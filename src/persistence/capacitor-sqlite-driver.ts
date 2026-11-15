@@ -2,6 +2,8 @@ import type { SQLiteDBConnection } from '@capacitor-community/sqlite';
 import type { SqliteDriver, SqliteValue } from './sqlite-game-repository';
 
 export class CapacitorSqliteDriver implements SqliteDriver {
+  private transactionQueue: Promise<void> = Promise.resolve();
+
   constructor(
     private readonly connection: SQLiteDBConnection,
     private readonly afterCommit?: () => Promise<void>,
@@ -21,19 +23,30 @@ export class CapacitorSqliteDriver implements SqliteDriver {
   }
 
   async transaction<T>(work: () => Promise<T>): Promise<T> {
-    await this.connection.beginTransaction();
+    const previousTransaction = this.transactionQueue;
+    let releaseTransaction!: () => void;
+    this.transactionQueue = new Promise<void>((resolve) => {
+      releaseTransaction = resolve;
+    });
+    await previousTransaction;
+
+    let transactionStarted = false;
     let committed = false;
     try {
+      await this.connection.beginTransaction();
+      transactionStarted = true;
       const result = await work();
       await this.connection.commitTransaction();
       committed = true;
       await this.afterCommit?.();
       return result;
     } catch (error) {
-      if (!committed) {
+      if (transactionStarted && !committed) {
         await this.connection.rollbackTransaction();
       }
       throw error;
+    } finally {
+      releaseTransaction();
     }
   }
 }

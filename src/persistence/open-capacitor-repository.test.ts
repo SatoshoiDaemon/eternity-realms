@@ -121,6 +121,28 @@ describe('Capacitor SQLite bootstrap', () => {
     expect(defineCustomElements).not.toHaveBeenCalled();
   });
 
+  it('shares concurrent native database opens and migration initialization', async () => {
+    const db = createDb();
+    const connection = createConnection(db);
+    let finishConnectionCheck!: (result: { result: boolean }) => void;
+    vi.mocked(connection.isConnection).mockImplementation(
+      () =>
+        new Promise((resolve) => {
+          finishConnectionCheck = resolve;
+        }),
+    );
+
+    const first = openCapacitorRepository({ platform: 'android', connection, document, window });
+    const second = openCapacitorRepository({ platform: 'android', connection, document, window });
+    expect(connection.isConnection).toHaveBeenCalledOnce();
+    finishConnectionCheck({ result: false });
+    const [firstRepository, secondRepository] = await Promise.all([first, second]);
+
+    expect(firstRepository).toBe(secondRepository);
+    expect(connection.createConnection).toHaveBeenCalledOnce();
+    expect(db.open).toHaveBeenCalledOnce();
+  });
+
   it('does not append a duplicate jeep-sqlite element and propagates connection failures', async () => {
     document.body.innerHTML = '<jeep-sqlite></jeep-sqlite>';
     const db = createDb();
@@ -135,6 +157,10 @@ describe('Capacitor SQLite bootstrap', () => {
     await expect(
       openCapacitorRepository({ platform: 'ios', connection: failure, document, window }),
     ).rejects.toThrow('SQLite unavailable.');
+    await expect(
+      openCapacitorRepository({ platform: 'ios', connection: failure, document, window }),
+    ).resolves.toBeDefined();
+    expect(failure.createConnection).toHaveBeenCalledTimes(2);
   });
 
   it('uses Capacitor defaults when platform and connection are not supplied', async () => {

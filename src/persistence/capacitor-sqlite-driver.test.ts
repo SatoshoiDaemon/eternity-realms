@@ -50,6 +50,37 @@ describe('Capacitor SQLite adapter', () => {
     expect(connection.rollbackTransaction).toHaveBeenCalledTimes(1);
   });
 
+  it('serializes overlapping transactions on the single SQLite connection', async () => {
+    const connection = createConnection();
+    const driver = new CapacitorSqliteDriver(connection);
+    const sequence: string[] = [];
+    let releaseFirst!: () => void;
+    const firstGate = new Promise<void>((resolve) => {
+      releaseFirst = resolve;
+    });
+    const first = driver.transaction(async () => {
+      sequence.push('first:start');
+      await firstGate;
+      sequence.push('first:end');
+    });
+    const second = driver.transaction(async () => {
+      sequence.push('second:start');
+      sequence.push('second:end');
+    });
+
+    await Promise.resolve();
+    await Promise.resolve();
+    expect(connection.beginTransaction).toHaveBeenCalledTimes(1);
+    expect(sequence).toEqual(['first:start']);
+
+    releaseFirst();
+    await Promise.all([first, second]);
+
+    expect(sequence).toEqual(['first:start', 'first:end', 'second:start', 'second:end']);
+    expect(connection.beginTransaction).toHaveBeenCalledTimes(2);
+    expect(connection.commitTransaction).toHaveBeenCalledTimes(2);
+  });
+
   it('flushes the committed web database and does not roll back a completed transaction on flush failure', async () => {
     const connection = createConnection();
     const flush = vi.fn(async () => undefined);
