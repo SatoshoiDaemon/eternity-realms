@@ -1,4 +1,5 @@
-import { screen } from '@testing-library/react';
+import { act, screen } from '@testing-library/react';
+import type { Root } from 'react-dom/client';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { openCapacitorRepository } from './persistence/open-capacitor-repository';
 import { bootstrapGame } from './bootstrap';
@@ -18,9 +19,13 @@ describe('application bootstrap', () => {
     const repository = { transact: vi.fn(async (reducer) => reducer(null)) };
     vi.mocked(openCapacitorRepository).mockResolvedValue(repository as never);
 
-    await bootstrapGame(root);
+    let application: Root | undefined;
+    await act(async () => {
+      application = await bootstrapGame(root);
+    });
 
-    expect(await screen.findByRole('heading', { name: 'Eternity Realms' })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'Eternity Realms' })).toBeInTheDocument();
+    await act(async () => application?.unmount());
   });
 
   it('fails clearly when the HTML root element is missing', async () => {
