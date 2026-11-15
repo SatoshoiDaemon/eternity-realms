@@ -1,0 +1,18 @@
+[
+  {
+    "id": "mining-iron",
+    "kind": "reward",
+    "name": "Resultado da mineração",
+    "description": "Recompensa provisória, configurada como conteúdo.",
+    "experience": 25,
+    "items": [{ "itemId": "iron-ore", "quantity": 1 }]
+  },
+  {
+    "id": "foraging-herbs",
+    "kind": "reward",
+    "name": "Resultado da coleta",
+    "description": "Recompensa provisória, configurada como conteúdo.",
+    "experience": 10,
+    "items": [{ "itemId": "wild-herb", "quantity": 1 }]
+  }
+]

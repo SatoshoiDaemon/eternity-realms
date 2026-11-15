@@ -1,0 +1,16 @@
+[
+  {
+    "id": "iron-ore",
+    "kind": "item",
+    "name": "Minério de ferro",
+    "description": "Minério comum extraído durante a mineração.",
+    "stackable": true
+  },
+  {
+    "id": "wild-herb",
+    "kind": "item",
+    "name": "Erva silvestre",
+    "description": "Uma erva comum reunida durante a coleta.",
+    "stackable": true
+  }
+]

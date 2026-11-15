@@ -1,0 +1,18 @@
+[
+  {
+    "id": "mining",
+    "kind": "activity",
+    "name": "Mineração",
+    "description": "Extrai minério de ferro ao concluir a duração escolhida.",
+    "category": "gathering",
+    "rewardId": "mining-iron"
+  },
+  {
+    "id": "foraging",
+    "kind": "activity",
+    "name": "Coleta de ervas",
+    "description": "Reúne ervas silvestres ao concluir a duração escolhida.",
+    "category": "gathering",
+    "rewardId": "foraging-herbs"
+  }
+]

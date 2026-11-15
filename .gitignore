@@ -1,0 +1,15 @@
+node_modules/
+dist/
+coverage/
+/public/assets/*.wasm
+.vite/
+*.log
+.DS_Store
+android/.gradle/
+android/local.properties
+android/**/build/
+android/captures/
+android/.idea/
+android/*.iml
+android/.externalNativeBuild/
+android/.cxx/

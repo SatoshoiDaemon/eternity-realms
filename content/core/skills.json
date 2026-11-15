@@ -1,0 +1,16 @@
+[
+  {
+    "id": "mining-skill",
+    "kind": "skill",
+    "name": "Mineração",
+    "description": "Trilha de progressão associada à extração de minérios.",
+    "activityIds": ["mining"]
+  },
+  {
+    "id": "herbalism-skill",
+    "kind": "skill",
+    "name": "Herbalismo",
+    "description": "Trilha de progressão associada à coleta de ervas.",
+    "activityIds": ["foraging"]
+  }
+]

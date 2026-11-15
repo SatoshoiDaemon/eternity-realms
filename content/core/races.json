@@ -1,0 +1,8 @@
+[
+  {
+    "id": "human",
+    "kind": "race",
+    "name": "Humano",
+    "description": "Raça inicial representativa para a primeira fatia jogável."
+  }
+]

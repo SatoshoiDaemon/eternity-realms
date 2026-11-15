@@ -1,0 +1,9 @@
+[
+  {
+    "id": "focused-work",
+    "kind": "effect",
+    "name": "Trabalho focado",
+    "description": "Registro de efeito para extensões futuras; sem modificador numérico presumido.",
+    "payload": { "status": "declarative-extension-point" }
+  }
+]
