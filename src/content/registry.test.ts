@@ -14,7 +14,7 @@ describe('declarative content registry', () => {
     expect(official.items.has('iron-ore')).toBe(true);
     expect(official.skills.has('mining-skill')).toBe(true);
     expect(official.effects.has('focused-work')).toBe(true);
-    expect(official.rules.experiencePerLevel).toBeGreaterThan(0);
+    expect(official.rules.experiencePerLevel).toBe(80);
   });
 
   it('allows a later content pack to override an id deliberately', () => {

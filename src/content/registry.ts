@@ -6,6 +6,7 @@ import activities from '../../content/core/activities.json';
 import rewards from '../../content/core/rewards.json';
 import skills from '../../content/core/skills.json';
 import effects from '../../content/core/effects.json';
+import rules from '../../content/core/rules.json';
 import {
   ContentPackSchema,
   type ActivityDefinition,
@@ -110,7 +111,7 @@ export function loadOfficialContent(): ContentCatalog {
     {
       manifest,
       records: [...races, ...classes, ...items, ...activities, ...rewards, ...skills, ...effects],
-      rules: { experiencePerLevel: 100 },
+      rules,
     },
   ]);
 }
