@@ -164,14 +164,11 @@ function tab(name: string) {
   );
 }
 
-function openSettings(category?: string) {
+async function openSettings(category?: string) {
   fireEvent.click(screen.getByRole('button', { name: 'Abrir configurações' }));
-  if (category)
-    fireEvent.click(
-      within(screen.getByRole('navigation', { name: 'Configurações' })).getByRole('button', {
-        name: category,
-      }),
-    );
+  if (!category) return;
+  const navigation = await screen.findByRole('navigation', { name: 'Configurações' });
+  fireEvent.click(within(navigation).getByRole('button', { name: category }));
 }
 
 async function createCharacterInUI(name = 'Aventureiro') {
@@ -375,9 +372,9 @@ describe('Eternity Realms navigation and play flow', () => {
     await screen.findByRole('heading', { name: 'Aria' });
     expect(repository.state?.character?.id).toBe('default-character-id');
 
-    openSettings('Mods');
+    await openSettings('Mods');
     expect(screen.getByText(/declara compatibilidade com 9.9.9/)).toBeInTheDocument();
-    openSettings('Desenvolvimento e debug');
+    await openSettings('Desenvolvimento e debug');
     fireEvent.click(screen.getByRole('switch', { name: 'Modo de desenvolvimento' }));
     fireEvent.click(screen.getByRole('button', { name: 'Validar mods carregados' }));
     expect(await screen.findByRole('status')).toHaveTextContent(
@@ -390,7 +387,7 @@ describe('Eternity Realms navigation and play flow', () => {
     const repository = new MemoryRepository();
     render(<GameApp repository={repository} storage={storage} clock={() => 1_000} />);
     await screen.findByRole('button', { name: 'Criar personagem' });
-    openSettings('Mods');
+    await openSettings('Mods');
     const pack = {
       manifest: { id: 'ui.test-pack', name: 'Pacote de interface', version: '1.0.0' },
       records: [
@@ -443,7 +440,7 @@ describe('Eternity Realms navigation and play flow', () => {
     await waitFor(() =>
       expect(screen.getByRole('alert')).toHaveTextContent('Ocorreu um erro inesperado.'),
     );
-    openSettings('Aparência e idioma');
+    await openSettings('Aparência e idioma');
     fireEvent.click(screen.getByRole('button', { name: 'Tokyo Night' }));
     await waitFor(() =>
       expect(screen.getByRole('alert')).toHaveTextContent('Settings storage unavailable.'),
@@ -469,7 +466,7 @@ describe('Eternity Realms navigation and play flow', () => {
       />,
     );
     await screen.findByRole('heading', { name: 'Aria' });
-    openSettings('Desenvolvimento e debug');
+    await openSettings('Desenvolvimento e debug');
     fireEvent.click(screen.getByRole('switch', { name: 'Habilitar logs verbosos' }));
     expect(document.querySelector('.combat-log')).toHaveTextContent(
       'Não foi possível atualizar o índice de personagens',
@@ -482,7 +479,7 @@ describe('Eternity Realms navigation and play flow', () => {
     await waitFor(() =>
       expect(screen.getByRole('alert')).toHaveTextContent('Ocorreu um erro inesperado.'),
     );
-    openSettings('Desenvolvimento e debug');
+    await openSettings('Desenvolvimento e debug');
 
     vi.spyOn(repository, 'load').mockRejectedValueOnce('offline');
     const loadSpy = vi.mocked(repository.load);
@@ -516,7 +513,7 @@ describe('Eternity Realms navigation and play flow', () => {
       />,
     );
     await screen.findByRole('heading', { name: 'Aria' });
-    openSettings('Aparência e idioma');
+    await openSettings('Aparência e idioma');
     fireEvent.click(screen.getByRole('button', { name: 'Tokyo Night' }));
     await waitFor(() =>
       expect(screen.getByRole('alert')).toHaveTextContent('Ocorreu um erro inesperado.'),
@@ -847,7 +844,7 @@ describe('Eternity Realms navigation and play flow', () => {
     expect(await screen.findByRole('dialog', { name: 'Novidades' })).toBeInTheDocument();
     fireEvent.click(screen.getByRole('button', { name: 'Continuar jornada' }));
     expect(storage.getItem('eternity-realms:changelog-seen:v1')).toBe('0.1.0');
-    openSettings('Novidades e atualizações');
+    await openSettings('Novidades e atualizações');
     fireEvent.click(screen.getByRole('button', { name: 'Novidades' }));
     expect(await screen.findByRole('dialog', { name: 'Novidades' })).toBeInTheDocument();
     fireEvent.click(screen.getByRole('button', { name: 'Fechar novidades' }));
@@ -855,7 +852,7 @@ describe('Eternity Realms navigation and play flow', () => {
 
   it('persists themes, motion, notification, backup and update preferences outside character saves', async () => {
     const { storage } = await mountApp();
-    openSettings('Aparência e idioma');
+    await openSettings('Aparência e idioma');
     fireEvent.click(screen.getByRole('button', { name: 'Tokyo Night' }));
     expect(document.documentElement.dataset.theme).toBe('tokyo-night');
     fireEvent.click(screen.getByRole('switch', { name: 'Movimento reduzido' }));
@@ -866,7 +863,7 @@ describe('Eternity Realms navigation and play flow', () => {
       { theme: 'tokyo-night', motion: 'reduced', fontScale: 1.15 },
     );
 
-    openSettings('Notificações');
+    await openSettings('Notificações');
     fireEvent.click(screen.getByRole('switch', { name: 'Conclusão de sessões' }));
     expect(
       JSON.parse(storage.getItem('eternity-realms:device-settings:v1') ?? '{}').notifications
@@ -877,13 +874,13 @@ describe('Eternity Realms navigation and play flow', () => {
       'Notificações locais estão disponíveis na versão Android.',
     );
 
-    openSettings('Saves e backups');
+    await openSettings('Saves e backups');
     fireEvent.click(screen.getByRole('combobox', { name: 'Frequência automática: Desativada' }));
     fireEvent.click(screen.getByRole('option', { name: 'Diária' }));
     expect(
       JSON.parse(storage.getItem('eternity-realms:device-settings:v1') ?? '{}').backup.frequency,
     ).toBe('daily');
-    openSettings('Novidades e atualizações');
+    await openSettings('Novidades e atualizações');
     fireEvent.click(screen.getByRole('combobox', { name: 'Canal de atualizações: Estável' }));
     fireEvent.click(screen.getByRole('option', { name: 'Prévia' }));
     expect(
@@ -901,7 +898,7 @@ describe('Eternity Realms navigation and play flow', () => {
   it('manages multiple characters and confirms reset and delete operations', async () => {
     const { repository } = await mountApp({ state: gameWithCharacter('Aria') });
     await screen.findByText('Aria');
-    openSettings('Personagens');
+    await openSettings('Personagens');
     expect(screen.getByText('Aria')).toBeInTheDocument();
     fireEvent.change(screen.getByLabelText('Criar outro personagem'), {
       target: { value: 'Luna' },
@@ -939,7 +936,7 @@ describe('Eternity Realms navigation and play flow', () => {
     persistProfile(storage, gameWithCharacter('Aria'), 1_000);
     persistProfile(storage, gameWithCharacter('Luna'), 1_001);
     const { repository } = await mountApp({ state: gameWithCharacter('Aria'), storage });
-    openSettings('Personagens');
+    await openSettings('Personagens');
     fireEvent.click(screen.getByRole('button', { name: 'Excluir personagem' }));
     fireEvent.click(screen.getByRole('button', { name: 'Confirmar operação' }));
     await waitFor(() => expect(repository.state?.character).toBeNull());
@@ -958,7 +955,7 @@ describe('Eternity Realms navigation and play flow', () => {
       },
     };
     await mountApp({ state: gameWithCharacter('Aria'), storage });
-    openSettings('Personagens');
+    await openSettings('Personagens');
     fireEvent.click(screen.getByRole('button', { name: 'Redefinir progresso' }));
     fireEvent.click(screen.getByRole('button', { name: 'Confirmar operação' }));
     await waitFor(() =>
@@ -969,13 +966,13 @@ describe('Eternity Realms navigation and play flow', () => {
   it('keeps character actions safe without a character and detects a missing local backup', async () => {
     const storage = new MemoryStorage();
     await mountApp({ storage });
-    openSettings('Personagens');
+    await openSettings('Personagens');
     fireEvent.click(screen.getByRole('button', { name: 'Redefinir progresso' }));
     fireEvent.click(screen.getByRole('button', { name: 'Confirmar operação' }));
     fireEvent.click(screen.getByRole('button', { name: 'Excluir personagem' }));
     fireEvent.click(screen.getByRole('button', { name: 'Confirmar operação' }));
 
-    openSettings('Saves e backups');
+    await openSettings('Saves e backups');
     fireEvent.click(screen.getByRole('button', { name: 'Criar backup agora' }));
     await waitFor(() => expect(storage.getItem(LOCAL_BACKUPS_KEY)).toContain('manual-1000'));
     const click = vi.spyOn(HTMLAnchorElement.prototype, 'click').mockImplementation(() => {});
@@ -1011,7 +1008,7 @@ describe('Eternity Realms navigation and play flow', () => {
       />,
     );
     await screen.findByRole('button', { name: 'Abrir configurações' });
-    openSettings('Saves e backups');
+    await openSettings('Saves e backups');
     fireEvent.click(screen.getByRole('button', { name: 'Exportar save' }));
     fireEvent.click(screen.getByRole('button', { name: 'Criar backup agora' }));
     expect(JSON.parse(storage.getItem(LOCAL_BACKUPS_KEY) ?? '[]')).toHaveLength(1);
@@ -1027,7 +1024,7 @@ describe('Eternity Realms navigation and play flow', () => {
     const { repository } = await mountApp({ state: empty, content: testCatalog });
     tab('Atividades');
     expect(screen.getByText('Nenhuma sessão planejada.')).toBeInTheDocument();
-    openSettings('Personagens');
+    await openSettings('Personagens');
     fireEvent.change(screen.getByLabelText('Criar outro personagem'), {
       target: { value: 'Lua' },
     });
@@ -1047,7 +1044,7 @@ describe('Eternity Realms navigation and play flow', () => {
     );
     render(<GameApp repository={delayedRepository} storage={delayedStorage} clock={() => 1_000} />);
     await screen.findByRole('button', { name: 'Abrir configurações' });
-    openSettings('Personagens');
+    await openSettings('Personagens');
     fireEvent.click(within(screen.getByText('Outro').closest('article')!).getByRole('button'));
     expect(delayedRepository.transactionCount).toBe(0);
     fireEvent.click(screen.getByRole('button', { name: 'Voltar ao jogo' }));
@@ -1126,8 +1123,8 @@ describe('Eternity Realms navigation and play flow', () => {
 
     cleanup();
     let checkpoint: (() => void) | undefined;
-    vi.spyOn(window, 'setInterval').mockImplementation((handler) => {
-      if (typeof handler === 'function') checkpoint = handler as () => void;
+    vi.spyOn(window, 'setInterval').mockImplementation((handler, timeout) => {
+      if (timeout === 15_000 && typeof handler === 'function') checkpoint = handler as () => void;
       return 17 as unknown as ReturnType<typeof window.setInterval>;
     });
     const state = gameWithCharacter('Checkpoint');
@@ -1146,7 +1143,8 @@ describe('Eternity Realms navigation and play flow', () => {
     state.queue = ['checkpoint-active'];
     const storage = new MemoryStorage();
     const { repository } = await mountApp({ state, storage, clock: () => 1_000 });
-    openSettings('Desenvolvimento e debug');
+    await waitFor(() => expect(checkpoint).toBeTypeOf('function'));
+    await openSettings('Desenvolvimento e debug');
     fireEvent.click(screen.getByRole('switch', { name: 'Habilitar logs verbosos' }));
     repository.failNext = true;
     repository.failNextError = new Error('checkpoint write failed');
@@ -1183,7 +1181,7 @@ describe('Eternity Realms navigation and play flow', () => {
       },
     };
     await mountApp({ state: gameWithCharacter('Mods'), storage });
-    openSettings('Mods');
+    await openSettings('Mods');
     const pack = {
       manifest: { id: 'failure.mod', name: 'Mod de falha', version: '1.0.0' },
       records: [],
@@ -1211,7 +1209,7 @@ describe('Eternity Realms navigation and play flow', () => {
     const state = gameWithCharacter('Debug');
     state.combatRecords = undefined as unknown as GameState['combatRecords'];
     const { repository } = await mountApp({ state, content: loadOfficialContent() });
-    openSettings('Desenvolvimento e debug');
+    await openSettings('Desenvolvimento e debug');
     fireEvent.click(screen.getByRole('switch', { name: 'Modo de desenvolvimento' }));
     fireEvent.click(screen.getByRole('button', { name: 'Inspecionar estado e RNG' }));
     expect(screen.getByRole('status')).toHaveTextContent('rngSeeds');
@@ -1287,7 +1285,7 @@ describe('Eternity Realms navigation and play flow', () => {
       state: gameWithCharacter('Aria'),
       clock: () => 10_000,
     });
-    openSettings('Saves e backups');
+    await openSettings('Saves e backups');
     fireEvent.click(screen.getByRole('button', { name: 'Criar backup agora' }));
     expect(await screen.findByRole('status')).toHaveTextContent('Backup criado e validado.');
     expect(screen.getByText(/Aria · manual/)).toBeInTheDocument();
@@ -1315,7 +1313,7 @@ describe('Eternity Realms navigation and play flow', () => {
       state: gameWithCharacter('Aria'),
       content: testCatalog,
     });
-    openSettings('Desenvolvimento e debug');
+    await openSettings('Desenvolvimento e debug');
     fireEvent.click(screen.getByRole('switch', { name: 'Modo de desenvolvimento' }));
     fireEvent.click(screen.getByRole('button', { name: 'Conceder 100 XP' }));
     await waitFor(() => expect(repository.state?.character?.experience.total).toBe(100));
@@ -1332,7 +1330,7 @@ describe('Eternity Realms navigation and play flow', () => {
       'Validação concluída: 0 mods instalados.',
     );
 
-    openSettings('Mods');
+    await openSettings('Mods');
     const pack = {
       manifest: { id: 'test.mod', name: 'Mod de teste', version: '1.0.0' },
       records: [],
@@ -1356,13 +1354,13 @@ describe('Eternity Realms navigation and play flow', () => {
       createObjectURL: vi.fn(() => 'blob:enabled-mod-save'),
       revokeObjectURL: vi.fn(),
     });
-    openSettings('Saves e backups');
+    await openSettings('Saves e backups');
     fireEvent.click(screen.getByRole('button', { name: 'Criar backup agora' }));
     await waitFor(() => expect(screen.getByRole('status')).toHaveTextContent('Backup criado'));
     fireEvent.click(screen.getByRole('button', { name: 'Exportar save' }));
     await waitFor(() => expect(click).toHaveBeenCalled());
     expect(storage.getItem(LOCAL_BACKUPS_KEY)).toContain('test.mod');
-    openSettings('Mods');
+    await openSettings('Mods');
     fireEvent.click(screen.getByRole('button', { name: 'Remover mod' }));
     await waitFor(() =>
       expect(JSON.parse(storage.getItem('eternity-realms:mods:v1') ?? '[]')).toEqual([]),
@@ -1415,7 +1413,7 @@ describe('Eternity Realms navigation and play flow', () => {
       },
     };
     await mountApp({ state: gameWithCharacter('Aria'), storage });
-    openSettings('Desenvolvimento e debug');
+    await openSettings('Desenvolvimento e debug');
     fireEvent.click(screen.getByRole('switch', { name: 'Habilitar logs verbosos' }));
     expect(document.querySelector('.combat-log')).toHaveTextContent(
       'Não foi possível atualizar o índice de personagens',
@@ -1456,7 +1454,7 @@ describe('Eternity Realms navigation and play flow', () => {
       ),
     );
     await waitFor(() => expect(nativeMocks.scheduleNotifications).toHaveBeenCalledTimes(2));
-    openSettings('Desenvolvimento e debug');
+    await openSettings('Desenvolvimento e debug');
     fireEvent.click(screen.getByRole('switch', { name: 'Habilitar logs verbosos' }));
     const logs = document.querySelector('.combat-log');
     expect(logs).toHaveTextContent('Não foi possível atualizar o agendamento de backups');
@@ -1469,7 +1467,7 @@ describe('Eternity Realms navigation and play flow', () => {
 
   it('guards development actions without a character or combat content', async () => {
     await mountApp({ content: testCatalog });
-    openSettings('Desenvolvimento e debug');
+    await openSettings('Desenvolvimento e debug');
     fireEvent.click(screen.getByRole('switch', { name: 'Modo de desenvolvimento' }));
     fireEvent.click(screen.getByRole('button', { name: 'Conceder 100 XP' }));
     await waitFor(() =>
@@ -1480,7 +1478,7 @@ describe('Eternity Realms navigation and play flow', () => {
 
     cleanup();
     await mountApp({ state: gameWithCharacter('Aria'), content: testCatalog });
-    openSettings('Desenvolvimento e debug');
+    await openSettings('Desenvolvimento e debug');
     fireEvent.click(screen.getByRole('switch', { name: 'Modo de desenvolvimento' }));
     fireEvent.click(screen.getByRole('button', { name: 'Simular combate' }));
     await waitFor(() =>
@@ -1547,7 +1545,7 @@ describe('Eternity Realms navigation and play flow', () => {
       exportedAt: 4_000,
       modDependencies: [],
     });
-    openSettings('Saves e backups');
+    await openSettings('Saves e backups');
     const saveFile = fileWithText(payload, 'jornada.json');
     fireEvent.change(screen.getByLabelText('Importar save'), { target: { files: [saveFile] } });
     fireEvent.click(screen.getByRole('button', { name: 'Confirmar operação' }));
@@ -1571,7 +1569,7 @@ describe('Eternity Realms navigation and play flow', () => {
 
   it('runs every development operation against the real game state and checks releases', async () => {
     const { repository } = await mountApp({ state: gameWithCharacter('Aria') });
-    openSettings('Desenvolvimento e debug');
+    await openSettings('Desenvolvimento e debug');
     fireEvent.click(screen.getByRole('switch', { name: 'Modo de desenvolvimento' }));
     fireEvent.click(screen.getByRole('button', { name: 'Adicionar recurso de teste' }));
     await waitFor(() => expect(repository.state?.character?.inventory['iron-ore']).toBe(5));
@@ -1586,7 +1584,7 @@ describe('Eternity Realms navigation and play flow', () => {
       expect(screen.getByRole('status')).toHaveTextContent('processedEventCount'),
     );
 
-    openSettings('Novidades e atualizações');
+    await openSettings('Novidades e atualizações');
     vi.stubGlobal(
       'fetch',
       vi.fn().mockResolvedValue({
@@ -1608,7 +1606,7 @@ describe('Eternity Realms navigation and play flow', () => {
         within(screen.getByLabelText('Novidades e atualizações')).getByRole('status'),
       ).toHaveTextContent('Nova versão disponível: 0.2.0'),
     );
-    openSettings('Sobre');
+    await openSettings('Sobre');
     expect(screen.getByRole('link', { name: 'Ver versões publicadas' })).toHaveAttribute(
       'href',
       'https://github.com/SatoshoiDaemon/eternity-realms/releases',
@@ -1617,7 +1615,7 @@ describe('Eternity Realms navigation and play flow', () => {
 
   it('handles current, preview, and offline update checks from settings', async () => {
     await mountApp({ state: gameWithCharacter('Aria') });
-    openSettings('Novidades e atualizações');
+    await openSettings('Novidades e atualizações');
     vi.stubGlobal(
       'fetch',
       vi.fn().mockResolvedValue({
@@ -1678,7 +1676,7 @@ describe('Eternity Realms navigation and play flow', () => {
 
   it('filters, copies, and exports verbose logs with recoverable clipboard errors', async () => {
     await mountApp({ state: gameWithCharacter('Aria') });
-    openSettings('Desenvolvimento e debug');
+    await openSettings('Desenvolvimento e debug');
     fireEvent.click(screen.getByRole('switch', { name: 'Modo de desenvolvimento' }));
     fireEvent.click(screen.getByRole('switch', { name: 'Habilitar logs verbosos' }));
     fireEvent.click(screen.getByRole('combobox', { name: 'Nível mínimo: Rastreamento' }));
@@ -1808,10 +1806,10 @@ describe('Eternity Realms navigation and play flow', () => {
     expect(nativeMocks.configure).toHaveBeenCalled();
     expect(nativeMocks.setMetadata).toHaveBeenCalled();
 
-    openSettings('Notificações');
+    await openSettings('Notificações');
     fireEvent.click(screen.getByRole('button', { name: 'Ativar notificações no Android' }));
     await waitFor(() => expect(nativeMocks.requestPermissions).toHaveBeenCalled());
-    openSettings('Saves e backups');
+    await openSettings('Saves e backups');
     fireEvent.click(screen.getByRole('button', { name: 'Criar backup agora' }));
     await waitFor(() => expect(nativeMocks.writeBackup).toHaveBeenCalled());
     fireEvent.click(screen.getByRole('button', { name: 'Exportar save' }));
@@ -1830,7 +1828,7 @@ describe('Eternity Realms navigation and play flow', () => {
           .some((notification) => notification.title === 'Missão concluída'),
       ).toBe(true),
     );
-    openSettings('Desenvolvimento e debug');
+    await openSettings('Desenvolvimento e debug');
     fireEvent.click(screen.getByRole('switch', { name: 'Habilitar logs verbosos' }));
     expect(screen.getByText(/Falha ao notificar uma missão disponível/)).toBeInTheDocument();
 
@@ -1842,7 +1840,7 @@ describe('Eternity Realms navigation and play flow', () => {
         modDependencies: [],
       }),
     });
-    openSettings('Saves e backups');
+    await openSettings('Saves e backups');
     fireEvent.click(await screen.findByRole('button', { name: 'Restaurar backup' }));
     fireEvent.click(screen.getByRole('button', { name: 'Confirmar operação' }));
     await waitFor(() => expect(repository.state?.character?.name).toBe('Restaurado'));
@@ -1872,14 +1870,14 @@ describe('Eternity Realms navigation and play flow', () => {
     state.queue = ['active-failure'];
     await mountApp({ state, clock: () => 1_000 });
     await waitFor(() => expect(nativeMocks.listBackups).toHaveBeenCalled());
-    openSettings('Notificações');
+    await openSettings('Notificações');
     fireEvent.click(screen.getByRole('button', { name: 'Ativar notificações no Android' }));
     await waitFor(() =>
       expect(screen.getByRole('alert')).toHaveTextContent(
         'Não foi possível ativar as notificações.',
       ),
     );
-    openSettings('Desenvolvimento e debug');
+    await openSettings('Desenvolvimento e debug');
     fireEvent.click(screen.getByRole('switch', { name: 'Habilitar logs verbosos' }));
     expect(document.querySelector('.combat-log')).toHaveTextContent(
       'Não foi possível atualizar o agendamento de backups',

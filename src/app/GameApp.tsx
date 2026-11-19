@@ -63,13 +63,12 @@ import {
 import { DebugLog } from './debug-log';
 import { t, type TranslationKey, userFacingError } from './i18n';
 import { GameSelect } from './GameSelect';
-import {
-  SettingsScreen,
-  type BackupSummary,
-  type DebugAction,
-  type DebugLevel,
-  type DebugSubsystem,
-  type InstalledModSummary,
+import type {
+  BackupSummary,
+  DebugAction,
+  DebugLevel,
+  DebugSubsystem,
+  InstalledModSummary,
 } from './SettingsScreen';
 import './game-app.css';
 import { unequipItem, type EquipmentSlot } from '../domain/forge';
@@ -95,6 +94,9 @@ type CombatView =
 type CharacterView = 'overview' | 'equipment' | 'inventory' | 'skills' | 'forge' | 'nodes';
 
 const OFFICIAL_CONTENT = loadOfficialContent();
+const SettingsScreen = lazy(() =>
+  import('./SettingsScreen').then((module) => ({ default: module.SettingsScreen })),
+);
 const PhaseTwoPanels = lazy(() =>
   import('./PhaseTwoPanels').then((module) => ({ default: module.PhaseTwoPanels })),
 );
