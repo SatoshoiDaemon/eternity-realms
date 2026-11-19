@@ -14,5 +14,23 @@
     "description": "Reúne ervas silvestres ao concluir a duração escolhida.",
     "category": "gathering",
     "rewardId": "foraging-herbs"
+  },
+  {
+    "id": "lost-foundry",
+    "kind": "activity",
+    "name": "Fundição Perdida",
+    "description": "Uma Dungeon com criaturas de natureza, anatomia e comportamento distintos.",
+    "category": "expedition",
+    "rewardId": "expedition-entry",
+    "expeditionId": "core:lost-foundry"
+  },
+  {
+    "id": "ashen-raid",
+    "kind": "activity",
+    "name": "Incursão ao Trono das Cinzas",
+    "description": "Uma Raid concentrada contra o Soberano das Cinzas e seu repertório dracônico.",
+    "category": "expedition",
+    "rewardId": "raid-entry",
+    "expeditionId": "core:ashen-raid"
   }
 ]

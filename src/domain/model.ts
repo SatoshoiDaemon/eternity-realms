@@ -1,4 +1,5 @@
 import type { Character, GameState } from './types';
+import { createNodeLibrary } from '../nodes/library';
 
 export interface CreateCharacterInput {
   id: string;
@@ -47,6 +48,7 @@ export function createCharacter(input: CreateCharacterInput): Character {
     },
     inventory: {},
     abilities: [],
+    nodeLibrary: createNodeLibrary(),
     skills: {},
     activityState: 'idle',
     extensions: input.extensions ? { ...input.extensions } : {},
@@ -62,5 +64,6 @@ export function createInitialGameState(): GameState {
     queue: [],
     events: [],
     processedEventIds: [],
+    combatRecords: [],
   };
 }

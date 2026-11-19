@@ -1,4 +1,5 @@
 import type { Character, DomainEvent } from './types';
+import type { LootDrop } from '../combat/loot';
 
 export interface ProgressionRules {
   experiencePerLevel: number;
@@ -96,4 +97,47 @@ export function grantItems(
     });
   }
   return { character: { ...character, inventory }, events };
+}
+
+export function grantLootDrops(
+  character: Character,
+  drops: LootDrop[],
+  processedRewardIds: Set<string> = new Set(),
+): CharacterUpdate {
+  const inventory = { ...character.inventory };
+  const rewardIds = new Set<string>();
+  const events: DomainEvent[] = [];
+  for (const drop of drops) {
+    if (
+      !drop.rewardId.trim() ||
+      !drop.itemId.trim() ||
+      !drop.sourceTableId.trim() ||
+      !Number.isSafeInteger(drop.quantity) ||
+      drop.quantity <= 0
+    ) {
+      throw new Error(
+        'Loot drops require unique IDs, item IDs, source tables, and positive quantities.',
+      );
+    }
+    if (rewardIds.has(drop.rewardId)) {
+      throw new Error('Loot reward ids must be unique.');
+    }
+    rewardIds.add(drop.rewardId);
+    if (processedRewardIds.has(drop.rewardId)) {
+      continue;
+    }
+    const total = (inventory[drop.itemId] ?? 0) + drop.quantity;
+    if (!Number.isSafeInteger(total)) {
+      throw new Error(`Inventory quantity exceeds the safe integer range for item: ${drop.itemId}`);
+    }
+    inventory[drop.itemId] = total;
+    events.push({
+      id: drop.rewardId,
+      type: 'item.acquired',
+      occurredAt: 0,
+      itemId: drop.itemId,
+      quantity: drop.quantity,
+    });
+  }
+  return { character: events.length ? { ...character, inventory } : character, events };
 }

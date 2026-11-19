@@ -1,0 +1,24 @@
+[
+  {
+    "id": "core:sigil-execution",
+    "name": "Execução",
+    "operation": {
+      "kind": "damage_modifier",
+      "id": "core:sigil-execution",
+      "interactionId": "sigil:execution",
+      "operation": "multiply",
+      "value": 1.25,
+      "potency": 1
+    }
+  },
+  {
+    "id": "core:sigil-echo",
+    "name": "Eco",
+    "operation": { "kind": "property", "value": "echoing" }
+  },
+  {
+    "id": "core:sigil-reversal",
+    "name": "Reversão",
+    "operation": { "kind": "property", "value": "reversal" }
+  }
+]

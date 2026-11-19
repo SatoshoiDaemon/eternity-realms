@@ -1,8 +1,8 @@
 import { act, fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import { createInitialGameState } from '../domain/model';
+import { createCharacter, createInitialGameState } from '../domain/model';
 import type { GameState } from '../domain/types';
-import { loadContentPacks } from '../content/registry';
+import { loadContentPacks, loadOfficialContent } from '../content/registry';
 import { createTestState, testCatalog } from '../test/fixtures';
 import { GameApp } from './GameApp';
 
@@ -257,6 +257,11 @@ describe('mobile-first game flow', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Criar personagem' }));
     await screen.findByRole('heading', { name: 'Aventureiro' });
     repository.returnNullNext = true;
+    fireEvent.click(screen.getByRole('button', { name: 'Fabricar equipamento' }));
+    expect(await screen.findByRole('status')).toHaveTextContent(
+      'Crie um personagem antes de alterar equipamentos ou construções.',
+    );
+    repository.returnNullNext = true;
     fireEvent.click(screen.getByRole('button', { name: 'Adicionar sessão' }));
     expect(await screen.findByRole('alert')).toHaveTextContent(
       'A character is required before starting a session.',
@@ -362,5 +367,36 @@ describe('mobile-first game flow', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Criar personagem' }));
     await screen.findByRole('heading', { name: 'Aventureiro' });
     expect(repository.state?.character?.id).toBe('browser-generated-id');
+  });
+
+  it('updates character equipment and reports a deleted character during a concurrent save', async () => {
+    const state = createInitialGameState();
+    const character = createCharacter({
+      id: 'phase-two',
+      name: 'Forge Hero',
+      raceId: 'human',
+      classId: 'wanderer',
+    });
+    character.inventory = { 'gear:iron-maul': 1 };
+    state.character = character;
+    const repository = new MemoryRepository(state);
+    render(
+      <GameApp
+        repository={repository}
+        content={loadOfficialContent()}
+        clock={() => 10}
+        makeId={() => 'generated'}
+      />,
+    );
+    await screen.findByRole('heading', { name: 'Forge Hero' });
+    fireEvent.click(screen.getByRole('button', { name: 'Equipar' }));
+    await waitFor(() =>
+      expect(repository.state?.character?.equipment.primary).toBe('gear:iron-maul'),
+    );
+    repository.state = { ...repository.state!, character: null };
+    fireEvent.click(screen.getByRole('button', { name: 'Fabricar equipamento' }));
+    expect(await screen.findByRole('status')).toHaveTextContent(
+      'Crie um personagem antes de alterar equipamentos ou construções.',
+    );
   });
 });

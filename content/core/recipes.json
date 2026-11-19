@@ -1,0 +1,98 @@
+[
+  {
+    "id": "forge:iron-maul",
+    "kind": "recipe",
+    "name": "Forjar malho de ferro",
+    "description": "Uma arma de esmagamento contra construtos e corpos minerais.",
+    "inputs": { "material-iron": 4 },
+    "resultItemId": "gear:iron-maul"
+  },
+  {
+    "id": "forge:silver-sabre",
+    "kind": "recipe",
+    "name": "Forjar sabre de prata",
+    "description": "Uma lâmina de prata para combater criaturas amaldiçoadas.",
+    "inputs": { "material-silver": 3, "material-iron": 1 },
+    "resultItemId": "gear:silver-sabre"
+  },
+  {
+    "id": "forge:mithril-spear",
+    "kind": "recipe",
+    "name": "Forjar lança de mithril",
+    "description": "Uma arma leve de perfuração.",
+    "inputs": { "material-mithril": 3, "material-iron": 1 },
+    "resultItemId": "gear:mithril-spear"
+  },
+  {
+    "id": "forge:adamantite-breaker",
+    "kind": "recipe",
+    "name": "Forjar quebra-armadura",
+    "description": "Esmagamento com a propriedade armor-penetrating.",
+    "inputs": { "material-adamantite": 3, "material-iron": 2 },
+    "resultItemId": "gear:adamantite-breaker"
+  },
+  {
+    "id": "forge:sacrite-mace",
+    "kind": "recipe",
+    "name": "Forjar maça de sacrito",
+    "description": "Arma sagrada que ancora espectros e fere mortos-vivos.",
+    "inputs": { "material-sacrite": 3, "material-iron": 2 },
+    "resultItemId": "gear:sacrite-mace"
+  },
+  {
+    "id": "forge:vibranium-plate",
+    "kind": "recipe",
+    "name": "Forjar peitoral de vibranio",
+    "description": "Proteção voltada à absorção de dano físico.",
+    "inputs": { "material-vibranium": 3, "material-iron": 3 },
+    "resultItemId": "gear:vibranium-plate"
+  },
+  {
+    "id": "forge:iron-plate",
+    "kind": "recipe",
+    "name": "Forjar peitoral de ferro",
+    "description": "Proteção física reforçada.",
+    "inputs": { "material-iron": 6 },
+    "resultItemId": "gear:iron-plate"
+  },
+  {
+    "id": "forge:gold-conductor",
+    "kind": "recipe",
+    "name": "Forjar condutor de ouro",
+    "description": "Faz o ouro conduzir uma ação elétrica mágica.",
+    "inputs": { "material-gold": 3, "material-iron": 1 },
+    "resultItemId": "gear:gold-conductor"
+  },
+  {
+    "id": "forge:orichalcum-focus",
+    "kind": "recipe",
+    "name": "Forjar foco de oricalco",
+    "description": "Conduz mana para uma ação arcana de maior potência.",
+    "inputs": { "material-orichalcum": 3, "material-gold": 1 },
+    "resultItemId": "gear:orichalcum-focus"
+  },
+  {
+    "id": "forge:unobtanio-spear",
+    "kind": "recipe",
+    "name": "Forjar lança de unobtanio",
+    "description": "Ancoragem material para atingir criaturas etéreas.",
+    "inputs": { "material-unobtanio": 3, "material-iron": 1 },
+    "resultItemId": "gear:unobtanio-spear"
+  },
+  {
+    "id": "forge:dilthio-wand",
+    "kind": "recipe",
+    "name": "Forjar varinha de dilthio",
+    "description": "Canaliza mana e amplia a reserva energética equipada.",
+    "inputs": { "material-dilthio": 3, "material-iron": 1 },
+    "resultItemId": "gear:dilthio-wand"
+  },
+  {
+    "id": "forge:chlorophyte-vest",
+    "kind": "recipe",
+    "name": "Forjar colete de clorofita",
+    "description": "Proteção leve com propriedades de regeneração ambiental.",
+    "inputs": { "material-chlorophyte": 3, "material-iron": 1 },
+    "resultItemId": "gear:chlorophyte-vest"
+  }
+]

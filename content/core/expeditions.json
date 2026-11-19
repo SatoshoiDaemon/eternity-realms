@@ -1,0 +1,82 @@
+[
+  {
+    "id": "core:lost-foundry",
+    "kind": "expedition",
+    "name": "Fundição Perdida",
+    "description": "Uma instalação subterrânea tomada por predadores, espectros, conjuradores e o Soberano das Cinzas.",
+    "activityKind": "dungeon",
+    "spawnIntervalMs": 60000,
+    "deathRewardRetention": 0.25,
+    "environment": {
+      "type": "cavern",
+      "condition": "fertile",
+      "timeOfDay": "night",
+      "hazard": "trap",
+      "elementOpposites": {
+        "fire": ["frost"],
+        "frost": ["fire"],
+        "light": ["shadow"],
+        "shadow": ["light"],
+        "water": ["lightning"]
+      }
+    },
+    "encounters": [
+      { "id": "stalker-patrol", "enemyId": "core:quarry-stalker", "weight": 5, "count": 2 },
+      { "id": "venom-burrow", "enemyId": "core:venom-crawler", "weight": 4 },
+      { "id": "sentinel-guard", "enemyId": "core:iron-sentinel", "weight": 4 },
+      { "id": "wraith-passage", "enemyId": "core:echo-wraith", "weight": 3 },
+      { "id": "arcanist-ambush", "enemyId": "core:rift-arcanist", "weight": 3 },
+      {
+        "id": "sovereign-chamber",
+        "enemyId": "core:ashen-sovereign",
+        "weight": 1,
+        "variantId": "Elite"
+      }
+    ],
+    "nodeUnlocks": [
+      "core:source-caster",
+      "core:type-physical",
+      "core:form-weapon-strike",
+      "core:effect-damage",
+      "core:effect-heal"
+    ]
+  },
+  {
+    "id": "core:ashen-raid",
+    "kind": "expedition",
+    "name": "Incursão ao Trono das Cinzas",
+    "description": "Confronto concentrado contra o chefe dracônico da Fundição Perdida.",
+    "activityKind": "raid",
+    "spawnIntervalMs": 60000,
+    "deathRewardRetention": 0.25,
+    "environment": {
+      "type": "volcanic_cavern",
+      "condition": "ashfall",
+      "timeOfDay": "night",
+      "hazard": "burning-ground",
+      "elementOpposites": {
+        "fire": ["frost"],
+        "frost": ["fire"],
+        "light": ["shadow"],
+        "shadow": ["light"]
+      }
+    },
+    "encounters": [
+      {
+        "id": "ashen-sovereign",
+        "enemyId": "core:ashen-sovereign",
+        "weight": 1,
+        "variantId": "Awakened"
+      }
+    ],
+    "nodeUnlocks": [
+      "core:type-fire",
+      "core:type-frost",
+      "core:form-projectile",
+      "core:form-summoning",
+      "core:effect-burn",
+      "core:effect-summon",
+      "core:modifier-amplify"
+    ]
+  }
+]

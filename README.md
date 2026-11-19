@@ -2,11 +2,15 @@
 
 Eternity Realms is an open source idle RPG for Android, designed to work offline, support mods, and keep saves under the player's control. The repository is the source of truth for implementation and technical notes.
 
-## Current vertical slice
+## Current playable loop
 
 - Create a character with a data-defined starter race and class.
-- Start a 30-minute mining session, close the app, and reconcile elapsed time when the app opens again.
-- Grant the configured ore and experience once, in the same SQLite transaction as the save and domain-event history.
+- Queue a mining, gathering, or expedition session, close the app, and reconcile elapsed time when it opens again.
+- Expeditions run deterministic, event-based battles against weighted encounters, groups, variants, elites, and bosses. The combat record keeps the seed, combat state, and detailed log for offline review.
+- Build abilities in the node editor, equip them, and order their automatic combat priority. The same compiled actions run in the arena and during expeditions.
+- Loot feeds a working forge: collect materials, craft equipment, equip it, and carry its damage, mitigation, speed, and material properties into combat.
+- Browse the bestiary to inspect enemy tags and their counterplay; dungeon and raid results add unlocked nodes to the character library.
+- Grant configured items, experience, loot, node unlocks, and combat history once, in the same SQLite transaction as the save and domain-event history.
 - Queue up to five sessions per character, edit and reorder queued sessions, or cancel the active cycle.
 - Load official JSON through the same schema-validated content-pack loader used by external packs.
 - Run Lua transforms in a WebAssembly runtime. SQLite and Lua WebAssembly files are copied into the local app assets so the runtime does not fetch them from the internet.
@@ -47,16 +51,18 @@ All production behavior is developed test-first. The Vitest coverage thresholds 
 
 - `src/domain/`: character model, progression, timed session engine, and domain events. This code has no React or Capacitor dependency.
 - `src/content/` and `content/core/`: Zod schemas, shared content-pack loader, and a small official JSON pack.
+- `src/combat/`: reusable player/enemy actors, executable tag rules, deterministic virtual-time combat, loot tables, and expedition simulation.
+- `src/nodes/`: typed graph validation and compilation, glyphs, sigils, and the character's versioned construction library.
 - `src/persistence/`: versioned SQLite migrations, atomic save/event transactions, idempotent event IDs, and Capacitor adapters.
 - `src/mods/`: Lua/WebAssembly transform boundary. Content packs are JSON and validated through the same loader regardless of source.
 - `src/app/`: mobile-first React screen and first playable loop.
 - `android/`: generated Capacitor Android host, synced from the web app.
 
-The session engine uses persisted timestamps rather than background timers. On foreground startup it processes elapsed cycles in order, stores each result atomically, and leaves the character idle when the queue ends. The queue is never restarted automatically.
+The session engine uses persisted timestamps rather than background timers. On foreground startup it processes elapsed cycles in order, simulates any expedition with a session-derived seed, stores its results atomically, and leaves the character idle when the queue ends. The queue is never restarted automatically. Combat uses virtual time and a saved PRNG state, so continuous play and offline batches produce the same event order.
 
 ## Content packs
 
-The official pack is in `content/core/`. External content can be passed as `{ manifest, records, rules? }` objects to `loadContentPacks`; each pack and record is schema-validated, duplicate IDs are rejected, and activity/reward/item/skill references are checked. The official pack goes through that exact code path. Starter records are intentionally small; no RP administration rules are enforced by the game.
+The official pack is in `content/core/`. External content can be passed as `{ manifest, records, nodes?, glyphs?, sigils?, rules? }` objects to `loadContentPacks`; each pack and record is schema-validated, duplicate IDs are rejected, and declared activity, reward, item, skill, expedition, enemy, loot, and recipe references are checked. Node, glyph, sigil, and tag records use the same validated registries. The official pack goes through that exact code path. Mods use the same runtime contracts as core content; no RP administration rules are enforced by the game.
 
 ## Android and CI
 

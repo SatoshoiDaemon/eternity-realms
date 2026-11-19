@@ -1,0 +1,129 @@
+[
+  {
+    "id": "core:stalker-drops",
+    "kind": "loot_table",
+    "name": "Rastreador da Pedreira",
+    "description": "Restos de predadores que caçam em grupo.",
+    "guaranteed": [{ "itemId": "material-iron", "quantity": 1 }],
+    "independent": [{ "itemId": "material-silver", "quantity": 1, "chance": 0.08 }],
+    "exclusive": [
+      {
+        "id": "predator-remains",
+        "rolls": 1,
+        "entries": [
+          { "itemId": "wild-herb", "quantity": 1, "weight": 2 },
+          { "itemId": "material-mithril", "quantity": 1, "weight": 1 }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "core:venom-drops",
+    "kind": "loot_table",
+    "name": "Rastejante Venenoso",
+    "description": "Glândulas tóxicas e partes segmentadas.",
+    "guaranteed": [{ "itemId": "wild-herb", "quantity": 1 }],
+    "independent": [{ "itemId": "material-chlorophyte", "quantity": 1, "chance": 0.2 }],
+    "exclusive": [
+      {
+        "id": "toxic-components",
+        "rolls": 1,
+        "entries": [
+          { "itemId": "material-dilthio", "quantity": 1, "weight": 1 },
+          { "itemId": "material-gold", "quantity": 1, "weight": 2 }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "core:construct-drops",
+    "kind": "loot_table",
+    "name": "Sentinela Mineral",
+    "description": "Minérios e peças do núcleo mineral.",
+    "guaranteed": [{ "itemId": "material-iron", "quantity": 3 }],
+    "independent": [{ "itemId": "material-adamantite", "quantity": 1, "chance": 0.12 }],
+    "exclusive": [
+      {
+        "id": "core-material",
+        "rolls": 1,
+        "entries": [
+          { "itemId": "material-orichalcum", "quantity": 1, "weight": 2 },
+          { "itemId": "material-vibranium", "quantity": 1, "weight": 1 }
+        ]
+      }
+    ],
+    "conditional": [
+      {
+        "id": "crushed-core",
+        "when": [
+          { "kind": "tag", "value": "base:construct" },
+          { "kind": "death_cause", "value": "physical" }
+        ],
+        "drops": [{ "itemId": "material-adamantite", "quantity": 1 }]
+      }
+    ]
+  },
+  {
+    "id": "core:wraith-drops",
+    "kind": "loot_table",
+    "name": "Espectro do Eco",
+    "description": "Fragmentos de essência espiritual.",
+    "guaranteed": [{ "itemId": "material-silver", "quantity": 1 }],
+    "independent": [{ "itemId": "material-sacrite", "quantity": 1, "chance": 0.1 }],
+    "exclusive": [
+      {
+        "id": "spirit-remains",
+        "rolls": 1,
+        "entries": [
+          { "itemId": "material-dilthio", "quantity": 1, "weight": 1 },
+          { "itemId": "material-gold", "quantity": 1, "weight": 1 }
+        ]
+      }
+    ],
+    "unlockNodeIds": ["core:modifier-spiritual"]
+  },
+  {
+    "id": "core:arcanist-drops",
+    "kind": "loot_table",
+    "name": "Arcanista da Fenda",
+    "description": "Componentes arcanos e energéticos.",
+    "guaranteed": [{ "itemId": "material-orichalcum", "quantity": 1 }],
+    "independent": [{ "itemId": "material-unobtanio", "quantity": 1, "chance": 0.04 }],
+    "exclusive": [
+      {
+        "id": "arcane-remains",
+        "rolls": 1,
+        "entries": [
+          { "itemId": "material-dilthio", "quantity": 2, "weight": 3 },
+          { "itemId": "material-sacrite", "quantity": 1, "weight": 1 }
+        ]
+      }
+    ],
+    "unlockNodeIds": ["core:effect-poison", "core:type-fire"]
+  },
+  {
+    "id": "core:sovereign-drops",
+    "kind": "loot_table",
+    "name": "Soberano das Cinzas",
+    "description": "Tesouro garantido do chefe e chance de materiais raros.",
+    "guaranteed": [
+      { "itemId": "material-gold", "quantity": 8 },
+      { "itemId": "material-adamantite", "quantity": 3 }
+    ],
+    "independent": [
+      { "itemId": "material-unobtanio", "quantity": 1, "chance": 0.25 },
+      { "itemId": "material-vibranium", "quantity": 2, "chance": 0.5 }
+    ],
+    "exclusive": [
+      {
+        "id": "sovereign-relic",
+        "rolls": 1,
+        "entries": [
+          { "itemId": "material-sacrite", "quantity": 3, "weight": 1 },
+          { "itemId": "material-orichalcum", "quantity": 4, "weight": 2 }
+        ]
+      }
+    ],
+    "unlockNodeIds": ["core:type-holy", "core:form-area"]
+  }
+]

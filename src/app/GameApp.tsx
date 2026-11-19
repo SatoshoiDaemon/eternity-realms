@@ -11,6 +11,7 @@ import {
 import { createCharacter, createInitialGameState } from '../domain/model';
 import type { GameState, Session } from '../domain/types';
 import './game-app.css';
+import { PhaseTwoPanels } from './PhaseTwoPanels';
 
 export interface GameRepositoryPort {
   transact(reducer: (current: GameState | null) => GameState): Promise<GameState>;
@@ -22,6 +23,8 @@ interface GameAppProps {
   clock?: () => number;
   makeId?: () => string;
 }
+
+const OFFICIAL_CONTENT = loadOfficialContent();
 
 function getErrorMessage(error: unknown): string {
   return error instanceof Error ? error.message : 'Ocorreu um erro inesperado.';
@@ -36,7 +39,7 @@ function describeSession(session: Session, activityName: string): string {
 
 export function GameApp({
   repository,
-  content = loadOfficialContent(),
+  content = OFFICIAL_CONTENT,
   clock = Date.now,
   makeId = () => crypto.randomUUID(),
 }: GameAppProps) {
@@ -174,6 +177,18 @@ export function GameApp({
     } catch (error) {
       setErrorMessage(getErrorMessage(error));
     }
+  };
+
+  const updateCharacterAction = async (
+    update: (current: NonNullable<GameState['character']>) => NonNullable<GameState['character']>,
+  ) => {
+    const next = await repository.transact((current) => {
+      const game = current ?? createInitialGameState();
+      if (!game.character)
+        throw new Error('Crie um personagem antes de alterar equipamentos ou construções.');
+      return { ...game, character: update(game.character) };
+    });
+    setState(next);
   };
 
   const character = state?.character ?? null;
@@ -379,6 +394,12 @@ export function GameApp({
               <p className="empty-state">Seu inventário está vazio.</p>
             )}
           </section>
+          <PhaseTwoPanels
+            state={state!}
+            content={content}
+            now={clock()}
+            updateCharacter={updateCharacterAction}
+          />
         </>
       )}
     </main>

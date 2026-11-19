@@ -1,16 +1,300 @@
 import { z } from 'zod';
+import { CombatSummonSpecSchema } from '../combat/schema';
 
 const id = z
   .string()
   .trim()
   .min(1)
-  .regex(/^[a-zA-Z0-9][a-zA-Z0-9._/-]*$/);
+  .regex(/^[a-zA-Z0-9][a-zA-Z0-9._:/-]*$/);
 const baseRecord = { id, name: z.string().trim().min(1), description: z.string() };
+
+const originSchema = z.object({
+  kind: z.enum(['weapon', 'ability', 'item', 'class', 'race', 'effect', 'node', 'mod']),
+  id,
+});
+const damageModifierSchema = z.object({
+  id,
+  interactionId: id.optional(),
+  operation: z.enum(['add', 'multiply']),
+  value: z.number().finite(),
+  potency: z.number().finite().nonnegative(),
+  origin: originSchema,
+});
+const damageSchema = z.object({
+  amount: z.number().int().nonnegative().safe(),
+  channel: z.enum(['physical', 'magical', 'true']),
+  subtype: z.enum(['cutting', 'piercing', 'crushing', 'other']).optional(),
+  element: z.string().optional(),
+  properties: z.array(z.string()),
+  origin: originSchema,
+  modifiers: z.array(damageModifierSchema).optional(),
+});
+const appliedEffectSchema = z
+  .object({
+    id,
+    category: z.string(),
+    potency: z.number().finite().nonnegative(),
+    counter: z.number().int().nonnegative().safe(),
+    source: originSchema.optional(),
+    damageMultiplier: z.number().finite().optional(),
+    damageChannel: z.enum(['physical', 'magical', 'true']).optional(),
+    expiresAt: z.number().int().safe().optional(),
+    tickDamage: z
+      .object({
+        amount: z.number().finite().nonnegative(),
+        channel: z.enum(['physical', 'magical', 'true']),
+        subtype: z.enum(['cutting', 'piercing', 'crushing', 'other']).optional(),
+        element: z.string().optional(),
+        properties: z.array(z.string()).optional(),
+      })
+      .optional(),
+    tickIntervalMs: z.number().int().positive().safe().optional(),
+    nextTickAt: z.number().int().nonnegative().safe().optional(),
+    sourceActorId: id.optional(),
+  })
+  .passthrough();
+const combatActionSchema = z.object({
+  id,
+  name: z.string().trim().min(1),
+  kind: z.enum([
+    'attack',
+    'magic',
+    'ranged',
+    'area',
+    'heal',
+    'guard',
+    'move',
+    'summon',
+    'support',
+    'intercept',
+    'combo',
+  ]),
+  target: z.enum(['enemy', 'ally', 'self', 'lowest_enemy_hp', 'lowest_ally_hp']),
+  intervalMs: z.number().int().positive().safe(),
+  accuracy: z.number().finite().min(0).max(1),
+  damage: damageSchema.optional(),
+  healing: z.number().int().nonnegative().safe().optional(),
+  cost: z.object({ resource: id, amount: z.number().int().nonnegative().safe() }).optional(),
+  effects: z.array(appliedEffectSchema).optional(),
+  properties: z.array(z.string()).optional(),
+  removeEffects: z.array(id).optional(),
+  movement: z
+    .object({
+      kind: z.enum(['advance', 'retreat', 'push', 'pull', 'burrow', 'emerge']),
+      distance: z.number().finite().nonnegative(),
+    })
+    .optional(),
+  summon: CombatSummonSpecSchema.optional(),
+});
+const barsSchema = z.object({
+  current: z.number().int().nonnegative().safe(),
+  maximum: z.number().int().nonnegative().safe(),
+});
+const policySchema = z.object({
+  id,
+  rules: z.array(
+    z.object({
+      actionId: id,
+      priority: z.number().finite(),
+      conditions: z
+        .array(
+          z.object({
+            path: z.string(),
+            operator: z.enum(['eq', 'neq', 'lt', 'lte', 'gt', 'gte']),
+            value: z.union([z.number(), z.string(), z.boolean()]),
+          }),
+        )
+        .optional(),
+    }),
+  ),
+});
+
+export const EnemyTagRecordSchema = z
+  .object({
+    ...baseRecord,
+    kind: z.literal('enemy_tag'),
+    category: z.enum(['nature', 'anatomy', 'affinity', 'movement', 'behavior']),
+    origin: z.string().trim().min(1),
+    activationConditions: z.array(z.string()),
+    eventsObserved: z.array(z.string()),
+    modifiers: z.array(
+      z.object({
+        id,
+        event: z.string(),
+        conditions: z.array(
+          z.object({ path: z.string(), op: z.string(), value: z.unknown().optional() }),
+        ),
+        interactionId: id,
+        potency: z.number().finite().nonnegative(),
+        priority: z.number().finite(),
+        effect: z.object({ type: z.string() }).passthrough(),
+      }),
+    ),
+    interactions: z.array(z.object({ id: z.string(), counterplay: z.string() })),
+    requirements: z.array(z.string()),
+    properties: z.array(z.string()),
+  })
+  .passthrough();
+
+const enemySchema = z
+  .object({
+    ...baseRecord,
+    kind: z.literal('enemy'),
+    tags: z.array(id),
+    lootTableId: id.optional(),
+    experience: z.number().int().nonnegative().safe(),
+    attributes: z
+      .object({
+        vigor: z.number().finite(),
+        resistance: z.number().finite(),
+        speed: z.number().finite(),
+        dexterity: z.number().finite(),
+        precision: z.number().finite(),
+        strength: z.number().finite(),
+      })
+      .catchall(z.number().finite()),
+    hp: barsSchema,
+    tenacity: barsSchema,
+    energy: z.record(z.string(), z.number().finite()),
+    equipment: z.array(z.object({ id, properties: z.array(z.string()).optional() })),
+    actions: z.array(combatActionSchema),
+    effects: z.array(appliedEffectSchema),
+    policy: policySchema,
+    actionPriority: z.array(id),
+    mitigation: z.object({
+      physical: z.number().finite().min(0).max(1),
+      magical: z.number().finite().min(0).max(1),
+    }),
+    evasion: z
+      .object({
+        chance: z.number().finite().min(0).max(1),
+        guaranteed: z.number().int().nonnegative().safe(),
+      })
+      .optional(),
+    position: z.object({ x: z.number().finite(), y: z.number().finite() }),
+    affinityElement: z.string().optional(),
+    movementState: z.string().optional(),
+    variantId: id.optional(),
+    elite: z.boolean().optional(),
+    boss: z.boolean().optional(),
+  })
+  .passthrough();
+
+const lootEntrySchema = z.object({
+  itemId: id,
+  quantity: z.number().int().positive().safe(),
+  chance: z.number().finite().min(0).max(1).optional(),
+  weight: z.number().int().positive().safe().optional(),
+});
+const lootConditionSchema = z.discriminatedUnion('kind', [
+  z.object({ kind: z.literal('tag'), value: id }),
+  z.object({ kind: z.literal('enemy_id'), value: id }),
+  z.object({ kind: z.literal('death_cause'), value: z.string() }),
+  z.object({ kind: z.literal('activity_kind'), value: z.enum(['quest', 'dungeon', 'raid']) }),
+  z.object({ kind: z.literal('environment'), key: z.string(), value: z.string() }),
+]);
+const lootTableSchema = z
+  .object({
+    ...baseRecord,
+    kind: z.literal('loot_table'),
+    guaranteed: z.array(lootEntrySchema).optional(),
+    independent: z.array(lootEntrySchema).optional(),
+    exclusive: z
+      .array(
+        z.object({
+          id,
+          rolls: z.number().int().nonnegative().safe(),
+          entries: z.array(lootEntrySchema).min(1),
+        }),
+      )
+      .optional(),
+    conditional: z
+      .array(
+        z.object({
+          id,
+          when: z.array(lootConditionSchema),
+          drops: z.array(lootEntrySchema),
+          unlockNodeIds: z.array(id).optional(),
+        }),
+      )
+      .optional(),
+    unlockNodeIds: z.array(id).optional(),
+  })
+  .passthrough();
+const expeditionSchema = z
+  .object({
+    ...baseRecord,
+    kind: z.literal('expedition'),
+    activityKind: z.enum(['quest', 'dungeon', 'raid']),
+    spawnIntervalMs: z.number().int().positive().safe(),
+    deathRewardRetention: z.number().finite().min(0).max(1),
+    environment: z
+      .object({
+        type: z.string().optional(),
+        condition: z.string().optional(),
+        timeOfDay: z.string().optional(),
+        hazard: z.string().optional(),
+        elementOpposites: z.record(z.string(), z.array(z.string())).optional(),
+      })
+      .passthrough(),
+    encounters: z
+      .array(
+        z.object({
+          id,
+          enemyId: id,
+          weight: z.number().int().positive().safe(),
+          count: z.number().int().positive().safe().optional(),
+          variantId: id.optional(),
+        }),
+      )
+      .min(1),
+    nodeUnlocks: z.array(id).optional(),
+  })
+  .passthrough();
+const recipeSchema = z
+  .object({
+    ...baseRecord,
+    kind: z.literal('recipe'),
+    inputs: z.record(id, z.number().int().positive().safe()),
+    resultItemId: id,
+    resultQuantity: z.number().int().positive().safe().default(1),
+  })
+  .passthrough();
 
 export const RaceSchema = z.object({ ...baseRecord, kind: z.literal('race') }).passthrough();
 export const ClassSchema = z.object({ ...baseRecord, kind: z.literal('class') }).passthrough();
 export const ItemSchema = z
-  .object({ ...baseRecord, kind: z.literal('item'), stackable: z.boolean() })
+  .object({
+    ...baseRecord,
+    kind: z.literal('item'),
+    stackable: z.boolean(),
+    slot: z
+      .enum(['head', 'chest', 'legs', 'hands', 'feet', 'primary', 'secondary', 'accessory'])
+      .optional(),
+    properties: z.array(z.string()).optional(),
+    combat: z
+      .object({
+        damage: damageSchema.optional(),
+        mitigation: z
+          .object({ physical: z.number().finite(), magical: z.number().finite() })
+          .optional(),
+        modifiers: z.array(damageModifierSchema).optional(),
+        speed: z.number().finite().optional(),
+        cost: z.object({ resource: id, amount: z.number().int().nonnegative().safe() }).optional(),
+        energyBonus: z.record(id, z.number().finite()).optional(),
+      })
+      .passthrough()
+      .optional(),
+    materialProfile: z
+      .object({
+        properties: z.array(z.string()),
+        weaponProperties: z.array(z.string()),
+        armorProperties: z.array(z.string()),
+        combatEffects: z.array(z.record(z.string(), z.unknown())),
+      })
+      .passthrough()
+      .optional(),
+  })
   .passthrough();
 export const ActivitySchema = z
   .object({
@@ -18,6 +302,7 @@ export const ActivitySchema = z
     kind: z.literal('activity'),
     rewardId: id,
     category: z.string().trim().min(1),
+    expeditionId: id.optional(),
   })
   .passthrough();
 export const RewardSchema = z
@@ -43,6 +328,11 @@ export const ContentRecordSchema = z.discriminatedUnion('kind', [
   RewardSchema,
   SkillSchema,
   EffectSchema,
+  EnemyTagRecordSchema,
+  enemySchema,
+  lootTableSchema,
+  expeditionSchema,
+  recipeSchema,
 ]);
 
 export const ContentPackSchema = z.object({
@@ -50,8 +340,19 @@ export const ContentPackSchema = z.object({
     .object({ id, name: z.string().trim().min(1), version: z.string().trim().min(1) })
     .passthrough(),
   records: z.array(ContentRecordSchema),
+  nodes: z.array(z.unknown()).optional(),
+  glyphs: z.array(z.unknown()).optional(),
+  sigils: z.array(z.unknown()).optional(),
   rules: z
-    .object({ experiencePerLevel: z.number().int().positive().safe() })
+    .object({
+      experiencePerLevel: z.number().int().positive().safe(),
+      combat: z
+        .object({
+          accuracy: z.number().finite().min(0).max(1),
+          intervalMs: z.number().int().positive().safe(),
+        })
+        .optional(),
+    })
     .passthrough()
     .optional(),
 });
@@ -65,3 +366,9 @@ export type ActivityDefinition = z.infer<typeof ActivitySchema>;
 export type RewardDefinition = z.infer<typeof RewardSchema>;
 export type SkillDefinition = z.infer<typeof SkillSchema>;
 export type EffectDefinition = z.infer<typeof EffectSchema>;
+export type EnemyTagRecord = z.infer<typeof EnemyTagRecordSchema>;
+export type EnemyDefinition = z.infer<typeof enemySchema>;
+export type LootTableDefinition = z.infer<typeof lootTableSchema>;
+export type ExpeditionDefinition = z.infer<typeof expeditionSchema>;
+export type RecipeDefinition = z.infer<typeof recipeSchema>;
+export type CombatDefaults = { accuracy: number; intervalMs: number };

@@ -12,5 +12,358 @@
     "name": "Erva silvestre",
     "description": "Uma erva comum reunida durante a coleta.",
     "stackable": true
+  },
+  {
+    "id": "material-silver",
+    "kind": "item",
+    "name": "Prata",
+    "description": "Conduz propriedades de prata para armas e armaduras; armas de prata ferem criaturas amaldiçoadas.",
+    "stackable": true,
+    "properties": ["silver"],
+    "materialProfile": {
+      "properties": ["silver"],
+      "weaponProperties": ["silver"],
+      "armorProperties": ["silver-inlaid"],
+      "combatEffects": [{ "operation": "tag-counter", "tag": "base:cursed", "property": "silver" }]
+    }
+  },
+  {
+    "id": "material-iron",
+    "kind": "item",
+    "name": "Ferro",
+    "description": "Material estrutural que fornece uma base robusta para armas e armaduras.",
+    "stackable": true,
+    "properties": ["iron"],
+    "materialProfile": {
+      "properties": ["iron"],
+      "weaponProperties": ["iron"],
+      "armorProperties": ["reinforced"],
+      "combatEffects": [{ "operation": "reinforcement", "physicalMitigation": 0.05 }]
+    }
+  },
+  {
+    "id": "material-gold",
+    "kind": "item",
+    "name": "Ouro",
+    "description": "Metal condutor que propaga energia elétrica através de armamentos.",
+    "stackable": true,
+    "properties": ["gold", "conductive"],
+    "materialProfile": {
+      "properties": ["gold", "conductive"],
+      "weaponProperties": ["conductive"],
+      "armorProperties": ["conductive"],
+      "combatEffects": [{ "operation": "conduction", "element": "lightning" }]
+    }
+  },
+  {
+    "id": "material-orichalcum",
+    "kind": "item",
+    "name": "Oricalco",
+    "description": "Liga que conduz energia arcana entre a construção e seu usuário.",
+    "stackable": true,
+    "properties": ["orichalcum", "arcane-conduit"],
+    "materialProfile": {
+      "properties": ["orichalcum", "arcane-conduit"],
+      "weaponProperties": ["arcane-conduit"],
+      "armorProperties": ["arcane-conduit"],
+      "combatEffects": [{ "operation": "energy-conduit", "energy": "mana" }]
+    }
+  },
+  {
+    "id": "material-adamantite",
+    "kind": "item",
+    "name": "Adamantita",
+    "description": "Material rígido que permite revestir ataques para atravessar armaduras.",
+    "stackable": true,
+    "properties": ["adamantite", "armor-penetrating"],
+    "materialProfile": {
+      "properties": ["adamantite"],
+      "weaponProperties": ["armor-penetrating"],
+      "armorProperties": ["reinforced"],
+      "combatEffects": [{ "operation": "armor-interaction", "property": "armor-penetrating" }]
+    }
+  },
+  {
+    "id": "material-mithril",
+    "kind": "item",
+    "name": "Mithril",
+    "description": "Metal leve usado para reduzir o peso de equipamentos sem perder mobilidade.",
+    "stackable": true,
+    "properties": ["mithril", "lightweight"],
+    "materialProfile": {
+      "properties": ["mithril", "lightweight"],
+      "weaponProperties": ["lightweight"],
+      "armorProperties": ["lightweight"],
+      "combatEffects": [{ "operation": "speed-adjustment", "value": 2 }]
+    }
+  },
+  {
+    "id": "material-unobtanio",
+    "kind": "item",
+    "name": "Unobtanio",
+    "description": "Material capaz de ancorar formas instáveis e manter um golpe em contato com o alvo.",
+    "stackable": true,
+    "properties": ["unobtanio", "anchoring"],
+    "materialProfile": {
+      "properties": ["unobtanio"],
+      "weaponProperties": ["anchoring"],
+      "armorProperties": ["anchoring"],
+      "combatEffects": [{ "operation": "phase-anchor", "property": "anchoring" }]
+    }
+  },
+  {
+    "id": "material-vibranium",
+    "kind": "item",
+    "name": "Vibranio",
+    "description": "Material que absorve e dispersa impactos físicos.",
+    "stackable": true,
+    "properties": ["vibranium", "impact-absorbing"],
+    "materialProfile": {
+      "properties": ["vibranium"],
+      "weaponProperties": ["impact-absorbing"],
+      "armorProperties": ["impact-absorbing"],
+      "combatEffects": [{ "operation": "impact-absorption", "channels": ["physical"] }]
+    }
+  },
+  {
+    "id": "material-dilthio",
+    "kind": "item",
+    "name": "Dilthio",
+    "description": "Cristal energético que armazena energia para construções e técnicas.",
+    "stackable": true,
+    "properties": ["dilthio", "energy-conductive"],
+    "materialProfile": {
+      "properties": ["dilthio", "energy-conductive"],
+      "weaponProperties": ["energy-conductive"],
+      "armorProperties": ["energy-conductive"],
+      "combatEffects": [{ "operation": "energy-reserve", "resource": "mana" }]
+    }
+  },
+  {
+    "id": "material-chlorophyte",
+    "kind": "item",
+    "name": "Clorofita",
+    "description": "Material vegetal vivo que responde a ambientes férteis e pode sustentar regeneração.",
+    "stackable": true,
+    "properties": ["chlorophyte", "regenerative"],
+    "materialProfile": {
+      "properties": ["chlorophyte"],
+      "weaponProperties": ["regenerative"],
+      "armorProperties": ["regenerative"],
+      "combatEffects": [
+        { "operation": "environmental-regeneration", "condition": "fertile", "value": 2 }
+      ]
+    }
+  },
+  {
+    "id": "material-sacrite",
+    "kind": "item",
+    "name": "Sacrito",
+    "description": "Material sagrado que revela e ancora criaturas espirituais.",
+    "stackable": true,
+    "properties": ["sacrite", "holy", "anchoring"],
+    "materialProfile": {
+      "properties": ["sacrite"],
+      "weaponProperties": ["holy", "anchoring"],
+      "armorProperties": ["holy", "anchoring"],
+      "combatEffects": [{ "operation": "sanctified-strike", "element": "holy" }]
+    }
+  },
+  {
+    "id": "gear:iron-maul",
+    "kind": "item",
+    "name": "Malho de ferro",
+    "description": "Arma pesada de esmagamento eficaz contra corpos minerais e construtos.",
+    "stackable": false,
+    "slot": "primary",
+    "properties": ["iron"],
+    "combat": {
+      "damage": {
+        "amount": 25,
+        "channel": "physical",
+        "subtype": "crushing",
+        "properties": ["iron"],
+        "origin": { "kind": "weapon", "id": "gear:iron-maul" }
+      }
+    }
+  },
+  {
+    "id": "gear:silver-sabre",
+    "kind": "item",
+    "name": "Sabre de prata",
+    "description": "Lâmina de corte com propriedade de prata para atingir criaturas amaldiçoadas.",
+    "stackable": false,
+    "slot": "primary",
+    "properties": ["silver"],
+    "combat": {
+      "damage": {
+        "amount": 18,
+        "channel": "physical",
+        "subtype": "cutting",
+        "properties": ["silver"],
+        "origin": { "kind": "weapon", "id": "gear:silver-sabre" }
+      }
+    }
+  },
+  {
+    "id": "gear:mithril-spear",
+    "kind": "item",
+    "name": "Lança de mithril",
+    "description": "Lança leve de perfuração que favorece a frequência de ações.",
+    "stackable": false,
+    "slot": "primary",
+    "properties": ["lightweight", "piercing"],
+    "combat": {
+      "damage": {
+        "amount": 20,
+        "channel": "physical",
+        "subtype": "piercing",
+        "properties": ["lightweight"],
+        "origin": { "kind": "weapon", "id": "gear:mithril-spear" }
+      },
+      "speed": 2
+    }
+  },
+  {
+    "id": "gear:adamantite-breaker",
+    "kind": "item",
+    "name": "Quebra-armadura de adamantita",
+    "description": "Arma esmagadora com propriedade explícita de penetração de armadura.",
+    "stackable": false,
+    "slot": "primary",
+    "properties": ["armor-penetrating", "adamantite"],
+    "combat": {
+      "damage": {
+        "amount": 22,
+        "channel": "physical",
+        "subtype": "crushing",
+        "properties": ["armor-penetrating"],
+        "origin": { "kind": "weapon", "id": "gear:adamantite-breaker" }
+      }
+    }
+  },
+  {
+    "id": "gear:sacrite-mace",
+    "kind": "item",
+    "name": "Maça de sacrito",
+    "description": "Maça sagrada que ancora criaturas etéreas e causa dano sagrado.",
+    "stackable": false,
+    "slot": "primary",
+    "properties": ["holy", "anchoring"],
+    "combat": {
+      "damage": {
+        "amount": 16,
+        "channel": "magical",
+        "subtype": "crushing",
+        "element": "holy",
+        "properties": ["holy", "anchoring"],
+        "origin": { "kind": "weapon", "id": "gear:sacrite-mace" }
+      }
+    }
+  },
+  {
+    "id": "gear:vibranium-plate",
+    "kind": "item",
+    "name": "Peitoral de vibranio",
+    "description": "Peitoral que absorve impactos físicos.",
+    "stackable": false,
+    "slot": "chest",
+    "properties": ["impact-absorbing"],
+    "combat": { "mitigation": { "physical": 0.2, "magical": 0 } }
+  },
+  {
+    "id": "gear:iron-plate",
+    "kind": "item",
+    "name": "Peitoral de ferro",
+    "description": "Peitoral reforçado que reduz dano físico.",
+    "stackable": false,
+    "slot": "chest",
+    "properties": ["reinforced"],
+    "combat": { "mitigation": { "physical": 0.1, "magical": 0 } }
+  },
+  {
+    "id": "gear:gold-conductor",
+    "kind": "item",
+    "name": "Condutor de ouro",
+    "description": "Bastão condutor que transforma o ouro em canal elétrico ofensivo.",
+    "stackable": false,
+    "slot": "primary",
+    "properties": ["gold", "conductive"],
+    "combat": {
+      "damage": {
+        "amount": 15,
+        "channel": "magical",
+        "element": "lightning",
+        "properties": ["conductive"],
+        "origin": { "kind": "weapon", "id": "gear:gold-conductor" }
+      }
+    }
+  },
+  {
+    "id": "gear:orichalcum-focus",
+    "kind": "item",
+    "name": "Foco de oricalco",
+    "description": "Foco arcano que conduz mana para uma técnica mais potente.",
+    "stackable": false,
+    "slot": "primary",
+    "properties": ["orichalcum", "arcane-conduit"],
+    "combat": {
+      "damage": {
+        "amount": 22,
+        "channel": "magical",
+        "element": "arcane",
+        "properties": ["arcane-conduit"],
+        "origin": { "kind": "weapon", "id": "gear:orichalcum-focus" }
+      },
+      "cost": { "resource": "mana", "amount": 2 }
+    }
+  },
+  {
+    "id": "gear:unobtanio-spear",
+    "kind": "item",
+    "name": "Lança de unobtanio",
+    "description": "Ponta de ancoragem que mantém contato com formas instáveis.",
+    "stackable": false,
+    "slot": "primary",
+    "properties": ["unobtanio", "anchoring"],
+    "combat": {
+      "damage": {
+        "amount": 16,
+        "channel": "physical",
+        "subtype": "piercing",
+        "properties": ["anchoring"],
+        "origin": { "kind": "weapon", "id": "gear:unobtanio-spear" }
+      }
+    }
+  },
+  {
+    "id": "gear:dilthio-wand",
+    "kind": "item",
+    "name": "Varinha de dilthio",
+    "description": "Cristal de reserva que sustenta uma técnica arcana com custo de mana.",
+    "stackable": false,
+    "slot": "primary",
+    "properties": ["dilthio", "energy-conductive"],
+    "combat": {
+      "damage": {
+        "amount": 14,
+        "channel": "magical",
+        "element": "arcane",
+        "properties": ["energy-conductive"],
+        "origin": { "kind": "weapon", "id": "gear:dilthio-wand" }
+      },
+      "cost": { "resource": "mana", "amount": 1 },
+      "energyBonus": { "mana": 5 }
+    }
+  },
+  {
+    "id": "gear:chlorophyte-vest",
+    "kind": "item",
+    "name": "Colete de clorofita",
+    "description": "Armadura vegetal leve que favorece movimento e recuperação em ambientes férteis.",
+    "stackable": false,
+    "slot": "chest",
+    "properties": ["chlorophyte", "regenerative", "lightweight"],
+    "combat": { "mitigation": { "physical": 0.08, "magical": 0.04 }, "speed": 1 }
   }
 ]
