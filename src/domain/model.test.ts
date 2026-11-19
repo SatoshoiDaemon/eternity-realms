@@ -76,6 +76,7 @@ describe('character model', () => {
       queue: [],
       events: [],
       processedEventIds: [],
+      combatRecords: [],
     });
   });
 });

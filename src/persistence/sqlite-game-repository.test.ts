@@ -74,6 +74,21 @@ describe('SQLite game repository', () => {
     driver.close();
   });
 
+  it('hydrates pre-combat saves with an empty combat history', async () => {
+    const driver = await SqlJsDriver.create();
+    const repository = new SqliteGameRepository(driver);
+    await repository.initialize();
+    const legacy = { ...createTestState() } as Record<string, unknown>;
+    delete legacy.combatRecords;
+    await driver.run(
+      "INSERT INTO game_state (id, revision, payload, updated_at) VALUES ('main', 0, ?, 0)",
+      [JSON.stringify(legacy)],
+    );
+
+    expect(await repository.load()).toMatchObject({ combatRecords: [] });
+    driver.close();
+  });
+
   it('rolls back state and event writes when the transaction callback fails', async () => {
     const driver = await SqlJsDriver.create();
     const repository = new SqliteGameRepository(driver);

@@ -1,0 +1,222 @@
+[
+  { "id": "core:source-caster", "name": "Lançamento pessoal", "category": "source" },
+  {
+    "id": "core:type-physical",
+    "name": "Físico",
+    "category": "type",
+    "damageType": { "channel": "physical", "subtype": "other" }
+  },
+  {
+    "id": "core:type-arcane",
+    "name": "Arcano",
+    "category": "type",
+    "damageType": { "channel": "magical", "element": "arcane" }
+  },
+  {
+    "id": "core:type-fire",
+    "name": "Fogo",
+    "category": "type",
+    "damageType": { "channel": "magical", "element": "fire" }
+  },
+  {
+    "id": "core:type-frost",
+    "name": "Gelo",
+    "category": "type",
+    "damageType": { "channel": "magical", "element": "frost" }
+  },
+  {
+    "id": "core:type-lightning",
+    "name": "Relâmpago",
+    "category": "type",
+    "damageType": { "channel": "magical", "element": "lightning" }
+  },
+  {
+    "id": "core:type-holy",
+    "name": "Sagrado",
+    "category": "type",
+    "damageType": { "channel": "magical", "element": "holy" }
+  },
+  {
+    "id": "core:type-shadow",
+    "name": "Sombrio",
+    "category": "type",
+    "damageType": { "channel": "magical", "element": "shadow" }
+  },
+  {
+    "id": "core:type-true",
+    "name": "Verdadeiro",
+    "category": "type",
+    "damageType": { "channel": "true" }
+  },
+  {
+    "id": "core:form-projectile",
+    "name": "Projétil",
+    "category": "form",
+    "action": { "kind": "magic", "target": "enemy", "intervalMs": 1000, "accuracy": 0.9 }
+  },
+  {
+    "id": "core:form-weapon-strike",
+    "name": "Golpe",
+    "category": "form",
+    "action": { "kind": "attack", "target": "enemy", "intervalMs": 1000, "accuracy": 0.9 }
+  },
+  {
+    "id": "core:form-area",
+    "name": "Explosão",
+    "category": "form",
+    "action": {
+      "kind": "area",
+      "target": "enemy",
+      "intervalMs": 1200,
+      "accuracy": 0.85,
+      "properties": ["area"]
+    }
+  },
+  {
+    "id": "core:form-self",
+    "name": "Pessoal",
+    "category": "form",
+    "action": { "kind": "support", "target": "self", "intervalMs": 1000, "accuracy": 1 }
+  },
+  {
+    "id": "core:form-summoning",
+    "name": "Invocação",
+    "category": "form",
+    "action": { "kind": "summon", "target": "self", "intervalMs": 1500, "accuracy": 1 }
+  },
+  {
+    "id": "core:effect-damage",
+    "name": "Dano",
+    "category": "effect",
+    "operation": { "kind": "damage", "amount": 10, "subtype": "other" },
+    "parameters": { "amount": { "default": 10 } }
+  },
+  {
+    "id": "core:effect-heal",
+    "name": "Cura",
+    "category": "effect",
+    "operation": { "kind": "heal", "amount": 10 },
+    "parameters": { "amount": { "default": 10 } }
+  },
+  {
+    "id": "core:effect-burn",
+    "name": "Queimadura",
+    "category": "effect",
+    "operation": {
+      "kind": "status",
+      "id": "core:burning",
+      "category": "dot",
+      "potency": 1,
+      "counter": 3
+    }
+  },
+  {
+    "id": "core:effect-poison",
+    "name": "Veneno",
+    "category": "effect",
+    "operation": {
+      "kind": "status",
+      "id": "core:poison",
+      "category": "biological",
+      "potency": 1,
+      "counter": 4
+    }
+  },
+  {
+    "id": "core:effect-freeze",
+    "name": "Congelamento",
+    "category": "effect",
+    "operation": {
+      "kind": "status",
+      "id": "core:freeze",
+      "category": "control",
+      "potency": 1,
+      "counter": 2
+    }
+  },
+  {
+    "id": "core:effect-cleanse",
+    "name": "Purificação",
+    "category": "effect",
+    "operation": { "kind": "remove_status", "ids": ["core:poison", "core:burning", "core:freeze"] }
+  },
+  {
+    "id": "core:effect-summon",
+    "name": "Espírito auxiliar",
+    "category": "effect",
+    "operation": {
+      "kind": "summon",
+      "summon": {
+        "id": "core:created-spirit",
+        "name": "Espírito criado",
+        "speciesId": "core:created-spirit",
+        "tags": ["base:ethereal"],
+        "attributes": {
+          "vigor": 4,
+          "resistance": 2,
+          "speed": 12,
+          "dexterity": 8,
+          "precision": 10,
+          "strength": 4
+        },
+        "hp": { "current": 36, "maximum": 36 },
+        "tenacity": { "current": 0, "maximum": 0 },
+        "energy": {},
+        "damage": {
+          "amount": 12,
+          "channel": "magical",
+          "element": "arcane",
+          "properties": ["spiritual"],
+          "origin": { "kind": "node", "id": "core:effect-summon" }
+        },
+        "intervalMs": 1100,
+        "accuracy": 0.9,
+        "mitigation": { "physical": 0.05, "magical": 0.05 },
+        "positionOffset": { "x": 0, "y": 1 }
+      }
+    }
+  },
+  {
+    "id": "core:effect-push",
+    "name": "Empurrão",
+    "category": "effect",
+    "operation": { "kind": "movement", "movement": { "kind": "push", "distance": 1 } }
+  },
+  {
+    "id": "core:effect-retreat",
+    "name": "Retirada",
+    "category": "effect",
+    "operation": { "kind": "movement", "movement": { "kind": "retreat", "distance": 1 } }
+  },
+  {
+    "id": "core:modifier-amplify",
+    "name": "Amplificar",
+    "category": "modifier",
+    "operation": {
+      "kind": "damage_modifier",
+      "id": "core:amplify",
+      "interactionId": "effect:amplify",
+      "operation": "multiply",
+      "value": 1.5,
+      "potency": 1
+    }
+  },
+  {
+    "id": "core:modifier-penetrate",
+    "name": "Penetrar armadura",
+    "category": "modifier",
+    "operation": { "kind": "property", "value": "armor-penetrating" }
+  },
+  {
+    "id": "core:modifier-spiritual",
+    "name": "Ancoragem espiritual",
+    "category": "modifier",
+    "operation": { "kind": "property", "value": "spiritual" }
+  },
+  {
+    "id": "core:sacrifice-long-cast",
+    "name": "Conjuração prolongada",
+    "category": "sacrifice",
+    "operation": { "kind": "interval", "operation": "add", "value": 500 }
+  }
+]

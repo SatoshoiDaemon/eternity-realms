@@ -1,6 +1,11 @@
-import { awardExperience, grantItems } from './progression';
+import { awardExperience, grantItems, grantLootDrops } from './progression';
 import type { ContentCatalog } from '../content/registry';
-import type { Character, DomainEvent, GameState, Session } from './types';
+import type { Character, DomainEvent, ExpeditionCombatRecord, GameState, Session } from './types';
+import { createCharacterCombatActor } from '../combat/player-actor';
+import { simulateExpedition } from '../combat/expedition';
+import type { CombatAction } from '../combat/types';
+import { compileConstruction } from '../nodes/graph';
+import { constructionPriority, unlockNodes } from '../nodes/library';
 
 const MAX_PENDING_SESSIONS = 5;
 
@@ -79,6 +84,36 @@ function startQueuedSession(state: GameState, sessionId: string, startedAt: numb
 
 function eventTime(events: DomainEvent[], occurredAt: number): DomainEvent[] {
   return events.map((event) => ({ ...event, occurredAt }));
+}
+
+function seedFromSessionId(sessionId: string): number {
+  let hash = 0x811c9dc5;
+  for (let index = 0; index < sessionId.length; index += 1) {
+    hash = Math.imul(hash ^ sessionId.charCodeAt(index), 0x01000193);
+  }
+  return hash >>> 0;
+}
+
+function createExpeditionPlayerActor(character: Character, content: ContentCatalog) {
+  const equippedActions: CombatAction[] = (character.nodeLibrary?.constructions ?? [])
+    .filter((construction) => construction.equipped)
+    .map(
+      (construction) =>
+        compileConstruction(construction.graph, content.nodes, content.glyphs, content.sigils)
+          .action,
+    );
+  const actor = createCharacterCombatActor(
+    character,
+    content.items,
+    content.rules.combat,
+    equippedActions,
+  );
+  const configuredPriority = constructionPriority(character);
+  actor.actionPriority = [
+    ...configuredPriority,
+    ...actor.actionPriority.filter((id) => !configuredPriority.includes(id)),
+  ];
+  return actor;
 }
 
 export function enqueueSession(
@@ -241,9 +276,33 @@ export function reconcileSessions(
       Object.fromEntries(reward.items.map((item) => [item.itemId, item.quantity])),
       session.id,
     );
+    const expedition = activity.expeditionId
+      ? content.expeditions.get(activity.expeditionId)
+      : undefined;
+    if (activity.expeditionId && !expedition) {
+      throw new Error(`Unknown expedition: ${activity.expeditionId}`);
+    }
+    const simulation = expedition
+      ? simulateExpedition({
+          sessionId: session.id,
+          player: createExpeditionPlayerActor(character, content),
+          expedition,
+          enemies: [...content.enemies.values()],
+          lootTables: [...content.lootTables.values()],
+          durationMs: session.durationMs,
+          seed: seedFromSessionId(session.id),
+          tagRegistry: [...content.enemyTags.values()],
+        })
+      : undefined;
+    const withLoot = simulation
+      ? grantLootDrops(withItems.character, simulation.drops, new Set(next.processedEventIds))
+      : { character: withItems.character, events: [] as DomainEvent[] };
+    const characterWithUnlocks = simulation
+      ? unlockNodes(withLoot.character, simulation.unlockedNodeIds)
+      : withLoot.character;
     const withExperience = awardExperience(
-      withItems.character,
-      reward.experience,
+      characterWithUnlocks,
+      reward.experience + (simulation?.experience ?? 0),
       content.rules,
       session.id,
     );
@@ -253,11 +312,35 @@ export function reconcileSessions(
       finishedAt: completedAt,
       rewardId: reward.id,
     };
+    const combatRecord: ExpeditionCombatRecord | undefined =
+      simulation && expedition
+        ? {
+            id: session.id,
+            sessionId: session.id,
+            expeditionId: expedition.id,
+            seed: seedFromSessionId(session.id),
+            kills: simulation.kills,
+            deaths: simulation.deaths,
+            experience: simulation.experience,
+            drops: simulation.drops,
+            unlockedNodeIds: simulation.unlockedNodeIds,
+            virtualDurationMs: simulation.virtualDurationMs,
+            combats: simulation.combats,
+            completedAt,
+          }
+        : undefined;
+    const combatRecords = combatRecord
+      ? [
+          ...(next.combatRecords ?? []).filter((record) => record.id !== combatRecord.id),
+          combatRecord,
+        ]
+      : (next.combatRecords ?? []);
     next = updateSession(
       {
         ...next,
         character: withExperience.character,
         queue: next.queue.slice(1),
+        combatRecords,
       },
       completedSession,
     );
@@ -277,7 +360,28 @@ export function reconcileSessions(
         rewardId: reward.id,
       },
       ...eventTime(withItems.events, completedAt),
+      ...eventTime(withLoot.events, completedAt),
       ...eventTime(withExperience.events, completedAt),
+      ...(combatRecord
+        ? [
+            {
+              id: `${session.id}:expedition.completed`,
+              type: 'expedition.completed' as const,
+              occurredAt: completedAt,
+              sessionId: session.id,
+              expeditionId: combatRecord.expeditionId,
+              kills: combatRecord.kills,
+              deaths: combatRecord.deaths,
+            },
+          ]
+        : []),
+      ...(combatRecord?.unlockedNodeIds.map((nodeId) => ({
+        id: `${session.id}:node:${nodeId}`,
+        type: 'node.unlocked' as const,
+        occurredAt: completedAt,
+        sessionId: session.id,
+        nodeId,
+      })) ?? []),
     ]);
 
     const nextId = next.queue[0];

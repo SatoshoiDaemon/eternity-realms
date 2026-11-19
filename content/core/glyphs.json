@@ -1,0 +1,29 @@
+[
+  {
+    "id": "core:glyph-focus",
+    "name": "Foco",
+    "operation": {
+      "kind": "damage_modifier",
+      "id": "core:glyph-focus",
+      "interactionId": "glyph:focus",
+      "operation": "multiply",
+      "value": 1.25,
+      "potency": 1
+    }
+  },
+  {
+    "id": "core:glyph-phase-anchor",
+    "name": "Âncora espiritual",
+    "operation": { "kind": "property", "value": "anchoring" }
+  },
+  {
+    "id": "core:glyph-penetration",
+    "name": "Penetração",
+    "operation": { "kind": "property", "value": "armor-penetrating" }
+  },
+  {
+    "id": "core:glyph-quickening",
+    "name": "Aceleração",
+    "operation": { "kind": "interval", "operation": "multiply", "value": 0.8 }
+  }
+]

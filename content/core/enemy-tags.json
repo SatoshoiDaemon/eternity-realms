@@ -1,0 +1,1639 @@
+[
+  {
+    "id": "base:undead",
+    "category": "nature",
+    "name": "Morto-vivo",
+    "description": "Persistência sobrenatural; resiste à sombra e cede ao sagrado.",
+    "origin": "base",
+    "activationConditions": ["incoming damage element is shadow or holy"],
+    "eventsObserved": ["damage.incoming"],
+    "modifiers": [
+      {
+        "id": "shadow-resistance",
+        "event": "damage.incoming",
+        "conditions": [{ "path": "damage.element", "op": "eq", "value": "shadow" }],
+        "interactionId": "damage:shadow",
+        "potency": 50,
+        "priority": 100,
+        "effect": { "type": "damage_multiplier", "value": 0.5 }
+      },
+      {
+        "id": "holy-weakness",
+        "event": "damage.incoming",
+        "conditions": [{ "path": "damage.element", "op": "eq", "value": "holy" }],
+        "interactionId": "damage:holy",
+        "potency": 50,
+        "priority": 100,
+        "effect": { "type": "damage_multiplier", "value": 1.5 }
+      }
+    ],
+    "interactions": [{ "id": "holy", "counterplay": "holy damage" }],
+    "requirements": [],
+    "properties": ["undead"]
+  },
+  {
+    "id": "base:ghost",
+    "category": "nature",
+    "name": "Fantasma",
+    "description": "Natureza espiritual; vulnerável a dano sagrado.",
+    "origin": "base",
+    "activationConditions": ["incoming damage element is holy"],
+    "eventsObserved": ["damage.incoming"],
+    "modifiers": [
+      {
+        "id": "holy-weakness",
+        "event": "damage.incoming",
+        "conditions": [{ "path": "damage.element", "op": "eq", "value": "holy" }],
+        "interactionId": "damage:holy",
+        "potency": 50,
+        "priority": 100,
+        "effect": { "type": "damage_multiplier", "value": 1.5 }
+      }
+    ],
+    "interactions": [{ "id": "spiritual", "counterplay": "holy damage" }],
+    "requirements": [],
+    "properties": ["spiritual"]
+  },
+  {
+    "id": "base:construct",
+    "category": "nature",
+    "name": "Construto",
+    "description": "Corpo artificial sem fisiologia biológica e vulnerável a impacto.",
+    "origin": "base",
+    "activationConditions": ["biological status is applied", "incoming damage subtype is crushing"],
+    "eventsObserved": ["status.incoming", "damage.incoming"],
+    "modifiers": [
+      {
+        "id": "biological-immunity",
+        "event": "status.incoming",
+        "conditions": [{ "path": "status.category", "op": "eq", "value": "biological" }],
+        "interactionId": "immunity:biological",
+        "potency": 100,
+        "priority": 100,
+        "effect": { "type": "status_immunity", "value": "biological" }
+      },
+      {
+        "id": "crushing-weakness",
+        "event": "damage.incoming",
+        "conditions": [{ "path": "damage.subtype", "op": "eq", "value": "crushing" }],
+        "interactionId": "damage:crushing",
+        "potency": 50,
+        "priority": 100,
+        "effect": { "type": "damage_multiplier", "value": 1.5 }
+      }
+    ],
+    "interactions": [{ "id": "biology", "counterplay": "impact or crushing damage" }],
+    "requirements": [],
+    "properties": ["artificial", "nonbiological"]
+  },
+  {
+    "id": "base:elemental",
+    "category": "nature",
+    "name": "Elemental",
+    "description": "Responde à própria afinidade e à relação declarada entre elementos.",
+    "origin": "base",
+    "activationConditions": ["elemental affinity is present"],
+    "eventsObserved": ["damage.incoming"],
+    "modifiers": [
+      {
+        "id": "elemental-relation",
+        "event": "damage.incoming",
+        "conditions": [{ "path": "damage.element", "op": "truthy" }],
+        "interactionId": "damage:elemental-affinity",
+        "potency": 50,
+        "priority": 100,
+        "effect": {
+          "type": "elemental_relation",
+          "sameElement": 0.5,
+          "oppositeElement": 1.5,
+          "affinityPath": "defender.affinityElement",
+          "oppositesPath": "environment.elementOpposites"
+        }
+      }
+    ],
+    "interactions": [
+      {
+        "id": "opposite-element",
+        "counterplay": "opposing element declared by the expedition content"
+      }
+    ],
+    "requirements": ["affinityElement"],
+    "properties": ["elemental"]
+  },
+  {
+    "id": "base:demonic",
+    "category": "nature",
+    "name": "Demoníaco",
+    "description": "Resistência ao fogo e vulnerabilidade sagrada.",
+    "origin": "base",
+    "activationConditions": ["incoming damage element is fire or holy"],
+    "eventsObserved": ["damage.incoming"],
+    "modifiers": [
+      {
+        "id": "fire-resistance",
+        "event": "damage.incoming",
+        "conditions": [{ "path": "damage.element", "op": "eq", "value": "fire" }],
+        "interactionId": "damage:fire",
+        "potency": 50,
+        "priority": 100,
+        "effect": { "type": "damage_multiplier", "value": 0.5 }
+      },
+      {
+        "id": "holy-weakness",
+        "event": "damage.incoming",
+        "conditions": [{ "path": "damage.element", "op": "eq", "value": "holy" }],
+        "interactionId": "damage:holy",
+        "potency": 50,
+        "priority": 100,
+        "effect": { "type": "damage_multiplier", "value": 1.5 }
+      }
+    ],
+    "interactions": [{ "id": "holy", "counterplay": "holy damage" }],
+    "requirements": [],
+    "properties": ["demonic"]
+  },
+  {
+    "id": "base:celestial",
+    "category": "nature",
+    "name": "Celestial",
+    "description": "Resistência sagrada e vulnerabilidade sombria.",
+    "origin": "base",
+    "activationConditions": ["incoming damage element is holy or shadow"],
+    "eventsObserved": ["damage.incoming"],
+    "modifiers": [
+      {
+        "id": "holy-resistance",
+        "event": "damage.incoming",
+        "conditions": [{ "path": "damage.element", "op": "eq", "value": "holy" }],
+        "interactionId": "damage:holy",
+        "potency": 50,
+        "priority": 100,
+        "effect": { "type": "damage_multiplier", "value": 0.5 }
+      },
+      {
+        "id": "shadow-weakness",
+        "event": "damage.incoming",
+        "conditions": [{ "path": "damage.element", "op": "eq", "value": "shadow" }],
+        "interactionId": "damage:shadow",
+        "potency": 50,
+        "priority": 100,
+        "effect": { "type": "damage_multiplier", "value": 1.5 }
+      }
+    ],
+    "interactions": [{ "id": "shadow", "counterplay": "shadow damage" }],
+    "requirements": [],
+    "properties": ["celestial"]
+  },
+  {
+    "id": "base:draconic",
+    "category": "nature",
+    "name": "Dracônico",
+    "description": "Anatomia dracônica exposta a técnicas antidracônicas.",
+    "origin": "base",
+    "activationConditions": ["attack has antidraconic property"],
+    "eventsObserved": ["damage.incoming"],
+    "modifiers": [
+      {
+        "id": "antidraconic",
+        "event": "damage.incoming",
+        "conditions": [{ "path": "damage.properties", "op": "includes", "value": "antidraconic" }],
+        "interactionId": "damage:antidraconic",
+        "potency": 100,
+        "priority": 100,
+        "effect": { "type": "damage_multiplier", "value": 2 }
+      }
+    ],
+    "interactions": [{ "id": "antidraconic", "counterplay": "antidraconic attack property" }],
+    "requirements": [],
+    "properties": ["draconic", "dragon-techniques"]
+  },
+  {
+    "id": "base:beast",
+    "category": "nature",
+    "name": "Bestial",
+    "description": "Rastreia criaturas ocultas, salta obstáculos e percebe armadilhas.",
+    "origin": "base",
+    "activationConditions": ["a target is camouflaged or a trap is present"],
+    "eventsObserved": ["targeting.check", "environment.tick"],
+    "modifiers": [
+      {
+        "id": "tracking",
+        "event": "targeting.check",
+        "conditions": [{ "path": "target.tags", "op": "includes", "value": "base:camouflaged" }],
+        "interactionId": "targeting:tracking",
+        "potency": 100,
+        "priority": 100,
+        "effect": { "type": "reveal_target", "value": true }
+      },
+      {
+        "id": "trap-sense",
+        "event": "environment.tick",
+        "conditions": [{ "path": "environment.hazard", "op": "eq", "value": "trap" }],
+        "interactionId": "environment:trap-awareness",
+        "potency": 100,
+        "priority": 100,
+        "effect": { "type": "hazard_awareness", "value": true }
+      }
+    ],
+    "interactions": [
+      { "id": "camouflage", "counterplay": "concealment that also defeats tracking" }
+    ],
+    "requirements": [],
+    "properties": ["tracking", "leaping", "trap-sense"]
+  },
+  {
+    "id": "base:plant",
+    "category": "nature",
+    "name": "Vegetal",
+    "description": "Regenera em ambiente fértil e é vulnerável ao fogo.",
+    "origin": "base",
+    "activationConditions": ["fertile environment or incoming fire damage"],
+    "eventsObserved": ["environment.tick", "damage.incoming"],
+    "modifiers": [
+      {
+        "id": "fertile-regeneration",
+        "event": "environment.tick",
+        "conditions": [{ "path": "environment.condition", "op": "eq", "value": "fertile" }],
+        "interactionId": "healing:environment",
+        "potency": 1,
+        "priority": 100,
+        "effect": { "type": "regeneration", "value": 1 }
+      },
+      {
+        "id": "fire-weakness",
+        "event": "damage.incoming",
+        "conditions": [{ "path": "damage.element", "op": "eq", "value": "fire" }],
+        "interactionId": "damage:fire",
+        "potency": 50,
+        "priority": 100,
+        "effect": { "type": "damage_multiplier", "value": 1.5 }
+      }
+    ],
+    "interactions": [{ "id": "fire", "counterplay": "fire damage" }],
+    "requirements": [],
+    "properties": ["environmental-regeneration"]
+  },
+  {
+    "id": "base:cursed",
+    "category": "nature",
+    "name": "Amaldiçoado",
+    "description": "Resiste à sombra e sofre interação especial com prata.",
+    "origin": "base",
+    "activationConditions": ["incoming shadow or silver damage"],
+    "eventsObserved": ["damage.incoming"],
+    "modifiers": [
+      {
+        "id": "shadow-resistance",
+        "event": "damage.incoming",
+        "conditions": [{ "path": "damage.element", "op": "eq", "value": "shadow" }],
+        "interactionId": "damage:shadow",
+        "potency": 50,
+        "priority": 100,
+        "effect": { "type": "damage_multiplier", "value": 0.5 }
+      },
+      {
+        "id": "silver-weakness",
+        "event": "damage.incoming",
+        "conditions": [{ "path": "damage.properties", "op": "includes", "value": "silver" }],
+        "interactionId": "damage:silver",
+        "potency": 50,
+        "priority": 100,
+        "effect": { "type": "damage_multiplier", "value": 1.5 }
+      }
+    ],
+    "interactions": [{ "id": "silver", "counterplay": "silver weapon or material property" }],
+    "requirements": [],
+    "properties": ["cursed"]
+  },
+
+  {
+    "id": "base:ethereal",
+    "category": "anatomy",
+    "name": "Etéreo",
+    "description": "Faseia ataques físicos comuns; ancoragem ou revelação permite atingi-lo.",
+    "origin": "base",
+    "activationConditions": ["attack is physical and lacks phase counterplay"],
+    "eventsObserved": ["targeting.check"],
+    "modifiers": [
+      {
+        "id": "phase",
+        "event": "targeting.check",
+        "conditions": [
+          { "path": "attack.channel", "op": "eq", "value": "physical" },
+          {
+            "path": "attack.properties",
+            "op": "not_includes_any",
+            "value": ["spiritual", "anchoring", "revealing", "inevitable"]
+          },
+          { "path": "defender.revealed", "op": "neq", "value": true }
+        ],
+        "interactionId": "targeting:phase",
+        "potency": 100,
+        "priority": 100,
+        "effect": {
+          "type": "target_gate",
+          "requiredProperties": ["spiritual", "anchoring", "revealing"]
+        }
+      }
+    ],
+    "interactions": [
+      { "id": "anchor", "counterplay": "anchoring, revealing or spiritual property" }
+    ],
+    "requirements": [],
+    "properties": ["phasing"]
+  },
+  {
+    "id": "base:mineral",
+    "category": "anatomy",
+    "name": "Mineral",
+    "description": "Resiste a corte e é vulnerável a esmagamento.",
+    "origin": "base",
+    "activationConditions": ["incoming cutting or crushing damage"],
+    "eventsObserved": ["damage.incoming"],
+    "modifiers": [
+      {
+        "id": "cut-resistance",
+        "event": "damage.incoming",
+        "conditions": [{ "path": "damage.subtype", "op": "eq", "value": "cutting" }],
+        "interactionId": "damage:cutting",
+        "potency": 50,
+        "priority": 100,
+        "effect": { "type": "damage_multiplier", "value": 0.5 }
+      },
+      {
+        "id": "crushing-weakness",
+        "event": "damage.incoming",
+        "conditions": [{ "path": "damage.subtype", "op": "eq", "value": "crushing" }],
+        "interactionId": "damage:crushing",
+        "potency": 50,
+        "priority": 100,
+        "effect": { "type": "damage_multiplier", "value": 1.5 }
+      }
+    ],
+    "interactions": [{ "id": "crushing", "counterplay": "crushing damage" }],
+    "requirements": [],
+    "properties": ["mineral-body"]
+  },
+  {
+    "id": "base:metallic",
+    "category": "anatomy",
+    "name": "Metálico",
+    "description": "Resiste a corte e conduz efeitos elétricos.",
+    "origin": "base",
+    "activationConditions": ["incoming cutting or electric damage"],
+    "eventsObserved": ["damage.incoming"],
+    "modifiers": [
+      {
+        "id": "cut-resistance",
+        "event": "damage.incoming",
+        "conditions": [{ "path": "damage.subtype", "op": "eq", "value": "cutting" }],
+        "interactionId": "damage:cutting",
+        "potency": 50,
+        "priority": 100,
+        "effect": { "type": "damage_multiplier", "value": 0.5 }
+      },
+      {
+        "id": "electric-conduction",
+        "event": "damage.incoming",
+        "conditions": [{ "path": "damage.element", "op": "eq", "value": "lightning" }],
+        "interactionId": "damage:lightning",
+        "potency": 50,
+        "priority": 100,
+        "effect": { "type": "damage_multiplier", "value": 1.5 }
+      }
+    ],
+    "interactions": [
+      { "id": "lightning", "counterplay": "electric damage conducts through the body" }
+    ],
+    "requirements": [],
+    "properties": ["metallic", "conductive"]
+  },
+  {
+    "id": "base:skeletal",
+    "category": "anatomy",
+    "name": "Esquelético",
+    "description": "Resiste a perfuração e é vulnerável a impacto.",
+    "origin": "base",
+    "activationConditions": ["incoming piercing or crushing damage"],
+    "eventsObserved": ["damage.incoming"],
+    "modifiers": [
+      {
+        "id": "pierce-resistance",
+        "event": "damage.incoming",
+        "conditions": [{ "path": "damage.subtype", "op": "eq", "value": "piercing" }],
+        "interactionId": "damage:piercing",
+        "potency": 50,
+        "priority": 100,
+        "effect": { "type": "damage_multiplier", "value": 0.5 }
+      },
+      {
+        "id": "impact-weakness",
+        "event": "damage.incoming",
+        "conditions": [{ "path": "damage.subtype", "op": "eq", "value": "crushing" }],
+        "interactionId": "damage:crushing",
+        "potency": 50,
+        "priority": 100,
+        "effect": { "type": "damage_multiplier", "value": 1.5 }
+      }
+    ],
+    "interactions": [{ "id": "impact", "counterplay": "impact damage" }],
+    "requirements": [],
+    "properties": ["skeletal"]
+  },
+  {
+    "id": "base:gelatinous",
+    "category": "anatomy",
+    "name": "Gelatinoso",
+    "description": "Dissipa perfurações e é vulnerável a congelamento.",
+    "origin": "base",
+    "activationConditions": ["incoming piercing or frost damage"],
+    "eventsObserved": ["damage.incoming"],
+    "modifiers": [
+      {
+        "id": "pierce-resistance",
+        "event": "damage.incoming",
+        "conditions": [{ "path": "damage.subtype", "op": "eq", "value": "piercing" }],
+        "interactionId": "damage:piercing",
+        "potency": 50,
+        "priority": 100,
+        "effect": { "type": "damage_multiplier", "value": 0.5 }
+      },
+      {
+        "id": "frost-weakness",
+        "event": "damage.incoming",
+        "conditions": [{ "path": "damage.element", "op": "eq", "value": "frost" }],
+        "interactionId": "damage:frost",
+        "potency": 50,
+        "priority": 100,
+        "effect": { "type": "damage_multiplier", "value": 1.5 }
+      }
+    ],
+    "interactions": [{ "id": "frost", "counterplay": "frost damage" }],
+    "requirements": [],
+    "properties": ["gelatinous"]
+  },
+  {
+    "id": "base:armored",
+    "category": "anatomy",
+    "name": "Blindado",
+    "description": "Mitiga ataques comuns; propriedades de penetração atravessam a defesa.",
+    "origin": "base",
+    "activationConditions": ["incoming attack does not penetrate armor"],
+    "eventsObserved": ["damage.incoming"],
+    "modifiers": [
+      {
+        "id": "armor-resistance",
+        "event": "damage.incoming",
+        "conditions": [
+          { "path": "damage.properties", "op": "not_includes", "value": "armor-penetrating" }
+        ],
+        "interactionId": "defense:armor",
+        "potency": 25,
+        "priority": 100,
+        "effect": { "type": "damage_multiplier", "value": 0.75 }
+      }
+    ],
+    "interactions": [
+      { "id": "armor-penetration", "counterplay": "armor-penetrating attack property" }
+    ],
+    "requirements": [],
+    "properties": ["armor"]
+  },
+  {
+    "id": "base:colossal",
+    "category": "anatomy",
+    "name": "Colossal",
+    "description": "Resiste a deslocamento forçado e expõe pontos vulneráveis quando marcado.",
+    "origin": "base",
+    "activationConditions": ["forced movement or an exposed-point attack"],
+    "eventsObserved": ["movement.forced", "damage.incoming"],
+    "modifiers": [
+      {
+        "id": "forced-movement-resistance",
+        "event": "movement.forced",
+        "conditions": [],
+        "interactionId": "movement:forced",
+        "potency": 100,
+        "priority": 100,
+        "effect": { "type": "displacement_resistance", "value": true }
+      },
+      {
+        "id": "exposed-point",
+        "event": "damage.incoming",
+        "conditions": [{ "path": "damage.properties", "op": "includes", "value": "exposed-point" }],
+        "interactionId": "damage:exposed-point",
+        "potency": 50,
+        "priority": 100,
+        "effect": { "type": "damage_multiplier", "value": 1.5 }
+      }
+    ],
+    "interactions": [{ "id": "exposed-point", "counterplay": "mark and strike an exposed point" }],
+    "requirements": [],
+    "properties": ["colossal", "exposed-points"]
+  },
+  {
+    "id": "base:segmented",
+    "category": "anatomy",
+    "name": "Segmentado",
+    "description": "Possui partes independentes e sofre melhor com ataques que atingem múltiplos alvos.",
+    "origin": "base",
+    "activationConditions": ["attack can affect multiple parts"],
+    "eventsObserved": ["damage.incoming"],
+    "modifiers": [
+      {
+        "id": "multi-part-hit",
+        "event": "damage.incoming",
+        "conditions": [
+          { "path": "damage.properties", "op": "includes_any", "value": ["multi-part", "area"] }
+        ],
+        "interactionId": "damage:multi-part",
+        "potency": 25,
+        "priority": 100,
+        "effect": { "type": "damage_multiplier", "value": 1.25 }
+      }
+    ],
+    "interactions": [{ "id": "multi-part", "counterplay": "area or multi-part attack property" }],
+    "requirements": [],
+    "properties": ["segmented-anatomy"]
+  },
+  {
+    "id": "base:regenerative",
+    "category": "anatomy",
+    "name": "Regenerativo",
+    "description": "Recupera HP e pode ter a regeneração interrompida por efeitos apropriados.",
+    "origin": "base",
+    "activationConditions": ["regeneration tick without interruption"],
+    "eventsObserved": ["environment.tick"],
+    "modifiers": [
+      {
+        "id": "regeneration",
+        "event": "environment.tick",
+        "conditions": [
+          {
+            "path": "actor.effects",
+            "op": "not_includes_id",
+            "value": "base:regeneration-suppressed"
+          }
+        ],
+        "interactionId": "healing:regeneration",
+        "potency": 1,
+        "priority": 100,
+        "effect": { "type": "regeneration", "value": 1 }
+      }
+    ],
+    "interactions": [
+      {
+        "id": "regeneration-suppression",
+        "counterplay": "registered regeneration-interruption effect"
+      }
+    ],
+    "requirements": [],
+    "properties": ["regenerates"]
+  },
+  {
+    "id": "base:swarm",
+    "category": "anatomy",
+    "name": "Enxame",
+    "description": "Dissipa ataques de alvo único e recebe dano ampliado em área.",
+    "origin": "base",
+    "activationConditions": ["incoming single-target or area attack"],
+    "eventsObserved": ["damage.incoming"],
+    "modifiers": [
+      {
+        "id": "single-target-resistance",
+        "event": "damage.incoming",
+        "conditions": [{ "path": "damage.properties", "op": "not_includes", "value": "area" }],
+        "interactionId": "damage:single-target",
+        "potency": 35,
+        "priority": 100,
+        "effect": { "type": "damage_multiplier", "value": 0.65 }
+      },
+      {
+        "id": "area-weakness",
+        "event": "damage.incoming",
+        "conditions": [{ "path": "damage.properties", "op": "includes", "value": "area" }],
+        "interactionId": "damage:area",
+        "potency": 50,
+        "priority": 100,
+        "effect": { "type": "damage_multiplier", "value": 1.5 }
+      }
+    ],
+    "interactions": [{ "id": "area", "counterplay": "area attack property" }],
+    "requirements": [],
+    "properties": ["swarm"]
+  },
+
+  {
+    "id": "base:fireborn",
+    "category": "affinity",
+    "name": "Nascido do fogo",
+    "description": "Resiste a fogo e é vulnerável a frio.",
+    "origin": "base",
+    "activationConditions": ["incoming fire or frost damage"],
+    "eventsObserved": ["damage.incoming"],
+    "modifiers": [
+      {
+        "id": "fire-resistance",
+        "event": "damage.incoming",
+        "conditions": [{ "path": "damage.element", "op": "eq", "value": "fire" }],
+        "interactionId": "damage:fire",
+        "potency": 50,
+        "priority": 100,
+        "effect": { "type": "damage_multiplier", "value": 0.5 }
+      },
+      {
+        "id": "frost-weakness",
+        "event": "damage.incoming",
+        "conditions": [{ "path": "damage.element", "op": "eq", "value": "frost" }],
+        "interactionId": "damage:frost",
+        "potency": 50,
+        "priority": 100,
+        "effect": { "type": "damage_multiplier", "value": 1.5 }
+      }
+    ],
+    "interactions": [{ "id": "frost", "counterplay": "frost damage" }],
+    "requirements": [],
+    "properties": ["fire-affinity"]
+  },
+  {
+    "id": "base:frostborn",
+    "category": "affinity",
+    "name": "Nascido do gelo",
+    "description": "Resiste a frio e é vulnerável a fogo.",
+    "origin": "base",
+    "activationConditions": ["incoming frost or fire damage"],
+    "eventsObserved": ["damage.incoming"],
+    "modifiers": [
+      {
+        "id": "frost-resistance",
+        "event": "damage.incoming",
+        "conditions": [{ "path": "damage.element", "op": "eq", "value": "frost" }],
+        "interactionId": "damage:frost",
+        "potency": 50,
+        "priority": 100,
+        "effect": { "type": "damage_multiplier", "value": 0.5 }
+      },
+      {
+        "id": "fire-weakness",
+        "event": "damage.incoming",
+        "conditions": [{ "path": "damage.element", "op": "eq", "value": "fire" }],
+        "interactionId": "damage:fire",
+        "potency": 50,
+        "priority": 100,
+        "effect": { "type": "damage_multiplier", "value": 1.5 }
+      }
+    ],
+    "interactions": [{ "id": "fire", "counterplay": "fire damage" }],
+    "requirements": [],
+    "properties": ["frost-affinity"]
+  },
+  {
+    "id": "base:stormbound",
+    "category": "affinity",
+    "name": "Vinculado à tempestade",
+    "description": "Resiste a eletricidade e conduz energia a alvos próximos.",
+    "origin": "base",
+    "activationConditions": ["incoming lightning damage"],
+    "eventsObserved": ["damage.incoming"],
+    "modifiers": [
+      {
+        "id": "lightning-resistance",
+        "event": "damage.incoming",
+        "conditions": [{ "path": "damage.element", "op": "eq", "value": "lightning" }],
+        "interactionId": "damage:lightning",
+        "potency": 50,
+        "priority": 100,
+        "effect": { "type": "damage_multiplier", "value": 0.5 }
+      },
+      {
+        "id": "conduction",
+        "event": "damage.incoming",
+        "conditions": [{ "path": "damage.element", "op": "eq", "value": "lightning" }],
+        "interactionId": "damage:storm-conduction",
+        "potency": 25,
+        "priority": 100,
+        "effect": { "type": "chain_damage", "value": 0.25 }
+      }
+    ],
+    "interactions": [
+      { "id": "earth-grounding", "counterplay": "grounding property suppresses chain conduction" }
+    ],
+    "requirements": [],
+    "properties": ["storm-affinity", "conductive"]
+  },
+  {
+    "id": "base:aquatic",
+    "category": "affinity",
+    "name": "Aquático",
+    "description": "Move-se e recupera-se melhor em ambiente aquático; fogo o ameaça.",
+    "origin": "base",
+    "activationConditions": ["water environment or incoming fire damage"],
+    "eventsObserved": ["environment.tick", "damage.incoming"],
+    "modifiers": [
+      {
+        "id": "water-recovery",
+        "event": "environment.tick",
+        "conditions": [{ "path": "environment.type", "op": "eq", "value": "water" }],
+        "interactionId": "healing:water",
+        "potency": 1,
+        "priority": 100,
+        "effect": { "type": "regeneration", "value": 1 }
+      },
+      {
+        "id": "fire-weakness",
+        "event": "damage.incoming",
+        "conditions": [{ "path": "damage.element", "op": "eq", "value": "fire" }],
+        "interactionId": "damage:fire",
+        "potency": 25,
+        "priority": 100,
+        "effect": { "type": "damage_multiplier", "value": 1.25 }
+      }
+    ],
+    "interactions": [
+      { "id": "water", "counterplay": "dry environment reduces its environmental advantage" }
+    ],
+    "requirements": [],
+    "properties": ["aquatic-affinity"]
+  },
+  {
+    "id": "base:dark_attuned",
+    "category": "affinity",
+    "name": "Afinidade sombria",
+    "description": "Resiste à sombra e é vulnerável à luz sagrada.",
+    "origin": "base",
+    "activationConditions": ["incoming shadow or holy damage"],
+    "eventsObserved": ["damage.incoming"],
+    "modifiers": [
+      {
+        "id": "shadow-resistance",
+        "event": "damage.incoming",
+        "conditions": [{ "path": "damage.element", "op": "eq", "value": "shadow" }],
+        "interactionId": "damage:shadow",
+        "potency": 50,
+        "priority": 100,
+        "effect": { "type": "damage_multiplier", "value": 0.5 }
+      },
+      {
+        "id": "holy-weakness",
+        "event": "damage.incoming",
+        "conditions": [{ "path": "damage.element", "op": "eq", "value": "holy" }],
+        "interactionId": "damage:holy",
+        "potency": 50,
+        "priority": 100,
+        "effect": { "type": "damage_multiplier", "value": 1.5 }
+      }
+    ],
+    "interactions": [{ "id": "holy", "counterplay": "holy damage" }],
+    "requirements": [],
+    "properties": ["shadow-affinity"]
+  },
+  {
+    "id": "base:light_attuned",
+    "category": "affinity",
+    "name": "Afinidade luminosa",
+    "description": "Resiste à luz sagrada e é vulnerável à sombra.",
+    "origin": "base",
+    "activationConditions": ["incoming holy or shadow damage"],
+    "eventsObserved": ["damage.incoming"],
+    "modifiers": [
+      {
+        "id": "holy-resistance",
+        "event": "damage.incoming",
+        "conditions": [{ "path": "damage.element", "op": "eq", "value": "holy" }],
+        "interactionId": "damage:holy",
+        "potency": 50,
+        "priority": 100,
+        "effect": { "type": "damage_multiplier", "value": 0.5 }
+      },
+      {
+        "id": "shadow-weakness",
+        "event": "damage.incoming",
+        "conditions": [{ "path": "damage.element", "op": "eq", "value": "shadow" }],
+        "interactionId": "damage:shadow",
+        "potency": 50,
+        "priority": 100,
+        "effect": { "type": "damage_multiplier", "value": 1.5 }
+      }
+    ],
+    "interactions": [{ "id": "shadow", "counterplay": "shadow damage" }],
+    "requirements": [],
+    "properties": ["holy-affinity"]
+  },
+  {
+    "id": "base:toxic",
+    "category": "affinity",
+    "name": "Tóxico",
+    "description": "Não recebe efeitos de veneno e contamina atacantes corpo a corpo.",
+    "origin": "base",
+    "activationConditions": ["poison status or physical contact"],
+    "eventsObserved": ["status.incoming", "damage.received"],
+    "modifiers": [
+      {
+        "id": "poison-immunity",
+        "event": "status.incoming",
+        "conditions": [{ "path": "status.id", "op": "eq", "value": "base:poison" }],
+        "interactionId": "immunity:poison",
+        "potency": 100,
+        "priority": 100,
+        "effect": { "type": "status_immunity", "value": "base:poison" }
+      },
+      {
+        "id": "toxic-contact",
+        "event": "damage.received",
+        "conditions": [{ "path": "damage.channel", "op": "eq", "value": "physical" }],
+        "interactionId": "status:toxic-contact",
+        "potency": 1,
+        "priority": 100,
+        "effect": {
+          "type": "on_hit_effect",
+          "value": { "id": "base:poison", "category": "dot", "potency": 1, "counter": 1 }
+        }
+      }
+    ],
+    "interactions": [{ "id": "poison", "counterplay": "poison immunity or ranged attacks" }],
+    "requirements": [],
+    "properties": ["toxic"]
+  },
+  {
+    "id": "base:corrosive",
+    "category": "affinity",
+    "name": "Corrosivo",
+    "description": "Resiste a corrosão e deteriora armaduras ao acertar.",
+    "origin": "base",
+    "activationConditions": ["corrosive damage or contact"],
+    "eventsObserved": ["damage.incoming", "damage.received"],
+    "modifiers": [
+      {
+        "id": "corrosion-resistance",
+        "event": "damage.incoming",
+        "conditions": [{ "path": "damage.element", "op": "eq", "value": "corrosive" }],
+        "interactionId": "damage:corrosive",
+        "potency": 50,
+        "priority": 100,
+        "effect": { "type": "damage_multiplier", "value": 0.5 }
+      },
+      {
+        "id": "armor-corrosion",
+        "event": "damage.received",
+        "conditions": [{ "path": "damage.channel", "op": "eq", "value": "physical" }],
+        "interactionId": "equipment:corrosion",
+        "potency": 1,
+        "priority": 100,
+        "effect": { "type": "corrode_armor", "value": 1 }
+      }
+    ],
+    "interactions": [{ "id": "corrosion", "counterplay": "corrosion resistance on equipment" }],
+    "requirements": [],
+    "properties": ["corrosive"]
+  },
+  {
+    "id": "base:arcane",
+    "category": "affinity",
+    "name": "Arcano",
+    "description": "Resiste a magia não elemental e reconhece construções arcanas.",
+    "origin": "base",
+    "activationConditions": ["incoming untyped magical damage"],
+    "eventsObserved": ["damage.incoming"],
+    "modifiers": [
+      {
+        "id": "arcane-resistance",
+        "event": "damage.incoming",
+        "conditions": [
+          { "path": "damage.channel", "op": "eq", "value": "magical" },
+          { "path": "damage.element", "op": "not_truthy" }
+        ],
+        "interactionId": "damage:arcane",
+        "potency": 25,
+        "priority": 100,
+        "effect": { "type": "damage_multiplier", "value": 0.75 }
+      }
+    ],
+    "interactions": [{ "id": "physical", "counterplay": "physical or elemental damage" }],
+    "requirements": [],
+    "properties": ["arcane-affinity"]
+  },
+  {
+    "id": "base:antimagic",
+    "category": "affinity",
+    "name": "Antimágico",
+    "description": "Reduz magia e pode suprimir efeitos energéticos diretos.",
+    "origin": "base",
+    "activationConditions": ["incoming magical damage or direct energy effect"],
+    "eventsObserved": ["damage.incoming", "status.incoming"],
+    "modifiers": [
+      {
+        "id": "magic-resistance",
+        "event": "damage.incoming",
+        "conditions": [{ "path": "damage.channel", "op": "eq", "value": "magical" }],
+        "interactionId": "damage:magic",
+        "potency": 50,
+        "priority": 100,
+        "effect": { "type": "damage_multiplier", "value": 0.5 }
+      },
+      {
+        "id": "energy-effect-immunity",
+        "event": "status.incoming",
+        "conditions": [{ "path": "status.source", "op": "eq", "value": "energy" }],
+        "interactionId": "immunity:energy-effect",
+        "potency": 100,
+        "priority": 100,
+        "effect": { "type": "status_immunity", "value": "energy" }
+      }
+    ],
+    "interactions": [{ "id": "physical", "counterplay": "physical damage" }],
+    "requirements": [],
+    "properties": ["antimagic"]
+  },
+
+  {
+    "id": "base:flying",
+    "category": "movement",
+    "name": "Voador",
+    "description": "Evita ataques limitados ao solo e mantém distância vertical.",
+    "origin": "base",
+    "activationConditions": ["attack cannot reach airborne targets"],
+    "eventsObserved": ["targeting.check", "action.select"],
+    "modifiers": [
+      {
+        "id": "airborne-gate",
+        "event": "targeting.check",
+        "conditions": [
+          {
+            "path": "attack.properties",
+            "op": "not_includes_any",
+            "value": ["ranged", "flying", "reach"]
+          }
+        ],
+        "interactionId": "targeting:airborne",
+        "potency": 100,
+        "priority": 100,
+        "effect": { "type": "target_gate", "requiredProperties": ["ranged", "flying", "reach"] }
+      },
+      {
+        "id": "flight-policy",
+        "event": "action.select",
+        "conditions": [],
+        "interactionId": "policy:flight",
+        "potency": 1,
+        "priority": 100,
+        "effect": {
+          "type": "policy_bias",
+          "value": { "actionKinds": ["ranged", "move"], "bonus": 1 }
+        }
+      }
+    ],
+    "interactions": [{ "id": "grounding", "counterplay": "ranged, flying or reach attack" }],
+    "requirements": [],
+    "properties": ["airborne"]
+  },
+  {
+    "id": "base:burrowing",
+    "category": "movement",
+    "name": "Escavador",
+    "description": "Oculta-se sob o terreno e emerge ao atacar.",
+    "origin": "base",
+    "activationConditions": ["targeting while underground"],
+    "eventsObserved": ["targeting.check", "action.select"],
+    "modifiers": [
+      {
+        "id": "underground-gate",
+        "event": "targeting.check",
+        "conditions": [
+          { "path": "defender.movementState", "op": "eq", "value": "burrowed" },
+          { "path": "defender.revealed", "op": "neq", "value": true },
+          {
+            "path": "attack.properties",
+            "op": "not_includes_any",
+            "value": ["area", "earth-sense", "ground-penetrating"]
+          }
+        ],
+        "interactionId": "targeting:burrowed",
+        "potency": 100,
+        "priority": 100,
+        "effect": {
+          "type": "target_gate",
+          "requiredProperties": ["area", "earth-sense", "ground-penetrating"]
+        }
+      },
+      {
+        "id": "emergence-policy",
+        "event": "action.select",
+        "conditions": [],
+        "interactionId": "policy:burrow",
+        "potency": 1,
+        "priority": 100,
+        "effect": {
+          "type": "policy_bias",
+          "value": { "actionKinds": ["attack", "move"], "bonus": 1 }
+        }
+      }
+    ],
+    "interactions": [
+      { "id": "earth-sense", "counterplay": "area, earth-sense or ground-penetrating attack" }
+    ],
+    "requirements": [],
+    "properties": ["burrowing"]
+  },
+  {
+    "id": "base:amphibious",
+    "category": "movement",
+    "name": "Anfíbio",
+    "description": "Mantém mobilidade e respiração em terra e água.",
+    "origin": "base",
+    "activationConditions": ["environment is water"],
+    "eventsObserved": ["environment.tick", "action.select"],
+    "modifiers": [
+      {
+        "id": "water-mobility",
+        "event": "environment.tick",
+        "conditions": [{ "path": "environment.type", "op": "eq", "value": "water" }],
+        "interactionId": "movement:water",
+        "potency": 1,
+        "priority": 100,
+        "effect": { "type": "environment_modifier", "value": { "movement": 1, "breathing": true } }
+      }
+    ],
+    "interactions": [{ "id": "water", "counterplay": "environment is not aquatic" }],
+    "requirements": [],
+    "properties": ["amphibious"]
+  },
+  {
+    "id": "base:subterranean",
+    "category": "movement",
+    "name": "Subterrâneo",
+    "description": "Percebe movimento e alvos através do solo.",
+    "origin": "base",
+    "activationConditions": ["target has underground state"],
+    "eventsObserved": ["targeting.check"],
+    "modifiers": [
+      {
+        "id": "earth-sense",
+        "event": "targeting.check",
+        "conditions": [{ "path": "target.movementState", "op": "eq", "value": "burrowed" }],
+        "interactionId": "targeting:earth-sense",
+        "potency": 100,
+        "priority": 100,
+        "effect": { "type": "reveal_target", "value": true }
+      }
+    ],
+    "interactions": [
+      { "id": "burrowing", "counterplay": "movement that leaves no ground vibration" }
+    ],
+    "requirements": [],
+    "properties": ["subterranean-sense"]
+  },
+  {
+    "id": "base:nocturnal",
+    "category": "movement",
+    "name": "Noturno",
+    "description": "Age melhor durante a noite e perde percepção sob luz intensa.",
+    "origin": "base",
+    "activationConditions": ["time of day is night or day"],
+    "eventsObserved": ["environment.tick"],
+    "modifiers": [
+      {
+        "id": "night-advantage",
+        "event": "environment.tick",
+        "conditions": [{ "path": "environment.timeOfDay", "op": "eq", "value": "night" }],
+        "interactionId": "environment:time-of-day",
+        "potency": 1,
+        "priority": 100,
+        "effect": {
+          "type": "environment_modifier",
+          "value": { "actionIntervalMultiplier": 0.8, "perception": 1 }
+        }
+      },
+      {
+        "id": "day-disadvantage",
+        "event": "environment.tick",
+        "conditions": [{ "path": "environment.timeOfDay", "op": "eq", "value": "day" }],
+        "interactionId": "environment:time-of-day",
+        "potency": 1,
+        "priority": 100,
+        "effect": {
+          "type": "environment_modifier",
+          "value": { "actionIntervalMultiplier": 1.2, "perception": -1 }
+        }
+      }
+    ],
+    "interactions": [{ "id": "light", "counterplay": "daylight or illumination" }],
+    "requirements": [],
+    "properties": ["nocturnal"]
+  },
+  {
+    "id": "base:diurnal",
+    "category": "movement",
+    "name": "Diurno",
+    "description": "Age melhor durante o dia e perde percepção à noite.",
+    "origin": "base",
+    "activationConditions": ["time of day is day or night"],
+    "eventsObserved": ["environment.tick"],
+    "modifiers": [
+      {
+        "id": "day-advantage",
+        "event": "environment.tick",
+        "conditions": [{ "path": "environment.timeOfDay", "op": "eq", "value": "day" }],
+        "interactionId": "environment:time-of-day",
+        "potency": 1,
+        "priority": 100,
+        "effect": {
+          "type": "environment_modifier",
+          "value": { "actionIntervalMultiplier": 0.8, "perception": 1 }
+        }
+      },
+      {
+        "id": "night-disadvantage",
+        "event": "environment.tick",
+        "conditions": [{ "path": "environment.timeOfDay", "op": "eq", "value": "night" }],
+        "interactionId": "environment:time-of-day",
+        "potency": 1,
+        "priority": 100,
+        "effect": {
+          "type": "environment_modifier",
+          "value": { "actionIntervalMultiplier": 1.2, "perception": -1 }
+        }
+      }
+    ],
+    "interactions": [{ "id": "darkness", "counterplay": "night or darkness" }],
+    "requirements": [],
+    "properties": ["diurnal"]
+  },
+  {
+    "id": "base:fast",
+    "category": "movement",
+    "name": "Veloz",
+    "description": "Reduz o intervalo entre ações e melhora perseguição.",
+    "origin": "base",
+    "activationConditions": ["scheduling an action"],
+    "eventsObserved": ["action.schedule", "targeting.check"],
+    "modifiers": [
+      {
+        "id": "action-tempo",
+        "event": "action.schedule",
+        "conditions": [],
+        "interactionId": "movement:speed",
+        "potency": 25,
+        "priority": 100,
+        "effect": { "type": "action_interval_multiplier", "value": 0.75 }
+      },
+      {
+        "id": "pursuit",
+        "event": "targeting.check",
+        "conditions": [{ "path": "target.movementState", "op": "eq", "value": "fleeing" }],
+        "interactionId": "targeting:pursuit",
+        "potency": 1,
+        "priority": 100,
+        "effect": { "type": "targeting_modifier", "value": { "trackFleeing": true } }
+      }
+    ],
+    "interactions": [{ "id": "slow", "counterplay": "slow or restrain effects" }],
+    "requirements": [],
+    "properties": ["fast"]
+  },
+  {
+    "id": "base:slow",
+    "category": "movement",
+    "name": "Lento",
+    "description": "Age com intervalo maior e resiste a deslocamento.",
+    "origin": "base",
+    "activationConditions": ["scheduling an action or forced movement"],
+    "eventsObserved": ["action.schedule", "movement.forced"],
+    "modifiers": [
+      {
+        "id": "action-tempo",
+        "event": "action.schedule",
+        "conditions": [],
+        "interactionId": "movement:speed",
+        "potency": 25,
+        "priority": 100,
+        "effect": { "type": "action_interval_multiplier", "value": 1.25 }
+      },
+      {
+        "id": "displacement-resistance",
+        "event": "movement.forced",
+        "conditions": [],
+        "interactionId": "movement:forced",
+        "potency": 25,
+        "priority": 100,
+        "effect": { "type": "displacement_resistance", "value": 0.5 }
+      }
+    ],
+    "interactions": [{ "id": "speed", "counterplay": "movement speed and repositioning" }],
+    "requirements": [],
+    "properties": ["slow"]
+  },
+  {
+    "id": "base:camouflaged",
+    "category": "movement",
+    "name": "Camuflado",
+    "description": "Não pode ser adquirido como alvo sem percepção ou revelação.",
+    "origin": "base",
+    "activationConditions": ["target lacks detection or revealing property"],
+    "eventsObserved": ["targeting.check"],
+    "modifiers": [
+      {
+        "id": "concealment",
+        "event": "targeting.check",
+        "conditions": [
+          {
+            "path": "attack.properties",
+            "op": "not_includes_any",
+            "value": ["revealing", "tracking", "area"]
+          },
+          { "path": "defender.revealed", "op": "neq", "value": true }
+        ],
+        "interactionId": "targeting:camouflage",
+        "potency": 100,
+        "priority": 100,
+        "effect": { "type": "target_gate", "requiredProperties": ["revealing", "tracking", "area"] }
+      }
+    ],
+    "interactions": [{ "id": "reveal", "counterplay": "revealing, tracking or area attack" }],
+    "requirements": [],
+    "properties": ["camouflaged"]
+  },
+  {
+    "id": "base:stationary",
+    "category": "movement",
+    "name": "Estacionário",
+    "description": "Não se desloca; mantém posição, alcance e linha de tiro.",
+    "origin": "base",
+    "activationConditions": ["movement action is selected"],
+    "eventsObserved": ["action.select", "movement.forced"],
+    "modifiers": [
+      {
+        "id": "cannot-voluntarily-move",
+        "event": "action.select",
+        "conditions": [{ "path": "action.kind", "op": "eq", "value": "move" }],
+        "interactionId": "movement:voluntary",
+        "potency": 100,
+        "priority": 100,
+        "effect": { "type": "action_forbidden", "value": "move" }
+      },
+      {
+        "id": "anchored",
+        "event": "movement.forced",
+        "conditions": [],
+        "interactionId": "movement:forced",
+        "potency": 100,
+        "priority": 100,
+        "effect": { "type": "displacement_resistance", "value": true }
+      }
+    ],
+    "interactions": [
+      { "id": "stationary", "counterplay": "area control or leave its effective range" }
+    ],
+    "requirements": [],
+    "properties": ["stationary"]
+  },
+
+  {
+    "id": "base:berserker",
+    "category": "behavior",
+    "name": "Berserker",
+    "description": "Prioriza ações ofensivas e abandona defesa ao entrar em fúria.",
+    "origin": "base",
+    "activationConditions": ["selecting an action"],
+    "eventsObserved": ["action.select"],
+    "modifiers": [
+      {
+        "id": "offense-priority",
+        "event": "action.select",
+        "conditions": [],
+        "interactionId": "policy:offense",
+        "potency": 100,
+        "priority": 100,
+        "effect": { "type": "policy_bias", "value": { "actionKinds": ["attack"], "bonus": 100 } }
+      },
+      {
+        "id": "defense-aversion",
+        "event": "action.select",
+        "conditions": [],
+        "interactionId": "policy:defense",
+        "potency": 100,
+        "priority": 100,
+        "effect": { "type": "policy_bias", "value": { "actionKinds": ["guard"], "bonus": -100 } }
+      }
+    ],
+    "interactions": [
+      { "id": "control", "counterplay": "control effects interrupt the offensive sequence" }
+    ],
+    "requirements": [],
+    "properties": ["berserker-policy"]
+  },
+  {
+    "id": "base:guardian",
+    "category": "behavior",
+    "name": "Guardião",
+    "description": "Prioriza interceptar ataques dirigidos a aliados.",
+    "origin": "base",
+    "activationConditions": ["an ally is targeted"],
+    "eventsObserved": ["targeting.check", "action.select"],
+    "modifiers": [
+      {
+        "id": "intercept",
+        "event": "targeting.check",
+        "conditions": [{ "path": "target.side", "op": "neq", "value": "self" }],
+        "interactionId": "policy:intercept",
+        "potency": 100,
+        "priority": 100,
+        "effect": { "type": "intercept_ally", "value": true }
+      },
+      {
+        "id": "guard-priority",
+        "event": "action.select",
+        "conditions": [],
+        "interactionId": "policy:guard",
+        "potency": 50,
+        "priority": 100,
+        "effect": {
+          "type": "policy_bias",
+          "value": { "actionKinds": ["guard", "intercept"], "bonus": 50 }
+        }
+      }
+    ],
+    "interactions": [
+      { "id": "intercept", "counterplay": "bypass, area attack or disable the guardian" }
+    ],
+    "requirements": [],
+    "properties": ["guardian-policy"]
+  },
+  {
+    "id": "base:counterattacker",
+    "category": "behavior",
+    "name": "Contra-atacante",
+    "description": "Responde a desvios e bloqueios com uma ação de retaliação.",
+    "origin": "base",
+    "activationConditions": ["attack is evaded or blocked"],
+    "eventsObserved": ["attack.evaded", "attack.blocked"],
+    "modifiers": [
+      {
+        "id": "dodge-counter",
+        "event": "attack.evaded",
+        "conditions": [],
+        "interactionId": "policy:counterattack",
+        "potency": 100,
+        "priority": 100,
+        "effect": { "type": "counterattack", "value": true }
+      },
+      {
+        "id": "block-counter",
+        "event": "attack.blocked",
+        "conditions": [],
+        "interactionId": "policy:counterattack",
+        "potency": 100,
+        "priority": 100,
+        "effect": { "type": "counterattack", "value": true }
+      }
+    ],
+    "interactions": [
+      { "id": "counterattack", "counterplay": "inevitable attacks or denying a reaction window" }
+    ],
+    "requirements": [],
+    "properties": ["counterattacker-policy"]
+  },
+  {
+    "id": "base:ambusher",
+    "category": "behavior",
+    "name": "Emboscador",
+    "description": "Prioriza o primeiro ataque enquanto não foi revelado.",
+    "origin": "base",
+    "activationConditions": ["first action before detection"],
+    "eventsObserved": ["combat.start", "action.select"],
+    "modifiers": [
+      {
+        "id": "opening-strike",
+        "event": "action.select",
+        "conditions": [
+          { "path": "actor.actionsTaken", "op": "eq", "value": 0 },
+          { "path": "actor.revealed", "op": "eq", "value": false }
+        ],
+        "interactionId": "policy:opening-strike",
+        "potency": 100,
+        "priority": 100,
+        "effect": { "type": "policy_bias", "value": { "actionKinds": ["attack"], "bonus": 100 } }
+      }
+    ],
+    "interactions": [
+      { "id": "revelation", "counterplay": "reveal the ambusher before its first action" }
+    ],
+    "requirements": [],
+    "properties": ["ambusher-policy"]
+  },
+  {
+    "id": "base:pack_hunter",
+    "category": "behavior",
+    "name": "Caçador de matilha",
+    "description": "Coordena ações ofensivas quando aliados estão ativos.",
+    "origin": "base",
+    "activationConditions": ["another ally is alive"],
+    "eventsObserved": ["action.select"],
+    "modifiers": [
+      {
+        "id": "pack-attack",
+        "event": "action.select",
+        "conditions": [{ "path": "actor.aliveAllies", "op": "gt", "value": 1 }],
+        "interactionId": "policy:pack-hunt",
+        "potency": 50,
+        "priority": 100,
+        "effect": {
+          "type": "policy_bias",
+          "value": { "actionKinds": ["attack", "combo"], "bonus": 50 }
+        }
+      }
+    ],
+    "interactions": [{ "id": "isolated", "counterplay": "separate the pack" }],
+    "requirements": [],
+    "properties": ["pack-hunt-policy"]
+  },
+  {
+    "id": "base:caster",
+    "category": "behavior",
+    "name": "Conjurador",
+    "description": "Prioriza magia e preserva distância de alvos próximos.",
+    "origin": "base",
+    "activationConditions": ["selecting an action or target"],
+    "eventsObserved": ["action.select", "targeting.check"],
+    "modifiers": [
+      {
+        "id": "magic-priority",
+        "event": "action.select",
+        "conditions": [],
+        "interactionId": "policy:magic",
+        "potency": 50,
+        "priority": 100,
+        "effect": {
+          "type": "policy_bias",
+          "value": { "actionKinds": ["magic", "ranged", "move"], "bonus": 50 }
+        }
+      },
+      {
+        "id": "range-preference",
+        "event": "targeting.check",
+        "conditions": [],
+        "interactionId": "policy:range",
+        "potency": 1,
+        "priority": 100,
+        "effect": { "type": "preferred_range", "value": 3 }
+      }
+    ],
+    "interactions": [{ "id": "melee", "counterplay": "close distance or interrupt casting" }],
+    "requirements": [],
+    "properties": ["caster-policy"]
+  },
+  {
+    "id": "base:summoner",
+    "category": "behavior",
+    "name": "Invocador",
+    "description": "Prioriza criar auxiliares antes de atacar diretamente.",
+    "origin": "base",
+    "activationConditions": ["summon action is available"],
+    "eventsObserved": ["action.select"],
+    "modifiers": [
+      {
+        "id": "summon-priority",
+        "event": "action.select",
+        "conditions": [{ "path": "actor.summonCount", "op": "eq", "value": 0 }],
+        "interactionId": "policy:summon",
+        "potency": 100,
+        "priority": 100,
+        "effect": { "type": "policy_bias", "value": { "actionKinds": ["summon"], "bonus": 100 } }
+      }
+    ],
+    "interactions": [{ "id": "summons", "counterplay": "defeat auxiliaries or interrupt summon" }],
+    "requirements": [],
+    "properties": ["summoner-policy"]
+  },
+  {
+    "id": "base:healer",
+    "category": "behavior",
+    "name": "Curandeiro",
+    "description": "Prioriza recuperar aliados feridos.",
+    "origin": "base",
+    "activationConditions": ["ally is below maximum HP"],
+    "eventsObserved": ["action.select"],
+    "modifiers": [
+      {
+        "id": "healing-priority",
+        "event": "action.select",
+        "conditions": [{ "path": "target.hpRatio", "op": "lt", "value": 1 }],
+        "interactionId": "policy:healing",
+        "potency": 75,
+        "priority": 100,
+        "effect": {
+          "type": "policy_bias",
+          "value": { "actionKinds": ["heal", "support"], "bonus": 75 }
+        }
+      }
+    ],
+    "interactions": [
+      { "id": "pressure", "counterplay": "focus the healer or deny healing actions" }
+    ],
+    "requirements": [],
+    "properties": ["healer-policy"]
+  },
+  {
+    "id": "base:artillery",
+    "category": "behavior",
+    "name": "Artilharia",
+    "description": "Prioriza ataques de longo alcance e área.",
+    "origin": "base",
+    "activationConditions": ["ranged or area action is available"],
+    "eventsObserved": ["action.select"],
+    "modifiers": [
+      {
+        "id": "ranged-priority",
+        "event": "action.select",
+        "conditions": [],
+        "interactionId": "policy:artillery",
+        "potency": 50,
+        "priority": 100,
+        "effect": {
+          "type": "policy_bias",
+          "value": { "actionKinds": ["ranged", "area"], "bonus": 50 }
+        }
+      }
+    ],
+    "interactions": [
+      { "id": "close-range", "counterplay": "close distance or obstruct line of sight" }
+    ],
+    "requirements": [],
+    "properties": ["artillery-policy"]
+  },
+  {
+    "id": "base:vampiric",
+    "category": "behavior",
+    "name": "Vampírico",
+    "description": "Recupera vida ao causar dano.",
+    "origin": "base",
+    "activationConditions": ["damage is dealt"],
+    "eventsObserved": ["damage.dealt"],
+    "modifiers": [
+      {
+        "id": "lifesteal",
+        "event": "damage.dealt",
+        "conditions": [],
+        "interactionId": "healing:life-steal",
+        "potency": 25,
+        "priority": 100,
+        "effect": { "type": "vampirism", "value": 0.25 }
+      }
+    ],
+    "interactions": [{ "id": "recovery", "counterplay": "deny hits or apply healing suppression" }],
+    "requirements": [],
+    "properties": ["vampiric"]
+  },
+  {
+    "id": "base:volatile",
+    "category": "behavior",
+    "name": "Volátil",
+    "description": "Libera uma explosão quando morre.",
+    "origin": "base",
+    "activationConditions": ["HP and Tenacity reach zero"],
+    "eventsObserved": ["combat.death"],
+    "modifiers": [
+      {
+        "id": "death-burst",
+        "event": "combat.death",
+        "conditions": [],
+        "interactionId": "death:burst",
+        "potency": 100,
+        "priority": 100,
+        "effect": {
+          "type": "death_burst",
+          "value": { "amount": 20, "channel": "magical", "element": "fire", "radius": 1 }
+        }
+      }
+    ],
+    "interactions": [{ "id": "death-burst", "counterplay": "defeat from range or resist fire" }],
+    "requirements": [],
+    "properties": ["volatile"]
+  },
+  {
+    "id": "base:adaptive",
+    "category": "behavior",
+    "name": "Adaptativo",
+    "description": "Ganha resistência temporária ao último canal de dano recebido.",
+    "origin": "base",
+    "activationConditions": ["damage type was received previously"],
+    "eventsObserved": ["damage.incoming"],
+    "modifiers": [
+      {
+        "id": "adapt-last-type",
+        "event": "damage.incoming",
+        "conditions": [
+          { "path": "damage.channel", "op": "eq_field", "value": "defender.lastDamageChannel" }
+        ],
+        "interactionId": "defense:adaptive",
+        "potency": 25,
+        "priority": 100,
+        "effect": { "type": "adaptive_resistance", "value": 0.75 }
+      }
+    ],
+    "interactions": [
+      { "id": "change-damage-type", "counterplay": "switch damage channel or subtype" }
+    ],
+    "requirements": [],
+    "properties": ["adaptive"]
+  }
+]

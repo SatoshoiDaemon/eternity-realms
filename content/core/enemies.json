@@ -1,0 +1,347 @@
+[
+  {
+    "id": "core:quarry-stalker",
+    "kind": "enemy",
+    "name": "Rastreador da Pedreira",
+    "description": "Predador veloz que abre o combate de uma emboscada.",
+    "tags": ["base:beast", "base:fast", "base:ambusher", "base:pack_hunter"],
+    "lootTableId": "core:stalker-drops",
+    "experience": 12,
+    "attributes": {
+      "vigor": 2,
+      "resistance": 1,
+      "speed": 20,
+      "dexterity": 14,
+      "precision": 12,
+      "strength": 8
+    },
+    "hp": { "current": 42, "maximum": 42 },
+    "tenacity": { "current": 0, "maximum": 0 },
+    "energy": {},
+    "equipment": [],
+    "actions": [
+      {
+        "id": "core:stalker-pounce",
+        "name": "Salto de emboscada",
+        "kind": "attack",
+        "target": "enemy",
+        "intervalMs": 700,
+        "accuracy": 0.82,
+        "damage": {
+          "amount": 14,
+          "channel": "physical",
+          "subtype": "piercing",
+          "properties": ["leaping"],
+          "origin": { "kind": "ability", "id": "core:stalker-pounce" }
+        }
+      }
+    ],
+    "effects": [],
+    "policy": { "id": "core:ambusher", "rules": [] },
+    "actionPriority": ["core:stalker-pounce"],
+    "mitigation": { "physical": 0.05, "magical": 0 },
+    "position": { "x": 2, "y": 0 }
+  },
+  {
+    "id": "core:venom-crawler",
+    "kind": "enemy",
+    "name": "Rastejante Venenoso",
+    "description": "Criatura segmentada cuja mordida deixa Veneno ativo durante o combate.",
+    "tags": ["base:beast", "base:segmented", "base:toxic"],
+    "lootTableId": "core:venom-drops",
+    "experience": 15,
+    "attributes": {
+      "vigor": 3,
+      "resistance": 2,
+      "speed": 8,
+      "dexterity": 6,
+      "precision": 8,
+      "strength": 10
+    },
+    "hp": { "current": 55, "maximum": 55 },
+    "tenacity": { "current": 0, "maximum": 0 },
+    "energy": {},
+    "equipment": [],
+    "actions": [
+      {
+        "id": "core:venom-bite",
+        "name": "Mordida venenosa",
+        "kind": "attack",
+        "target": "enemy",
+        "intervalMs": 1100,
+        "accuracy": 0.92,
+        "damage": {
+          "amount": 9,
+          "channel": "physical",
+          "subtype": "piercing",
+          "element": "poison",
+          "properties": ["toxic"],
+          "origin": { "kind": "ability", "id": "core:venom-bite" }
+        },
+        "effects": [
+          {
+            "id": "core:poison",
+            "category": "dot",
+            "potency": 1,
+            "counter": 4,
+            "source": { "kind": "ability", "id": "core:venom-bite" },
+            "tickDamage": { "amount": 3, "channel": "magical", "element": "poison" },
+            "tickIntervalMs": 1000
+          }
+        ]
+      }
+    ],
+    "effects": [],
+    "policy": { "id": "core:venom-hunter", "rules": [] },
+    "actionPriority": ["core:venom-bite"],
+    "mitigation": { "physical": 0.05, "magical": 0.05 },
+    "position": { "x": 1, "y": 1 }
+  },
+  {
+    "id": "core:iron-sentinel",
+    "kind": "enemy",
+    "name": "Sentinela Mineral",
+    "description": "Golem blindado resistente a cortes e vulnerável a esmagamento.",
+    "tags": ["base:construct", "base:mineral", "base:armored", "base:slow", "base:guardian"],
+    "lootTableId": "core:construct-drops",
+    "experience": 25,
+    "attributes": {
+      "vigor": 12,
+      "resistance": 20,
+      "speed": 5,
+      "dexterity": 2,
+      "precision": 7,
+      "strength": 18
+    },
+    "hp": { "current": 180, "maximum": 180 },
+    "tenacity": { "current": 80, "maximum": 80 },
+    "energy": {},
+    "equipment": [],
+    "actions": [
+      {
+        "id": "core:sentinel-slam",
+        "name": "Golpe de bigorna",
+        "kind": "attack",
+        "target": "enemy",
+        "intervalMs": 1500,
+        "accuracy": 0.9,
+        "damage": {
+          "amount": 25,
+          "channel": "physical",
+          "subtype": "crushing",
+          "properties": ["heavy"],
+          "origin": { "kind": "ability", "id": "core:sentinel-slam" }
+        }
+      }
+    ],
+    "effects": [],
+    "policy": {
+      "id": "core:heavy-strike",
+      "rules": [{ "actionId": "core:sentinel-slam", "priority": 10 }]
+    },
+    "actionPriority": ["core:sentinel-slam"],
+    "mitigation": { "physical": 0.25, "magical": 0.1 },
+    "position": { "x": 1, "y": 0 }
+  },
+  {
+    "id": "core:echo-wraith",
+    "kind": "enemy",
+    "name": "Espectro do Eco",
+    "description": "Entidade etérea que exige ataques espirituais, ancoragem ou revelação.",
+    "tags": ["base:ghost", "base:ethereal", "base:undead", "base:fast"],
+    "lootTableId": "core:wraith-drops",
+    "experience": 20,
+    "attributes": {
+      "vigor": 4,
+      "resistance": 8,
+      "speed": 16,
+      "dexterity": 18,
+      "precision": 14,
+      "strength": 9
+    },
+    "hp": { "current": 90, "maximum": 90 },
+    "tenacity": { "current": 0, "maximum": 0 },
+    "energy": {},
+    "equipment": [],
+    "actions": [
+      {
+        "id": "core:wraith-touch",
+        "name": "Toque espectral",
+        "kind": "magic",
+        "target": "enemy",
+        "intervalMs": 900,
+        "accuracy": 0.86,
+        "damage": {
+          "amount": 17,
+          "channel": "magical",
+          "element": "shadow",
+          "properties": ["spiritual"],
+          "origin": { "kind": "ability", "id": "core:wraith-touch" }
+        }
+      }
+    ],
+    "effects": [],
+    "policy": { "id": "core:wraith-hunt", "rules": [] },
+    "actionPriority": ["core:wraith-touch"],
+    "mitigation": { "physical": 0.2, "magical": 0.1 },
+    "position": { "x": 3, "y": 0 },
+    "movementState": "phased"
+  },
+  {
+    "id": "core:rift-arcanist",
+    "kind": "enemy",
+    "name": "Arcanista da Fenda",
+    "description": "Conjurador que ataca com magia à distância e reserva mana para o feitiço mais forte.",
+    "tags": ["base:arcane", "base:caster", "base:artillery", "base:adaptive", "base:summoner"],
+    "lootTableId": "core:arcanist-drops",
+    "experience": 28,
+    "attributes": {
+      "vigor": 4,
+      "resistance": 8,
+      "speed": 9,
+      "dexterity": 7,
+      "precision": 16,
+      "strength": 4,
+      "mana": 30
+    },
+    "hp": { "current": 110, "maximum": 110 },
+    "tenacity": { "current": 0, "maximum": 0 },
+    "energy": { "mana": 30 },
+    "equipment": [],
+    "actions": [
+      {
+        "id": "core:rift-bolt",
+        "name": "Raio de fenda",
+        "kind": "magic",
+        "target": "enemy",
+        "intervalMs": 1200,
+        "accuracy": 0.9,
+        "cost": { "resource": "mana", "amount": 3 },
+        "damage": {
+          "amount": 24,
+          "channel": "magical",
+          "element": "arcane",
+          "properties": ["ranged"],
+          "origin": { "kind": "ability", "id": "core:rift-bolt" }
+        }
+      },
+      {
+        "id": "core:call-rift-wisp",
+        "name": "Invocar espírito da fenda",
+        "kind": "summon",
+        "target": "self",
+        "intervalMs": 1800,
+        "accuracy": 1,
+        "cost": { "resource": "mana", "amount": 8 },
+        "summon": {
+          "id": "core:rift-wisp",
+          "name": "Espírito da fenda",
+          "speciesId": "core:rift-wisp",
+          "tags": ["base:ethereal", "base:arcane"],
+          "attributes": {
+            "vigor": 3,
+            "resistance": 2,
+            "speed": 15,
+            "dexterity": 9,
+            "precision": 11,
+            "strength": 4
+          },
+          "hp": { "current": 30, "maximum": 30 },
+          "tenacity": { "current": 0, "maximum": 0 },
+          "energy": {},
+          "damage": {
+            "amount": 12,
+            "channel": "magical",
+            "element": "arcane",
+            "properties": ["spiritual", "ranged"],
+            "origin": { "kind": "ability", "id": "core:rift-wisp-bolt" }
+          },
+          "intervalMs": 900,
+          "accuracy": 0.86,
+          "mitigation": { "physical": 0.05, "magical": 0.05 },
+          "positionOffset": { "x": -1, "y": 0 }
+        }
+      }
+    ],
+    "effects": [],
+    "policy": {
+      "id": "core:keep-distance",
+      "rules": [{ "actionId": "core:rift-bolt", "priority": 20 }]
+    },
+    "actionPriority": ["core:rift-bolt", "core:call-rift-wisp"],
+    "mitigation": { "physical": 0, "magical": 0.2 },
+    "position": { "x": 4, "y": 0 },
+    "affinityElement": "arcane"
+  },
+  {
+    "id": "core:ashen-sovereign",
+    "kind": "enemy",
+    "name": "Soberano das Cinzas",
+    "description": "Elite dracônico e demoníaco que alterna ataques pesados e fogo.",
+    "tags": [
+      "base:demonic",
+      "base:draconic",
+      "base:armored",
+      "base:colossal",
+      "base:berserker",
+      "base:volatile"
+    ],
+    "lootTableId": "core:sovereign-drops",
+    "experience": 100,
+    "elite": true,
+    "boss": true,
+    "attributes": {
+      "vigor": 24,
+      "resistance": 30,
+      "speed": 10,
+      "dexterity": 8,
+      "precision": 15,
+      "strength": 32
+    },
+    "hp": { "current": 650, "maximum": 650 },
+    "tenacity": { "current": 300, "maximum": 300 },
+    "energy": {},
+    "equipment": [],
+    "actions": [
+      {
+        "id": "core:sovereign-claw",
+        "name": "Garra dracônica",
+        "kind": "attack",
+        "target": "enemy",
+        "intervalMs": 1400,
+        "accuracy": 0.9,
+        "damage": {
+          "amount": 48,
+          "channel": "physical",
+          "subtype": "cutting",
+          "properties": ["antidraconic"],
+          "origin": { "kind": "ability", "id": "core:sovereign-claw" }
+        }
+      },
+      {
+        "id": "core:sovereign-flame",
+        "name": "Sopro das cinzas",
+        "kind": "area",
+        "target": "enemy",
+        "intervalMs": 2400,
+        "accuracy": 0.92,
+        "damage": {
+          "amount": 62,
+          "channel": "magical",
+          "element": "fire",
+          "properties": ["area", "draconic"],
+          "origin": { "kind": "ability", "id": "core:sovereign-flame" }
+        }
+      }
+    ],
+    "effects": [],
+    "policy": {
+      "id": "core:sovereign-fury",
+      "rules": [{ "actionId": "core:sovereign-flame", "priority": 20 }]
+    },
+    "actionPriority": ["core:sovereign-flame", "core:sovereign-claw"],
+    "mitigation": { "physical": 0.4, "magical": 0.3 },
+    "position": { "x": 5, "y": 0 },
+    "affinityElement": "fire"
+  }
+]

@@ -1,3 +1,7 @@
 {
-  "experiencePerLevel": 80
+  "experiencePerLevel": 80,
+  "combat": {
+    "accuracy": 0.9,
+    "intervalMs": 1000
+  }
 }

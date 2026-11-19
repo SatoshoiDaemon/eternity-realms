@@ -9,6 +9,10 @@ import {
   reorderQueuedSession,
 } from './session-engine';
 import { createTestState, newTestSession, testCatalog } from '../test/fixtures';
+import { loadContentPacks } from '../content/registry';
+import { testPack } from '../test/fixtures';
+import { equipConstruction, saveConstruction, unlockNodes } from '../nodes/library';
+import type { NodeGraph } from '../nodes/graph';
 
 describe('universal timed session engine', () => {
   it('starts a declarative activity and awards its saved result once after offline time', () => {
@@ -34,6 +38,190 @@ describe('universal timed session engine', () => {
       'experience.gained',
       'level.increased',
     ]);
+  });
+
+  it('simulates a Dungeon inside the existing session reconciliation and persists unique kill rewards', () => {
+    const combatPack = {
+      manifest: { id: 'test.dungeon', name: 'Test Dungeon', version: '1.0.0' },
+      records: [
+        {
+          id: 'mining',
+          kind: 'activity',
+          name: 'Dungeon',
+          description: '',
+          rewardId: 'empty-reward',
+          category: 'expedition',
+          expeditionId: 'test:foundry',
+        },
+        {
+          id: 'empty-reward',
+          kind: 'reward',
+          name: 'Empty',
+          description: '',
+          experience: 0,
+          items: [],
+        },
+        {
+          id: 'test:relic-drops',
+          kind: 'loot_table',
+          name: 'Relic drops',
+          description: '',
+          guaranteed: [{ itemId: 'iron-ore', quantity: 1 }],
+        },
+        {
+          id: 'test:relic-guardian',
+          kind: 'enemy',
+          name: 'Relic Guardian',
+          description: '',
+          tags: ['base:construct'],
+          lootTableId: 'test:relic-drops',
+          experience: 9,
+          attributes: {
+            vigor: 1,
+            resistance: 1,
+            speed: 1,
+            dexterity: 1,
+            precision: 1,
+            strength: 1,
+          },
+          hp: { current: 3, maximum: 3 },
+          tenacity: { current: 0, maximum: 0 },
+          energy: {},
+          equipment: [],
+          actions: [],
+          effects: [],
+          policy: { id: 'test:idle', rules: [] },
+          actionPriority: [],
+          mitigation: { physical: 0, magical: 0 },
+          position: { x: 1, y: 0 },
+        },
+        {
+          id: 'test:foundry',
+          kind: 'expedition',
+          name: 'Foundry',
+          description: '',
+          activityKind: 'dungeon',
+          spawnIntervalMs: 60_000,
+          deathRewardRetention: 0.25,
+          environment: { type: 'cavern' },
+          encounters: [{ id: 'guardian', enemyId: 'test:relic-guardian', weight: 1 }],
+          nodeUnlocks: ['core:damage'],
+        },
+      ],
+    };
+    const content = loadContentPacks([testPack, combatPack]);
+    const graph: NodeGraph = {
+      schemaVersion: 1,
+      id: 'test:heavy-strike',
+      name: 'Heavy Strike',
+      kind: 'ability',
+      rootId: 'source',
+      glyphIds: [],
+      nodes: [
+        { instanceId: 'source', definitionId: 'core:source-caster', children: ['type'] },
+        { instanceId: 'type', definitionId: 'core:type-true', children: ['form'] },
+        { instanceId: 'form', definitionId: 'core:form-weapon-strike', children: ['effect'] },
+        {
+          instanceId: 'effect',
+          definitionId: 'core:effect-damage',
+          children: [],
+          parameters: { amount: 50 },
+        },
+      ],
+    };
+    const hero = createTestState().character!;
+    const preparedHero = equipConstruction(
+      saveConstruction(
+        unlockNodes(
+          hero,
+          graph.nodes.map((node) => node.definitionId),
+        ),
+        graph,
+        0,
+      ),
+      graph.id,
+    );
+    const state = {
+      ...createTestState(),
+      character: preparedHero,
+      combatRecords: undefined as unknown as GameState['combatRecords'],
+    };
+    const started = enqueueSession(state, newTestSession('dungeon', 1_000), content, 0);
+    const completed = reconcileSessions(started, 1_000, content);
+    const record = (
+      completed as GameState & {
+        combatRecords?: Array<{
+          kills: number;
+          experience: number;
+          drops: Array<{ rewardId: string }>;
+        }>;
+      }
+    ).combatRecords?.[0];
+    const reopened = reconcileSessions(completed, 86_401_000, content);
+
+    expect(record).toMatchObject({ kills: 1, experience: 9 });
+    expect(
+      (record as NonNullable<GameState['combatRecords']>[number] | undefined)?.combats[0]?.log.find(
+        (entry) => entry.actorId === 'player:character-1',
+      )?.actionId,
+    ).toBe(graph.id);
+    expect(record?.drops).toHaveLength(1);
+    expect(completed.character?.inventory['iron-ore']).toBe(1);
+    expect(completed.character?.nodeLibrary?.unlockedNodeIds).toContain('core:damage');
+    expect(completed.events.some((event) => event.type === 'expedition.completed')).toBe(true);
+    expect(reopened.character).toEqual(completed.character);
+    expect((reopened as GameState & { combatRecords?: unknown[] }).combatRecords).toEqual(
+      (completed as GameState & { combatRecords?: unknown[] }).combatRecords,
+    );
+
+    const repeatedRecord = reconcileSessions(
+      {
+        ...started,
+        combatRecords: (
+          completed as GameState & { combatRecords?: NonNullable<GameState['combatRecords']> }
+        ).combatRecords,
+      },
+      1_000,
+      content,
+    );
+    expect(repeatedRecord.combatRecords).toHaveLength(1);
+    const retainedRecords = reconcileSessions(
+      {
+        ...started,
+        combatRecords: [{ id: 'older-run' } as NonNullable<GameState['combatRecords']>[number]],
+      },
+      1_000,
+      content,
+    );
+    expect(retainedRecords.combatRecords).toHaveLength(2);
+    const withoutExpedition = { ...content, expeditions: new Map(content.expeditions) };
+    withoutExpedition.expeditions.delete('test:foundry');
+    expect(() => reconcileSessions(started, 1_000, withoutExpedition)).toThrow(
+      'Unknown expedition: test:foundry',
+    );
+
+    const legacyCharacter = {
+      ...createTestState().character!,
+      nodeLibrary: undefined,
+    };
+    const legacyState = { ...createTestState(), character: legacyCharacter };
+    const legacyStarted = enqueueSession(
+      legacyState,
+      newTestSession('legacy-build', 1_000),
+      content,
+      0,
+    );
+    expect(() => reconcileSessions(legacyStarted, 1_000, content)).not.toThrow();
+  });
+
+  it('initializes combat history for legacy saves without a record field', () => {
+    const initial = {
+      ...createTestState(),
+      combatRecords: undefined as unknown as GameState['combatRecords'],
+    };
+    const started = enqueueSession(initial, newTestSession('legacy', 100), testCatalog, 0);
+    const completed = reconcileSessions(started, 100, testCatalog);
+    expect(completed.combatRecords).toEqual([]);
   });
 
   it('accepts five total active and queued sessions and rejects a sixth', () => {

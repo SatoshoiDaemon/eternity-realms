@@ -1,3 +1,6 @@
+import type { CombatState } from '../combat/types';
+import type { LootDrop } from '../combat/loot';
+
 export interface PhysicalAttributes {
   vigor: number;
   resistance: number;
@@ -30,12 +33,29 @@ export interface Character {
   };
   inventory: Record<string, number>;
   abilities: string[];
+  /** Optional for backward compatibility with saves created before construction editing. */
+  nodeLibrary?: NodeLibrary;
   skills: Record<
     string,
     { level: number; experience: number; extensions: Record<string, unknown> }
   >;
   activityState: 'idle' | 'active';
   extensions: Record<string, unknown>;
+}
+
+export interface SavedConstruction {
+  id: string;
+  graph: import('../nodes/graph').NodeGraph;
+  equipped: boolean;
+  updatedAt: number;
+}
+
+export interface NodeLibrary {
+  schemaVersion: 1;
+  unlockedNodeIds: string[];
+  constructions: SavedConstruction[];
+  /** User-selected order for equipped constructions; absent on older saves. */
+  actionPriority?: string[];
 }
 
 export type SessionStatus = 'queued' | 'active' | 'completed' | 'cancelled';
@@ -63,7 +83,30 @@ export type DomainEvent =
   | (EventBase & { type: 'reward.granted'; sessionId: string; rewardId: string })
   | (EventBase & { type: 'experience.gained'; amount: number })
   | (EventBase & { type: 'level.increased'; level: number })
-  | (EventBase & { type: 'item.acquired'; itemId: string; quantity: number });
+  | (EventBase & { type: 'item.acquired'; itemId: string; quantity: number })
+  | (EventBase & {
+      type: 'expedition.completed';
+      sessionId: string;
+      expeditionId: string;
+      kills: number;
+      deaths: number;
+    })
+  | (EventBase & { type: 'node.unlocked'; nodeId: string; sessionId: string });
+
+export interface ExpeditionCombatRecord {
+  id: string;
+  sessionId: string;
+  expeditionId: string;
+  seed: number;
+  kills: number;
+  deaths: number;
+  experience: number;
+  drops: LootDrop[];
+  unlockedNodeIds: string[];
+  virtualDurationMs: number;
+  combats: CombatState[];
+  completedAt: number;
+}
 
 export interface GameState {
   schemaVersion: 1;
@@ -74,4 +117,6 @@ export interface GameState {
   queue: string[];
   events: DomainEvent[];
   processedEventIds: string[];
+  /** Added without changing schemaVersion; older saves hydrate as an empty list. */
+  combatRecords?: ExpeditionCombatRecord[];
 }

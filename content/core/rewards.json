@@ -14,5 +14,21 @@
     "description": "Recompensa provisória, configurada como conteúdo.",
     "experience": 10,
     "items": [{ "itemId": "wild-herb", "quantity": 1 }]
+  },
+  {
+    "id": "expedition-entry",
+    "kind": "reward",
+    "name": "Recompensa da expedição",
+    "description": "A experiência e os itens da Dungeon são gerados pelos encontros resolvidos.",
+    "experience": 0,
+    "items": []
+  },
+  {
+    "id": "raid-entry",
+    "kind": "reward",
+    "name": "Recompensa da Raid",
+    "description": "A experiência e os itens vêm da resolução do encontro com o chefe.",
+    "experience": 0,
+    "items": []
   }
 ]

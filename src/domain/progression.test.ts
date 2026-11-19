@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { awardExperience, grantItems } from './progression';
+import { awardExperience, grantItems, grantLootDrops } from './progression';
 import { createTestState } from '../test/fixtures';
 
 describe('character progression', () => {
@@ -74,6 +74,44 @@ describe('character progression', () => {
         { ...character, inventory: { 'iron-ore': Number.MAX_SAFE_INTEGER } },
         { 'iron-ore': 1 },
       ),
+    ).toThrow('Inventory quantity exceeds the safe integer range for item: iron-ore');
+  });
+
+  it('grants combat loot once by unique kill reward id', () => {
+    const character = createTestState().character!;
+    const drops = [
+      {
+        rewardId: 'session:kill:1:table:guaranteed:0',
+        itemId: 'iron-ore',
+        quantity: 2,
+        sourceTableId: 'table',
+      },
+      {
+        rewardId: 'session:kill:2:table:guaranteed:0',
+        itemId: 'wild-herb',
+        quantity: 1,
+        sourceTableId: 'table',
+      },
+    ];
+    const first = grantLootDrops(character, drops);
+    const repeated = grantLootDrops(
+      first.character,
+      drops,
+      new Set(first.events.map((event) => event.id)),
+    );
+
+    expect(first.character.inventory).toMatchObject({ 'iron-ore': 2, 'wild-herb': 1 });
+    expect(first.events.map((event) => event.id)).toEqual(drops.map((drop) => drop.rewardId));
+    expect(repeated.character).toEqual(first.character);
+    expect(repeated.events).toEqual([]);
+    expect(() => grantLootDrops(character, [{ ...drops[0]!, quantity: 0 }])).toThrow();
+    expect(() =>
+      grantLootDrops(character, [drops[0]!, { ...drops[0]!, itemId: 'wild-herb' }]),
+    ).toThrow('Loot reward ids must be unique.');
+    expect(() =>
+      grantLootDrops({ ...character, inventory: { 'iron-ore': Number.MAX_SAFE_INTEGER } }, [
+        drops[0]!,
+      ]),
     ).toThrow('Inventory quantity exceeds the safe integer range for item: iron-ore');
   });
 });
