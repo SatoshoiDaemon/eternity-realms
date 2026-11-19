@@ -1,12 +1,12 @@
 package com.satoshidaemon.eternityrealms;
 
 import android.content.Context;
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 import androidx.annotation.NonNull;
 import androidx.work.Worker;
 import androidx.work.WorkerParameters;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
@@ -16,7 +16,7 @@ import org.json.JSONObject;
 
 public class AutomaticBackupWorker extends Worker {
     private static final String PREFERENCES = "eternity-realms-backups";
-    private static final String DATABASE_FILE = "eternity-realmsSQLite.db";
+    private static final String SNAPSHOT_FILE = "latest-save.json";
 
     public AutomaticBackupWorker(@NonNull Context context, @NonNull WorkerParameters parameters) {
         super(context, parameters);
@@ -25,33 +25,20 @@ public class AutomaticBackupWorker extends Worker {
     @NonNull
     @Override
     public Result doWork() {
-        File databaseFile = getApplicationContext().getDatabasePath(DATABASE_FILE);
-        if (!databaseFile.isFile()) return Result.success();
-
-        String payload;
-        try (SQLiteDatabase database = SQLiteDatabase.openDatabase(
-            databaseFile.getAbsolutePath(),
-            null,
-            SQLiteDatabase.OPEN_READONLY
-        )) {
-            try (Cursor cursor = database.rawQuery(
-                "SELECT payload FROM game_state WHERE id = 'main' LIMIT 1",
-                null
-            )) {
-                if (!cursor.moveToFirst()) return Result.success();
-                payload = cursor.getString(0);
-            }
-        } catch (Exception error) {
-            return Result.retry();
-        }
-
         try {
             Context context = getApplicationContext();
+            File snapshot = new File(context.getFilesDir(), SNAPSHOT_FILE);
+            if (!snapshot.isFile()) return Result.success();
+            String payload = readSnapshot(snapshot);
             long exportedAt = System.currentTimeMillis();
             JSONObject gameState = new JSONObject(payload);
             JSONObject envelope = new JSONObject();
             envelope.put("formatVersion", 1);
-            envelope.put("applicationVersion", BuildConfig.VERSION_NAME);
+            envelope.put(
+                "applicationVersion",
+                context.getSharedPreferences(PREFERENCES, 0)
+                    .getString("applicationVersion", BuildConfig.VERSION_NAME)
+            );
             envelope.put("databaseVersion", 2);
             envelope.put("exportedAt", exportedAt);
             envelope.put("modDependencies", readModDependencies(context));
@@ -75,6 +62,16 @@ public class AutomaticBackupWorker extends Worker {
         } catch (Exception error) {
             return Result.retry();
         }
+    }
+
+    private String readSnapshot(File file) throws Exception {
+        ByteArrayOutputStream output = new ByteArrayOutputStream();
+        try (FileInputStream stream = new FileInputStream(file)) {
+            byte[] buffer = new byte[8_192];
+            int count;
+            while ((count = stream.read(buffer)) != -1) output.write(buffer, 0, count);
+        }
+        return new String(output.toByteArray(), StandardCharsets.UTF_8);
     }
 
     private JSONArray readModDependencies(Context context) {

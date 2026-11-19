@@ -13,6 +13,7 @@ interface BackupSchedulerPlugin {
     retention: number;
   }): Promise<unknown>;
   setMetadata(options: { applicationVersion: string; modDependencies: string }): Promise<void>;
+  setSnapshot(options: { payload: string }): Promise<void>;
   writeBackup(options: { payload: string }): Promise<{ id: string; createdAt: number }>;
   listBackups(): Promise<{ backups: BackupSummary[] }>;
   readBackup(options: { id: string }): Promise<{ payload: string }>;
@@ -41,6 +42,11 @@ export async function setBackupMetadata(
     applicationVersion,
     modDependencies: JSON.stringify(modDependencies),
   });
+}
+
+export async function setBackupSnapshot(payload: string): Promise<void> {
+  if (!isNativeBackupAvailable()) return;
+  await BackupScheduler.setSnapshot({ payload });
 }
 
 export async function writeNativeBackup(payload: string): Promise<BackupSummary> {

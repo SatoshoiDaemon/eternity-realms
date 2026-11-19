@@ -163,6 +163,52 @@ describe('Capacitor SQLite bootstrap', () => {
     expect(failure.createConnection).toHaveBeenCalledTimes(2);
   });
 
+  it('retries transient SQLite locked errors while opening the database', async () => {
+    const db = createDb();
+    const connection = createConnection(db);
+    vi.mocked(connection.isConnection)
+      .mockResolvedValueOnce({ result: false })
+      .mockResolvedValue({ result: true });
+    vi.mocked(db.open)
+      .mockRejectedValueOnce(new Error('database is locked while compiling: PRAGMA journal_mode'))
+      .mockResolvedValue(undefined);
+
+    await expect(
+      openCapacitorRepository({ platform: 'android', connection, document, window }),
+    ).resolves.toBeDefined();
+
+    expect(connection.createConnection).toHaveBeenCalledOnce();
+    expect(connection.retrieveConnection).toHaveBeenCalledOnce();
+    expect(db.open).toHaveBeenCalledTimes(2);
+  });
+
+  it('does not retry other SQLite startup failures across native error shapes', async () => {
+    const errors: unknown[] = [
+      'native plugin unavailable',
+      { message: 'native plugin unavailable' },
+      { code: 5 },
+      null,
+      5,
+    ];
+
+    for (const [index, error] of errors.entries()) {
+      const db = createDb();
+      const connection = createConnection(db);
+      vi.mocked(connection.isConnection).mockResolvedValue({ result: false });
+      vi.mocked(db.open).mockRejectedValueOnce(error);
+
+      await expect(
+        openCapacitorRepository({
+          platform: `android-error-${index}`,
+          connection,
+          document,
+          window,
+        }),
+      ).rejects.toBe(error);
+      expect(db.open).toHaveBeenCalledOnce();
+    }
+  });
+
   it('uses Capacitor defaults when platform and connection are not supplied', async () => {
     vi.spyOn(Capacitor, 'getPlatform').mockReturnValue('android');
 

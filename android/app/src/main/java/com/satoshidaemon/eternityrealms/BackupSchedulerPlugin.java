@@ -1,5 +1,6 @@
 package com.satoshidaemon.eternityrealms;
 
+import android.system.Os;
 import androidx.work.ExistingPeriodicWorkPolicy;
 import androidx.work.PeriodicWorkRequest;
 import androidx.work.WorkManager;
@@ -76,6 +77,28 @@ public class BackupSchedulerPlugin extends Plugin {
             .putString("modDependencies", modDependencies)
             .apply();
         call.resolve();
+    }
+
+    @PluginMethod
+    public synchronized void setSnapshot(PluginCall call) {
+        String payload = call.getString("payload");
+        if (payload == null) {
+            call.reject("O conteúdo do save está ausente.");
+            return;
+        }
+        try {
+            new JSONObject(payload);
+            File destination = new File(getContext().getFilesDir(), "latest-save.json");
+            File temporary = new File(getContext().getFilesDir(), "latest-save.json.tmp");
+            try (FileOutputStream stream = new FileOutputStream(temporary)) {
+                stream.write(payload.getBytes(StandardCharsets.UTF_8));
+                stream.getFD().sync();
+            }
+            Os.rename(temporary.getAbsolutePath(), destination.getAbsolutePath());
+            call.resolve();
+        } catch (Exception error) {
+            call.reject("Não foi possível atualizar o save do backup automático.", error);
+        }
     }
 
     @PluginMethod

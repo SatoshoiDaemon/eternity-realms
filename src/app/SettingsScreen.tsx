@@ -104,7 +104,7 @@ const themeOptions: Array<{
   {
     id: 'tokyo-night',
     label: t('settings.theme.tokyo'),
-    colors: ['#1a1b26', '#bb9af7', '#7aa2f7', '#9ece6a'],
+    colors: ['#1a1b26', '#7aa2f7', '#7dcfff', '#9ece6a'],
   },
   {
     id: 'monochrome',
