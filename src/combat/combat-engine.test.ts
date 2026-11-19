@@ -156,6 +156,108 @@ describe('deterministic event combat', () => {
     });
   });
 
+  it('resolves area attacks against every living target with independent logs and rolls', () => {
+    const areaStrike: CombatAction = {
+      ...strike,
+      id: 'base:wide-strike',
+      kind: 'area',
+      properties: [],
+    };
+    const result = advanceCombat(
+      createCombatState(
+        'area-group',
+        [
+          actor('hero', 'party', { actions: [areaStrike], actionPriority: [areaStrike.id] }),
+          actor('a-swarm', 'enemy', { tags: ['base:swarm'] }),
+          actor('b-swarm', 'enemy', { tags: ['base:swarm'] }),
+        ],
+        15,
+      ),
+      1,
+    );
+    const hits = result.log.filter((entry) => entry.actorId === 'hero');
+
+    expect(hits.map((entry) => entry.targetId)).toEqual(['a-swarm', 'b-swarm']);
+    expect(hits.map((entry) => entry.damageFinal)).toEqual([60, 60]);
+    expect(
+      result.actors.filter((entry) => entry.side === 'enemy').map((entry) => entry.hp.current),
+    ).toEqual([40, 40]);
+  });
+
+  it('applies an area action to the configured ally group or its explicit self target', () => {
+    const allyArea: CombatAction = {
+      ...strike,
+      id: 'base:ally-area',
+      kind: 'area',
+      target: 'ally',
+    };
+    const allyResult = advanceCombat(
+      createCombatState(
+        'ally-area',
+        [
+          actor('hero', 'party', { actions: [allyArea], actionPriority: [allyArea.id] }),
+          actor('support', 'party', { actions: [] }),
+          actor('foe', 'enemy', { actions: [] }),
+        ],
+        16,
+      ),
+      1,
+    );
+    expect(
+      allyResult.log.filter((entry) => entry.actorId === 'hero').map((entry) => entry.targetId),
+    ).toEqual(['support']);
+    expect(allyResult.actors.find((entry) => entry.id === 'foe')?.hp.current).toBe(100);
+
+    const selfArea: CombatAction = { ...allyArea, id: 'base:self-area', target: 'self' };
+    const selfResult = advanceCombat(
+      createCombatState(
+        'self-area',
+        [
+          actor('hero', 'party', { actions: [selfArea], actionPriority: [selfArea.id] }),
+          actor('foe', 'enemy', { actions: [] }),
+        ],
+        17,
+      ),
+      1,
+    );
+    expect(selfResult.log.find((entry) => entry.actorId === 'hero')?.targetId).toBe('hero');
+    expect(selfResult.actors.find((entry) => entry.id === 'hero')?.hp.current).toBe(60);
+  });
+
+  it('skips area targets killed by an earlier death-trigger in the same action', () => {
+    const areaStrike: CombatAction = {
+      ...strike,
+      id: 'base:volatile-area',
+      kind: 'area',
+    };
+    const volatile = actor('a-volatile', 'enemy', {
+      tags: ['base:volatile'],
+      hp: { current: 20, maximum: 20 },
+      position: { x: 1, y: 0 },
+    });
+    const burstTarget = actor('b-burst-target', 'enemy', {
+      hp: { current: 20, maximum: 20 },
+      position: { x: 2, y: 0 },
+    });
+    const result = advanceCombat(
+      createCombatState(
+        'area-death-trigger',
+        [
+          actor('hero', 'party', { actions: [areaStrike], actionPriority: [areaStrike.id] }),
+          volatile,
+          burstTarget,
+        ],
+        18,
+      ),
+      1,
+    );
+
+    expect(result.actors.find((entry) => entry.id === 'b-burst-target')?.state).toBe('dead');
+    expect(
+      result.log.filter((entry) => entry.actorId === 'hero').map((entry) => entry.targetId),
+    ).toEqual(['a-volatile']);
+  });
+
   it('splits damage between HP and Tenacity and only dies after both are depleted', () => {
     const heavyStrike = { ...strike, damage: { ...strike.damage!, amount: 160 } };
     const result = advanceCombat(

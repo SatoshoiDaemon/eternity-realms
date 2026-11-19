@@ -302,25 +302,7 @@ function targetFor(
       (candidate) =>
         candidate.state === 'alive' &&
         (allies ? candidate.side === actor.side : candidate.side !== actor.side) &&
-        (allies ||
-          candidate.movementState !== 'fleeing' ||
-          evaluateTagEffects(
-            actor.tags,
-            'targeting.check',
-            {
-              actor: actorView(actor, actors),
-              target: actorView(candidate, actors),
-              action,
-              environment: {},
-            },
-            tagRegistry,
-          ).some(
-            (effect) =>
-              effect.type === 'targeting_modifier' &&
-              typeof effect.value === 'object' &&
-              effect.value !== null &&
-              (effect.value as { trackFleeing?: unknown }).trackFleeing === true,
-          )) &&
+        (allies || canTrackFleeingTarget(actor, candidate, actors, action, tagRegistry)) &&
         (action.target !== 'ally' || candidate.id !== actor.id),
     )
     .sort((left, right) => left.id.localeCompare(right.id));
@@ -359,6 +341,59 @@ function targetFor(
       ).some((effect) => effect.type === 'intercept_ally' && effect.value === true),
     );
   return interceptor ?? selected;
+}
+
+function canTrackFleeingTarget(
+  actor: CombatActor,
+  target: CombatActor,
+  actors: CombatActor[],
+  action: CombatAction,
+  tagRegistry?: EnemyTagDefinition[],
+): boolean {
+  if (target.movementState !== 'fleeing') return true;
+  return evaluateTagEffects(
+    actor.tags,
+    'targeting.check',
+    {
+      actor: actorView(actor, actors),
+      target: actorView(target, actors),
+      action,
+      environment: {},
+    },
+    tagRegistry,
+  ).some(
+    (effect) =>
+      effect.type === 'targeting_modifier' &&
+      typeof effect.value === 'object' &&
+      effect.value !== null &&
+      (effect.value as { trackFleeing?: unknown }).trackFleeing === true,
+  );
+}
+
+function isAreaAction(action: CombatAction): boolean {
+  return action.kind === 'area' || actionProperties(action).includes('area');
+}
+
+function areaTargets(
+  action: CombatAction,
+  actor: CombatActor,
+  actors: CombatActor[],
+  tagRegistry?: EnemyTagDefinition[],
+): CombatActor[] {
+  if (action.target === 'self') return [actor];
+  const allies = action.target === 'ally' || action.target === 'lowest_ally_hp';
+  return actors
+    .filter(
+      (candidate) =>
+        candidate.state === 'alive' &&
+        (allies
+          ? candidate.side === actor.side && candidate.id !== actor.id
+          : candidate.side !== actor.side),
+    )
+    .filter(
+      (candidate) => allies || canTrackFleeingTarget(actor, candidate, actors, action, tagRegistry),
+    )
+    .sort((left, right) => left.id.localeCompare(right.id));
 }
 
 function conditionContext(
@@ -776,7 +811,13 @@ function applyEnvironmentalEffects(state: CombatState, actor: CombatActor): stri
 }
 
 function actionProperties(action: CombatAction): string[] {
-  return [...new Set([...(action.properties ?? []), ...(action.damage?.properties ?? [])])];
+  return [
+    ...new Set([
+      ...(action.kind === 'area' ? ['area'] : []),
+      ...(action.properties ?? []),
+      ...(action.damage?.properties ?? []),
+    ]),
+  ];
 }
 
 function isTargetBlocked(
@@ -1362,6 +1403,61 @@ function processStatusTicks(state: CombatState, atMs: number): void {
   }
 }
 
+function resolveDamageAction(
+  state: CombatState,
+  actor: CombatActor,
+  target: CombatActor,
+  action: DamagingCombatAction,
+  resourceChanges: CombatLogEntry['resourceChanges'],
+  environmentalTags: string[],
+): Omit<CombatLogEntry, 'id' | 'timeMs' | 'actorId' | 'targetId' | 'actionId' | 'kind'> {
+  const blocked = isTargetBlocked(target, action, actor, state.tagRegistry);
+  if (blocked.length > 0) {
+    return {
+      hit: false,
+      evaded: false,
+      blocked: true,
+      damageInitial: action.damage.amount,
+      damageFinal: 0,
+      modifiers: [],
+      tagInteractions: interactionLogs(blocked),
+      resourceChanges,
+      effectsApplied: environmentalTags,
+      killed: false,
+      message: `${target.name} não pode ser alcançado por esta ação.`,
+    };
+  }
+  const result = rollAttack(state, actor, target, action);
+  if (!result.hit || result.evaded) {
+    return {
+      hit: result.hit,
+      evaded: result.evaded,
+      blocked: false,
+      damageInitial: action.damage.amount,
+      damageFinal: 0,
+      modifiers: [],
+      tagInteractions: [],
+      resourceChanges,
+      effectsApplied: environmentalTags,
+      killed: false,
+      message: result.evaded
+        ? `${target.name} desvia de ${action.name}.`
+        : `${action.name} erra ${target.name}.`,
+    };
+  }
+  const entry = applyDamage(state, actor, target, action);
+  entry.resourceChanges.push(...resourceChanges);
+  entry.effectsApplied.push(...environmentalTags);
+  runEffects(state, actor, target, action, entry);
+  if (action.movement) {
+    const movement = applyMovement(state, actor, target, action.movement);
+    entry.message += ` ${movement.message}`;
+    entry.effectsApplied.push(movement.effect);
+    entry.tagInteractions.push(...movement.tagInteractions);
+  }
+  return entry;
+}
+
 function processAction(state: CombatState, actor: CombatActor): void {
   const environmentalTags = applyEnvironmentalEffects(state, actor);
   const selected = chooseAction(actor, state.actors, state.tagRegistry);
@@ -1393,6 +1489,51 @@ function processAction(state: CombatState, actor: CombatActor): void {
     const after = before - action.cost.amount;
     actor.energy[action.cost.resource] = after;
     resourceChanges.push({ actorId: actor.id, resource: action.cost.resource, before, after });
+  }
+  if (action.damage) {
+    const damagingAction: DamagingCombatAction = { ...action, damage: action.damage };
+    const targets = isAreaAction(action)
+      ? areaTargets(action, actor, state.actors, state.tagRegistry)
+      : [target];
+    let firstEntry:
+      | Omit<CombatLogEntry, 'id' | 'timeMs' | 'actorId' | 'targetId' | 'actionId' | 'kind'>
+      | undefined;
+    for (const targetActor of targets) {
+      if (targetActor.state !== 'alive') continue;
+      const includeCastState = firstEntry === undefined;
+      const targetEntry = resolveDamageAction(
+        state,
+        actor,
+        targetActor,
+        damagingAction,
+        includeCastState ? resourceChanges : [],
+        includeCastState ? environmentalTags : [],
+      );
+      const actionLog = createLog(state, {
+        ...targetEntry,
+        timeMs: state.nowMs,
+        kind: 'attack',
+        actorId: actor.id,
+        targetId: targetActor.id,
+        actionId: action.id,
+      });
+      if (targetEntry.hit && !targetEntry.evaded && !targetEntry.blocked) {
+        processDamageReactions(state, actor, targetActor, damagingAction, targetEntry, actionLog);
+      }
+      if (targetEntry.killed) triggerDeathBurst(state, targetActor);
+      if (targetEntry.evaded || targetEntry.blocked) {
+        runCounterattack(
+          state,
+          targetActor,
+          actor,
+          targetEntry.blocked ? 'attack.blocked' : 'attack.evaded',
+        );
+      }
+      firstEntry ??= targetEntry;
+    }
+    actor.actionsTaken = (actor.actionsTaken ?? 0) + 1;
+    scheduleNext(state, actor, action);
+    return;
   }
   let entry: Omit<CombatLogEntry, 'id' | 'timeMs' | 'actorId' | 'targetId' | 'actionId' | 'kind'>;
   if (action.kind === 'heal' || action.kind === 'support') {
@@ -1468,54 +1609,6 @@ function processAction(state: CombatState, actor: CombatActor): void {
       killed: false,
       message: `${actor.name} invoca ${summoned.name}.`,
     };
-  } else if (action.damage) {
-    const damagingAction: DamagingCombatAction = { ...action, damage: action.damage };
-    const blocked = isTargetBlocked(target, damagingAction, actor, state.tagRegistry);
-    if (blocked.length > 0) {
-      entry = {
-        hit: false,
-        evaded: false,
-        blocked: true,
-        damageInitial: action.damage.amount,
-        damageFinal: 0,
-        modifiers: [],
-        tagInteractions: interactionLogs(blocked),
-        resourceChanges,
-        effectsApplied: environmentalTags,
-        killed: false,
-        message: `${target.name} não pode ser alcançado por esta ação.`,
-      };
-    } else {
-      const result = rollAttack(state, actor, target, damagingAction);
-      if (!result.hit || result.evaded) {
-        entry = {
-          hit: result.hit,
-          evaded: result.evaded,
-          blocked: false,
-          damageInitial: action.damage.amount,
-          damageFinal: 0,
-          modifiers: [],
-          tagInteractions: [],
-          resourceChanges,
-          effectsApplied: environmentalTags,
-          killed: false,
-          message: result.evaded
-            ? `${target.name} desvia de ${action.name}.`
-            : `${action.name} erra ${target.name}.`,
-        };
-      } else {
-        entry = applyDamage(state, actor, target, action);
-        entry.resourceChanges.push(...resourceChanges);
-        entry.effectsApplied.push(...environmentalTags);
-        runEffects(state, actor, target, action, entry);
-        if (action.movement) {
-          const movement = applyMovement(state, actor, target, action.movement);
-          entry.message += ` ${movement.message}`;
-          entry.effectsApplied.push(movement.effect);
-          entry.tagInteractions.push(...movement.tagInteractions);
-        }
-      }
-    }
   } else {
     entry = {
       hit: true,
@@ -1538,7 +1631,7 @@ function processAction(state: CombatState, actor: CombatActor): void {
     }
     runEffects(state, actor, target, action, entry);
   }
-  const actionLog = createLog(state, {
+  createLog(state, {
     ...entry,
     timeMs: state.nowMs,
     kind:
@@ -1551,19 +1644,6 @@ function processAction(state: CombatState, actor: CombatActor): void {
     targetId: target.id,
     actionId: action.id,
   });
-  if (action.damage && entry.hit && !entry.evaded && !entry.blocked) {
-    processDamageReactions(
-      state,
-      actor,
-      target,
-      { ...action, damage: action.damage },
-      entry,
-      actionLog,
-    );
-  }
-  if (entry.killed) triggerDeathBurst(state, target);
-  if (entry.evaded || entry.blocked)
-    runCounterattack(state, target, actor, entry.blocked ? 'attack.blocked' : 'attack.evaded');
   actor.actionsTaken = (actor.actionsTaken ?? 0) + 1;
   scheduleNext(state, actor, action);
 }
