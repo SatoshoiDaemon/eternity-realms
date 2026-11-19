@@ -15,6 +15,9 @@ const nativeMocks = vi.hoisted(() => ({
   native: false,
   configure: vi.fn(async () => undefined),
   setMetadata: vi.fn(async () => undefined),
+  setSnapshot: vi.fn(async ({ payload }: { payload: string }) => {
+    if (!payload) return;
+  }),
   writeBackup: vi.fn(async () => ({ id: 'manual-1.json', createdAt: 1_000 })),
   listBackups: vi.fn(async () => ({
     backups: [{ id: 'manual-1.json', createdAt: 1_000, characterName: 'Aria', automatic: false }],
@@ -23,7 +26,13 @@ const nativeMocks = vi.hoisted(() => ({
   cancelNotifications: vi.fn(async () => undefined),
   scheduleNotifications: vi.fn(
     async (request: {
-      notifications: Array<{ id: number; title: string; body: string; schedule: { at: Date } }>;
+      notifications: Array<{
+        id: number;
+        title: string;
+        body: string;
+        isExactNotification?: boolean;
+        schedule: { at: Date };
+      }>;
     }) => request.notifications.map(({ id }) => id),
   ),
   checkPermissions: vi.fn(async () => ({ display: 'denied' })),
@@ -37,6 +46,7 @@ vi.mock('@capacitor/core', () => ({
   registerPlugin: () => ({
     configure: nativeMocks.configure,
     setMetadata: nativeMocks.setMetadata,
+    setSnapshot: nativeMocks.setSnapshot,
     writeBackup: nativeMocks.writeBackup,
     listBackups: nativeMocks.listBackups,
     readBackup: nativeMocks.readBackup,
@@ -193,6 +203,37 @@ afterEach(() => {
 });
 
 describe('Eternity Realms navigation and play flow', () => {
+  it('keeps every main destination usable before a character is created', async () => {
+    await mountApp({ state: createInitialGameState() });
+
+    expect(screen.getByRole('heading', { name: 'Crie seu personagem' })).toBeInTheDocument();
+    tab('Atividades');
+    expect(
+      await screen.findByRole('heading', { name: 'Atividades e sessões' }),
+    ).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Adicionar sessão' })).toBeDisabled();
+
+    tab('Combate');
+    expect(
+      await screen.findByRole('heading', { name: 'Combate e exploração' }),
+    ).toBeInTheDocument();
+    expect(await screen.findByRole('heading', { name: 'Expedições' })).toBeInTheDocument();
+    fireEvent.click(screen.getByRole('tab', { name: 'Arena' }));
+    expect(
+      screen.getByText('Crie um personagem na tela Início para acessar os sistemas de personagem.'),
+    ).toBeInTheDocument();
+    fireEvent.click(screen.getByRole('tab', { name: 'Bestiário' }));
+    expect(screen.getByRole('heading', { name: 'Bestiário' })).toBeInTheDocument();
+
+    tab('Missões');
+    expect(screen.getByRole('heading', { name: 'Missões' })).toBeInTheDocument();
+    tab('Personagem');
+    expect(
+      screen.getByText('Crie um personagem na tela Início para acessar os sistemas de personagem.'),
+    ).toBeInTheDocument();
+    expect(screen.getByRole('navigation', { name: 'Navegação principal' })).toBeInTheDocument();
+  });
+
   it('renders an icon fallback and the complete activity category set', async () => {
     const categorized = loadContentPacks([
       {
@@ -692,6 +733,10 @@ describe('Eternity Realms navigation and play flow', () => {
   });
 
   it('checkpoints active sessions and reconciles when the app returns to the foreground', async () => {
+    nativeMocks.native = true;
+    nativeMocks.setSnapshot
+      .mockRejectedValueOnce('snapshot service unavailable')
+      .mockRejectedValueOnce(new Error('snapshot storage unavailable'));
     vi.useFakeTimers();
     let now = 1_000;
     const state = gameWithCharacter();
@@ -709,13 +754,13 @@ describe('Eternity Realms navigation and play flow', () => {
     ];
     state.queue = ['foreground-session'];
     const repository = new MemoryRepository(state);
+    const storage = new MemoryStorage();
+    storage.setItem(
+      DEVICE_SETTINGS_KEY,
+      JSON.stringify({ backup: { frequency: 'daily', retention: 7 } }),
+    );
     const view = render(
-      <GameApp
-        repository={repository}
-        content={testCatalog}
-        clock={() => now}
-        storage={new MemoryStorage()}
-      />,
+      <GameApp repository={repository} content={testCatalog} clock={() => now} storage={storage} />,
     );
     await act(async () => {
       await Promise.resolve();
@@ -723,6 +768,8 @@ describe('Eternity Realms navigation and play flow', () => {
       await Promise.resolve();
     });
     expect(screen.getByRole('heading', { name: 'Aria' })).toBeInTheDocument();
+    expect(nativeMocks.scheduleNotifications).toHaveBeenCalledTimes(1);
+    expect(nativeMocks.setSnapshot).toHaveBeenCalledTimes(1);
 
     now += 15_000;
     await act(async () => {
@@ -735,6 +782,8 @@ describe('Eternity Realms navigation and play flow', () => {
       elapsedMs: 15_000,
       lastObservedAt: 16_000,
     });
+    expect(nativeMocks.scheduleNotifications).toHaveBeenCalledTimes(1);
+    expect(nativeMocks.setSnapshot).toHaveBeenCalledTimes(2);
 
     await act(async () => {
       vi.advanceTimersByTime(15_000);
@@ -1802,6 +1851,11 @@ describe('Eternity Realms navigation and play flow', () => {
     let now = 1_000;
     const { repository } = await mountApp({ state, clock: () => now });
     await waitFor(() => expect(nativeMocks.scheduleNotifications).toHaveBeenCalled());
+    expect(
+      nativeMocks.scheduleNotifications.mock.calls
+        .flatMap(([request]) => request.notifications)
+        .every((notification) => notification.isExactNotification === false),
+    ).toBe(true);
     expect(nativeMocks.cancelNotifications).toHaveBeenCalled();
     expect(nativeMocks.configure).toHaveBeenCalled();
     expect(nativeMocks.setMetadata).toHaveBeenCalled();
@@ -1847,10 +1901,26 @@ describe('Eternity Realms navigation and play flow', () => {
     expect(nativeMocks.readBackup).toHaveBeenCalledWith({ id: 'manual-1.json' });
   });
 
+  it('keeps the automatic backup snapshot synchronized without reopening SQLite from a worker', async () => {
+    nativeMocks.native = true;
+    const storage = new MemoryStorage();
+    storage.setItem(
+      DEVICE_SETTINGS_KEY,
+      JSON.stringify({ backup: { frequency: 'daily', retention: 7 } }),
+    );
+
+    await mountApp({ state: gameWithCharacter('Aria'), storage });
+    await waitFor(() => expect(nativeMocks.setSnapshot).toHaveBeenCalled());
+
+    const latestPayload = nativeMocks.setSnapshot.mock.calls.at(-1)?.[0]?.payload;
+    expect(JSON.parse(latestPayload ?? '{}')).toMatchObject({ character: { name: 'Aria' } });
+  });
+
   it('records native backup and session notification scheduling failures', async () => {
     nativeMocks.native = true;
     nativeMocks.configure.mockRejectedValue('worker unavailable');
     nativeMocks.setMetadata.mockRejectedValue(new Error('metadata unavailable'));
+    nativeMocks.setSnapshot.mockRejectedValue('snapshot unavailable');
     nativeMocks.listBackups.mockRejectedValue('backup list unavailable');
     nativeMocks.scheduleNotifications.mockRejectedValue('notification service unavailable');
     nativeMocks.requestPermissions.mockRejectedValue('permission service unavailable');
@@ -1868,8 +1938,14 @@ describe('Eternity Realms navigation and play flow', () => {
       },
     ];
     state.queue = ['active-failure'];
-    await mountApp({ state, clock: () => 1_000 });
+    const storage = new MemoryStorage();
+    storage.setItem(
+      DEVICE_SETTINGS_KEY,
+      JSON.stringify({ backup: { frequency: 'daily', retention: 7 } }),
+    );
+    await mountApp({ state, clock: () => 1_000, storage });
     await waitFor(() => expect(nativeMocks.listBackups).toHaveBeenCalled());
+    await waitFor(() => expect(nativeMocks.setSnapshot).toHaveBeenCalled());
     await openSettings('Notificações');
     fireEvent.click(screen.getByRole('button', { name: 'Ativar notificações no Android' }));
     await waitFor(() =>
@@ -1879,6 +1955,9 @@ describe('Eternity Realms navigation and play flow', () => {
     );
     await openSettings('Desenvolvimento e debug');
     fireEvent.click(screen.getByRole('switch', { name: 'Habilitar logs verbosos' }));
+    expect(document.querySelector('.combat-log')).toHaveTextContent(
+      'Não foi possível atualizar o estado do backup automático',
+    );
     expect(document.querySelector('.combat-log')).toHaveTextContent(
       'Não foi possível atualizar o agendamento de backups',
     );

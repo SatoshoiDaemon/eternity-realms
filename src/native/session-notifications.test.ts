@@ -48,6 +48,7 @@ describe('Android session notification scheduling', () => {
       notifications: [
         expect.objectContaining({
           id: SESSION_NOTIFICATION_ID,
+          isExactNotification: false,
           schedule: { at: new Date(50_000) },
         }),
       ],
@@ -83,6 +84,12 @@ describe('Android session notification scheduling', () => {
       REWARD_NOTIFICATION_ID,
       IDLE_QUEUE_NOTIFICATION_ID,
     ]);
+    expect(
+      notifications?.every(
+        (notification: { isExactNotification?: boolean }) =>
+          notification.isExactNotification === false,
+      ),
+    ).toBe(true);
     await syncSessionNotification(
       plugin,
       activeSession,
@@ -95,6 +102,7 @@ describe('Android session notification scheduling', () => {
     expect(plugin.schedule.mock.calls[1]?.[0].notifications[0]).toMatchObject({
       id: 8_001,
       title: 'Missão concluída',
+      isExactNotification: false,
       schedule: { at: new Date(20_000) },
     });
   });

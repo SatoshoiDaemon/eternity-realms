@@ -73,7 +73,7 @@ export const PhaseTwoPanels = memo(function PhaseTwoPanels({
   view,
   expeditionKind,
 }: PhaseTwoPanelsProps) {
-  const character = state.character!;
+  const character = state.character;
   const [enemyId, setEnemyId] = useState([...content.enemies.keys()][0] ?? '');
   const [recipeId, setRecipeId] = useState([...content.recipes.keys()][0] ?? '');
   const [graph, setGraph] = useState<NodeGraph>(starterGraph);
@@ -87,16 +87,16 @@ export const PhaseTwoPanels = memo(function PhaseTwoPanels({
   const [nodeCategory, setNodeCategory] = useState('all');
   const [zoom, setZoom] = useState(1);
   const [selectedConstructionId, setSelectedConstructionId] = useState(
-    () => character.nodeLibrary?.constructions?.[0]?.id ?? '',
+    () => character?.nodeLibrary?.constructions?.[0]?.id ?? '',
   );
   const [arena, setArena] = useState<CombatState | null>(null);
   const [message, setMessage] = useState('');
   const [detail, setDetail] = useState(false);
-  const unlocked = new Set(character.nodeLibrary?.unlockedNodeIds ?? []);
-  const constructions = character.nodeLibrary?.constructions ?? [];
-  const equippedConstructions = constructionPriority(character).map((id) =>
-    constructions.find((entry) => entry.id === id)!,
-  );
+  const unlocked = new Set(character?.nodeLibrary?.unlockedNodeIds ?? []);
+  const constructions = character?.nodeLibrary?.constructions ?? [];
+  const equippedConstructions = character
+    ? constructionPriority(character).map((id) => constructions.find((entry) => entry.id === id)!)
+    : [];
   const combatRecords = state.combatRecords ?? [];
   const selectedEnemy = content.enemies.get(enemyId);
   const selectedLootTable = selectedEnemy?.lootTableId
@@ -227,7 +227,7 @@ export const PhaseTwoPanels = memo(function PhaseTwoPanels({
         content.glyphs,
         content.sigils,
       ).action;
-      const actor = createCharacterCombatActor(character, content.items, content.rules.combat, [
+      const actor = createCharacterCombatActor(character!, content.items, content.rules.combat, [
         action,
       ]);
       actor.side = 'party';
@@ -245,6 +245,17 @@ export const PhaseTwoPanels = memo(function PhaseTwoPanels({
       setMessage(error instanceof Error ? error.message : t('phase.arenaFailed'));
     }
   };
+
+  if (
+    !character &&
+    (view === undefined || view === 'arena' || view === 'forge' || view === 'nodes')
+  ) {
+    return (
+      <section className="panel empty-state" aria-live="polite">
+        <p>{t('character.noCharacter')}</p>
+      </section>
+    );
+  }
 
   return (
     <>
@@ -440,7 +451,7 @@ export const PhaseTwoPanels = memo(function PhaseTwoPanels({
             {(
               ['primary', 'secondary', 'head', 'chest', 'legs', 'hands', 'feet'] as EquipmentSlot[]
             ).map((slot) => {
-              const value = character.equipment[slot];
+              const value = character!.equipment[slot];
               const id = typeof value === 'string' ? value : undefined;
               return (
                 <li key={slot}>
@@ -463,7 +474,7 @@ export const PhaseTwoPanels = memo(function PhaseTwoPanels({
           </ul>
           <h3>{t('phase.equippableInventory')}</h3>
           <ul className="inventory-list">
-            {Object.entries(character.inventory)
+            {Object.entries(character!.inventory)
               .filter(([id, count]) => count > 0 && content.items.get(id)?.slot)
               .map(([id, count]) => (
                 <li key={id}>

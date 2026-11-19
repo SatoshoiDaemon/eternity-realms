@@ -13,8 +13,17 @@
       "Progresso de sessões preservado após alterações no relógio do dispositivo."
     ],
     "changed": [],
-    "fixed": ["Reconciliação de sessões idempotente após reinicialização e retrocesso do relógio."],
+    "fixed": [
+      "Reconciliação de sessões idempotente após reinicialização e retrocesso do relógio.",
+      "A navegação permanece utilizável antes da criação de um personagem.",
+      "O tema Tokyo Night agora usa sua paleta azul característica e se distingue do Catppuccin Mocha.",
+      "Notificações de sessão deixam de abrir repetidamente a tela de alarmes exatos do Android.",
+      "A falha temporária ao abrir o SQLite oferece nova tentativa sem expor erros técnicos na tela."
+    ],
     "removed": [],
-    "technical": ["Formato de save separado das versões do aplicativo e do banco de dados."]
+    "technical": [
+      "Formato de save separado das versões do aplicativo e do banco de dados.",
+      "O backup automático usa um snapshot local atômico e não abre o SQLite em segundo plano."
+    ]
   }
 }

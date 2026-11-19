@@ -18,6 +18,7 @@ import {
   isNativeBackupAvailable,
   listNativeBackups,
   readNativeBackup,
+  setBackupSnapshot,
   setBackupMetadata,
   writeNativeBackup,
 } from '../native/backup-scheduler';
@@ -344,7 +345,9 @@ export function GameApp({
   const refreshInFlight = useRef<Promise<GameState> | null>(null);
   const lastBackgroundRefresh = useRef(0);
   const [settingError, setSettingError] = useState('');
+  const [notificationPermissionRevision, setNotificationPermissionRevision] = useState(0);
   const previousMissionState = useRef<GameState | null>(null);
+  const lastNotificationSync = useRef<string | null>(null);
   const activeContent = suppliedContent ?? content;
 
   const persistProfileState = useCallback(
@@ -519,6 +522,18 @@ export function GameApp({
     ).catch(() => undefined);
   }, [deviceSettings, mods, storage]);
 
+  useEffect(() => {
+    if (!isNativeBackupAvailable() || !state || deviceSettings.backup.frequency === 'off') return;
+    void setBackupSnapshot(JSON.stringify(state)).catch((error: unknown) => {
+      logger.current.write(
+        'warn',
+        'persistence',
+        'Não foi possível atualizar o estado do backup automático.',
+        { error: error instanceof Error ? error.message : String(error) },
+      );
+    });
+  }, [deviceSettings.backup.frequency, state]);
+
   const activeSession = useMemo(() => {
     if (!state) return undefined;
     const sessionMap = new Map(state.sessions.map((session) => [session.id, session]));
@@ -526,6 +541,19 @@ export function GameApp({
     const candidate = activeId ? sessionMap.get(activeId) : undefined;
     return candidate?.status === 'active' ? candidate : undefined;
   }, [state]);
+
+  const notificationSyncSignature = JSON.stringify([
+    activeSession?.id ?? null,
+    activeSession?.activityId ?? null,
+    activeSession?.status ?? null,
+    activeSession?.startedAt ?? null,
+    activeSession?.durationMs ?? null,
+    state?.queue.length ?? 0,
+    deviceSettings.notifications.sessionComplete,
+    deviceSettings.notifications.rewards,
+    deviceSettings.notifications.queueIdle,
+    notificationPermissionRevision,
+  ]);
 
   useEffect(() => {
     if (!activeSession) return undefined;
@@ -566,6 +594,8 @@ export function GameApp({
 
   useEffect(() => {
     if (!Capacitor.isNativePlatform()) return;
+    if (lastNotificationSync.current === notificationSyncSignature) return;
+    lastNotificationSync.current = notificationSyncSignature;
     void syncSessionNotification(
       localNotificationPort,
       activeSession,
@@ -590,6 +620,8 @@ export function GameApp({
     deviceSettings.notifications.queueIdle,
     deviceSettings.notifications.rewards,
     deviceSettings.notifications.sessionComplete,
+    notificationPermissionRevision,
+    notificationSyncSignature,
     state?.queue.length,
   ]);
 
@@ -2047,6 +2079,7 @@ export function GameApp({
         try {
           if (!Capacitor.isNativePlatform()) throw new Error(t('settings.notification.nativeOnly'));
           await requestLocalNotificationPermission();
+          setNotificationPermissionRevision((revision) => revision + 1);
           setStatusMessage(t('settings.notification.permissionUpdated'));
         } catch (error) {
           setErrorMessage(
