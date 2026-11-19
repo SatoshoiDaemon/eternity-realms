@@ -225,6 +225,96 @@ h2 {
   color: #a1abba;
   background: #131923;
 }
+.codex-card,
+.arena-box {
+  display: grid;
+  gap: 0.6rem;
+  padding: 0.9rem;
+  border: 1px solid #303b4d;
+  border-radius: 14px;
+  background: #131923;
+}
+.codex-card p,
+.codex-card li,
+.arena-box p {
+  color: #c0c8d5;
+  line-height: 1.5;
+}
+.codex-card ul {
+  margin: 0;
+  padding-left: 1.2rem;
+}
+.node-canvas {
+  height: 18rem;
+  overflow: auto;
+  padding: 0.8rem;
+  border: 1px dashed #58677e;
+  border-radius: 14px;
+  background: radial-gradient(ellipse at top, #202b3a, #121822 70%);
+  touch-action: pan-x pan-y;
+}
+.graph-nodes {
+  display: flex;
+  flex-wrap: nowrap;
+  flex-direction: column;
+  align-items: flex-start;
+  width: max-content;
+  min-width: 100%;
+  gap: 0.65rem;
+  margin-top: 0.8rem;
+}
+.graph-node {
+  display: grid;
+  gap: 0.2rem;
+  min-width: 120px;
+  color: #e9edfa;
+  border: 1px solid #4b5b73;
+  background: #222d3d;
+  text-align: left;
+}
+.graph-node small {
+  color: #adb9cc;
+  overflow-wrap: anywhere;
+}
+.graph-node.selected {
+  border-color: #b39aff;
+  box-shadow: 0 0 0 2px #b39aff55;
+}
+.graph-node span {
+  justify-self: end;
+  color: #ff9da5;
+  font-size: 1.2rem;
+}
+.combat-log {
+  max-height: 360px;
+  overflow: auto;
+  margin: 0;
+  padding: 0.8rem;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  border-radius: 10px;
+  color: #d0dae8;
+  background: #0c1118;
+  font:
+    0.78rem/1.5 ui-monospace,
+    SFMono-Regular,
+    Menlo,
+    monospace;
+}
+details {
+  padding: 0.7rem;
+  border: 1px solid #2a3341;
+  border-radius: 10px;
+  background: #131923;
+}
+details > details {
+  margin-top: 0.65rem;
+}
+summary {
+  min-height: 32px;
+  color: #e4e9f2;
+  cursor: pointer;
+}
 .sr-only {
   position: absolute;
   width: 1px;
