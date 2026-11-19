@@ -319,6 +319,24 @@ export const SkillSchema = z
 export const EffectSchema = z
   .object({ ...baseRecord, kind: z.literal('effect'), payload: z.record(z.string(), z.unknown()) })
   .passthrough();
+export const MissionSchema = z
+  .object({
+    ...baseRecord,
+    kind: z.literal('mission'),
+    cadence: z.enum(['main', 'daily', 'weekly']),
+    eventType: z.enum([
+      'session.completed',
+      'expedition.completed',
+      'experience.gained',
+      'item.acquired',
+    ]),
+    target: z.number().int().positive().safe(),
+    reward: z.object({
+      experience: z.number().int().nonnegative().safe().default(0),
+      items: z.record(id, z.number().int().positive().safe()).default({}),
+    }),
+  })
+  .passthrough();
 
 export const ContentRecordSchema = z.discriminatedUnion('kind', [
   RaceSchema,
@@ -328,6 +346,7 @@ export const ContentRecordSchema = z.discriminatedUnion('kind', [
   RewardSchema,
   SkillSchema,
   EffectSchema,
+  MissionSchema,
   EnemyTagRecordSchema,
   enemySchema,
   lootTableSchema,
@@ -337,7 +356,14 @@ export const ContentRecordSchema = z.discriminatedUnion('kind', [
 
 export const ContentPackSchema = z.object({
   manifest: z
-    .object({ id, name: z.string().trim().min(1), version: z.string().trim().min(1) })
+    .object({
+      id,
+      name: z.string().trim().min(1),
+      version: z.string().trim().min(1),
+      author: z.string().trim().min(1).optional(),
+      dependencies: z.array(id).optional(),
+      compatibleWith: z.string().trim().min(1).optional(),
+    })
     .passthrough(),
   records: z.array(ContentRecordSchema),
   nodes: z.array(z.unknown()).optional(),
@@ -366,6 +392,7 @@ export type ActivityDefinition = z.infer<typeof ActivitySchema>;
 export type RewardDefinition = z.infer<typeof RewardSchema>;
 export type SkillDefinition = z.infer<typeof SkillSchema>;
 export type EffectDefinition = z.infer<typeof EffectSchema>;
+export type MissionDefinition = z.infer<typeof MissionSchema>;
 export type EnemyTagRecord = z.infer<typeof EnemyTagRecordSchema>;
 export type EnemyDefinition = z.infer<typeof enemySchema>;
 export type LootTableDefinition = z.infer<typeof lootTableSchema>;

@@ -5,7 +5,7 @@ const config: CapacitorConfig = {
   appName: 'Eternity Realms',
   webDir: 'dist',
   android: {
-    backgroundColor: '#101313',
+    backgroundColor: '#1e1e2e',
   },
 };
 

@@ -1,0 +1,32 @@
+[
+  {
+    "id": "first-steps",
+    "kind": "mission",
+    "name": "Primeiros passos",
+    "description": "Conclua sua primeira sessão.",
+    "cadence": "main",
+    "eventType": "session.completed",
+    "target": 1,
+    "reward": { "experience": 20, "items": { "iron-ore": 1 } }
+  },
+  {
+    "id": "daily-routine",
+    "kind": "mission",
+    "name": "Rotina diária",
+    "description": "Conclua três sessões no período diário.",
+    "cadence": "daily",
+    "eventType": "session.completed",
+    "target": 3,
+    "reward": { "experience": 40, "items": { "wild-herb": 1 } }
+  },
+  {
+    "id": "weekly-expedition",
+    "kind": "mission",
+    "name": "Semana de expedições",
+    "description": "Conclua dez sessões no período semanal.",
+    "cadence": "weekly",
+    "eventType": "session.completed",
+    "target": 10,
+    "reward": { "experience": 100, "items": { "material-silver": 1 } }
+  }
+]

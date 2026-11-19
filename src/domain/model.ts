@@ -64,6 +64,7 @@ export function createInitialGameState(): GameState {
     queue: [],
     events: [],
     processedEventIds: [],
+    missionClaims: [],
     combatRecords: [],
   };
 }

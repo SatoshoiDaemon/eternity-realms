@@ -11,23 +11,46 @@
       {
         "id": "shadow-resistance",
         "event": "damage.incoming",
-        "conditions": [{ "path": "damage.element", "op": "eq", "value": "shadow" }],
+        "conditions": [
+          {
+            "path": "damage.element",
+            "op": "eq",
+            "value": "shadow"
+          }
+        ],
         "interactionId": "damage:shadow",
         "potency": 50,
         "priority": 100,
-        "effect": { "type": "damage_multiplier", "value": 0.5 }
+        "effect": {
+          "type": "damage_multiplier",
+          "value": 0.5
+        }
       },
       {
         "id": "holy-weakness",
         "event": "damage.incoming",
-        "conditions": [{ "path": "damage.element", "op": "eq", "value": "holy" }],
+        "conditions": [
+          {
+            "path": "damage.element",
+            "op": "eq",
+            "value": "holy"
+          }
+        ],
         "interactionId": "damage:holy",
         "potency": 50,
         "priority": 100,
-        "effect": { "type": "damage_multiplier", "value": 1.5 }
+        "effect": {
+          "type": "damage_multiplier",
+          "value": 1.5
+        }
       }
     ],
-    "interactions": [{ "id": "holy", "counterplay": "holy damage" }],
+    "interactions": [
+      {
+        "id": "holy",
+        "counterplay": "dano sagrado"
+      }
+    ],
     "requirements": [],
     "properties": ["undead"]
   },
@@ -43,14 +66,28 @@
       {
         "id": "holy-weakness",
         "event": "damage.incoming",
-        "conditions": [{ "path": "damage.element", "op": "eq", "value": "holy" }],
+        "conditions": [
+          {
+            "path": "damage.element",
+            "op": "eq",
+            "value": "holy"
+          }
+        ],
         "interactionId": "damage:holy",
         "potency": 50,
         "priority": 100,
-        "effect": { "type": "damage_multiplier", "value": 1.5 }
+        "effect": {
+          "type": "damage_multiplier",
+          "value": 1.5
+        }
       }
     ],
-    "interactions": [{ "id": "spiritual", "counterplay": "holy damage" }],
+    "interactions": [
+      {
+        "id": "spiritual",
+        "counterplay": "dano sagrado"
+      }
+    ],
     "requirements": [],
     "properties": ["spiritual"]
   },
@@ -66,23 +103,46 @@
       {
         "id": "biological-immunity",
         "event": "status.incoming",
-        "conditions": [{ "path": "status.category", "op": "eq", "value": "biological" }],
+        "conditions": [
+          {
+            "path": "status.category",
+            "op": "eq",
+            "value": "biological"
+          }
+        ],
         "interactionId": "immunity:biological",
         "potency": 100,
         "priority": 100,
-        "effect": { "type": "status_immunity", "value": "biological" }
+        "effect": {
+          "type": "status_immunity",
+          "value": "biological"
+        }
       },
       {
         "id": "crushing-weakness",
         "event": "damage.incoming",
-        "conditions": [{ "path": "damage.subtype", "op": "eq", "value": "crushing" }],
+        "conditions": [
+          {
+            "path": "damage.subtype",
+            "op": "eq",
+            "value": "crushing"
+          }
+        ],
         "interactionId": "damage:crushing",
         "potency": 50,
         "priority": 100,
-        "effect": { "type": "damage_multiplier", "value": 1.5 }
+        "effect": {
+          "type": "damage_multiplier",
+          "value": 1.5
+        }
       }
     ],
-    "interactions": [{ "id": "biology", "counterplay": "impact or crushing damage" }],
+    "interactions": [
+      {
+        "id": "biology",
+        "counterplay": "dano de impacto ou esmagamento"
+      }
+    ],
     "requirements": [],
     "properties": ["artificial", "nonbiological"]
   },
@@ -98,7 +158,12 @@
       {
         "id": "elemental-relation",
         "event": "damage.incoming",
-        "conditions": [{ "path": "damage.element", "op": "truthy" }],
+        "conditions": [
+          {
+            "path": "damage.element",
+            "op": "truthy"
+          }
+        ],
         "interactionId": "damage:elemental-affinity",
         "potency": 50,
         "priority": 100,
@@ -114,7 +179,7 @@
     "interactions": [
       {
         "id": "opposite-element",
-        "counterplay": "opposing element declared by the expedition content"
+        "counterplay": "elemento oposto definido pelo conteúdo da expedição"
       }
     ],
     "requirements": ["affinityElement"],
@@ -132,23 +197,46 @@
       {
         "id": "fire-resistance",
         "event": "damage.incoming",
-        "conditions": [{ "path": "damage.element", "op": "eq", "value": "fire" }],
+        "conditions": [
+          {
+            "path": "damage.element",
+            "op": "eq",
+            "value": "fire"
+          }
+        ],
         "interactionId": "damage:fire",
         "potency": 50,
         "priority": 100,
-        "effect": { "type": "damage_multiplier", "value": 0.5 }
+        "effect": {
+          "type": "damage_multiplier",
+          "value": 0.5
+        }
       },
       {
         "id": "holy-weakness",
         "event": "damage.incoming",
-        "conditions": [{ "path": "damage.element", "op": "eq", "value": "holy" }],
+        "conditions": [
+          {
+            "path": "damage.element",
+            "op": "eq",
+            "value": "holy"
+          }
+        ],
         "interactionId": "damage:holy",
         "potency": 50,
         "priority": 100,
-        "effect": { "type": "damage_multiplier", "value": 1.5 }
+        "effect": {
+          "type": "damage_multiplier",
+          "value": 1.5
+        }
       }
     ],
-    "interactions": [{ "id": "holy", "counterplay": "holy damage" }],
+    "interactions": [
+      {
+        "id": "holy",
+        "counterplay": "dano sagrado"
+      }
+    ],
     "requirements": [],
     "properties": ["demonic"]
   },
@@ -164,23 +252,46 @@
       {
         "id": "holy-resistance",
         "event": "damage.incoming",
-        "conditions": [{ "path": "damage.element", "op": "eq", "value": "holy" }],
+        "conditions": [
+          {
+            "path": "damage.element",
+            "op": "eq",
+            "value": "holy"
+          }
+        ],
         "interactionId": "damage:holy",
         "potency": 50,
         "priority": 100,
-        "effect": { "type": "damage_multiplier", "value": 0.5 }
+        "effect": {
+          "type": "damage_multiplier",
+          "value": 0.5
+        }
       },
       {
         "id": "shadow-weakness",
         "event": "damage.incoming",
-        "conditions": [{ "path": "damage.element", "op": "eq", "value": "shadow" }],
+        "conditions": [
+          {
+            "path": "damage.element",
+            "op": "eq",
+            "value": "shadow"
+          }
+        ],
         "interactionId": "damage:shadow",
         "potency": 50,
         "priority": 100,
-        "effect": { "type": "damage_multiplier", "value": 1.5 }
+        "effect": {
+          "type": "damage_multiplier",
+          "value": 1.5
+        }
       }
     ],
-    "interactions": [{ "id": "shadow", "counterplay": "shadow damage" }],
+    "interactions": [
+      {
+        "id": "shadow",
+        "counterplay": "dano sombrio"
+      }
+    ],
     "requirements": [],
     "properties": ["celestial"]
   },
@@ -196,14 +307,28 @@
       {
         "id": "antidraconic",
         "event": "damage.incoming",
-        "conditions": [{ "path": "damage.properties", "op": "includes", "value": "antidraconic" }],
+        "conditions": [
+          {
+            "path": "damage.properties",
+            "op": "includes",
+            "value": "antidraconic"
+          }
+        ],
         "interactionId": "damage:antidraconic",
         "potency": 100,
         "priority": 100,
-        "effect": { "type": "damage_multiplier", "value": 2 }
+        "effect": {
+          "type": "damage_multiplier",
+          "value": 2
+        }
       }
     ],
-    "interactions": [{ "id": "antidraconic", "counterplay": "antidraconic attack property" }],
+    "interactions": [
+      {
+        "id": "antidraconic",
+        "counterplay": "propriedade de ataque antidracônico"
+      }
+    ],
     "requirements": [],
     "properties": ["draconic", "dragon-techniques"]
   },
@@ -219,24 +344,45 @@
       {
         "id": "tracking",
         "event": "targeting.check",
-        "conditions": [{ "path": "target.tags", "op": "includes", "value": "base:camouflaged" }],
+        "conditions": [
+          {
+            "path": "target.tags",
+            "op": "includes",
+            "value": "base:camouflaged"
+          }
+        ],
         "interactionId": "targeting:tracking",
         "potency": 100,
         "priority": 100,
-        "effect": { "type": "reveal_target", "value": true }
+        "effect": {
+          "type": "reveal_target",
+          "value": true
+        }
       },
       {
         "id": "trap-sense",
         "event": "environment.tick",
-        "conditions": [{ "path": "environment.hazard", "op": "eq", "value": "trap" }],
+        "conditions": [
+          {
+            "path": "environment.hazard",
+            "op": "eq",
+            "value": "trap"
+          }
+        ],
         "interactionId": "environment:trap-awareness",
         "potency": 100,
         "priority": 100,
-        "effect": { "type": "hazard_awareness", "value": true }
+        "effect": {
+          "type": "hazard_awareness",
+          "value": true
+        }
       }
     ],
     "interactions": [
-      { "id": "camouflage", "counterplay": "concealment that also defeats tracking" }
+      {
+        "id": "camouflage",
+        "counterplay": "ocultação que também evita rastreamento"
+      }
     ],
     "requirements": [],
     "properties": ["tracking", "leaping", "trap-sense"]
@@ -253,23 +399,46 @@
       {
         "id": "fertile-regeneration",
         "event": "environment.tick",
-        "conditions": [{ "path": "environment.condition", "op": "eq", "value": "fertile" }],
+        "conditions": [
+          {
+            "path": "environment.condition",
+            "op": "eq",
+            "value": "fertile"
+          }
+        ],
         "interactionId": "healing:environment",
         "potency": 1,
         "priority": 100,
-        "effect": { "type": "regeneration", "value": 1 }
+        "effect": {
+          "type": "regeneration",
+          "value": 1
+        }
       },
       {
         "id": "fire-weakness",
         "event": "damage.incoming",
-        "conditions": [{ "path": "damage.element", "op": "eq", "value": "fire" }],
+        "conditions": [
+          {
+            "path": "damage.element",
+            "op": "eq",
+            "value": "fire"
+          }
+        ],
         "interactionId": "damage:fire",
         "potency": 50,
         "priority": 100,
-        "effect": { "type": "damage_multiplier", "value": 1.5 }
+        "effect": {
+          "type": "damage_multiplier",
+          "value": 1.5
+        }
       }
     ],
-    "interactions": [{ "id": "fire", "counterplay": "fire damage" }],
+    "interactions": [
+      {
+        "id": "fire",
+        "counterplay": "dano de fogo"
+      }
+    ],
     "requirements": [],
     "properties": ["environmental-regeneration"]
   },
@@ -285,27 +454,49 @@
       {
         "id": "shadow-resistance",
         "event": "damage.incoming",
-        "conditions": [{ "path": "damage.element", "op": "eq", "value": "shadow" }],
+        "conditions": [
+          {
+            "path": "damage.element",
+            "op": "eq",
+            "value": "shadow"
+          }
+        ],
         "interactionId": "damage:shadow",
         "potency": 50,
         "priority": 100,
-        "effect": { "type": "damage_multiplier", "value": 0.5 }
+        "effect": {
+          "type": "damage_multiplier",
+          "value": 0.5
+        }
       },
       {
         "id": "silver-weakness",
         "event": "damage.incoming",
-        "conditions": [{ "path": "damage.properties", "op": "includes", "value": "silver" }],
+        "conditions": [
+          {
+            "path": "damage.properties",
+            "op": "includes",
+            "value": "silver"
+          }
+        ],
         "interactionId": "damage:silver",
         "potency": 50,
         "priority": 100,
-        "effect": { "type": "damage_multiplier", "value": 1.5 }
+        "effect": {
+          "type": "damage_multiplier",
+          "value": 1.5
+        }
       }
     ],
-    "interactions": [{ "id": "silver", "counterplay": "silver weapon or material property" }],
+    "interactions": [
+      {
+        "id": "silver",
+        "counterplay": "arma de prata ou propriedade do material"
+      }
+    ],
     "requirements": [],
     "properties": ["cursed"]
   },
-
   {
     "id": "base:ethereal",
     "category": "anatomy",
@@ -319,13 +510,21 @@
         "id": "phase",
         "event": "targeting.check",
         "conditions": [
-          { "path": "attack.channel", "op": "eq", "value": "physical" },
+          {
+            "path": "attack.channel",
+            "op": "eq",
+            "value": "physical"
+          },
           {
             "path": "attack.properties",
             "op": "not_includes_any",
             "value": ["spiritual", "anchoring", "revealing", "inevitable"]
           },
-          { "path": "defender.revealed", "op": "neq", "value": true }
+          {
+            "path": "defender.revealed",
+            "op": "neq",
+            "value": true
+          }
         ],
         "interactionId": "targeting:phase",
         "potency": 100,
@@ -337,7 +536,10 @@
       }
     ],
     "interactions": [
-      { "id": "anchor", "counterplay": "anchoring, revealing or spiritual property" }
+      {
+        "id": "anchor",
+        "counterplay": "ancoragem, revelação ou propriedade espiritual"
+      }
     ],
     "requirements": [],
     "properties": ["phasing"]
@@ -354,23 +556,46 @@
       {
         "id": "cut-resistance",
         "event": "damage.incoming",
-        "conditions": [{ "path": "damage.subtype", "op": "eq", "value": "cutting" }],
+        "conditions": [
+          {
+            "path": "damage.subtype",
+            "op": "eq",
+            "value": "cutting"
+          }
+        ],
         "interactionId": "damage:cutting",
         "potency": 50,
         "priority": 100,
-        "effect": { "type": "damage_multiplier", "value": 0.5 }
+        "effect": {
+          "type": "damage_multiplier",
+          "value": 0.5
+        }
       },
       {
         "id": "crushing-weakness",
         "event": "damage.incoming",
-        "conditions": [{ "path": "damage.subtype", "op": "eq", "value": "crushing" }],
+        "conditions": [
+          {
+            "path": "damage.subtype",
+            "op": "eq",
+            "value": "crushing"
+          }
+        ],
         "interactionId": "damage:crushing",
         "potency": 50,
         "priority": 100,
-        "effect": { "type": "damage_multiplier", "value": 1.5 }
+        "effect": {
+          "type": "damage_multiplier",
+          "value": 1.5
+        }
       }
     ],
-    "interactions": [{ "id": "crushing", "counterplay": "crushing damage" }],
+    "interactions": [
+      {
+        "id": "crushing",
+        "counterplay": "dano de esmagamento"
+      }
+    ],
     "requirements": [],
     "properties": ["mineral-body"]
   },
@@ -386,24 +611,45 @@
       {
         "id": "cut-resistance",
         "event": "damage.incoming",
-        "conditions": [{ "path": "damage.subtype", "op": "eq", "value": "cutting" }],
+        "conditions": [
+          {
+            "path": "damage.subtype",
+            "op": "eq",
+            "value": "cutting"
+          }
+        ],
         "interactionId": "damage:cutting",
         "potency": 50,
         "priority": 100,
-        "effect": { "type": "damage_multiplier", "value": 0.5 }
+        "effect": {
+          "type": "damage_multiplier",
+          "value": 0.5
+        }
       },
       {
         "id": "electric-conduction",
         "event": "damage.incoming",
-        "conditions": [{ "path": "damage.element", "op": "eq", "value": "lightning" }],
+        "conditions": [
+          {
+            "path": "damage.element",
+            "op": "eq",
+            "value": "lightning"
+          }
+        ],
         "interactionId": "damage:lightning",
         "potency": 50,
         "priority": 100,
-        "effect": { "type": "damage_multiplier", "value": 1.5 }
+        "effect": {
+          "type": "damage_multiplier",
+          "value": 1.5
+        }
       }
     ],
     "interactions": [
-      { "id": "lightning", "counterplay": "electric damage conducts through the body" }
+      {
+        "id": "lightning",
+        "counterplay": "dano elétrico se propaga pelo corpo"
+      }
     ],
     "requirements": [],
     "properties": ["metallic", "conductive"]
@@ -420,23 +666,46 @@
       {
         "id": "pierce-resistance",
         "event": "damage.incoming",
-        "conditions": [{ "path": "damage.subtype", "op": "eq", "value": "piercing" }],
+        "conditions": [
+          {
+            "path": "damage.subtype",
+            "op": "eq",
+            "value": "piercing"
+          }
+        ],
         "interactionId": "damage:piercing",
         "potency": 50,
         "priority": 100,
-        "effect": { "type": "damage_multiplier", "value": 0.5 }
+        "effect": {
+          "type": "damage_multiplier",
+          "value": 0.5
+        }
       },
       {
         "id": "impact-weakness",
         "event": "damage.incoming",
-        "conditions": [{ "path": "damage.subtype", "op": "eq", "value": "crushing" }],
+        "conditions": [
+          {
+            "path": "damage.subtype",
+            "op": "eq",
+            "value": "crushing"
+          }
+        ],
         "interactionId": "damage:crushing",
         "potency": 50,
         "priority": 100,
-        "effect": { "type": "damage_multiplier", "value": 1.5 }
+        "effect": {
+          "type": "damage_multiplier",
+          "value": 1.5
+        }
       }
     ],
-    "interactions": [{ "id": "impact", "counterplay": "impact damage" }],
+    "interactions": [
+      {
+        "id": "impact",
+        "counterplay": "dano de impacto"
+      }
+    ],
     "requirements": [],
     "properties": ["skeletal"]
   },
@@ -452,23 +721,46 @@
       {
         "id": "pierce-resistance",
         "event": "damage.incoming",
-        "conditions": [{ "path": "damage.subtype", "op": "eq", "value": "piercing" }],
+        "conditions": [
+          {
+            "path": "damage.subtype",
+            "op": "eq",
+            "value": "piercing"
+          }
+        ],
         "interactionId": "damage:piercing",
         "potency": 50,
         "priority": 100,
-        "effect": { "type": "damage_multiplier", "value": 0.5 }
+        "effect": {
+          "type": "damage_multiplier",
+          "value": 0.5
+        }
       },
       {
         "id": "frost-weakness",
         "event": "damage.incoming",
-        "conditions": [{ "path": "damage.element", "op": "eq", "value": "frost" }],
+        "conditions": [
+          {
+            "path": "damage.element",
+            "op": "eq",
+            "value": "frost"
+          }
+        ],
         "interactionId": "damage:frost",
         "potency": 50,
         "priority": 100,
-        "effect": { "type": "damage_multiplier", "value": 1.5 }
+        "effect": {
+          "type": "damage_multiplier",
+          "value": 1.5
+        }
       }
     ],
-    "interactions": [{ "id": "frost", "counterplay": "frost damage" }],
+    "interactions": [
+      {
+        "id": "frost",
+        "counterplay": "dano gélido"
+      }
+    ],
     "requirements": [],
     "properties": ["gelatinous"]
   },
@@ -485,16 +777,26 @@
         "id": "armor-resistance",
         "event": "damage.incoming",
         "conditions": [
-          { "path": "damage.properties", "op": "not_includes", "value": "armor-penetrating" }
+          {
+            "path": "damage.properties",
+            "op": "not_includes",
+            "value": "armor-penetrating"
+          }
         ],
         "interactionId": "defense:armor",
         "potency": 25,
         "priority": 100,
-        "effect": { "type": "damage_multiplier", "value": 0.75 }
+        "effect": {
+          "type": "damage_multiplier",
+          "value": 0.75
+        }
       }
     ],
     "interactions": [
-      { "id": "armor-penetration", "counterplay": "armor-penetrating attack property" }
+      {
+        "id": "armor-penetration",
+        "counterplay": "propriedade de ataque perfurante de armadura"
+      }
     ],
     "requirements": [],
     "properties": ["armor"]
@@ -515,19 +817,36 @@
         "interactionId": "movement:forced",
         "potency": 100,
         "priority": 100,
-        "effect": { "type": "displacement_resistance", "value": true }
+        "effect": {
+          "type": "displacement_resistance",
+          "value": true
+        }
       },
       {
         "id": "exposed-point",
         "event": "damage.incoming",
-        "conditions": [{ "path": "damage.properties", "op": "includes", "value": "exposed-point" }],
+        "conditions": [
+          {
+            "path": "damage.properties",
+            "op": "includes",
+            "value": "exposed-point"
+          }
+        ],
         "interactionId": "damage:exposed-point",
         "potency": 50,
         "priority": 100,
-        "effect": { "type": "damage_multiplier", "value": 1.5 }
+        "effect": {
+          "type": "damage_multiplier",
+          "value": 1.5
+        }
       }
     ],
-    "interactions": [{ "id": "exposed-point", "counterplay": "mark and strike an exposed point" }],
+    "interactions": [
+      {
+        "id": "exposed-point",
+        "counterplay": "marcar e atingir um ponto exposto"
+      }
+    ],
     "requirements": [],
     "properties": ["colossal", "exposed-points"]
   },
@@ -544,15 +863,27 @@
         "id": "multi-part-hit",
         "event": "damage.incoming",
         "conditions": [
-          { "path": "damage.properties", "op": "includes_any", "value": ["multi-part", "area"] }
+          {
+            "path": "damage.properties",
+            "op": "includes_any",
+            "value": ["multi-part", "area"]
+          }
         ],
         "interactionId": "damage:multi-part",
         "potency": 25,
         "priority": 100,
-        "effect": { "type": "damage_multiplier", "value": 1.25 }
+        "effect": {
+          "type": "damage_multiplier",
+          "value": 1.25
+        }
       }
     ],
-    "interactions": [{ "id": "multi-part", "counterplay": "area or multi-part attack property" }],
+    "interactions": [
+      {
+        "id": "multi-part",
+        "counterplay": "propriedade de ataque em área ou com múltiplas partes"
+      }
+    ],
     "requirements": [],
     "properties": ["segmented-anatomy"]
   },
@@ -578,13 +909,16 @@
         "interactionId": "healing:regeneration",
         "potency": 1,
         "priority": 100,
-        "effect": { "type": "regeneration", "value": 1 }
+        "effect": {
+          "type": "regeneration",
+          "value": 1
+        }
       }
     ],
     "interactions": [
       {
         "id": "regeneration-suppression",
-        "counterplay": "registered regeneration-interruption effect"
+        "counterplay": "efeito registrado que interrompe regeneração"
       }
     ],
     "requirements": [],
@@ -602,27 +936,49 @@
       {
         "id": "single-target-resistance",
         "event": "damage.incoming",
-        "conditions": [{ "path": "damage.properties", "op": "not_includes", "value": "area" }],
+        "conditions": [
+          {
+            "path": "damage.properties",
+            "op": "not_includes",
+            "value": "area"
+          }
+        ],
         "interactionId": "damage:single-target",
         "potency": 35,
         "priority": 100,
-        "effect": { "type": "damage_multiplier", "value": 0.65 }
+        "effect": {
+          "type": "damage_multiplier",
+          "value": 0.65
+        }
       },
       {
         "id": "area-weakness",
         "event": "damage.incoming",
-        "conditions": [{ "path": "damage.properties", "op": "includes", "value": "area" }],
+        "conditions": [
+          {
+            "path": "damage.properties",
+            "op": "includes",
+            "value": "area"
+          }
+        ],
         "interactionId": "damage:area",
         "potency": 50,
         "priority": 100,
-        "effect": { "type": "damage_multiplier", "value": 1.5 }
+        "effect": {
+          "type": "damage_multiplier",
+          "value": 1.5
+        }
       }
     ],
-    "interactions": [{ "id": "area", "counterplay": "area attack property" }],
+    "interactions": [
+      {
+        "id": "area",
+        "counterplay": "propriedade de ataque em área"
+      }
+    ],
     "requirements": [],
     "properties": ["swarm"]
   },
-
   {
     "id": "base:fireborn",
     "category": "affinity",
@@ -635,23 +991,46 @@
       {
         "id": "fire-resistance",
         "event": "damage.incoming",
-        "conditions": [{ "path": "damage.element", "op": "eq", "value": "fire" }],
+        "conditions": [
+          {
+            "path": "damage.element",
+            "op": "eq",
+            "value": "fire"
+          }
+        ],
         "interactionId": "damage:fire",
         "potency": 50,
         "priority": 100,
-        "effect": { "type": "damage_multiplier", "value": 0.5 }
+        "effect": {
+          "type": "damage_multiplier",
+          "value": 0.5
+        }
       },
       {
         "id": "frost-weakness",
         "event": "damage.incoming",
-        "conditions": [{ "path": "damage.element", "op": "eq", "value": "frost" }],
+        "conditions": [
+          {
+            "path": "damage.element",
+            "op": "eq",
+            "value": "frost"
+          }
+        ],
         "interactionId": "damage:frost",
         "potency": 50,
         "priority": 100,
-        "effect": { "type": "damage_multiplier", "value": 1.5 }
+        "effect": {
+          "type": "damage_multiplier",
+          "value": 1.5
+        }
       }
     ],
-    "interactions": [{ "id": "frost", "counterplay": "frost damage" }],
+    "interactions": [
+      {
+        "id": "frost",
+        "counterplay": "dano gélido"
+      }
+    ],
     "requirements": [],
     "properties": ["fire-affinity"]
   },
@@ -667,23 +1046,46 @@
       {
         "id": "frost-resistance",
         "event": "damage.incoming",
-        "conditions": [{ "path": "damage.element", "op": "eq", "value": "frost" }],
+        "conditions": [
+          {
+            "path": "damage.element",
+            "op": "eq",
+            "value": "frost"
+          }
+        ],
         "interactionId": "damage:frost",
         "potency": 50,
         "priority": 100,
-        "effect": { "type": "damage_multiplier", "value": 0.5 }
+        "effect": {
+          "type": "damage_multiplier",
+          "value": 0.5
+        }
       },
       {
         "id": "fire-weakness",
         "event": "damage.incoming",
-        "conditions": [{ "path": "damage.element", "op": "eq", "value": "fire" }],
+        "conditions": [
+          {
+            "path": "damage.element",
+            "op": "eq",
+            "value": "fire"
+          }
+        ],
         "interactionId": "damage:fire",
         "potency": 50,
         "priority": 100,
-        "effect": { "type": "damage_multiplier", "value": 1.5 }
+        "effect": {
+          "type": "damage_multiplier",
+          "value": 1.5
+        }
       }
     ],
-    "interactions": [{ "id": "fire", "counterplay": "fire damage" }],
+    "interactions": [
+      {
+        "id": "fire",
+        "counterplay": "dano de fogo"
+      }
+    ],
     "requirements": [],
     "properties": ["frost-affinity"]
   },
@@ -699,24 +1101,45 @@
       {
         "id": "lightning-resistance",
         "event": "damage.incoming",
-        "conditions": [{ "path": "damage.element", "op": "eq", "value": "lightning" }],
+        "conditions": [
+          {
+            "path": "damage.element",
+            "op": "eq",
+            "value": "lightning"
+          }
+        ],
         "interactionId": "damage:lightning",
         "potency": 50,
         "priority": 100,
-        "effect": { "type": "damage_multiplier", "value": 0.5 }
+        "effect": {
+          "type": "damage_multiplier",
+          "value": 0.5
+        }
       },
       {
         "id": "conduction",
         "event": "damage.incoming",
-        "conditions": [{ "path": "damage.element", "op": "eq", "value": "lightning" }],
+        "conditions": [
+          {
+            "path": "damage.element",
+            "op": "eq",
+            "value": "lightning"
+          }
+        ],
         "interactionId": "damage:storm-conduction",
         "potency": 25,
         "priority": 100,
-        "effect": { "type": "chain_damage", "value": 0.25 }
+        "effect": {
+          "type": "chain_damage",
+          "value": 0.25
+        }
       }
     ],
     "interactions": [
-      { "id": "earth-grounding", "counterplay": "grounding property suppresses chain conduction" }
+      {
+        "id": "earth-grounding",
+        "counterplay": "propriedade de aterramento suprime a condução em cadeia"
+      }
     ],
     "requirements": [],
     "properties": ["storm-affinity", "conductive"]
@@ -733,24 +1156,45 @@
       {
         "id": "water-recovery",
         "event": "environment.tick",
-        "conditions": [{ "path": "environment.type", "op": "eq", "value": "water" }],
+        "conditions": [
+          {
+            "path": "environment.type",
+            "op": "eq",
+            "value": "water"
+          }
+        ],
         "interactionId": "healing:water",
         "potency": 1,
         "priority": 100,
-        "effect": { "type": "regeneration", "value": 1 }
+        "effect": {
+          "type": "regeneration",
+          "value": 1
+        }
       },
       {
         "id": "fire-weakness",
         "event": "damage.incoming",
-        "conditions": [{ "path": "damage.element", "op": "eq", "value": "fire" }],
+        "conditions": [
+          {
+            "path": "damage.element",
+            "op": "eq",
+            "value": "fire"
+          }
+        ],
         "interactionId": "damage:fire",
         "potency": 25,
         "priority": 100,
-        "effect": { "type": "damage_multiplier", "value": 1.25 }
+        "effect": {
+          "type": "damage_multiplier",
+          "value": 1.25
+        }
       }
     ],
     "interactions": [
-      { "id": "water", "counterplay": "dry environment reduces its environmental advantage" }
+      {
+        "id": "water",
+        "counterplay": "ambiente seco reduz sua vantagem ambiental"
+      }
     ],
     "requirements": [],
     "properties": ["aquatic-affinity"]
@@ -767,23 +1211,46 @@
       {
         "id": "shadow-resistance",
         "event": "damage.incoming",
-        "conditions": [{ "path": "damage.element", "op": "eq", "value": "shadow" }],
+        "conditions": [
+          {
+            "path": "damage.element",
+            "op": "eq",
+            "value": "shadow"
+          }
+        ],
         "interactionId": "damage:shadow",
         "potency": 50,
         "priority": 100,
-        "effect": { "type": "damage_multiplier", "value": 0.5 }
+        "effect": {
+          "type": "damage_multiplier",
+          "value": 0.5
+        }
       },
       {
         "id": "holy-weakness",
         "event": "damage.incoming",
-        "conditions": [{ "path": "damage.element", "op": "eq", "value": "holy" }],
+        "conditions": [
+          {
+            "path": "damage.element",
+            "op": "eq",
+            "value": "holy"
+          }
+        ],
         "interactionId": "damage:holy",
         "potency": 50,
         "priority": 100,
-        "effect": { "type": "damage_multiplier", "value": 1.5 }
+        "effect": {
+          "type": "damage_multiplier",
+          "value": 1.5
+        }
       }
     ],
-    "interactions": [{ "id": "holy", "counterplay": "holy damage" }],
+    "interactions": [
+      {
+        "id": "holy",
+        "counterplay": "dano sagrado"
+      }
+    ],
     "requirements": [],
     "properties": ["shadow-affinity"]
   },
@@ -799,23 +1266,46 @@
       {
         "id": "holy-resistance",
         "event": "damage.incoming",
-        "conditions": [{ "path": "damage.element", "op": "eq", "value": "holy" }],
+        "conditions": [
+          {
+            "path": "damage.element",
+            "op": "eq",
+            "value": "holy"
+          }
+        ],
         "interactionId": "damage:holy",
         "potency": 50,
         "priority": 100,
-        "effect": { "type": "damage_multiplier", "value": 0.5 }
+        "effect": {
+          "type": "damage_multiplier",
+          "value": 0.5
+        }
       },
       {
         "id": "shadow-weakness",
         "event": "damage.incoming",
-        "conditions": [{ "path": "damage.element", "op": "eq", "value": "shadow" }],
+        "conditions": [
+          {
+            "path": "damage.element",
+            "op": "eq",
+            "value": "shadow"
+          }
+        ],
         "interactionId": "damage:shadow",
         "potency": 50,
         "priority": 100,
-        "effect": { "type": "damage_multiplier", "value": 1.5 }
+        "effect": {
+          "type": "damage_multiplier",
+          "value": 1.5
+        }
       }
     ],
-    "interactions": [{ "id": "shadow", "counterplay": "shadow damage" }],
+    "interactions": [
+      {
+        "id": "shadow",
+        "counterplay": "dano sombrio"
+      }
+    ],
     "requirements": [],
     "properties": ["holy-affinity"]
   },
@@ -831,26 +1321,51 @@
       {
         "id": "poison-immunity",
         "event": "status.incoming",
-        "conditions": [{ "path": "status.id", "op": "eq", "value": "base:poison" }],
+        "conditions": [
+          {
+            "path": "status.id",
+            "op": "eq",
+            "value": "base:poison"
+          }
+        ],
         "interactionId": "immunity:poison",
         "potency": 100,
         "priority": 100,
-        "effect": { "type": "status_immunity", "value": "base:poison" }
+        "effect": {
+          "type": "status_immunity",
+          "value": "base:poison"
+        }
       },
       {
         "id": "toxic-contact",
         "event": "damage.received",
-        "conditions": [{ "path": "damage.channel", "op": "eq", "value": "physical" }],
+        "conditions": [
+          {
+            "path": "damage.channel",
+            "op": "eq",
+            "value": "physical"
+          }
+        ],
         "interactionId": "status:toxic-contact",
         "potency": 1,
         "priority": 100,
         "effect": {
           "type": "on_hit_effect",
-          "value": { "id": "base:poison", "category": "dot", "potency": 1, "counter": 1 }
+          "value": {
+            "id": "base:poison",
+            "category": "dot",
+            "potency": 1,
+            "counter": 1
+          }
         }
       }
     ],
-    "interactions": [{ "id": "poison", "counterplay": "poison immunity or ranged attacks" }],
+    "interactions": [
+      {
+        "id": "poison",
+        "counterplay": "imunidade a veneno ou ataques à distância"
+      }
+    ],
     "requirements": [],
     "properties": ["toxic"]
   },
@@ -866,23 +1381,46 @@
       {
         "id": "corrosion-resistance",
         "event": "damage.incoming",
-        "conditions": [{ "path": "damage.element", "op": "eq", "value": "corrosive" }],
+        "conditions": [
+          {
+            "path": "damage.element",
+            "op": "eq",
+            "value": "corrosive"
+          }
+        ],
         "interactionId": "damage:corrosive",
         "potency": 50,
         "priority": 100,
-        "effect": { "type": "damage_multiplier", "value": 0.5 }
+        "effect": {
+          "type": "damage_multiplier",
+          "value": 0.5
+        }
       },
       {
         "id": "armor-corrosion",
         "event": "damage.received",
-        "conditions": [{ "path": "damage.channel", "op": "eq", "value": "physical" }],
+        "conditions": [
+          {
+            "path": "damage.channel",
+            "op": "eq",
+            "value": "physical"
+          }
+        ],
         "interactionId": "equipment:corrosion",
         "potency": 1,
         "priority": 100,
-        "effect": { "type": "corrode_armor", "value": 1 }
+        "effect": {
+          "type": "corrode_armor",
+          "value": 1
+        }
       }
     ],
-    "interactions": [{ "id": "corrosion", "counterplay": "corrosion resistance on equipment" }],
+    "interactions": [
+      {
+        "id": "corrosion",
+        "counterplay": "resistência à corrosão nos equipamentos"
+      }
+    ],
     "requirements": [],
     "properties": ["corrosive"]
   },
@@ -899,16 +1437,31 @@
         "id": "arcane-resistance",
         "event": "damage.incoming",
         "conditions": [
-          { "path": "damage.channel", "op": "eq", "value": "magical" },
-          { "path": "damage.element", "op": "not_truthy" }
+          {
+            "path": "damage.channel",
+            "op": "eq",
+            "value": "magical"
+          },
+          {
+            "path": "damage.element",
+            "op": "not_truthy"
+          }
         ],
         "interactionId": "damage:arcane",
         "potency": 25,
         "priority": 100,
-        "effect": { "type": "damage_multiplier", "value": 0.75 }
+        "effect": {
+          "type": "damage_multiplier",
+          "value": 0.75
+        }
       }
     ],
-    "interactions": [{ "id": "physical", "counterplay": "physical or elemental damage" }],
+    "interactions": [
+      {
+        "id": "physical",
+        "counterplay": "dano físico ou elemental"
+      }
+    ],
     "requirements": [],
     "properties": ["arcane-affinity"]
   },
@@ -924,27 +1477,49 @@
       {
         "id": "magic-resistance",
         "event": "damage.incoming",
-        "conditions": [{ "path": "damage.channel", "op": "eq", "value": "magical" }],
+        "conditions": [
+          {
+            "path": "damage.channel",
+            "op": "eq",
+            "value": "magical"
+          }
+        ],
         "interactionId": "damage:magic",
         "potency": 50,
         "priority": 100,
-        "effect": { "type": "damage_multiplier", "value": 0.5 }
+        "effect": {
+          "type": "damage_multiplier",
+          "value": 0.5
+        }
       },
       {
         "id": "energy-effect-immunity",
         "event": "status.incoming",
-        "conditions": [{ "path": "status.source", "op": "eq", "value": "energy" }],
+        "conditions": [
+          {
+            "path": "status.source",
+            "op": "eq",
+            "value": "energy"
+          }
+        ],
         "interactionId": "immunity:energy-effect",
         "potency": 100,
         "priority": 100,
-        "effect": { "type": "status_immunity", "value": "energy" }
+        "effect": {
+          "type": "status_immunity",
+          "value": "energy"
+        }
       }
     ],
-    "interactions": [{ "id": "physical", "counterplay": "physical damage" }],
+    "interactions": [
+      {
+        "id": "physical",
+        "counterplay": "dano físico"
+      }
+    ],
     "requirements": [],
     "properties": ["antimagic"]
   },
-
   {
     "id": "base:flying",
     "category": "movement",
@@ -967,7 +1542,10 @@
         "interactionId": "targeting:airborne",
         "potency": 100,
         "priority": 100,
-        "effect": { "type": "target_gate", "requiredProperties": ["ranged", "flying", "reach"] }
+        "effect": {
+          "type": "target_gate",
+          "requiredProperties": ["ranged", "flying", "reach"]
+        }
       },
       {
         "id": "flight-policy",
@@ -978,11 +1556,19 @@
         "priority": 100,
         "effect": {
           "type": "policy_bias",
-          "value": { "actionKinds": ["ranged", "move"], "bonus": 1 }
+          "value": {
+            "actionKinds": ["ranged", "move"],
+            "bonus": 1
+          }
         }
       }
     ],
-    "interactions": [{ "id": "grounding", "counterplay": "ranged, flying or reach attack" }],
+    "interactions": [
+      {
+        "id": "grounding",
+        "counterplay": "ataques à distância, voadores ou de longo alcance"
+      }
+    ],
     "requirements": [],
     "properties": ["airborne"]
   },
@@ -999,8 +1585,16 @@
         "id": "underground-gate",
         "event": "targeting.check",
         "conditions": [
-          { "path": "defender.movementState", "op": "eq", "value": "burrowed" },
-          { "path": "defender.revealed", "op": "neq", "value": true },
+          {
+            "path": "defender.movementState",
+            "op": "eq",
+            "value": "burrowed"
+          },
+          {
+            "path": "defender.revealed",
+            "op": "neq",
+            "value": true
+          },
           {
             "path": "attack.properties",
             "op": "not_includes_any",
@@ -1024,12 +1618,18 @@
         "priority": 100,
         "effect": {
           "type": "policy_bias",
-          "value": { "actionKinds": ["attack", "move"], "bonus": 1 }
+          "value": {
+            "actionKinds": ["attack", "move"],
+            "bonus": 1
+          }
         }
       }
     ],
     "interactions": [
-      { "id": "earth-sense", "counterplay": "area, earth-sense or ground-penetrating attack" }
+      {
+        "id": "earth-sense",
+        "counterplay": "ataque em área, percepção da terra ou que atravesse o solo"
+      }
     ],
     "requirements": [],
     "properties": ["burrowing"]
@@ -1046,14 +1646,31 @@
       {
         "id": "water-mobility",
         "event": "environment.tick",
-        "conditions": [{ "path": "environment.type", "op": "eq", "value": "water" }],
+        "conditions": [
+          {
+            "path": "environment.type",
+            "op": "eq",
+            "value": "water"
+          }
+        ],
         "interactionId": "movement:water",
         "potency": 1,
         "priority": 100,
-        "effect": { "type": "environment_modifier", "value": { "movement": 1, "breathing": true } }
+        "effect": {
+          "type": "environment_modifier",
+          "value": {
+            "movement": 1,
+            "breathing": true
+          }
+        }
       }
     ],
-    "interactions": [{ "id": "water", "counterplay": "environment is not aquatic" }],
+    "interactions": [
+      {
+        "id": "water",
+        "counterplay": "ambiente que não seja aquático"
+      }
+    ],
     "requirements": [],
     "properties": ["amphibious"]
   },
@@ -1069,15 +1686,27 @@
       {
         "id": "earth-sense",
         "event": "targeting.check",
-        "conditions": [{ "path": "target.movementState", "op": "eq", "value": "burrowed" }],
+        "conditions": [
+          {
+            "path": "target.movementState",
+            "op": "eq",
+            "value": "burrowed"
+          }
+        ],
         "interactionId": "targeting:earth-sense",
         "potency": 100,
         "priority": 100,
-        "effect": { "type": "reveal_target", "value": true }
+        "effect": {
+          "type": "reveal_target",
+          "value": true
+        }
       }
     ],
     "interactions": [
-      { "id": "burrowing", "counterplay": "movement that leaves no ground vibration" }
+      {
+        "id": "burrowing",
+        "counterplay": "movimento que não cause vibrações no solo"
+      }
     ],
     "requirements": [],
     "properties": ["subterranean-sense"]
@@ -1094,29 +1723,52 @@
       {
         "id": "night-advantage",
         "event": "environment.tick",
-        "conditions": [{ "path": "environment.timeOfDay", "op": "eq", "value": "night" }],
+        "conditions": [
+          {
+            "path": "environment.timeOfDay",
+            "op": "eq",
+            "value": "night"
+          }
+        ],
         "interactionId": "environment:time-of-day",
         "potency": 1,
         "priority": 100,
         "effect": {
           "type": "environment_modifier",
-          "value": { "actionIntervalMultiplier": 0.8, "perception": 1 }
+          "value": {
+            "actionIntervalMultiplier": 0.8,
+            "perception": 1
+          }
         }
       },
       {
         "id": "day-disadvantage",
         "event": "environment.tick",
-        "conditions": [{ "path": "environment.timeOfDay", "op": "eq", "value": "day" }],
+        "conditions": [
+          {
+            "path": "environment.timeOfDay",
+            "op": "eq",
+            "value": "day"
+          }
+        ],
         "interactionId": "environment:time-of-day",
         "potency": 1,
         "priority": 100,
         "effect": {
           "type": "environment_modifier",
-          "value": { "actionIntervalMultiplier": 1.2, "perception": -1 }
+          "value": {
+            "actionIntervalMultiplier": 1.2,
+            "perception": -1
+          }
         }
       }
     ],
-    "interactions": [{ "id": "light", "counterplay": "daylight or illumination" }],
+    "interactions": [
+      {
+        "id": "light",
+        "counterplay": "luz do dia ou iluminação"
+      }
+    ],
     "requirements": [],
     "properties": ["nocturnal"]
   },
@@ -1132,29 +1784,52 @@
       {
         "id": "day-advantage",
         "event": "environment.tick",
-        "conditions": [{ "path": "environment.timeOfDay", "op": "eq", "value": "day" }],
+        "conditions": [
+          {
+            "path": "environment.timeOfDay",
+            "op": "eq",
+            "value": "day"
+          }
+        ],
         "interactionId": "environment:time-of-day",
         "potency": 1,
         "priority": 100,
         "effect": {
           "type": "environment_modifier",
-          "value": { "actionIntervalMultiplier": 0.8, "perception": 1 }
+          "value": {
+            "actionIntervalMultiplier": 0.8,
+            "perception": 1
+          }
         }
       },
       {
         "id": "night-disadvantage",
         "event": "environment.tick",
-        "conditions": [{ "path": "environment.timeOfDay", "op": "eq", "value": "night" }],
+        "conditions": [
+          {
+            "path": "environment.timeOfDay",
+            "op": "eq",
+            "value": "night"
+          }
+        ],
         "interactionId": "environment:time-of-day",
         "potency": 1,
         "priority": 100,
         "effect": {
           "type": "environment_modifier",
-          "value": { "actionIntervalMultiplier": 1.2, "perception": -1 }
+          "value": {
+            "actionIntervalMultiplier": 1.2,
+            "perception": -1
+          }
         }
       }
     ],
-    "interactions": [{ "id": "darkness", "counterplay": "night or darkness" }],
+    "interactions": [
+      {
+        "id": "darkness",
+        "counterplay": "noite ou escuridão"
+      }
+    ],
     "requirements": [],
     "properties": ["diurnal"]
   },
@@ -1174,19 +1849,38 @@
         "interactionId": "movement:speed",
         "potency": 25,
         "priority": 100,
-        "effect": { "type": "action_interval_multiplier", "value": 0.75 }
+        "effect": {
+          "type": "action_interval_multiplier",
+          "value": 0.75
+        }
       },
       {
         "id": "pursuit",
         "event": "targeting.check",
-        "conditions": [{ "path": "target.movementState", "op": "eq", "value": "fleeing" }],
+        "conditions": [
+          {
+            "path": "target.movementState",
+            "op": "eq",
+            "value": "fleeing"
+          }
+        ],
         "interactionId": "targeting:pursuit",
         "potency": 1,
         "priority": 100,
-        "effect": { "type": "targeting_modifier", "value": { "trackFleeing": true } }
+        "effect": {
+          "type": "targeting_modifier",
+          "value": {
+            "trackFleeing": true
+          }
+        }
       }
     ],
-    "interactions": [{ "id": "slow", "counterplay": "slow or restrain effects" }],
+    "interactions": [
+      {
+        "id": "slow",
+        "counterplay": "efeitos de lentidão ou imobilização"
+      }
+    ],
     "requirements": [],
     "properties": ["fast"]
   },
@@ -1206,7 +1900,10 @@
         "interactionId": "movement:speed",
         "potency": 25,
         "priority": 100,
-        "effect": { "type": "action_interval_multiplier", "value": 1.25 }
+        "effect": {
+          "type": "action_interval_multiplier",
+          "value": 1.25
+        }
       },
       {
         "id": "displacement-resistance",
@@ -1215,10 +1912,18 @@
         "interactionId": "movement:forced",
         "potency": 25,
         "priority": 100,
-        "effect": { "type": "displacement_resistance", "value": 0.5 }
+        "effect": {
+          "type": "displacement_resistance",
+          "value": 0.5
+        }
       }
     ],
-    "interactions": [{ "id": "speed", "counterplay": "movement speed and repositioning" }],
+    "interactions": [
+      {
+        "id": "speed",
+        "counterplay": "velocidade de movimento e reposicionamento"
+      }
+    ],
     "requirements": [],
     "properties": ["slow"]
   },
@@ -1240,15 +1945,27 @@
             "op": "not_includes_any",
             "value": ["revealing", "tracking", "area"]
           },
-          { "path": "defender.revealed", "op": "neq", "value": true }
+          {
+            "path": "defender.revealed",
+            "op": "neq",
+            "value": true
+          }
         ],
         "interactionId": "targeting:camouflage",
         "potency": 100,
         "priority": 100,
-        "effect": { "type": "target_gate", "requiredProperties": ["revealing", "tracking", "area"] }
+        "effect": {
+          "type": "target_gate",
+          "requiredProperties": ["revealing", "tracking", "area"]
+        }
       }
     ],
-    "interactions": [{ "id": "reveal", "counterplay": "revealing, tracking or area attack" }],
+    "interactions": [
+      {
+        "id": "reveal",
+        "counterplay": "revelação, rastreamento ou ataque em área"
+      }
+    ],
     "requirements": [],
     "properties": ["camouflaged"]
   },
@@ -1264,11 +1981,20 @@
       {
         "id": "cannot-voluntarily-move",
         "event": "action.select",
-        "conditions": [{ "path": "action.kind", "op": "eq", "value": "move" }],
+        "conditions": [
+          {
+            "path": "action.kind",
+            "op": "eq",
+            "value": "move"
+          }
+        ],
         "interactionId": "movement:voluntary",
         "potency": 100,
         "priority": 100,
-        "effect": { "type": "action_forbidden", "value": "move" }
+        "effect": {
+          "type": "action_forbidden",
+          "value": "move"
+        }
       },
       {
         "id": "anchored",
@@ -1277,16 +2003,21 @@
         "interactionId": "movement:forced",
         "potency": 100,
         "priority": 100,
-        "effect": { "type": "displacement_resistance", "value": true }
+        "effect": {
+          "type": "displacement_resistance",
+          "value": true
+        }
       }
     ],
     "interactions": [
-      { "id": "stationary", "counterplay": "area control or leave its effective range" }
+      {
+        "id": "stationary",
+        "counterplay": "controle de área ou sair do seu alcance efetivo"
+      }
     ],
     "requirements": [],
     "properties": ["stationary"]
   },
-
   {
     "id": "base:berserker",
     "category": "behavior",
@@ -1303,7 +2034,13 @@
         "interactionId": "policy:offense",
         "potency": 100,
         "priority": 100,
-        "effect": { "type": "policy_bias", "value": { "actionKinds": ["attack"], "bonus": 100 } }
+        "effect": {
+          "type": "policy_bias",
+          "value": {
+            "actionKinds": ["attack"],
+            "bonus": 100
+          }
+        }
       },
       {
         "id": "defense-aversion",
@@ -1312,11 +2049,20 @@
         "interactionId": "policy:defense",
         "potency": 100,
         "priority": 100,
-        "effect": { "type": "policy_bias", "value": { "actionKinds": ["guard"], "bonus": -100 } }
+        "effect": {
+          "type": "policy_bias",
+          "value": {
+            "actionKinds": ["guard"],
+            "bonus": -100
+          }
+        }
       }
     ],
     "interactions": [
-      { "id": "control", "counterplay": "control effects interrupt the offensive sequence" }
+      {
+        "id": "control",
+        "counterplay": "efeitos de controle interrompem a sequência ofensiva"
+      }
     ],
     "requirements": [],
     "properties": ["berserker-policy"]
@@ -1333,11 +2079,20 @@
       {
         "id": "intercept",
         "event": "targeting.check",
-        "conditions": [{ "path": "target.side", "op": "neq", "value": "self" }],
+        "conditions": [
+          {
+            "path": "target.side",
+            "op": "neq",
+            "value": "self"
+          }
+        ],
         "interactionId": "policy:intercept",
         "potency": 100,
         "priority": 100,
-        "effect": { "type": "intercept_ally", "value": true }
+        "effect": {
+          "type": "intercept_ally",
+          "value": true
+        }
       },
       {
         "id": "guard-priority",
@@ -1348,12 +2103,18 @@
         "priority": 100,
         "effect": {
           "type": "policy_bias",
-          "value": { "actionKinds": ["guard", "intercept"], "bonus": 50 }
+          "value": {
+            "actionKinds": ["guard", "intercept"],
+            "bonus": 50
+          }
         }
       }
     ],
     "interactions": [
-      { "id": "intercept", "counterplay": "bypass, area attack or disable the guardian" }
+      {
+        "id": "intercept",
+        "counterplay": "contornar, atacar em área ou incapacitar o guardião"
+      }
     ],
     "requirements": [],
     "properties": ["guardian-policy"]
@@ -1374,7 +2135,10 @@
         "interactionId": "policy:counterattack",
         "potency": 100,
         "priority": 100,
-        "effect": { "type": "counterattack", "value": true }
+        "effect": {
+          "type": "counterattack",
+          "value": true
+        }
       },
       {
         "id": "block-counter",
@@ -1383,11 +2147,17 @@
         "interactionId": "policy:counterattack",
         "potency": 100,
         "priority": 100,
-        "effect": { "type": "counterattack", "value": true }
+        "effect": {
+          "type": "counterattack",
+          "value": true
+        }
       }
     ],
     "interactions": [
-      { "id": "counterattack", "counterplay": "inevitable attacks or denying a reaction window" }
+      {
+        "id": "counterattack",
+        "counterplay": "ataques inevitáveis ou negar a janela de reação"
+      }
     ],
     "requirements": [],
     "properties": ["counterattacker-policy"]
@@ -1405,17 +2175,34 @@
         "id": "opening-strike",
         "event": "action.select",
         "conditions": [
-          { "path": "actor.actionsTaken", "op": "eq", "value": 0 },
-          { "path": "actor.revealed", "op": "eq", "value": false }
+          {
+            "path": "actor.actionsTaken",
+            "op": "eq",
+            "value": 0
+          },
+          {
+            "path": "actor.revealed",
+            "op": "eq",
+            "value": false
+          }
         ],
         "interactionId": "policy:opening-strike",
         "potency": 100,
         "priority": 100,
-        "effect": { "type": "policy_bias", "value": { "actionKinds": ["attack"], "bonus": 100 } }
+        "effect": {
+          "type": "policy_bias",
+          "value": {
+            "actionKinds": ["attack"],
+            "bonus": 100
+          }
+        }
       }
     ],
     "interactions": [
-      { "id": "revelation", "counterplay": "reveal the ambusher before its first action" }
+      {
+        "id": "revelation",
+        "counterplay": "revelar o emboscador antes de sua primeira ação"
+      }
     ],
     "requirements": [],
     "properties": ["ambusher-policy"]
@@ -1432,17 +2219,31 @@
       {
         "id": "pack-attack",
         "event": "action.select",
-        "conditions": [{ "path": "actor.aliveAllies", "op": "gt", "value": 1 }],
+        "conditions": [
+          {
+            "path": "actor.aliveAllies",
+            "op": "gt",
+            "value": 1
+          }
+        ],
         "interactionId": "policy:pack-hunt",
         "potency": 50,
         "priority": 100,
         "effect": {
           "type": "policy_bias",
-          "value": { "actionKinds": ["attack", "combo"], "bonus": 50 }
+          "value": {
+            "actionKinds": ["attack", "combo"],
+            "bonus": 50
+          }
         }
       }
     ],
-    "interactions": [{ "id": "isolated", "counterplay": "separate the pack" }],
+    "interactions": [
+      {
+        "id": "isolated",
+        "counterplay": "separar a matilha"
+      }
+    ],
     "requirements": [],
     "properties": ["pack-hunt-policy"]
   },
@@ -1464,7 +2265,10 @@
         "priority": 100,
         "effect": {
           "type": "policy_bias",
-          "value": { "actionKinds": ["magic", "ranged", "move"], "bonus": 50 }
+          "value": {
+            "actionKinds": ["magic", "ranged", "move"],
+            "bonus": 50
+          }
         }
       },
       {
@@ -1474,10 +2278,18 @@
         "interactionId": "policy:range",
         "potency": 1,
         "priority": 100,
-        "effect": { "type": "preferred_range", "value": 3 }
+        "effect": {
+          "type": "preferred_range",
+          "value": 3
+        }
       }
     ],
-    "interactions": [{ "id": "melee", "counterplay": "close distance or interrupt casting" }],
+    "interactions": [
+      {
+        "id": "melee",
+        "counterplay": "encurtar a distância ou interromper a conjuração"
+      }
+    ],
     "requirements": [],
     "properties": ["caster-policy"]
   },
@@ -1493,14 +2305,31 @@
       {
         "id": "summon-priority",
         "event": "action.select",
-        "conditions": [{ "path": "actor.summonCount", "op": "eq", "value": 0 }],
+        "conditions": [
+          {
+            "path": "actor.summonCount",
+            "op": "eq",
+            "value": 0
+          }
+        ],
         "interactionId": "policy:summon",
         "potency": 100,
         "priority": 100,
-        "effect": { "type": "policy_bias", "value": { "actionKinds": ["summon"], "bonus": 100 } }
+        "effect": {
+          "type": "policy_bias",
+          "value": {
+            "actionKinds": ["summon"],
+            "bonus": 100
+          }
+        }
       }
     ],
-    "interactions": [{ "id": "summons", "counterplay": "defeat auxiliaries or interrupt summon" }],
+    "interactions": [
+      {
+        "id": "summons",
+        "counterplay": "derrotar os auxiliares ou interromper a invocação"
+      }
+    ],
     "requirements": [],
     "properties": ["summoner-policy"]
   },
@@ -1516,18 +2345,30 @@
       {
         "id": "healing-priority",
         "event": "action.select",
-        "conditions": [{ "path": "target.hpRatio", "op": "lt", "value": 1 }],
+        "conditions": [
+          {
+            "path": "target.hpRatio",
+            "op": "lt",
+            "value": 1
+          }
+        ],
         "interactionId": "policy:healing",
         "potency": 75,
         "priority": 100,
         "effect": {
           "type": "policy_bias",
-          "value": { "actionKinds": ["heal", "support"], "bonus": 75 }
+          "value": {
+            "actionKinds": ["heal", "support"],
+            "bonus": 75
+          }
         }
       }
     ],
     "interactions": [
-      { "id": "pressure", "counterplay": "focus the healer or deny healing actions" }
+      {
+        "id": "pressure",
+        "counterplay": "focar o curandeiro ou impedir ações de cura"
+      }
     ],
     "requirements": [],
     "properties": ["healer-policy"]
@@ -1550,12 +2391,18 @@
         "priority": 100,
         "effect": {
           "type": "policy_bias",
-          "value": { "actionKinds": ["ranged", "area"], "bonus": 50 }
+          "value": {
+            "actionKinds": ["ranged", "area"],
+            "bonus": 50
+          }
         }
       }
     ],
     "interactions": [
-      { "id": "close-range", "counterplay": "close distance or obstruct line of sight" }
+      {
+        "id": "close-range",
+        "counterplay": "encurtar a distância ou bloquear a linha de visão"
+      }
     ],
     "requirements": [],
     "properties": ["artillery-policy"]
@@ -1576,10 +2423,18 @@
         "interactionId": "healing:life-steal",
         "potency": 25,
         "priority": 100,
-        "effect": { "type": "vampirism", "value": 0.25 }
+        "effect": {
+          "type": "vampirism",
+          "value": 0.25
+        }
       }
     ],
-    "interactions": [{ "id": "recovery", "counterplay": "deny hits or apply healing suppression" }],
+    "interactions": [
+      {
+        "id": "recovery",
+        "counterplay": "evitar acertos ou aplicar supressão de cura"
+      }
+    ],
     "requirements": [],
     "properties": ["vampiric"]
   },
@@ -1601,11 +2456,21 @@
         "priority": 100,
         "effect": {
           "type": "death_burst",
-          "value": { "amount": 20, "channel": "magical", "element": "fire", "radius": 1 }
+          "value": {
+            "amount": 20,
+            "channel": "magical",
+            "element": "fire",
+            "radius": 1
+          }
         }
       }
     ],
-    "interactions": [{ "id": "death-burst", "counterplay": "defeat from range or resist fire" }],
+    "interactions": [
+      {
+        "id": "death-burst",
+        "counterplay": "derrotar à distância ou resistir ao fogo"
+      }
+    ],
     "requirements": [],
     "properties": ["volatile"]
   },
@@ -1622,16 +2487,26 @@
         "id": "adapt-last-type",
         "event": "damage.incoming",
         "conditions": [
-          { "path": "damage.channel", "op": "eq_field", "value": "defender.lastDamageChannel" }
+          {
+            "path": "damage.channel",
+            "op": "eq_field",
+            "value": "defender.lastDamageChannel"
+          }
         ],
         "interactionId": "defense:adaptive",
         "potency": 25,
         "priority": 100,
-        "effect": { "type": "adaptive_resistance", "value": 0.75 }
+        "effect": {
+          "type": "adaptive_resistance",
+          "value": 0.75
+        }
       }
     ],
     "interactions": [
-      { "id": "change-damage-type", "counterplay": "switch damage channel or subtype" }
+      {
+        "id": "change-damage-type",
+        "counterplay": "alternar o canal ou subtipo de dano"
+      }
     ],
     "requirements": [],
     "properties": ["adaptive"]

@@ -74,6 +74,59 @@ describe('SQLite game repository', () => {
     driver.close();
   });
 
+  it('persists active elapsed checkpoints across SQLite reopen and clock rollback', async () => {
+    let driver = await SqlJsDriver.create();
+    let repository = new SqliteGameRepository(driver);
+    await repository.initialize();
+    await repository.transact(() => createTestState());
+    await repository.transact((state) =>
+      enqueueSession(state!, newTestSession('rollback-db', 1_000), testCatalog, 100),
+    );
+    const checkpoint = await repository.transact((state) =>
+      reconcileSessions(state!, 600, testCatalog),
+    );
+    expect(checkpoint.sessions[0]).toMatchObject({
+      elapsedMs: 500,
+      lastObservedAt: 600,
+      status: 'active',
+    });
+    const bytes = driver.export();
+    driver.close();
+
+    driver = await SqlJsDriver.create(bytes);
+    repository = new SqliteGameRepository(driver);
+    await repository.initialize();
+    const afterRollback = await repository.transact((state) =>
+      reconcileSessions(state!, 250, testCatalog),
+    );
+    expect(afterRollback.sessions[0]).toMatchObject({
+      elapsedMs: 500,
+      lastObservedAt: 600,
+      status: 'active',
+    });
+    expect(afterRollback.character?.inventory).toEqual({});
+    const completed = await repository.transact((state) =>
+      reconcileSessions(state!, 1_100, testCatalog),
+    );
+    expect(completed.sessions[0]?.status).toBe('completed');
+    expect(completed.character?.inventory['iron-ore']).toBe(2);
+    const completedBytes = driver.export();
+    driver.close();
+
+    driver = await SqlJsDriver.create(completedBytes);
+    repository = new SqliteGameRepository(driver);
+    await repository.initialize();
+    const afterSecondReopen = await repository.transact((state) =>
+      reconcileSessions(state!, 0, testCatalog),
+    );
+    expect(afterSecondReopen.sessions[0]?.status).toBe('completed');
+    expect(afterSecondReopen.character?.inventory['iron-ore']).toBe(2);
+    expect(
+      (await repository.loadEvents()).filter((event) => event.type === 'reward.granted'),
+    ).toHaveLength(1);
+    driver.close();
+  });
+
   it('hydrates pre-combat saves with an empty combat history', async () => {
     const driver = await SqlJsDriver.create();
     const repository = new SqliteGameRepository(driver);

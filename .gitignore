@@ -3,6 +3,7 @@ dist/
 coverage/
 /public/assets/*.wasm
 .vite/
+.vitest/
 *.log
 .DS_Store
 android/.gradle/
