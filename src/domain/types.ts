@@ -67,6 +67,10 @@ export interface Session {
   status: SessionStatus;
   createdAt: number;
   startedAt?: number;
+  /** Highest elapsed wall-clock progress observed; absent in legacy saves. */
+  elapsedMs?: number;
+  /** Monotonic wall-clock watermark used to make clock rollback harmless. */
+  lastObservedAt?: number;
   finishedAt?: number;
   rewardId?: string;
 }
@@ -91,7 +95,12 @@ export type DomainEvent =
       kills: number;
       deaths: number;
     })
-  | (EventBase & { type: 'node.unlocked'; nodeId: string; sessionId: string });
+  | (EventBase & { type: 'node.unlocked'; nodeId: string; sessionId: string })
+  | (EventBase & {
+      type: 'mission.reward_claimed';
+      missionId: string;
+      periodKey: string;
+    });
 
 export interface ExpeditionCombatRecord {
   id: string;
@@ -117,6 +126,8 @@ export interface GameState {
   queue: string[];
   events: DomainEvent[];
   processedEventIds: string[];
+  /** Added with the mission system; older saves hydrate as an empty list. */
+  missionClaims?: string[];
   /** Added without changing schemaVersion; older saves hydrate as an empty list. */
   combatRecords?: ExpeditionCombatRecord[];
 }

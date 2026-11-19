@@ -17,6 +17,14 @@ Eternity Realms is an open source idle RPG for Android, designed to work offline
 
 The initial mining and foraging rewards, and the 80 XP per-level threshold, are explicitly provisional data. Change the content JSON when the game rules are ready; the session engine does not encode reward values or a level curve.
 
+## Mobile experience and management
+
+The app is organized around five destinations: Activities, Combat, Home, Missions, and Character. Each destination has focused subsections for its systems, while a single queue still handles up to five combat or noncombat sessions. The interface uses custom in-game dialogs, selectors, switches, and bottom navigation instead of browser controls that open native Android UI.
+
+Appearance settings include Catppuccin Mocha, Tokyo Night, Monochrome, and Gruvbox, with persistent font scale, motion, and effects controls. The original sword artwork is packaged locally for the app identity. Saves and profile data remain local; Android builds can schedule daily or weekly backups with WorkManager, and the browser build has a local backup fallback. The settings center also manages characters, imported content mods, local notifications, verbose diagnostics, changelogs, and optional GitHub release checks.
+
+Versioned changelog JSON ships with the app, so the news screen works offline. A tag-triggered workflow builds the Android APK and publishes it with generated release notes. No in-app APK installer is included.
+
 ## Requirements
 
 - Node.js 24 and npm.
@@ -55,10 +63,10 @@ All production behavior is developed test-first. The Vitest coverage thresholds 
 - `src/nodes/`: typed graph validation and compilation, glyphs, sigils, and the character's versioned construction library.
 - `src/persistence/`: versioned SQLite migrations, atomic save/event transactions, idempotent event IDs, and Capacitor adapters.
 - `src/mods/`: Lua/WebAssembly transform boundary. Content packs are JSON and validated through the same loader regardless of source.
-- `src/app/`: mobile-first React screen and first playable loop.
+- `src/app/`: five-destination mobile UI, settings, diagnostics, changelog, and gameplay panels.
 - `android/`: generated Capacitor Android host, synced from the web app.
 
-The session engine uses persisted timestamps rather than background timers. On foreground startup it processes elapsed cycles in order, simulates any expedition with a session-derived seed, stores its results atomically, and leaves the character idle when the queue ends. The queue is never restarted automatically. Combat uses virtual time and a saved PRNG state, so continuous play and offline batches produce the same event order.
+The session engine uses a persisted elapsed-time watermark and last-observed timestamp rather than relying on the device clock alone. On foreground startup it processes elapsed cycles in order, simulates any expedition with a session-derived seed, stores rewards and processed event IDs atomically, and leaves the character idle when the queue ends. A clock rollback cannot reopen a completed cycle or replay its rewards. The queue is never restarted automatically. Combat uses virtual time and a saved PRNG state, so continuous play and offline batches produce the same event order.
 
 ## Content packs
 
@@ -68,7 +76,7 @@ The official pack is in `content/core/`. External content can be passed as `{ ma
 
 `npm run android:add` creates the Capacitor Android host. On machines without the Android SDK, the GitHub Actions workflow installs the SDK, syncs Capacitor, builds `app-debug.apk`, and uploads it as a short-lived artifact. The workflow compiles the APK; physical-device behavior still needs device validation.
 
-The main CI workflow runs typecheck, lint, formatting, 100% coverage, content validation, web build, and a high-severity dependency audit on pushes and pull requests to `main`.
+The main CI workflow runs typecheck, lint, formatting, 100% coverage, content and changelog validation, web build, and dependency audits on pushes to `main` and pull requests targeting `main`. The tag workflow also runs these quality checks before producing an Android APK and GitHub Release.
 
 ## License
 

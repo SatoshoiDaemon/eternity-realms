@@ -13,6 +13,8 @@ describe('declarative content registry', () => {
     expect(official.rewards.get('foraging-herbs')?.items[0]?.itemId).toBe('wild-herb');
     expect(official.items.has('iron-ore')).toBe(true);
     expect(official.skills.has('mining-skill')).toBe(true);
+    expect(official.missions.get('first-steps')?.cadence).toBe('main');
+    expect(official.missions.get('daily-routine')?.target).toBe(3);
     expect(official.effects.has('focused-work')).toBe(true);
     expect(official.enemies.has('core:iron-sentinel')).toBe(true);
     expect(official.expeditions.get('core:lost-foundry')?.encounters.length).toBeGreaterThan(4);
@@ -287,5 +289,25 @@ describe('declarative content registry', () => {
         },
       ]),
     ).toThrow('Skill "mining-skill" references missing activity "missing-activity".');
+    expect(() =>
+      loadContentPacks([
+        {
+          ...testPack,
+          records: [
+            ...testPack.records,
+            {
+              id: 'bad-mission',
+              kind: 'mission',
+              name: 'Bad mission',
+              description: '',
+              cadence: 'daily',
+              eventType: 'session.completed',
+              target: 1,
+              reward: { experience: 5, items: { missing: 1 } },
+            },
+          ],
+        },
+      ]),
+    ).toThrow('Mission "bad-mission" references missing reward item "missing".');
   });
 });

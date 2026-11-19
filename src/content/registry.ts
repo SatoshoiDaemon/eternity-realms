@@ -5,6 +5,7 @@ import items from '../../content/core/items.json';
 import activities from '../../content/core/activities.json';
 import rewards from '../../content/core/rewards.json';
 import skills from '../../content/core/skills.json';
+import missionsContent from '../../content/core/missions.json';
 import effects from '../../content/core/effects.json';
 import rules from '../../content/core/rules.json';
 import enemiesContent from '../../content/core/enemies.json';
@@ -20,6 +21,7 @@ import {
   type ClassDefinition,
   type ContentRecord,
   type EffectDefinition,
+  type MissionDefinition,
   type ItemDefinition,
   type RaceDefinition,
   type RewardDefinition,
@@ -48,6 +50,7 @@ export interface ContentCatalog {
   activities: Map<string, ActivityDefinition>;
   rewards: Map<string, RewardDefinition>;
   skills: Map<string, SkillDefinition>;
+  missions: Map<string, MissionDefinition>;
   effects: Map<string, EffectDefinition>;
   enemyTags: Map<string, EnemyTagDefinition>;
   enemies: Map<string, EnemyDefinition>;
@@ -102,6 +105,7 @@ export function loadContentPacks(inputs: unknown[]): ContentCatalog {
   const activityRecords = indexOfKind(records, 'activity');
   const rewardRecords = indexOfKind(records, 'reward');
   const skillRecords = indexOfKind(records, 'skill');
+  const missions = indexOfKind(records, 'mission');
   const effectRecords = indexOfKind(records, 'effect');
   const enemies = indexOfKind(records, 'enemy');
   const expeditions = indexOfKind(records, 'expedition');
@@ -204,6 +208,13 @@ export function loadContentPacks(inputs: unknown[]): ContentCatalog {
       }
     }
   }
+  for (const mission of missions.values()) {
+    for (const itemId of Object.keys(mission.reward.items)) {
+      if (!itemRecords.has(itemId)) {
+        throw new Error(`Mission "${mission.id}" references missing reward item "${itemId}".`);
+      }
+    }
+  }
 
   return {
     races,
@@ -212,6 +223,7 @@ export function loadContentPacks(inputs: unknown[]): ContentCatalog {
     activities: activityRecords,
     rewards: rewardRecords,
     skills: skillRecords,
+    missions,
     effects: effectRecords,
     enemyTags,
     enemies,
@@ -226,7 +238,7 @@ export function loadContentPacks(inputs: unknown[]): ContentCatalog {
   };
 }
 
-export function loadOfficialContent(): ContentCatalog {
+export function loadOfficialContent(additionalPacks: unknown[] = []): ContentCatalog {
   return loadContentPacks([
     {
       manifest,
@@ -237,6 +249,7 @@ export function loadOfficialContent(): ContentCatalog {
         ...activities,
         ...rewards,
         ...skills,
+        ...missionsContent,
         ...effects,
         ...enemiesContent,
         ...expeditionsContent,
@@ -245,5 +258,6 @@ export function loadOfficialContent(): ContentCatalog {
       ],
       rules,
     },
+    ...additionalPacks,
   ]);
 }

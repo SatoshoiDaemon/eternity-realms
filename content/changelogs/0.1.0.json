@@ -1,0 +1,20 @@
+{
+  "version": "0.1.0",
+  "date": "2026-11-19",
+  "changes": {
+    "added": [
+      "Combate simulado, bestiário, forja e editor universal de nós.",
+      "Cinco áreas de navegação e temas visuais configuráveis.",
+      "Missões principais, diárias e semanais com recompensas resgatáveis.",
+      "Gerenciamento local de personagens, saves, backups e mods."
+    ],
+    "improved": [
+      "Interface adaptada para telas Android e áreas seguras do sistema.",
+      "Progresso de sessões preservado após alterações no relógio do dispositivo."
+    ],
+    "changed": [],
+    "fixed": ["Reconciliação de sessões idempotente após reinicialização e retrocesso do relógio."],
+    "removed": [],
+    "technical": ["Formato de save separado das versões do aplicativo e do banco de dados."]
+  }
+}

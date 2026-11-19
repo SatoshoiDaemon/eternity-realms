@@ -58,11 +58,12 @@ function parseGameState(payload: unknown): GameState {
       !Array.isArray(parsed.events) ||
       !('processedEventIds' in parsed) ||
       !Array.isArray(parsed.processedEventIds) ||
+      ('missionClaims' in parsed && !Array.isArray(parsed.missionClaims)) ||
       ('combatRecords' in parsed && !Array.isArray(parsed.combatRecords))
     ) {
       throw new Error('Save payload does not match the current schema.');
     }
-    return { combatRecords: [], ...(parsed as GameState) };
+    return { combatRecords: [], missionClaims: [], ...(parsed as GameState) };
   } catch {
     throw new Error('Saved game data is invalid.');
   }

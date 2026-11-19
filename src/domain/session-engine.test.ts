@@ -315,14 +315,201 @@ describe('universal timed session engine', () => {
       elapsedMs: 1_000,
       fraction: 1,
     });
+    expect(getSessionProgress({ ...session, elapsedMs: 700 }, 500)).toEqual({
+      elapsedMs: 700,
+      fraction: 0.7,
+    });
     expect(getSessionProgress({ ...session, status: 'queued', startedAt: undefined }, 200)).toEqual(
       { elapsedMs: 0, fraction: 0 },
     );
   });
 
+  it('keeps active progress monotonic across clock rollback and restart, then completes once', () => {
+    const started = enqueueSession(
+      createTestState(),
+      newTestSession('clock-safe', 1_000),
+      testCatalog,
+      100,
+    );
+    const checkpointed = reconcileSessions(started, 600, testCatalog);
+    expect(checkpointed.sessions[0]).toMatchObject({
+      status: 'active',
+      startedAt: 100,
+      elapsedMs: 500,
+      lastObservedAt: 600,
+    });
+
+    const reopened = JSON.parse(JSON.stringify(checkpointed)) as GameState;
+    const rolledBack = reconcileSessions(reopened, 250, testCatalog);
+    expect(rolledBack.sessions[0]).toMatchObject({ elapsedMs: 500, lastObservedAt: 600 });
+    expect(getSessionProgress(rolledBack.sessions[0]!, 250)).toEqual({
+      elapsedMs: 500,
+      fraction: 0.5,
+    });
+
+    const completed = reconcileSessions(rolledBack, 1_100, testCatalog);
+    const rolledBackAgain = reconcileSessions(
+      JSON.parse(JSON.stringify(completed)) as GameState,
+      200,
+      testCatalog,
+    );
+    expect(completed.sessions[0]).toMatchObject({ status: 'completed', elapsedMs: 1_000 });
+    expect(rolledBackAgain.queue).toEqual([]);
+    expect(rolledBackAgain.sessions[0]?.status).toBe('completed');
+    expect(rolledBackAgain.character?.inventory['iron-ore']).toBe(2);
+    expect(rolledBackAgain.events.filter((event) => event.type === 'reward.granted')).toHaveLength(
+      1,
+    );
+    expect(rolledBackAgain.events).toEqual(completed.events);
+  });
+
+  it('hydrates an active legacy session without checkpoint fields', () => {
+    const state = enqueueSession(
+      createTestState(),
+      newTestSession('legacy-active', 1_000),
+      testCatalog,
+      100,
+    );
+    const legacy = JSON.parse(JSON.stringify(state)) as GameState;
+    delete legacy.sessions[0]!.elapsedMs;
+    delete legacy.sessions[0]!.lastObservedAt;
+
+    const checkpointed = reconcileSessions(legacy, 600, testCatalog);
+    expect(checkpointed.sessions[0]).toMatchObject({ elapsedMs: 500, lastObservedAt: 600 });
+    expect(getSessionProgress({ ...checkpointed.sessions[0]!, elapsedMs: undefined }, 600)).toEqual(
+      {
+        elapsedMs: 500,
+        fraction: 0.5,
+      },
+    );
+  });
+
+  it('discards stale queue references to completed and cancelled sessions without granting again', () => {
+    const first = enqueueSession(
+      createTestState(),
+      newTestSession('terminal-completed', 10),
+      testCatalog,
+      100,
+    );
+    const second = enqueueSession(
+      first,
+      newTestSession('terminal-cancelled', 10),
+      testCatalog,
+      101,
+    );
+    const completed = reconcileSessions(first, 110, testCatalog);
+    const staleQueue: GameState = {
+      ...completed,
+      queue: ['terminal-completed', 'terminal-cancelled'],
+      sessions: [
+        ...completed.sessions,
+        {
+          ...second.sessions.find((session) => session.id === 'terminal-cancelled')!,
+          status: 'cancelled' as const,
+        },
+      ],
+    };
+
+    const reconciled = reconcileSessions(staleQueue, 50, testCatalog);
+    expect(reconciled.queue).toEqual([]);
+    expect(reconciled.character?.inventory['iron-ore']).toBe(2);
+    expect(reconciled.events).toEqual(completed.events);
+    expect(reconciled.processedEventIds).toEqual(completed.processedEventIds);
+    expect(second.sessions.some((session) => session.status === 'active')).toBe(true);
+  });
+
+  it('treats persisted completion event IDs as authoritative during recovery', () => {
+    const started = enqueueSession(
+      createTestState(),
+      newTestSession('event-checkpoint', 100),
+      testCatalog,
+      100,
+    );
+    const completedMarker: GameState = {
+      ...started,
+      processedEventIds: [
+        ...started.processedEventIds,
+        'event-checkpoint:session.completed',
+        'event-checkpoint:reward.granted',
+      ],
+    };
+
+    const recovered = reconcileSessions(completedMarker, 1_000, testCatalog);
+    expect(recovered.queue).toEqual([]);
+    expect(recovered.sessions[0]).toMatchObject({ status: 'completed', elapsedMs: 100 });
+    expect(recovered.character?.inventory).toEqual({});
+    expect(recovered.events).toEqual(started.events);
+  });
+
+  it('starts the queued successor when a persisted completion marker is recovered and rejects corrupt active state', () => {
+    const first = enqueueSession(
+      createTestState(),
+      newTestSession('recover-first', 100),
+      testCatalog,
+      100,
+    );
+    const withNext = enqueueSession(first, newTestSession('recover-next', 100), testCatalog, 150);
+    const marked = {
+      ...withNext,
+      processedEventIds: [...withNext.processedEventIds, 'recover-first:session.completed'],
+    };
+    const recovered = reconcileSessions(marked, 200, testCatalog);
+    expect(recovered.queue).toEqual(['recover-next']);
+    expect(recovered.sessions.find((session) => session.id === 'recover-next')).toMatchObject({
+      status: 'active',
+      startedAt: 200,
+    });
+
+    const invalid = {
+      ...first,
+      sessions: first.sessions.map((session) => ({
+        ...session,
+        status: 'active' as const,
+        startedAt: undefined,
+      })),
+    };
+    expect(() => reconcileSessions(invalid, 200, testCatalog)).toThrow(
+      'Invalid queued session state: recover-first',
+    );
+  });
+
+  it('does not reopen an event-committed session after the device clock rolls backward', () => {
+    const started = enqueueSession(
+      createTestState(),
+      newTestSession('committed-before-rollback', 100),
+      testCatalog,
+      1_000,
+    );
+    const eventCommitted: GameState = {
+      ...started,
+      processedEventIds: [
+        ...started.processedEventIds,
+        'committed-before-rollback:session.completed',
+      ],
+      events: [
+        ...started.events,
+        {
+          id: 'committed-before-rollback:session.completed',
+          type: 'session.completed',
+          occurredAt: 1_100,
+          sessionId: 'committed-before-rollback',
+          activityId: 'mining',
+        },
+      ],
+    };
+    const recovered = reconcileSessions(eventCommitted, 500, testCatalog);
+    expect(recovered.sessions[0]).toMatchObject({ status: 'completed', elapsedMs: 100 });
+    expect(recovered.queue).toEqual([]);
+    expect(recovered.character?.inventory).toEqual(started.character?.inventory);
+  });
+
   it('does not grant partial work before completion and recovers a queued head after reopening', () => {
     const started = enqueueSession(createTestState(), newTestSession('s1', 100), testCatalog, 100);
-    expect(reconcileSessions(started, 199, testCatalog)).toEqual(started);
+    expect(reconcileSessions(started, 199, testCatalog).sessions[0]).toMatchObject({
+      status: 'active',
+      elapsedMs: 99,
+      lastObservedAt: 199,
+    });
     const queuedSave = {
       ...started,
       queue: ['s1'],
@@ -426,13 +613,13 @@ describe('universal timed session engine', () => {
     expect(() => cancelActiveSession(started, Number.POSITIVE_INFINITY)).toThrow(
       'Current time must be a finite safe integer.',
     );
-    expect(() =>
-      reconcileSessions(
-        { ...started, queue: ['s1'], sessions: [{ ...started.sessions[0]!, status: 'completed' }] },
-        10_000_000,
-        testCatalog,
-      ),
-    ).toThrow('Invalid queued session state: s1');
+    const staleTerminalReference = reconcileSessions(
+      { ...started, queue: ['s1'], sessions: [{ ...started.sessions[0]!, status: 'completed' }] },
+      10_000_000,
+      testCatalog,
+    );
+    expect(staleTerminalReference.queue).toEqual([]);
+    expect(staleTerminalReference.character?.inventory).toEqual({});
     expect(() =>
       reconcileSessions(started, 10_000_000, { ...testCatalog, activities: new Map() }),
     ).toThrow('Unknown activity: mining');

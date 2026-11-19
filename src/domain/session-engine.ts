@@ -69,7 +69,13 @@ function startQueuedSession(state: GameState, sessionId: string, startedAt: numb
   if (!Number.isSafeInteger(startedAt + session.durationMs)) {
     throw new Error('Session end time exceeds the safe integer range.');
   }
-  const active: Session = { ...session, status: 'active', startedAt };
+  const active: Session = {
+    ...session,
+    status: 'active',
+    startedAt,
+    elapsedMs: 0,
+    lastObservedAt: startedAt,
+  };
   const next = updateSession(state, active);
   return appendEvents(next, [
     {
@@ -247,6 +253,10 @@ export function reconcileSessions(
       return setActivityState(next);
     }
     let session = getSession(next, sessionId);
+    if (session.status === 'completed' || session.status === 'cancelled') {
+      next = { ...next, queue: next.queue.slice(1) };
+      continue;
+    }
     if (session.status === 'queued') {
       next = startQueuedSession(next, session.id, now);
       session = getSession(next, session.id);
@@ -266,7 +276,35 @@ export function reconcileSessions(
     if (!Number.isSafeInteger(completedAt)) {
       throw new Error('Session end time exceeds the safe integer range.');
     }
-    if (now < completedAt) {
+    const completionEventId = `${session.id}:session.completed`;
+    const rewardEventId = `${session.id}:reward.granted`;
+    const alreadyProcessed =
+      next.processedEventIds.includes(completionEventId) ||
+      next.processedEventIds.includes(rewardEventId) ||
+      next.events.some((event) => event.id === completionEventId || event.id === rewardEventId);
+    if (alreadyProcessed) {
+      const completedSession: Session = {
+        ...session,
+        status: 'completed',
+        elapsedMs: session.durationMs,
+        finishedAt: session.finishedAt ?? completedAt,
+      };
+      next = updateSession({ ...next, queue: next.queue.slice(1) }, completedSession);
+      const nextId = next.queue[0];
+      if (nextId) {
+        next = startQueuedSession(next, nextId, completedSession.finishedAt!);
+      }
+      continue;
+    }
+    const elapsedMs = Math.max(
+      Math.max(0, session.elapsedMs ?? 0),
+      Math.min(session.durationMs, Math.max(0, now - session.startedAt)),
+    );
+    const lastObservedAt = Math.max(session.lastObservedAt ?? session.startedAt, now);
+    if (elapsedMs < session.durationMs && now < completedAt) {
+      if (session.elapsedMs !== elapsedMs || session.lastObservedAt !== lastObservedAt) {
+        next = updateSession(next, { ...session, elapsedMs, lastObservedAt });
+      }
       return setActivityState(next);
     }
 
@@ -309,6 +347,8 @@ export function reconcileSessions(
     const completedSession: Session = {
       ...session,
       status: 'completed',
+      elapsedMs: session.durationMs,
+      lastObservedAt,
       finishedAt: completedAt,
       rewardId: reward.id,
     };
@@ -403,6 +443,9 @@ export function getSessionProgress(
   if (session.status !== 'active' || session.startedAt === undefined) {
     return { elapsedMs: 0, fraction: 0 };
   }
-  const elapsedMs = Math.max(0, Math.min(session.durationMs, now - session.startedAt));
+  const elapsedMs = Math.max(
+    Math.max(0, session.elapsedMs ?? 0),
+    Math.min(session.durationMs, Math.max(0, now - session.startedAt)),
+  );
   return { elapsedMs, fraction: elapsedMs / session.durationMs };
 }

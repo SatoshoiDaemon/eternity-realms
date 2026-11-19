@@ -1,12 +1,14 @@
-import { fireEvent, render, screen, waitFor } from '@testing-library/react';
+import { act, fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 import { loadOfficialContent } from '../content/registry';
 import { createCharacter, createInitialGameState } from '../domain/model';
 import type { GameState } from '../domain/types';
 import type { NodeGraph } from '../nodes/graph';
-import type { CombatState, CombatLogEntry } from '../combat/types';
+import type { CombatActor, CombatState, CombatLogEntry } from '../combat/types';
 import type { ExpeditionCombatRecord } from '../domain/types';
+import { redoGraphHistory, undoGraphHistory } from '../nodes/graph-history';
 import { PhaseTwoPanels } from './PhaseTwoPanels';
+import { nodeCategoryName } from './phase-two-format';
 
 vi.mock('../nodes/graph', async (importOriginal) => {
   const actual = await importOriginal<typeof import('../nodes/graph')>();
@@ -15,6 +17,11 @@ vi.mock('../nodes/graph', async (importOriginal) => {
 import { compileConstruction } from '../nodes/graph';
 
 const content = loadOfficialContent();
+
+function chooseOption(label: string, optionName: string | RegExp) {
+  fireEvent.click(screen.getByRole('combobox', { name: new RegExp(`^${label}:`) }));
+  fireEvent.click(screen.getByRole('option', { name: optionName }));
+}
 const graph: NodeGraph = {
   schemaVersion: 1,
   id: 'construction:arena-test',
@@ -69,16 +76,58 @@ function game(overrides: { construction?: boolean; records?: boolean } = {}): Ga
 }
 
 describe('phase two gameplay panels', () => {
+  it('retains unknown node categories from mod content', () => {
+    expect(nodeCategoryName('mod:astral')).toBe('mod:astral');
+  });
+
+  it('keeps graph history transitions idempotent and moves both stacks', () => {
+    const history = { past: [] as NodeGraph[], future: [] as NodeGraph[] };
+    expect(undoGraphHistory(history, graph)).toEqual({ graph, history, versionDelta: 0 });
+    expect(redoGraphHistory(history, graph)).toEqual({ graph, history, versionDelta: 0 });
+
+    const previous = { ...graph, name: 'Anterior' };
+    const next = undoGraphHistory({ past: [previous], future: [] }, graph);
+    expect(next).toEqual({
+      graph: previous,
+      history: { past: [], future: [graph] },
+      versionDelta: 1,
+    });
+    expect(redoGraphHistory(next.history, next.graph)).toEqual({
+      graph,
+      history: { past: [previous], future: [] },
+      versionDelta: 1,
+    });
+  });
+
+  it('supports graph undo and redo and surfaces persistence errors from the node editor', async () => {
+    render(
+      <PhaseTwoPanels
+        state={game()}
+        content={content}
+        clock={() => 25}
+        updateCharacter={vi.fn().mockRejectedValue(new Error('Falha ao persistir construção.'))}
+      />,
+    );
+    const name = screen.getByLabelText('Nome da construção');
+    fireEvent.change(name, { target: { value: 'Construção revisada' } });
+    fireEvent.click(screen.getByRole('button', { name: 'Desfazer alteração' }));
+    expect(screen.getByLabelText('Nome da construção')).toHaveValue('Nova construção');
+    fireEvent.click(screen.getByRole('button', { name: 'Refazer alteração' }));
+    expect(screen.getByLabelText('Nome da construção')).toHaveValue('Construção revisada');
+    fireEvent.click(screen.getByRole('button', { name: 'Validar e salvar grafo' }));
+    expect(await screen.findByText('Falha ao persistir construção.')).toBeInTheDocument();
+  });
+
   it('shows the expedition roster, enemy tag counterplay, and material forge', () => {
     render(
       <PhaseTwoPanels
         state={game()}
         content={content}
-        now={10}
+        clock={() => 10}
         updateCharacter={vi.fn().mockResolvedValue(undefined)}
       />,
     );
-    expect(screen.getByRole('heading', { name: 'Expedições e bestiário' })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'Expedições' })).toBeInTheDocument();
     expect(screen.getAllByText(/contrajogo:/).length).toBeGreaterThan(0);
     expect(screen.getByRole('heading', { name: 'Forja e builds' })).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Fabricar equipamento' })).toBeInTheDocument();
@@ -100,7 +149,7 @@ describe('phase two gameplay panels', () => {
       <PhaseTwoPanels
         state={game()}
         content={content}
-        now={25}
+        clock={() => 25}
         updateCharacter={updateCharacter}
       />,
     );
@@ -118,14 +167,12 @@ describe('phase two gameplay panels', () => {
       <PhaseTwoPanels
         state={game({ construction: true })}
         content={content}
-        now={1234}
+        clock={() => 1234}
         updateCharacter={vi.fn().mockResolvedValue(undefined)}
+        view="arena"
       />,
     );
-    fireEvent.change(screen.getByLabelText('Construções salvas'), { target: { value: graph.id } });
-    fireEvent.change(screen.getByLabelText('Examinar criatura'), {
-      target: { value: 'core:quarry-stalker' },
-    });
+    chooseOption('Construção salva para teste', 'Golpe de teste (construction:arena-test)');
     fireEvent.click(screen.getByRole('button', { name: 'Executar simulação' }));
     await waitFor(() =>
       expect(screen.getByText(/Simulação de 30 segundos concluída/)).toBeInTheDocument(),
@@ -149,11 +196,11 @@ describe('phase two gameplay panels', () => {
       <PhaseTwoPanels
         state={current}
         content={content}
-        now={10}
+        clock={() => 10}
         updateCharacter={updateCharacter}
       />,
     );
-    fireEvent.change(screen.getByLabelText('Receita'), { target: { value: 'forge:iron-maul' } });
+    chooseOption('Receita', /Forjar malho de ferro/);
     fireEvent.click(screen.getByRole('button', { name: 'Fabricar equipamento' }));
     expect(await screen.findByText('Alterações salvas.')).toBeInTheDocument();
     expect(current.character?.inventory['gear:iron-maul']).toBe(1);
@@ -161,7 +208,7 @@ describe('phase two gameplay panels', () => {
       <PhaseTwoPanels
         state={current}
         content={content}
-        now={11}
+        clock={() => 11}
         updateCharacter={updateCharacter}
       />,
     );
@@ -171,7 +218,7 @@ describe('phase two gameplay panels', () => {
       <PhaseTwoPanels
         state={current}
         content={content}
-        now={12}
+        clock={() => 12}
         updateCharacter={updateCharacter}
       />,
     );
@@ -188,24 +235,34 @@ describe('phase two gameplay panels', () => {
       <PhaseTwoPanels
         state={unlockedState}
         content={content}
-        now={10}
+        clock={() => 10}
         updateCharacter={vi.fn().mockResolvedValue(undefined)}
       />,
     );
-    fireEvent.change(screen.getByLabelText('Buscar nós'), { target: { value: 'dano' } });
-    fireEvent.change(screen.getByLabelText('Filtrar categoria'), { target: { value: 'effect' } });
-    fireEvent.change(screen.getByLabelText('Catálogo de nós'), {
-      target: { value: 'core:effect-damage' },
+    const undo = screen.getByRole('button', { name: 'Desfazer alteração' }) as HTMLButtonElement;
+    const redo = screen.getByRole('button', { name: 'Refazer alteração' }) as HTMLButtonElement;
+    undo.disabled = false;
+    redo.disabled = false;
+    act(() => {
+      undo.click();
+      redo.click();
     });
-    fireEvent.change(screen.getByLabelText('Conectar a'), { target: { value: 'form' } });
+    fireEvent.change(screen.getByLabelText('Buscar nós'), { target: { value: 'dano' } });
+    chooseOption('Filtrar categoria', 'Efeito');
+    chooseOption('Catálogo de nós', '◆ Efeito · Dano');
+    chooseOption('Conectar a', 'Golpe (form)');
     fireEvent.click(screen.getByRole('button', { name: 'Aumentar zoom' }));
     fireEvent.click(screen.getByRole('button', { name: 'Diminuir zoom' }));
     fireEvent.click(screen.getByRole('button', { name: 'Adicionar e conectar nó' }));
     const addedNode = [...container.querySelectorAll<HTMLButtonElement>('.graph-node')].find(
       (node) => node.textContent?.includes('effect-damage-5'),
     )!;
-    const quantityInputs = screen.getAllByLabelText(/quantidade/);
-    fireEvent.change(quantityInputs.at(-1)!, { target: { value: '75' } });
+    fireEvent.change(screen.getByLabelText('Quantidade', { exact: true }), {
+      target: { value: '75' },
+    });
+    fireEvent.change(screen.getAllByLabelText('Dano · quantidade')[0]!, {
+      target: { value: '33' },
+    });
     const canvas = screen.getByLabelText('Canvas do grafo de nós');
     fireEvent.dragOver(canvas);
     const transfer = { getData: () => 'core:effect-damage' };
@@ -220,14 +277,60 @@ describe('phase two gameplay panels', () => {
     fireEvent.click(addedNode.querySelector('[role="presentation"]')!);
     const catalogButton = screen.getByRole('button', { name: 'Adicionar e conectar nó' });
     fireEvent.dragStart(catalogButton, { dataTransfer: { setData: vi.fn() } });
-    if (content.glyphs[0])
-      fireEvent.change(screen.getByLabelText('Glyph'), { target: { value: content.glyphs[0].id } });
-    fireEvent.change(screen.getByLabelText('Glyph'), { target: { value: '' } });
-    if (content.sigils[0])
-      fireEvent.change(screen.getByLabelText('Sigil'), { target: { value: content.sigils[0].id } });
-    fireEvent.change(screen.getByLabelText('Sigil'), { target: { value: '' } });
-    fireEvent.change(screen.getByLabelText('Tipo'), { target: { value: 'ability' } });
+    if (content.glyphs[0]) chooseOption('Glifo', content.glyphs[0].name);
+    chooseOption('Glifo', 'Nenhum');
+    if (content.sigils[0]) chooseOption('Sigilo', content.sigils[0].name);
+    chooseOption('Sigilo', 'Nenhum');
+    chooseOption('Tipo', 'Habilidade');
     expect(container.querySelector('.graph-nodes')).toHaveStyle({ transform: 'scale(1)' });
+  });
+
+  it('removes the selected graph node from the inspector', () => {
+    const { container } = render(
+      <PhaseTwoPanels
+        state={game()}
+        content={content}
+        clock={() => 10}
+        updateCharacter={vi.fn().mockResolvedValue(undefined)}
+        view="nodes"
+      />,
+    );
+    expect(container.querySelectorAll('.graph-node')).toHaveLength(4);
+    fireEvent.click(screen.getByRole('button', { name: 'Remover nó selecionado' }));
+    expect(container.querySelectorAll('.graph-node')).toHaveLength(3);
+  });
+
+  it('handles an empty recipe list and missing graph connections in saved builds', () => {
+    const emptyRecipes = { ...content, recipes: new Map() };
+    const state = game({ construction: true });
+    const saved = state.character!.nodeLibrary!.constructions[0]!;
+    saved.graph = {
+      ...saved.graph,
+      nodes: saved.graph.nodes.map((node) =>
+        node.instanceId === 'form' ? { ...node, children: ['missing-child'] } : node,
+      ),
+    };
+    const view = render(
+      <PhaseTwoPanels
+        state={state}
+        content={emptyRecipes}
+        clock={() => 10}
+        updateCharacter={vi.fn().mockResolvedValue(undefined)}
+        view="forge"
+      />,
+    );
+    expect(screen.getByRole('heading', { name: 'Forja e builds' })).toBeInTheDocument();
+    view.rerender(
+      <PhaseTwoPanels
+        state={state}
+        content={emptyRecipes}
+        clock={() => 10}
+        updateCharacter={vi.fn().mockResolvedValue(undefined)}
+        view="nodes"
+      />,
+    );
+    fireEvent.click(screen.getByRole('button', { name: 'Editar selecionada' }));
+    expect(document.querySelectorAll('.graph-connections path')).toHaveLength(2);
   });
 
   it('reports invalid or locked graphs and handles storage errors outside Error objects', async () => {
@@ -238,7 +341,7 @@ describe('phase two gameplay panels', () => {
       <PhaseTwoPanels
         state={game()}
         content={content}
-        now={10}
+        clock={() => 10}
         updateCharacter={updateCharacter as never}
       />,
     );
@@ -251,7 +354,7 @@ describe('phase two gameplay panels', () => {
       <PhaseTwoPanels
         state={locked}
         content={content}
-        now={10}
+        clock={() => 10}
         updateCharacter={updateCharacter as never}
       />,
     );
@@ -279,11 +382,11 @@ describe('phase two gameplay panels', () => {
       <PhaseTwoPanels
         state={current}
         content={content}
-        now={1234}
+        clock={() => 1234}
         updateCharacter={updateCharacter}
       />,
     );
-    fireEvent.change(screen.getByLabelText('Construções salvas'), { target: { value: graph.id } });
+    chooseOption('Construções salvas', 'Golpe de teste (construction:arena-test)');
     fireEvent.change(screen.getByLabelText('ID da cópia'), {
       target: { value: 'construction:copy-two' },
     });
@@ -294,22 +397,22 @@ describe('phase two gameplay panels', () => {
       <PhaseTwoPanels
         state={current}
         content={content}
-        now={1235}
+        clock={() => 1235}
         updateCharacter={updateCharacter}
       />,
     );
-    fireEvent.change(screen.getByLabelText('Construções salvas'), { target: { value: graph.id } });
+    chooseOption('Construções salvas', 'Golpe de teste (construction:arena-test)');
     fireEvent.click(screen.getByRole('button', { name: 'Equipar build' }));
     expect(current.character?.abilities).toContain(graph.id);
     view.rerender(
       <PhaseTwoPanels
         state={current}
         content={content}
-        now={1236}
+        clock={() => 1236}
         updateCharacter={updateCharacter}
       />,
     );
-    fireEvent.change(screen.getByLabelText('Construções salvas'), { target: { value: graph.id } });
+    chooseOption('Construções salvas', 'Golpe de teste (construction:arena-test)');
     fireEvent.click(screen.getByRole('button', { name: 'Editar selecionada' }));
     fireEvent.click(screen.getByRole('button', { name: 'Desequipar' }));
     expect(current.character?.abilities).not.toContain(graph.id);
@@ -325,14 +428,12 @@ describe('phase two gameplay panels', () => {
       <PhaseTwoPanels
         state={current}
         content={arenaContent}
-        now={1237}
+        clock={() => 1237}
         updateCharacter={updateCharacter}
       />,
     );
-    fireEvent.change(screen.getByLabelText('Construções salvas'), { target: { value: graph.id } });
-    fireEvent.change(screen.getByLabelText('Examinar criatura'), {
-      target: { value: 'core:echo-wraith' },
-    });
+    chooseOption('Construções salvas', 'Golpe de teste (construction:arena-test)');
+    chooseOption('Examinar criatura', 'Espectro do Eco');
     fireEvent.click(screen.getByRole('button', { name: 'Executar simulação' }));
     expect(await screen.findByText(/Simulação de 30 segundos concluída/)).toBeInTheDocument();
     fireEvent.click(screen.getByRole('button', { name: 'Ver log detalhado' }));
@@ -353,20 +454,18 @@ describe('phase two gameplay panels', () => {
       <PhaseTwoPanels
         state={current}
         content={{ ...arenaContent, enemies: arenaEnemies }}
-        now={1238}
+        clock={() => 1238}
         updateCharacter={updateCharacter}
       />,
     );
-    fireEvent.change(screen.getByLabelText('Examinar criatura'), {
-      target: { value: durableEnemy.id },
-    });
+    chooseOption('Examinar criatura', 'Training Dummy');
     fireEvent.click(screen.getByRole('button', { name: 'Executar simulação' }));
     expect(screen.getByText(/vencedor: não decidido/)).toBeInTheDocument();
     view.rerender(
       <PhaseTwoPanels
         state={current}
         content={{ ...content, enemies: new Map() }}
-        now={1238}
+        clock={() => 1238}
         updateCharacter={updateCharacter}
       />,
     );
@@ -398,7 +497,7 @@ describe('phase two gameplay panels', () => {
       <PhaseTwoPanels
         state={current}
         content={content}
-        now={40}
+        clock={() => 40}
         updateCharacter={updateCharacter}
       />,
     );
@@ -409,7 +508,7 @@ describe('phase two gameplay panels', () => {
       <PhaseTwoPanels
         state={current}
         content={content}
-        now={41}
+        clock={() => 41}
         updateCharacter={updateCharacter}
       />,
     );
@@ -449,13 +548,21 @@ describe('phase two gameplay panels', () => {
       killed: false,
       message: 'Hero hits enemy',
     };
+    const receivedEntry: CombatLogEntry = {
+      ...logEntry,
+      id: 'combat:event:2',
+      actorId: 'enemy',
+      targetId: 'hero',
+      damageFinal: 3,
+      message: 'enemy hits Hero',
+    };
     const combat: CombatState = {
       id: 'combat:one',
       seed: 3,
       rngState: 3,
       nowMs: 1000,
-      actors: [],
-      log: [logEntry],
+      actors: [{ id: 'hero', side: 'party' } as CombatActor],
+      log: [logEntry, receivedEntry],
       nextEventNumber: 2,
       environment: {},
     };
@@ -479,15 +586,17 @@ describe('phase two gameplay panels', () => {
       <PhaseTwoPanels
         state={history}
         content={content}
-        now={10}
+        clock={() => 10}
         updateCharacter={vi.fn().mockResolvedValue(undefined)}
       />,
     );
-    fireEvent.click(screen.getByText(/core:lost-foundry · 1 derrotas/));
-    fireEvent.click(screen.getByText(/combat:one · 1 eventos/));
+    fireEvent.click(screen.getByText(/Fundição Perdida · 1 inimigos derrotados/));
+    expect(screen.getByText(/Dano causado: 8 · Dano recebido: 3/)).toBeInTheDocument();
+    fireEvent.click(screen.getByText(/Confronto 1 · 2 eventos/));
     expect(screen.getByText(/1\.0s — Hero hits enemy/)).toBeInTheDocument();
-    fireEvent.click(screen.getByRole('button', { name: 'Alternar detalhes' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Exibir detalhes técnicos' }));
     expect(screen.getByText(/"damageFinal": 8/)).toBeInTheDocument();
+    expect(screen.getByText(/ID do registro: session:one/)).toBeInTheDocument();
   });
 
   it('shows both compile error forms from graph saving and the arena', () => {
@@ -499,7 +608,7 @@ describe('phase two gameplay panels', () => {
       <PhaseTwoPanels
         state={unlocked}
         content={content}
-        now={10}
+        clock={() => 10}
         updateCharacter={vi.fn().mockResolvedValue(undefined)}
       />,
     );
@@ -519,11 +628,11 @@ describe('phase two gameplay panels', () => {
       <PhaseTwoPanels
         state={saved}
         content={content}
-        now={10}
+        clock={() => 10}
         updateCharacter={vi.fn().mockResolvedValue(undefined)}
       />,
     );
-    fireEvent.change(screen.getByLabelText('Construções salvas'), { target: { value: graph.id } });
+    chooseOption('Construções salvas', 'Golpe de teste (construction:arena-test)');
     compile.mockImplementationOnce(() => {
       throw 'arena unavailable';
     });
@@ -539,7 +648,7 @@ describe('phase two gameplay panels', () => {
       <PhaseTwoPanels
         state={state}
         content={{ ...content, nodes: [] }}
-        now={10}
+        clock={() => 10}
         updateCharacter={vi.fn().mockResolvedValue(undefined)}
       />,
     );
@@ -550,14 +659,14 @@ describe('phase two gameplay panels', () => {
       <PhaseTwoPanels
         state={state}
         content={content}
-        now={10}
+        clock={() => 10}
         updateCharacter={vi.fn().mockResolvedValue(undefined)}
       />,
     );
-    fireEvent.change(screen.getByLabelText('Examinar criatura'), {
-      target: { value: 'core:ashen-sovereign' },
-    });
-    expect(screen.getByRole('option', { name: 'Soberano das Cinzas · Chefe' })).toBeInTheDocument();
+    chooseOption('Examinar criatura', 'Soberano das Cinzas · Chefe');
+    expect(
+      screen.getByRole('combobox', { name: 'Examinar criatura: Soberano das Cinzas · Chefe' }),
+    ).toBeInTheDocument();
   });
 
   it('renders modded bestiary and equipment fallbacks and old combat history shapes', () => {
@@ -568,11 +677,34 @@ describe('phase two gameplay panels', () => {
       id: 'mod:elite-stalker',
       name: 'Elite Stalker',
       tags: ['mod:missing-tag'],
+      attributes: { ...content.enemies.get('core:quarry-stalker')!.attributes, custom: 4 },
+      actions: [],
+      lootTableId: undefined,
       elite: true,
       boss: false,
     };
     const enemies = new Map(content.enemies);
     enemies.set(enemy.id, enemy);
+    const conditionalEnemy = {
+      ...enemy,
+      id: 'mod:conditional-stalker',
+      name: 'Conditional Stalker',
+      lootTableId: 'mod:conditional-loot',
+    };
+    enemies.set(conditionalEnemy.id, conditionalEnemy);
+    const lootTables = new Map(content.lootTables);
+    const conditionalLoot = content.lootTables.get('core:construct-drops')!;
+    lootTables.set('mod:conditional-loot', {
+      ...conditionalLoot,
+      id: 'mod:conditional-loot',
+      guaranteed: undefined,
+      independent: undefined,
+      exclusive: undefined,
+      conditional: [
+        ...(conditionalLoot.conditional ?? []),
+        { id: 'missing-drop', when: [], drops: [{ itemId: 'missing:component', quantity: 2 }] },
+      ],
+    } as NonNullable<ReturnType<typeof content.lootTables.get>>);
     const recipe = {
       ...content.recipes.values().next().value!,
       id: 'mod:unknown-input',
@@ -580,7 +712,7 @@ describe('phase two gameplay panels', () => {
     };
     const recipes = new Map(content.recipes);
     recipes.set(recipe.id, recipe);
-    const customContent = { ...content, enemies, recipes };
+    const customContent = { ...content, enemies, recipes, lootTables };
     const first: ExpeditionCombatRecord = {
       id: 'combat:old-item',
       sessionId: 'combat:old-item',
@@ -608,19 +740,40 @@ describe('phase two gameplay panels', () => {
       <PhaseTwoPanels
         state={state}
         content={customContent}
-        now={10}
+        clock={() => 10}
         updateCharacter={vi.fn().mockResolvedValue(undefined)}
       />,
     );
-    fireEvent.change(screen.getByLabelText('Examinar criatura'), { target: { value: enemy.id } });
-    expect(screen.getByRole('option', { name: 'Elite Stalker · Elite' })).toBeInTheDocument();
+    fireEvent.click(screen.getByText('Detalhes da criatura'));
+    expect(screen.getByText('Habilidades conhecidas')).toBeInTheDocument();
+    expect(screen.getByText('Salto de emboscada')).toBeInTheDocument();
+    expect(screen.getByText('Espólios conhecidos')).toBeInTheDocument();
+    expect(screen.getByText('Ferro ×1')).toBeInTheDocument();
+    expect(screen.getByText('Locais de encontro')).toBeInTheDocument();
+    expect(screen.getAllByText('Fundição Perdida').length).toBeGreaterThan(1);
+    chooseOption('Examinar criatura', 'Elite Stalker · Elite');
+    expect(
+      screen.getByRole('combobox', { name: 'Examinar criatura: Elite Stalker · Elite' }),
+    ).toBeInTheDocument();
     expect(screen.getByText(/mod:missing-tag/)).toBeInTheDocument();
-    expect(screen.getByText('primary: missing:weapon')).toBeInTheDocument();
+    if (!(screen.getByText('Detalhes da criatura').closest('details') as HTMLDetailsElement).open) {
+      fireEvent.click(screen.getByText('Detalhes da criatura'));
+    }
+    expect(screen.getByText('Mitigação física: 5%')).toBeInTheDocument();
+    expect(screen.getByText('Habilidades conhecidas')).toBeInTheDocument();
+    expect(screen.getByText('Nenhuma habilidade registrada.')).toBeInTheDocument();
+    expect(screen.getByText('Nenhum item conhecido.')).toBeInTheDocument();
+    expect(screen.getByText('Nenhum local conhecido.')).toBeInTheDocument();
+    expect(screen.getByText('Arma primária: missing:weapon')).toBeInTheDocument();
+    chooseOption('Examinar criatura', 'Conditional Stalker · Elite');
+    expect(screen.getByText('Adamantita ×1')).toBeInTheDocument();
+    expect(screen.getByText('missing:component ×2')).toBeInTheDocument();
+    fireEvent.click(screen.getByRole('combobox', { name: /^Receita:/ }));
     expect(screen.getByRole('option', { name: /missing:material ×2/ })).toBeInTheDocument();
-    fireEvent.click(screen.getAllByText(/mod:old · 0 derrotas/)[0]!);
+    fireEvent.click(screen.getAllByText(/mod:old · 0 inimigos derrotados/)[0]!);
     expect(screen.getByText(/missing:relic ×2/)).toBeInTheDocument();
-    fireEvent.click(screen.getAllByText(/mod:old · 0 derrotas/)[0]!);
-    fireEvent.click(screen.getAllByText(/mod:old · 0 derrotas/)[1]!);
+    fireEvent.click(screen.getAllByText(/mod:old · 0 inimigos derrotados/)[0]!);
+    fireEvent.click(screen.getAllByText(/mod:old · 0 inimigos derrotados/)[1]!);
     expect(screen.getByText(/sem drops/)).toBeInTheDocument();
 
     const legacy = game();
@@ -629,7 +782,7 @@ describe('phase two gameplay panels', () => {
       <PhaseTwoPanels
         state={legacy}
         content={{ ...content, enemies: new Map() }}
-        now={10}
+        clock={() => 10}
         updateCharacter={vi.fn().mockResolvedValue(undefined)}
       />,
     );
@@ -644,21 +797,48 @@ describe('phase two gameplay panels', () => {
       <PhaseTwoPanels
         state={state}
         content={content}
-        now={10}
+        clock={() => 10}
         updateCharacter={vi.fn().mockResolvedValue(undefined)}
       />,
     );
-    fireEvent.change(screen.getByLabelText('Construções salvas'), { target: { value: graph.id } });
+    chooseOption('Construções salvas', 'Golpe de teste (construction:arena-test)');
     const stale = game();
     view.rerender(
       <PhaseTwoPanels
         state={stale}
         content={content}
-        now={10}
+        clock={() => 10}
         updateCharacter={vi.fn().mockResolvedValue(undefined)}
       />,
     );
     fireEvent.click(screen.getByRole('button', { name: 'Editar selecionada' }));
+    expect(screen.getByLabelText('Nome da construção')).toHaveValue('Nova construção');
+  });
+
+  it('draws graph connections and supports undo and redo in the node editor', () => {
+    const state = game();
+    state.character!.nodeLibrary!.unlockedNodeIds = content.nodes.map((node) => node.id);
+    const { container } = render(
+      <PhaseTwoPanels
+        state={state}
+        content={content}
+        clock={() => 10}
+        updateCharacter={vi.fn().mockResolvedValue(undefined)}
+        view="nodes"
+      />,
+    );
+    expect(container.querySelectorAll('.graph-connections path')).toHaveLength(3);
+    fireEvent.click(screen.getByRole('button', { name: 'Adicionar e conectar nó' }));
+    expect(container.querySelectorAll('.graph-node')).toHaveLength(5);
+    fireEvent.click(screen.getByRole('button', { name: 'Desfazer alteração' }));
+    expect(container.querySelectorAll('.graph-node')).toHaveLength(4);
+    fireEvent.click(screen.getByRole('button', { name: 'Refazer alteração' }));
+    expect(container.querySelectorAll('.graph-node')).toHaveLength(5);
+    expect(
+      screen.getByRole('region', { name: 'Propriedades do nó selecionado' }),
+    ).toBeInTheDocument();
+    fireEvent.change(screen.getByLabelText('Nome da construção'), { target: { value: 'Ruptura' } });
+    fireEvent.click(screen.getByRole('button', { name: 'Desfazer alteração' }));
     expect(screen.getByLabelText('Nome da construção')).toHaveValue('Nova construção');
   });
 });
