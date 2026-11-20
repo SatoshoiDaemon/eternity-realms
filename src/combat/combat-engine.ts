@@ -101,6 +101,18 @@ function validateActor(actor: CombatActor): void {
   ) {
     throw new Error(`Combat actor ${actor.id} has invalid Tenacity.`);
   }
+  if (
+    actor.regenerationPerAction !== undefined &&
+    (!Number.isSafeInteger(actor.regenerationPerAction) || actor.regenerationPerAction < 0)
+  ) {
+    throw new Error(`Combat actor ${actor.id} has invalid regeneration.`);
+  }
+  if (
+    (actor.soulAnchorAvailable !== undefined && typeof actor.soulAnchorAvailable !== 'boolean') ||
+    (actor.soulAnchorUsed !== undefined && typeof actor.soulAnchorUsed !== 'boolean')
+  ) {
+    throw new Error(`Combat actor ${actor.id} has invalid soul anchor state.`);
+  }
   if (!Number.isSafeInteger(actor.attributes.speed) || actor.attributes.speed <= 0) {
     throw new Error(`Combat actor ${actor.id} needs positive Speed.`);
   }
@@ -668,7 +680,7 @@ function statusIsImmune(
 function damageToBars(
   target: CombatActor,
   damage: number,
-): { hpLoss: number; tenacityLoss: number; killed: boolean } {
+): { hpLoss: number; tenacityLoss: number; killed: boolean; resurrected: boolean } {
   let hpLoss = damage;
   let tenacityLoss = 0;
   if (target.tenacity.current > 0) {
@@ -679,14 +691,25 @@ function damageToBars(
   const tenacityBefore = target.tenacity.current;
   target.hp.current = Math.max(0, target.hp.current - hpLoss);
   target.tenacity.current = Math.max(0, target.tenacity.current - tenacityLoss);
-  const killed = target.hp.current <= 0 && target.tenacity.current <= 0;
+  let killed = target.hp.current <= 0 && target.tenacity.current <= 0;
+  let resurrected = false;
   if (killed) {
-    target.state = 'dead';
+    if (target.soulAnchorAvailable) {
+      target.hp.current = 1;
+      target.tenacity.current = 0;
+      target.soulAnchorAvailable = false;
+      target.soulAnchorUsed = true;
+      resurrected = true;
+      killed = false;
+    } else {
+      target.state = 'dead';
+    }
   }
   return {
     hpLoss: hpBefore - target.hp.current,
     tenacityLoss: tenacityBefore - target.tenacity.current,
     killed,
+    resurrected,
   };
 }
 
@@ -785,6 +808,16 @@ function applyEnvironmentalEffects(state: CombatState, actor: CombatActor): stri
     state.tagRegistry,
   );
   const applied: string[] = [];
+  if (
+    actor.regenerationPerAction &&
+    !actor.effects.some((effect) => effect.id === 'base:regeneration-suppressed')
+  ) {
+    const before = actor.hp.current;
+    actor.hp.current = Math.min(actor.hp.maximum, actor.hp.current + actor.regenerationPerAction);
+    if (actor.hp.current > before) {
+      applied.push(`regeneration:${actor.hp.current - before}`);
+    }
+  }
   for (const effect of effects) {
     if (effect.type === 'hazard_awareness' && state.environment.hazard) {
       applied.push(`hazard-awareness:${state.environment.hazard}`);
@@ -1005,9 +1038,11 @@ function applyDamage(
     hpChange: { before: hpBefore, after: defender.hp.current },
     tenacityChange: { before: tenacityBefore, after: defender.tenacity.current },
     resourceChanges: [],
-    effectsApplied: [],
+    effectsApplied: barDamage.resurrected ? ['soul-anchor:resurrected-and-broken'] : [],
     killed: barDamage.killed,
-    message: `${attacker.name} atinge ${defender.name} por ${final} de dano.`,
+    message: barDamage.resurrected
+      ? `${attacker.name} atinge ${defender.name} por ${final} de dano; a Âncora da Alma o traz de volta com 1 HP e se quebra.`
+      : `${attacker.name} atinge ${defender.name} por ${final} de dano.`,
   };
 }
 
@@ -1088,15 +1123,20 @@ function processDamageReactions(
     state.tagRegistry,
   );
   for (const effect of effects) {
-    if (effect.type === 'vampirism' && typeof effect.value === 'number' && effect.value > 0) {
+    if (
+      (effect.type === 'vampirism' || effect.type === 'flat_vampirism') &&
+      typeof effect.value === 'number' &&
+      effect.value > 0
+    ) {
       const before = attacker.hp.current;
-      attacker.hp.current = Math.min(
-        attacker.hp.maximum,
-        attacker.hp.current + Math.floor(entry.damageFinal * effect.value),
-      );
+      const healing =
+        effect.type === 'flat_vampirism'
+          ? Math.floor(effect.value)
+          : Math.floor(entry.damageFinal * effect.value);
+      attacker.hp.current = Math.min(attacker.hp.maximum, attacker.hp.current + healing);
       entry.actorHpChange = { before, after: attacker.hp.current };
       currentLog.actorHpChange = entry.actorHpChange;
-      entry.effectsApplied.push(`vampirism:${attacker.hp.current - before}`);
+      entry.effectsApplied.push(`${effect.type}:${attacker.hp.current - before}`);
       entry.tagInteractions.push(...interactionLogs([effect]));
     }
   }

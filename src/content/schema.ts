@@ -258,10 +258,90 @@ const recipeSchema = z
     inputs: z.record(id, z.number().int().positive().safe()),
     resultItemId: id,
     resultQuantity: z.number().int().positive().safe().default(1),
+    skillId: id.optional(),
+    requiredSkillLevel: z.number().int().positive().safe().optional(),
+    requiredLevel: z.number().int().positive().safe().optional(),
+    experience: z.number().int().nonnegative().safe().optional(),
+    station: z.string().trim().min(1).optional(),
   })
   .passthrough();
 
-export const RaceSchema = z.object({ ...baseRecord, kind: z.literal('race') }).passthrough();
+export const RegionSchema = z
+  .object({
+    ...baseRecord,
+    kind: z.literal('region'),
+    terrain: z.array(z.string().trim().min(1)),
+    climate: z.array(z.string().trim().min(1)),
+    localities: z.array(z.string().trim().min(1)),
+    materials: z.array(id),
+    enemies: z.array(id),
+    expeditionIds: z.array(id),
+    activityIds: z.array(id),
+    unlockRequirements: z
+      .object({
+        level: z.number().int().positive().safe().optional(),
+        regionIds: z.array(id).optional(),
+      })
+      .optional(),
+  })
+  .passthrough();
+
+const shopEntrySchema = z.object({
+  itemId: id,
+  currency: z.string().trim().min(1),
+  price: z.number().int().nonnegative().safe(),
+  sellPrice: z.number().int().nonnegative().safe().optional(),
+  stock: z.number().int().min(-1).safe().optional(),
+  requiredLevel: z.number().int().positive().safe().optional(),
+  requiredSkill: id.optional(),
+  requiredSkillLevel: z.number().int().positive().safe().optional(),
+});
+export const ShopSchema = z
+  .object({
+    ...baseRecord,
+    kind: z.literal('shop'),
+    cadence: z.enum(['permanent', 'daily', 'weekly']),
+    entries: z.array(shopEntrySchema),
+    regionId: id.optional(),
+  })
+  .passthrough();
+
+export const EnergySchema = z
+  .object({
+    ...baseRecord,
+    kind: z.literal('energy'),
+    origin: z.string().trim().min(1),
+    resources: z.array(id),
+    progression: z.array(z.record(z.string(), z.unknown())),
+  })
+  .passthrough();
+
+export const SystemSchema = z
+  .object({
+    ...baseRecord,
+    kind: z.literal('system'),
+    systemType: z.string().trim().min(1),
+    entries: z.array(z.record(z.string(), z.unknown())),
+  })
+  .passthrough();
+
+const racialCombatTagSchema = EnemyTagRecordSchema.omit({ kind: true });
+export const RaceSchema = z
+  .object({
+    ...baseRecord,
+    kind: z.literal('race'),
+    lore: z.string().optional(),
+    advantages: z.array(z.string()).optional(),
+    disadvantages: z.array(z.string()).optional(),
+    combatTags: z.array(id).optional(),
+    combatTag: racialCombatTagSchema.optional(),
+    combatActions: z.array(combatActionSchema).optional(),
+    combatStartEffects: z.array(appliedEffectSchema).optional(),
+    activityBonuses: z
+      .array(z.object({ skillId: id, yieldMultiplier: z.number().finite().positive() }))
+      .optional(),
+  })
+  .passthrough();
 export const ClassSchema = z.object({ ...baseRecord, kind: z.literal('class') }).passthrough();
 export const ItemSchema = z
   .object({
@@ -294,6 +374,16 @@ export const ItemSchema = z
       })
       .passthrough()
       .optional(),
+    consumable: z
+      .discriminatedUnion('effect', [
+        z.object({ effect: z.literal('heal'), amount: z.number().int().positive().safe() }),
+        z.object({
+          effect: z.literal('restore-resource'),
+          resource: id,
+          amount: z.number().int().positive().safe(),
+        }),
+      ])
+      .optional(),
   })
   .passthrough();
 export const ActivitySchema = z
@@ -303,6 +393,32 @@ export const ActivitySchema = z
     rewardId: id,
     category: z.string().trim().min(1),
     expeditionId: id.optional(),
+    regionId: id.optional(),
+    skillId: id.optional(),
+    requiredLevel: z.number().int().positive().safe().optional(),
+    requiredSkillLevel: z.number().int().positive().safe().optional(),
+    cycleDurationMs: z.number().int().positive().safe().optional(),
+    outputItemId: id.optional(),
+    outputQuantity: z.number().int().positive().safe().optional(),
+    skillExperience: z.number().int().nonnegative().safe().optional(),
+    activityExperience: z.number().int().nonnegative().safe().optional(),
+    fragmentReward: z.number().int().nonnegative().safe().optional(),
+    trainingEffect: z
+      .object({
+        attributeId: z.enum([
+          'physical:vigor',
+          'physical:resistance',
+          'physical:speed',
+          'physical:dexterity',
+          'physical:precision',
+          'physical:strength',
+          'energy:chi',
+          'energy:mana',
+          'energy:spirit',
+        ]),
+        amount: z.number().int().positive().safe(),
+      })
+      .optional(),
   })
   .passthrough();
 export const RewardSchema = z
@@ -314,7 +430,22 @@ export const RewardSchema = z
   })
   .passthrough();
 export const SkillSchema = z
-  .object({ ...baseRecord, kind: z.literal('skill'), activityIds: z.array(id) })
+  .object({
+    ...baseRecord,
+    kind: z.literal('skill'),
+    activityIds: z.array(id),
+    category: z.string().trim().min(1).optional(),
+    experiencePerLevel: z.number().int().positive().safe().optional(),
+    milestones: z
+      .array(
+        z.object({
+          level: z.number().int().positive().safe(),
+          name: z.string(),
+          effects: z.array(z.record(z.string(), z.unknown())),
+        }),
+      )
+      .optional(),
+  })
   .passthrough();
 export const EffectSchema = z
   .object({ ...baseRecord, kind: z.literal('effect'), payload: z.record(z.string(), z.unknown()) })
@@ -323,18 +454,34 @@ export const MissionSchema = z
   .object({
     ...baseRecord,
     kind: z.literal('mission'),
-    cadence: z.enum(['main', 'daily', 'weekly']),
+    cadence: z.enum(['main', 'secondary', 'daily', 'weekly']),
     eventType: z.enum([
       'session.completed',
       'expedition.completed',
       'experience.gained',
       'item.acquired',
+      'item.consumed',
+      'activity.completed',
+      'skill.level_increased',
+      'attribute.increased',
+      'attribute.points_awarded',
+      'enemy.defeated',
+      'quest.completed',
+      'currency.earned',
+      'item.crafted',
+      'region.unlocked',
+      'implant.installed',
     ]),
     target: z.number().int().positive().safe(),
     reward: z.object({
       experience: z.number().int().nonnegative().safe().default(0),
       items: z.record(id, z.number().int().positive().safe()).default({}),
+      currencies: z.record(id, z.number().int().nonnegative().safe()).default({}),
     }),
+    criteria: z.record(z.string(), z.unknown()).optional(),
+    requiredLevel: z.number().int().positive().safe().optional(),
+    regionId: id.optional(),
+    prerequisites: z.array(id).optional(),
   })
   .passthrough();
 
@@ -352,6 +499,10 @@ export const ContentRecordSchema = z.discriminatedUnion('kind', [
   lootTableSchema,
   expeditionSchema,
   recipeSchema,
+  RegionSchema,
+  ShopSchema,
+  EnergySchema,
+  SystemSchema,
 ]);
 
 export const ContentPackSchema = z.object({
@@ -372,6 +523,8 @@ export const ContentPackSchema = z.object({
   rules: z
     .object({
       experiencePerLevel: z.number().int().positive().safe(),
+      maxLevel: z.number().int().positive().safe().optional(),
+      attributePointsPerLevel: z.number().int().positive().safe().optional(),
       combat: z
         .object({
           accuracy: z.number().finite().min(0).max(1),
@@ -386,6 +539,10 @@ export const ContentPackSchema = z.object({
 export type ContentPack = z.infer<typeof ContentPackSchema>;
 export type ContentRecord = z.infer<typeof ContentRecordSchema>;
 export type RaceDefinition = z.infer<typeof RaceSchema>;
+export type RegionDefinition = z.infer<typeof RegionSchema>;
+export type ShopDefinition = z.infer<typeof ShopSchema>;
+export type EnergyDefinition = z.infer<typeof EnergySchema>;
+export type SystemDefinition = z.infer<typeof SystemSchema>;
 export type ClassDefinition = z.infer<typeof ClassSchema>;
 export type ItemDefinition = z.infer<typeof ItemSchema>;
 export type ActivityDefinition = z.infer<typeof ActivitySchema>;

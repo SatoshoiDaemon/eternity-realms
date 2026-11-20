@@ -4,15 +4,34 @@
     "kind": "loot_table",
     "name": "Rastreador da Pedreira",
     "description": "Restos de predadores que caçam em grupo.",
-    "guaranteed": [{ "itemId": "material-iron", "quantity": 1 }],
-    "independent": [{ "itemId": "material-silver", "quantity": 1, "chance": 0.08 }],
+    "guaranteed": [
+      {
+        "itemId": "material-iron",
+        "quantity": 1
+      }
+    ],
+    "independent": [
+      {
+        "itemId": "material-silver",
+        "quantity": 1,
+        "chance": 0.08
+      }
+    ],
     "exclusive": [
       {
         "id": "predator-remains",
         "rolls": 1,
         "entries": [
-          { "itemId": "wild-herb", "quantity": 1, "weight": 2 },
-          { "itemId": "material-mithril", "quantity": 1, "weight": 1 }
+          {
+            "itemId": "wild-herb",
+            "quantity": 1,
+            "weight": 2
+          },
+          {
+            "itemId": "material-mithril",
+            "quantity": 1,
+            "weight": 1
+          }
         ]
       }
     ]
@@ -22,15 +41,34 @@
     "kind": "loot_table",
     "name": "Rastejante Venenoso",
     "description": "Glândulas tóxicas e partes segmentadas.",
-    "guaranteed": [{ "itemId": "wild-herb", "quantity": 1 }],
-    "independent": [{ "itemId": "material-chlorophyte", "quantity": 1, "chance": 0.2 }],
+    "guaranteed": [
+      {
+        "itemId": "wild-herb",
+        "quantity": 1
+      }
+    ],
+    "independent": [
+      {
+        "itemId": "material-chlorophyte",
+        "quantity": 1,
+        "chance": 0.2
+      }
+    ],
     "exclusive": [
       {
         "id": "toxic-components",
         "rolls": 1,
         "entries": [
-          { "itemId": "material-dilthio", "quantity": 1, "weight": 1 },
-          { "itemId": "material-gold", "quantity": 1, "weight": 2 }
+          {
+            "itemId": "material-dilthio",
+            "quantity": 1,
+            "weight": 1
+          },
+          {
+            "itemId": "material-gold",
+            "quantity": 1,
+            "weight": 2
+          }
         ]
       }
     ]
@@ -40,15 +78,34 @@
     "kind": "loot_table",
     "name": "Sentinela Mineral",
     "description": "Minérios e peças do núcleo mineral.",
-    "guaranteed": [{ "itemId": "material-iron", "quantity": 3 }],
-    "independent": [{ "itemId": "material-adamantite", "quantity": 1, "chance": 0.12 }],
+    "guaranteed": [
+      {
+        "itemId": "material-iron",
+        "quantity": 3
+      }
+    ],
+    "independent": [
+      {
+        "itemId": "material-adamantite",
+        "quantity": 1,
+        "chance": 0.12
+      }
+    ],
     "exclusive": [
       {
         "id": "core-material",
         "rolls": 1,
         "entries": [
-          { "itemId": "material-orichalcum", "quantity": 1, "weight": 2 },
-          { "itemId": "material-vibranium", "quantity": 1, "weight": 1 }
+          {
+            "itemId": "material-orichalcum",
+            "quantity": 1,
+            "weight": 2
+          },
+          {
+            "itemId": "material-vibranium",
+            "quantity": 1,
+            "weight": 1
+          }
         ]
       }
     ],
@@ -56,10 +113,21 @@
       {
         "id": "crushed-core",
         "when": [
-          { "kind": "tag", "value": "base:construct" },
-          { "kind": "death_cause", "value": "physical" }
+          {
+            "kind": "tag",
+            "value": "base:construct"
+          },
+          {
+            "kind": "death_cause",
+            "value": "physical"
+          }
         ],
-        "drops": [{ "itemId": "material-adamantite", "quantity": 1 }]
+        "drops": [
+          {
+            "itemId": "material-adamantite",
+            "quantity": 1
+          }
+        ]
       }
     ]
   },
@@ -68,15 +136,34 @@
     "kind": "loot_table",
     "name": "Espectro do Eco",
     "description": "Fragmentos de essência espiritual.",
-    "guaranteed": [{ "itemId": "material-silver", "quantity": 1 }],
-    "independent": [{ "itemId": "material-sacrite", "quantity": 1, "chance": 0.1 }],
+    "guaranteed": [
+      {
+        "itemId": "material-silver",
+        "quantity": 1
+      }
+    ],
+    "independent": [
+      {
+        "itemId": "material-sacrite",
+        "quantity": 1,
+        "chance": 0.1
+      }
+    ],
     "exclusive": [
       {
         "id": "spirit-remains",
         "rolls": 1,
         "entries": [
-          { "itemId": "material-dilthio", "quantity": 1, "weight": 1 },
-          { "itemId": "material-gold", "quantity": 1, "weight": 1 }
+          {
+            "itemId": "material-dilthio",
+            "quantity": 1,
+            "weight": 1
+          },
+          {
+            "itemId": "material-gold",
+            "quantity": 1,
+            "weight": 1
+          }
         ]
       }
     ],
@@ -87,15 +174,34 @@
     "kind": "loot_table",
     "name": "Arcanista da Fenda",
     "description": "Componentes arcanos e energéticos.",
-    "guaranteed": [{ "itemId": "material-orichalcum", "quantity": 1 }],
-    "independent": [{ "itemId": "material-unobtanio", "quantity": 1, "chance": 0.04 }],
+    "guaranteed": [
+      {
+        "itemId": "material-orichalcum",
+        "quantity": 1
+      }
+    ],
+    "independent": [
+      {
+        "itemId": "material-unobtanio",
+        "quantity": 1,
+        "chance": 0.04
+      }
+    ],
     "exclusive": [
       {
         "id": "arcane-remains",
         "rolls": 1,
         "entries": [
-          { "itemId": "material-dilthio", "quantity": 2, "weight": 3 },
-          { "itemId": "material-sacrite", "quantity": 1, "weight": 1 }
+          {
+            "itemId": "material-dilthio",
+            "quantity": 2,
+            "weight": 3
+          },
+          {
+            "itemId": "material-sacrite",
+            "quantity": 1,
+            "weight": 1
+          }
         ]
       }
     ],
@@ -107,23 +213,938 @@
     "name": "Soberano das Cinzas",
     "description": "Tesouro garantido do chefe e chance de materiais raros.",
     "guaranteed": [
-      { "itemId": "material-gold", "quantity": 8 },
-      { "itemId": "material-adamantite", "quantity": 3 }
+      {
+        "itemId": "material-gold",
+        "quantity": 8
+      },
+      {
+        "itemId": "material-adamantite",
+        "quantity": 3
+      }
     ],
     "independent": [
-      { "itemId": "material-unobtanio", "quantity": 1, "chance": 0.25 },
-      { "itemId": "material-vibranium", "quantity": 2, "chance": 0.5 }
+      {
+        "itemId": "material-unobtanio",
+        "quantity": 1,
+        "chance": 0.25
+      },
+      {
+        "itemId": "material-vibranium",
+        "quantity": 2,
+        "chance": 0.5
+      }
     ],
     "exclusive": [
       {
         "id": "sovereign-relic",
         "rolls": 1,
         "entries": [
-          { "itemId": "material-sacrite", "quantity": 3, "weight": 1 },
-          { "itemId": "material-orichalcum", "quantity": 4, "weight": 2 }
+          {
+            "itemId": "material-sacrite",
+            "quantity": 3,
+            "weight": 1
+          },
+          {
+            "itemId": "material-orichalcum",
+            "quantity": 4,
+            "weight": 2
+          }
         ]
       }
     ],
     "unlockNodeIds": ["core:type-holy", "core:form-area"]
+  },
+  {
+    "id": "core:p4-loot-apexia-1",
+    "kind": "loot_table",
+    "name": "Resíduos: Clockwork Saboteur",
+    "description": "Partes e recursos obtidos ao derrotar Clockwork Saboteur em Apexia.",
+    "guaranteed": [
+      {
+        "itemId": "material-iron",
+        "quantity": 1
+      }
+    ]
+  },
+  {
+    "id": "core:p4-loot-apexia-2",
+    "kind": "loot_table",
+    "name": "Resíduos: Cão Hextech",
+    "description": "Partes e recursos obtidos ao derrotar Cão Hextech em Apexia.",
+    "guaranteed": [
+      {
+        "itemId": "material-gold",
+        "quantity": 2
+      }
+    ],
+    "independent": [
+      {
+        "itemId": "beast-hide",
+        "quantity": 1,
+        "chance": 0.25
+      }
+    ]
+  },
+  {
+    "id": "core:p4-loot-apexia-3",
+    "kind": "loot_table",
+    "name": "Resíduos: Sentinela Cristalina",
+    "description": "Partes e recursos obtidos ao derrotar Sentinela Cristalina em Apexia.",
+    "guaranteed": [
+      {
+        "itemId": "material-dilthio",
+        "quantity": 1
+      }
+    ],
+    "independent": [
+      {
+        "itemId": "material-iron",
+        "quantity": 1,
+        "chance": 0.30000000000000004
+      }
+    ]
+  },
+  {
+    "id": "core:p4-loot-apexia-4",
+    "kind": "loot_table",
+    "name": "Resíduos: Mímico de Portal",
+    "description": "Partes e recursos obtidos ao derrotar Mímico de Portal em Apexia.",
+    "guaranteed": [
+      {
+        "itemId": "ore-iron",
+        "quantity": 2
+      }
+    ],
+    "independent": [
+      {
+        "itemId": "arcane-crystal",
+        "quantity": 1,
+        "chance": 0.2
+      }
+    ]
+  },
+  {
+    "id": "core:p4-loot-boss-apexia",
+    "kind": "loot_table",
+    "name": "Tesouro: Núcleo Ferros",
+    "description": "Recompensa de chefe ligada à identidade de Apexia.",
+    "guaranteed": [
+      {
+        "itemId": "ore-iron",
+        "quantity": 3
+      }
+    ],
+    "independent": [
+      {
+        "itemId": "rune-token",
+        "quantity": 1,
+        "chance": 0.5
+      },
+      {
+        "itemId": "jewel-shard",
+        "quantity": 1,
+        "chance": 0.35
+      }
+    ]
+  },
+  {
+    "id": "core:p4-loot-dross-1",
+    "kind": "loot_table",
+    "name": "Resíduos: Sanguessuga Quimtec",
+    "description": "Partes e recursos obtidos ao derrotar Sanguessuga Quimtec em Dross.",
+    "guaranteed": [
+      {
+        "itemId": "material-dilthio",
+        "quantity": 1
+      }
+    ],
+    "independent": [
+      {
+        "itemId": "venom-sac",
+        "quantity": 1,
+        "chance": 0.2
+      }
+    ]
+  },
+  {
+    "id": "core:p4-loot-dross-2",
+    "kind": "loot_table",
+    "name": "Resíduos: Sombra do Esgoto",
+    "description": "Partes e recursos obtidos ao derrotar Sombra do Esgoto em Dross.",
+    "guaranteed": [
+      {
+        "itemId": "material-gold",
+        "quantity": 2
+      }
+    ],
+    "independent": [
+      {
+        "itemId": "arcane-crystal",
+        "quantity": 1,
+        "chance": 0.25
+      }
+    ]
+  },
+  {
+    "id": "core:p4-loot-dross-3",
+    "kind": "loot_table",
+    "name": "Resíduos: Executor de Fábrica",
+    "description": "Partes e recursos obtidos ao derrotar Executor de Fábrica em Dross.",
+    "guaranteed": [
+      {
+        "itemId": "wild-herb",
+        "quantity": 1
+      }
+    ],
+    "independent": [
+      {
+        "itemId": "material-iron",
+        "quantity": 1,
+        "chance": 0.30000000000000004
+      }
+    ]
+  },
+  {
+    "id": "core:p4-loot-dross-4",
+    "kind": "loot_table",
+    "name": "Resíduos: Contrabandista Taumaturgo",
+    "description": "Partes e recursos obtidos ao derrotar Contrabandista Taumaturgo em Dross.",
+    "guaranteed": [
+      {
+        "itemId": "dross-mushroom",
+        "quantity": 2
+      }
+    ],
+    "independent": [
+      {
+        "itemId": "beast-hide",
+        "quantity": 1,
+        "chance": 0.2
+      }
+    ]
+  },
+  {
+    "id": "core:p4-loot-boss-dross",
+    "kind": "loot_table",
+    "name": "Tesouro: Abominação Quimtec",
+    "description": "Recompensa de chefe ligada à identidade de Dross.",
+    "guaranteed": [
+      {
+        "itemId": "dross-mushroom",
+        "quantity": 3
+      }
+    ],
+    "independent": [
+      {
+        "itemId": "rune-token",
+        "quantity": 1,
+        "chance": 0.5
+      },
+      {
+        "itemId": "jewel-shard",
+        "quantity": 1,
+        "chance": 0.35
+      }
+    ]
+  },
+  {
+    "id": "core:p4-loot-vaeloria-1",
+    "kind": "loot_table",
+    "name": "Resíduos: Javali de Guerra",
+    "description": "Partes e recursos obtidos ao derrotar Javali de Guerra em Vaeloria.",
+    "guaranteed": [
+      {
+        "itemId": "material-iron",
+        "quantity": 1
+      }
+    ],
+    "independent": [
+      {
+        "itemId": "beast-hide",
+        "quantity": 1,
+        "chance": 0.2
+      }
+    ]
+  },
+  {
+    "id": "core:p4-loot-vaeloria-2",
+    "kind": "loot_table",
+    "name": "Resíduos: Soldado da Vanguarda",
+    "description": "Partes e recursos obtidos ao derrotar Soldado da Vanguarda em Vaeloria.",
+    "guaranteed": [
+      {
+        "itemId": "material-mithril",
+        "quantity": 2
+      }
+    ],
+    "independent": [
+      {
+        "itemId": "material-iron",
+        "quantity": 1,
+        "chance": 0.25
+      }
+    ]
+  },
+  {
+    "id": "core:p4-loot-vaeloria-3",
+    "kind": "loot_table",
+    "name": "Resíduos: Caçador de Dragões",
+    "description": "Partes e recursos obtidos ao derrotar Caçador de Dragões em Vaeloria.",
+    "guaranteed": [
+      {
+        "itemId": "wheat",
+        "quantity": 1
+      }
+    ],
+    "independent": [
+      {
+        "itemId": "beast-hide",
+        "quantity": 1,
+        "chance": 0.30000000000000004
+      }
+    ]
+  },
+  {
+    "id": "core:p4-loot-vaeloria-4",
+    "kind": "loot_table",
+    "name": "Resíduos: Sentinela Rúnica",
+    "description": "Partes e recursos obtidos ao derrotar Sentinela Rúnica em Vaeloria.",
+    "guaranteed": [
+      {
+        "itemId": "oak-log",
+        "quantity": 2
+      }
+    ],
+    "independent": [
+      {
+        "itemId": "arcane-crystal",
+        "quantity": 1,
+        "chance": 0.2
+      }
+    ]
+  },
+  {
+    "id": "core:p4-loot-boss-vaeloria",
+    "kind": "loot_table",
+    "name": "Tesouro: Draco da Caça Real",
+    "description": "Recompensa de chefe ligada à identidade de Vaeloria.",
+    "guaranteed": [
+      {
+        "itemId": "oak-log",
+        "quantity": 3
+      }
+    ],
+    "independent": [
+      {
+        "itemId": "rune-token",
+        "quantity": 1,
+        "chance": 0.5
+      },
+      {
+        "itemId": "jewel-shard",
+        "quantity": 1,
+        "chance": 0.35
+      }
+    ]
+  },
+  {
+    "id": "core:p4-loot-vrakkas-1",
+    "kind": "loot_table",
+    "name": "Resíduos: Gladiador de Arena",
+    "description": "Partes e recursos obtidos ao derrotar Gladiador de Arena em Vrakkas.",
+    "guaranteed": [
+      {
+        "itemId": "material-gold",
+        "quantity": 1
+      }
+    ],
+    "independent": [
+      {
+        "itemId": "beast-hide",
+        "quantity": 1,
+        "chance": 0.2
+      }
+    ]
+  },
+  {
+    "id": "core:p4-loot-vrakkas-2",
+    "kind": "loot_table",
+    "name": "Resíduos: Grifo Imperial",
+    "description": "Partes e recursos obtidos ao derrotar Grifo Imperial em Vrakkas.",
+    "guaranteed": [
+      {
+        "itemId": "material-silver",
+        "quantity": 2
+      }
+    ],
+    "independent": [
+      {
+        "itemId": "beast-hide",
+        "quantity": 1,
+        "chance": 0.25
+      }
+    ]
+  },
+  {
+    "id": "core:p4-loot-vrakkas-3",
+    "kind": "loot_table",
+    "name": "Resíduos: Larápio do Bazar",
+    "description": "Partes e recursos obtidos ao derrotar Larápio do Bazar em Vrakkas.",
+    "guaranteed": [
+      {
+        "itemId": "jewel-shard",
+        "quantity": 1
+      }
+    ],
+    "independent": [
+      {
+        "itemId": "beast-hide",
+        "quantity": 1,
+        "chance": 0.30000000000000004
+      }
+    ]
+  },
+  {
+    "id": "core:p4-loot-vrakkas-4",
+    "kind": "loot_table",
+    "name": "Resíduos: Campeão do Trifarix",
+    "description": "Partes e recursos obtidos ao derrotar Campeão do Trifarix em Vrakkas.",
+    "guaranteed": [
+      {
+        "itemId": "material-gold",
+        "quantity": 2
+      }
+    ],
+    "independent": [
+      {
+        "itemId": "material-iron",
+        "quantity": 1,
+        "chance": 0.2
+      }
+    ]
+  },
+  {
+    "id": "core:p4-loot-boss-vrakkas",
+    "kind": "loot_table",
+    "name": "Tesouro: Executor do Trifarix",
+    "description": "Recompensa de chefe ligada à identidade de Vrakkas.",
+    "guaranteed": [
+      {
+        "itemId": "jewel-shard",
+        "quantity": 3
+      }
+    ],
+    "independent": [
+      {
+        "itemId": "rune-token",
+        "quantity": 1,
+        "chance": 0.5
+      },
+      {
+        "itemId": "jewel-shard",
+        "quantity": 1,
+        "chance": 0.35
+      }
+    ]
+  },
+  {
+    "id": "core:p4-loot-kryos-1",
+    "kind": "loot_table",
+    "name": "Resíduos: Wendigo de Geada",
+    "description": "Partes e recursos obtidos ao derrotar Wendigo de Geada em Kryos.",
+    "guaranteed": [
+      {
+        "itemId": "material-adamantite",
+        "quantity": 1
+      }
+    ],
+    "independent": [
+      {
+        "itemId": "beast-hide",
+        "quantity": 1,
+        "chance": 0.2
+      }
+    ]
+  },
+  {
+    "id": "core:p4-loot-kryos-2",
+    "kind": "loot_table",
+    "name": "Resíduos: Colosso de Gelo",
+    "description": "Partes e recursos obtidos ao derrotar Colosso de Gelo em Kryos.",
+    "guaranteed": [
+      {
+        "itemId": "material-mithril",
+        "quantity": 2
+      }
+    ],
+    "independent": [
+      {
+        "itemId": "material-iron",
+        "quantity": 1,
+        "chance": 0.25
+      }
+    ]
+  },
+  {
+    "id": "core:p4-loot-kryos-3",
+    "kind": "loot_table",
+    "name": "Resíduos: Coruja da Nevasca",
+    "description": "Partes e recursos obtidos ao derrotar Coruja da Nevasca em Kryos.",
+    "guaranteed": [
+      {
+        "itemId": "frostwood-log",
+        "quantity": 1
+      }
+    ],
+    "independent": [
+      {
+        "itemId": "beast-hide",
+        "quantity": 1,
+        "chance": 0.30000000000000004
+      }
+    ]
+  },
+  {
+    "id": "core:p4-loot-kryos-4",
+    "kind": "loot_table",
+    "name": "Resíduos: Revenante Congelado",
+    "description": "Partes e recursos obtidos ao derrotar Revenante Congelado em Kryos.",
+    "guaranteed": [
+      {
+        "itemId": "frostflower",
+        "quantity": 2
+      }
+    ],
+    "independent": [
+      {
+        "itemId": "arcane-crystal",
+        "quantity": 1,
+        "chance": 0.2
+      }
+    ]
+  },
+  {
+    "id": "core:p4-loot-boss-kryos",
+    "kind": "loot_table",
+    "name": "Tesouro: Pássaro de Gelo",
+    "description": "Recompensa de chefe ligada à identidade de Kryos.",
+    "guaranteed": [
+      {
+        "itemId": "frostflower",
+        "quantity": 3
+      }
+    ],
+    "independent": [
+      {
+        "itemId": "rune-token",
+        "quantity": 1,
+        "chance": 0.5
+      },
+      {
+        "itemId": "jewel-shard",
+        "quantity": 1,
+        "chance": 0.35
+      }
+    ]
+  },
+  {
+    "id": "core:p4-loot-riptide-1",
+    "kind": "loot_table",
+    "name": "Resíduos: Tubarão de Recife",
+    "description": "Partes e recursos obtidos ao derrotar Tubarão de Recife em Riptide.",
+    "guaranteed": [
+      {
+        "itemId": "material-chlorophyte",
+        "quantity": 1
+      }
+    ],
+    "independent": [
+      {
+        "itemId": "beast-hide",
+        "quantity": 1,
+        "chance": 0.2
+      }
+    ]
+  },
+  {
+    "id": "core:p4-loot-riptide-2",
+    "kind": "loot_table",
+    "name": "Resíduos: Peixe Jaula Predador",
+    "description": "Partes e recursos obtidos ao derrotar Peixe Jaula Predador em Riptide.",
+    "guaranteed": [
+      {
+        "itemId": "material-silver",
+        "quantity": 2
+      }
+    ],
+    "independent": [
+      {
+        "itemId": "material-iron",
+        "quantity": 1,
+        "chance": 0.25
+      }
+    ]
+  },
+  {
+    "id": "core:p4-loot-riptide-3",
+    "kind": "loot_table",
+    "name": "Resíduos: Corsário Espectral",
+    "description": "Partes e recursos obtidos ao derrotar Corsário Espectral em Riptide.",
+    "guaranteed": [
+      {
+        "itemId": "cage-fish",
+        "quantity": 1
+      }
+    ],
+    "independent": [
+      {
+        "itemId": "beast-hide",
+        "quantity": 1,
+        "chance": 0.30000000000000004
+      }
+    ]
+  },
+  {
+    "id": "core:p4-loot-riptide-4",
+    "kind": "loot_table",
+    "name": "Resíduos: Enguia de Tempestade",
+    "description": "Partes e recursos obtidos ao derrotar Enguia de Tempestade em Riptide.",
+    "guaranteed": [
+      {
+        "itemId": "driftwood",
+        "quantity": 2
+      }
+    ],
+    "independent": [
+      {
+        "itemId": "arcane-crystal",
+        "quantity": 1,
+        "chance": 0.2
+      }
+    ]
+  },
+  {
+    "id": "core:p4-loot-boss-riptide",
+    "kind": "loot_table",
+    "name": "Tesouro: Capitã dos Doze Mares",
+    "description": "Recompensa de chefe ligada à identidade de Riptide.",
+    "guaranteed": [
+      {
+        "itemId": "driftwood",
+        "quantity": 3
+      }
+    ],
+    "independent": [
+      {
+        "itemId": "rune-token",
+        "quantity": 1,
+        "chance": 0.5
+      },
+      {
+        "itemId": "jewel-shard",
+        "quantity": 1,
+        "chance": 0.35
+      }
+    ]
+  },
+  {
+    "id": "core:p4-loot-caelum-1",
+    "kind": "loot_table",
+    "name": "Resíduos: Eco Temporal",
+    "description": "Partes e recursos obtidos ao derrotar Eco Temporal em Caelum.",
+    "guaranteed": [
+      {
+        "itemId": "material-orichalcum",
+        "quantity": 1
+      }
+    ],
+    "independent": [
+      {
+        "itemId": "spectral-dust",
+        "quantity": 1,
+        "chance": 0.2
+      }
+    ]
+  },
+  {
+    "id": "core:p4-loot-caelum-2",
+    "kind": "loot_table",
+    "name": "Resíduos: Draco do Penhasco",
+    "description": "Partes e recursos obtidos ao derrotar Draco do Penhasco em Caelum.",
+    "guaranteed": [
+      {
+        "itemId": "material-unobtanio",
+        "quantity": 2
+      }
+    ],
+    "independent": [
+      {
+        "itemId": "beast-hide",
+        "quantity": 1,
+        "chance": 0.25
+      }
+    ]
+  },
+  {
+    "id": "core:p4-loot-caelum-3",
+    "kind": "loot_table",
+    "name": "Resíduos: Sentinela das Nuvens",
+    "description": "Partes e recursos obtidos ao derrotar Sentinela das Nuvens em Caelum.",
+    "guaranteed": [
+      {
+        "itemId": "arcane-crystal",
+        "quantity": 1
+      }
+    ],
+    "independent": [
+      {
+        "itemId": "material-iron",
+        "quantity": 1,
+        "chance": 0.30000000000000004
+      }
+    ]
+  },
+  {
+    "id": "core:p4-loot-caelum-4",
+    "kind": "loot_table",
+    "name": "Resíduos: Peregrino Deslocado",
+    "description": "Partes e recursos obtidos ao derrotar Peregrino Deslocado em Caelum.",
+    "guaranteed": [
+      {
+        "itemId": "material-orichalcum",
+        "quantity": 2
+      }
+    ],
+    "independent": [
+      {
+        "itemId": "arcane-crystal",
+        "quantity": 1,
+        "chance": 0.2
+      }
+    ]
+  },
+  {
+    "id": "core:p4-loot-boss-caelum",
+    "kind": "loot_table",
+    "name": "Tesouro: Aspecto da Trilha Impossível",
+    "description": "Recompensa de chefe ligada à identidade de Caelum.",
+    "guaranteed": [
+      {
+        "itemId": "arcane-crystal",
+        "quantity": 3
+      }
+    ],
+    "independent": [
+      {
+        "itemId": "rune-token",
+        "quantity": 1,
+        "chance": 0.5
+      },
+      {
+        "itemId": "jewel-shard",
+        "quantity": 1,
+        "chance": 0.35
+      }
+    ]
+  },
+  {
+    "id": "core:p4-loot-mourland-1",
+    "kind": "loot_table",
+    "name": "Resíduos: Espectro da Névoa Negra",
+    "description": "Partes e recursos obtidos ao derrotar Espectro da Névoa Negra em Mourland.",
+    "guaranteed": [
+      {
+        "itemId": "material-silver",
+        "quantity": 1
+      }
+    ],
+    "independent": [
+      {
+        "itemId": "arcane-crystal",
+        "quantity": 1,
+        "chance": 0.2
+      }
+    ]
+  },
+  {
+    "id": "core:p4-loot-mourland-2",
+    "kind": "loot_table",
+    "name": "Resíduos: Monge Arruinado",
+    "description": "Partes e recursos obtidos ao derrotar Monge Arruinado em Mourland.",
+    "guaranteed": [
+      {
+        "itemId": "material-sacrite",
+        "quantity": 2
+      }
+    ],
+    "independent": [
+      {
+        "itemId": "medicinal-herb",
+        "quantity": 1,
+        "chance": 0.25
+      }
+    ]
+  },
+  {
+    "id": "core:p4-loot-mourland-3",
+    "kind": "loot_table",
+    "name": "Resíduos: Afogado Revenante",
+    "description": "Partes e recursos obtidos ao derrotar Afogado Revenante em Mourland.",
+    "guaranteed": [
+      {
+        "itemId": "spectral-dust",
+        "quantity": 1
+      }
+    ],
+    "independent": [
+      {
+        "itemId": "venom-sac",
+        "quantity": 1,
+        "chance": 0.30000000000000004
+      }
+    ]
+  },
+  {
+    "id": "core:p4-loot-mourland-4",
+    "kind": "loot_table",
+    "name": "Resíduos: Campeão do Rei Destruído",
+    "description": "Partes e recursos obtidos ao derrotar Campeão do Rei Destruído em Mourland.",
+    "guaranteed": [
+      {
+        "itemId": "medicinal-herb",
+        "quantity": 2
+      }
+    ],
+    "independent": [
+      {
+        "itemId": "material-iron",
+        "quantity": 1,
+        "chance": 0.2
+      }
+    ]
+  },
+  {
+    "id": "core:p4-loot-boss-mourland",
+    "kind": "loot_table",
+    "name": "Tesouro: Rainha da Névoa Negra",
+    "description": "Recompensa de chefe ligada à identidade de Mourland.",
+    "guaranteed": [
+      {
+        "itemId": "medicinal-herb",
+        "quantity": 3
+      }
+    ],
+    "independent": [
+      {
+        "itemId": "rune-token",
+        "quantity": 1,
+        "chance": 0.5
+      },
+      {
+        "itemId": "jewel-shard",
+        "quantity": 1,
+        "chance": 0.35
+      }
+    ]
+  },
+  {
+    "id": "core:p4-loot-xochitlan-1",
+    "kind": "loot_table",
+    "name": "Resíduos: Guardião do Templo",
+    "description": "Partes e recursos obtidos ao derrotar Guardião do Templo em Xochitlan.",
+    "guaranteed": [
+      {
+        "itemId": "material-vibranium",
+        "quantity": 1
+      }
+    ],
+    "independent": [
+      {
+        "itemId": "material-iron",
+        "quantity": 1,
+        "chance": 0.2
+      }
+    ]
+  },
+  {
+    "id": "core:p4-loot-xochitlan-2",
+    "kind": "loot_table",
+    "name": "Resíduos: Víbora Elemental",
+    "description": "Partes e recursos obtidos ao derrotar Víbora Elemental em Xochitlan.",
+    "guaranteed": [
+      {
+        "itemId": "material-chlorophyte",
+        "quantity": 2
+      }
+    ],
+    "independent": [
+      {
+        "itemId": "arcane-crystal",
+        "quantity": 1,
+        "chance": 0.25
+      }
+    ]
+  },
+  {
+    "id": "core:p4-loot-xochitlan-3",
+    "kind": "loot_table",
+    "name": "Resíduos: Desafiante Yun Tal",
+    "description": "Partes e recursos obtidos ao derrotar Desafiante Yun Tal em Xochitlan.",
+    "guaranteed": [
+      {
+        "itemId": "crystalwood",
+        "quantity": 1
+      }
+    ],
+    "independent": [
+      {
+        "itemId": "beast-hide",
+        "quantity": 1,
+        "chance": 0.30000000000000004
+      }
+    ]
+  },
+  {
+    "id": "core:p4-loot-xochitlan-4",
+    "kind": "loot_table",
+    "name": "Resíduos: Mantícora do Vale",
+    "description": "Partes e recursos obtidos ao derrotar Mantícora do Vale em Xochitlan.",
+    "guaranteed": [
+      {
+        "itemId": "jewel-shard",
+        "quantity": 2
+      }
+    ],
+    "independent": [
+      {
+        "itemId": "venom-sac",
+        "quantity": 1,
+        "chance": 0.2
+      }
+    ]
+  },
+  {
+    "id": "core:p4-loot-boss-xochitlan",
+    "kind": "loot_table",
+    "name": "Tesouro: Protetor da Barreira",
+    "description": "Recompensa de chefe ligada à identidade de Xochitlan.",
+    "guaranteed": [
+      {
+        "itemId": "jewel-shard",
+        "quantity": 3
+      }
+    ],
+    "independent": [
+      {
+        "itemId": "rune-token",
+        "quantity": 1,
+        "chance": 0.5
+      },
+      {
+        "itemId": "jewel-shard",
+        "quantity": 1,
+        "chance": 0.35
+      }
+    ]
   }
 ]

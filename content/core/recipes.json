@@ -4,7 +4,9 @@
     "kind": "recipe",
     "name": "Forjar malho de ferro",
     "description": "Uma arma de esmagamento contra construtos e corpos minerais.",
-    "inputs": { "material-iron": 4 },
+    "inputs": {
+      "material-iron": 4
+    },
     "resultItemId": "gear:iron-maul"
   },
   {
@@ -12,7 +14,10 @@
     "kind": "recipe",
     "name": "Forjar sabre de prata",
     "description": "Uma lâmina de prata para combater criaturas amaldiçoadas.",
-    "inputs": { "material-silver": 3, "material-iron": 1 },
+    "inputs": {
+      "material-silver": 3,
+      "material-iron": 1
+    },
     "resultItemId": "gear:silver-sabre"
   },
   {
@@ -20,7 +25,10 @@
     "kind": "recipe",
     "name": "Forjar lança de mithril",
     "description": "Uma arma leve de perfuração.",
-    "inputs": { "material-mithril": 3, "material-iron": 1 },
+    "inputs": {
+      "material-mithril": 3,
+      "material-iron": 1
+    },
     "resultItemId": "gear:mithril-spear"
   },
   {
@@ -28,7 +36,10 @@
     "kind": "recipe",
     "name": "Forjar quebra-armadura",
     "description": "Esmagamento com a propriedade armor-penetrating.",
-    "inputs": { "material-adamantite": 3, "material-iron": 2 },
+    "inputs": {
+      "material-adamantite": 3,
+      "material-iron": 2
+    },
     "resultItemId": "gear:adamantite-breaker"
   },
   {
@@ -36,7 +47,10 @@
     "kind": "recipe",
     "name": "Forjar maça de sacrito",
     "description": "Arma sagrada que ancora espectros e fere mortos-vivos.",
-    "inputs": { "material-sacrite": 3, "material-iron": 2 },
+    "inputs": {
+      "material-sacrite": 3,
+      "material-iron": 2
+    },
     "resultItemId": "gear:sacrite-mace"
   },
   {
@@ -44,7 +58,10 @@
     "kind": "recipe",
     "name": "Forjar peitoral de vibranio",
     "description": "Proteção voltada à absorção de dano físico.",
-    "inputs": { "material-vibranium": 3, "material-iron": 3 },
+    "inputs": {
+      "material-vibranium": 3,
+      "material-iron": 3
+    },
     "resultItemId": "gear:vibranium-plate"
   },
   {
@@ -52,7 +69,9 @@
     "kind": "recipe",
     "name": "Forjar peitoral de ferro",
     "description": "Proteção física reforçada.",
-    "inputs": { "material-iron": 6 },
+    "inputs": {
+      "material-iron": 6
+    },
     "resultItemId": "gear:iron-plate"
   },
   {
@@ -60,7 +79,10 @@
     "kind": "recipe",
     "name": "Forjar condutor de ouro",
     "description": "Faz o ouro conduzir uma ação elétrica mágica.",
-    "inputs": { "material-gold": 3, "material-iron": 1 },
+    "inputs": {
+      "material-gold": 3,
+      "material-iron": 1
+    },
     "resultItemId": "gear:gold-conductor"
   },
   {
@@ -68,7 +90,10 @@
     "kind": "recipe",
     "name": "Forjar foco de oricalco",
     "description": "Conduz mana para uma ação arcana de maior potência.",
-    "inputs": { "material-orichalcum": 3, "material-gold": 1 },
+    "inputs": {
+      "material-orichalcum": 3,
+      "material-gold": 1
+    },
     "resultItemId": "gear:orichalcum-focus"
   },
   {
@@ -76,7 +101,10 @@
     "kind": "recipe",
     "name": "Forjar lança de unobtanio",
     "description": "Ancoragem material para atingir criaturas etéreas.",
-    "inputs": { "material-unobtanio": 3, "material-iron": 1 },
+    "inputs": {
+      "material-unobtanio": 3,
+      "material-iron": 1
+    },
     "resultItemId": "gear:unobtanio-spear"
   },
   {
@@ -84,7 +112,10 @@
     "kind": "recipe",
     "name": "Forjar varinha de dilthio",
     "description": "Canaliza mana e amplia a reserva energética equipada.",
-    "inputs": { "material-dilthio": 3, "material-iron": 1 },
+    "inputs": {
+      "material-dilthio": 3,
+      "material-iron": 1
+    },
     "resultItemId": "gear:dilthio-wand"
   },
   {
@@ -92,7 +123,593 @@
     "kind": "recipe",
     "name": "Forjar colete de clorofita",
     "description": "Proteção leve com propriedades de regeneração ambiental.",
-    "inputs": { "material-chlorophyte": 3, "material-iron": 1 },
+    "inputs": {
+      "material-chlorophyte": 3,
+      "material-iron": 1
+    },
     "resultItemId": "gear:chlorophyte-vest"
+  },
+  {
+    "id": "smelt:iron",
+    "kind": "recipe",
+    "name": "Refinar minério de ferro",
+    "description": "Fundição de matéria-prima em Apexia.",
+    "inputs": {
+      "ore-iron": 2
+    },
+    "resultItemId": "material-iron",
+    "resultQuantity": 2,
+    "skillId": "forging-skill",
+    "requiredSkillLevel": 1,
+    "station": "foundry",
+    "source": "Adaptação jogável v1.0"
+  },
+  {
+    "id": "smelt:silver",
+    "kind": "recipe",
+    "name": "Refinar minério de prata",
+    "description": "Fundição de matéria-prima em Mourland.",
+    "inputs": {
+      "ore-silver": 2
+    },
+    "resultItemId": "material-silver",
+    "resultQuantity": 2,
+    "skillId": "forging-skill",
+    "requiredSkillLevel": 1,
+    "station": "foundry",
+    "source": "Adaptação jogável v1.0"
+  },
+  {
+    "id": "smelt:gold",
+    "kind": "recipe",
+    "name": "Refinar minério de ouro",
+    "description": "Fundição de matéria-prima em Vrakkas.",
+    "inputs": {
+      "ore-gold": 2
+    },
+    "resultItemId": "material-gold",
+    "resultQuantity": 2,
+    "skillId": "forging-skill",
+    "requiredSkillLevel": 1,
+    "station": "foundry",
+    "source": "Adaptação jogável v1.0"
+  },
+  {
+    "id": "smelt:orichalcum",
+    "kind": "recipe",
+    "name": "Refinar veio de oricalco",
+    "description": "Fundição de matéria-prima em Caelum.",
+    "inputs": {
+      "ore-orichalcum": 2
+    },
+    "resultItemId": "material-orichalcum",
+    "resultQuantity": 2,
+    "skillId": "forging-skill",
+    "requiredSkillLevel": 1,
+    "station": "foundry",
+    "source": "Adaptação jogável v1.0"
+  },
+  {
+    "id": "smelt:adamantite",
+    "kind": "recipe",
+    "name": "Refinar nódulo de adamantita",
+    "description": "Fundição de matéria-prima em Kryos.",
+    "inputs": {
+      "ore-adamantite": 2
+    },
+    "resultItemId": "material-adamantite",
+    "resultQuantity": 2,
+    "skillId": "forging-skill",
+    "requiredSkillLevel": 1,
+    "station": "foundry",
+    "source": "Adaptação jogável v1.0"
+  },
+  {
+    "id": "smelt:mithril",
+    "kind": "recipe",
+    "name": "Refinar veio de mithril",
+    "description": "Fundição de matéria-prima em Vaeloria.",
+    "inputs": {
+      "ore-mithril": 2
+    },
+    "resultItemId": "material-mithril",
+    "resultQuantity": 2,
+    "skillId": "forging-skill",
+    "requiredSkillLevel": 1,
+    "station": "foundry",
+    "source": "Adaptação jogável v1.0"
+  },
+  {
+    "id": "smelt:unobtanio",
+    "kind": "recipe",
+    "name": "Refinar fragmento de unobtanio",
+    "description": "Fundição de matéria-prima em Caelum.",
+    "inputs": {
+      "ore-unobtanio": 2
+    },
+    "resultItemId": "material-unobtanio",
+    "resultQuantity": 2,
+    "skillId": "forging-skill",
+    "requiredSkillLevel": 1,
+    "station": "foundry",
+    "source": "Adaptação jogável v1.0"
+  },
+  {
+    "id": "smelt:vibranium",
+    "kind": "recipe",
+    "name": "Refinar veio de vibranio",
+    "description": "Fundição de matéria-prima em Xochitlan.",
+    "inputs": {
+      "ore-vibranium": 2
+    },
+    "resultItemId": "material-vibranium",
+    "resultQuantity": 2,
+    "skillId": "forging-skill",
+    "requiredSkillLevel": 1,
+    "station": "foundry",
+    "source": "Adaptação jogável v1.0"
+  },
+  {
+    "id": "smelt:dilthio",
+    "kind": "recipe",
+    "name": "Refinar cristal de dilthio",
+    "description": "Fundição de matéria-prima em Dross.",
+    "inputs": {
+      "ore-dilthio": 2
+    },
+    "resultItemId": "material-dilthio",
+    "resultQuantity": 2,
+    "skillId": "forging-skill",
+    "requiredSkillLevel": 1,
+    "station": "foundry",
+    "source": "Adaptação jogável v1.0"
+  },
+  {
+    "id": "smelt:chlorophyte",
+    "kind": "recipe",
+    "name": "Refinar clorofita bruta",
+    "description": "Fundição de matéria-prima em Riptide.",
+    "inputs": {
+      "ore-chlorophyte": 2,
+      "wild-herb": 1
+    },
+    "resultItemId": "material-chlorophyte",
+    "resultQuantity": 2,
+    "skillId": "forging-skill",
+    "requiredSkillLevel": 1,
+    "station": "foundry",
+    "source": "Adaptação jogável v1.0"
+  },
+  {
+    "id": "smelt:sacrite",
+    "kind": "recipe",
+    "name": "Refinar nódulo de sacrito",
+    "description": "Fundição de matéria-prima em Mourland.",
+    "inputs": {
+      "ore-sacrite": 2,
+      "wild-herb": 1
+    },
+    "resultItemId": "material-sacrite",
+    "resultQuantity": 2,
+    "skillId": "forging-skill",
+    "requiredSkillLevel": 1,
+    "station": "foundry",
+    "source": "Adaptação jogável v1.0"
+  },
+  {
+    "id": "forge:iron-weapon",
+    "kind": "recipe",
+    "name": "Forjar arma de minério de ferro",
+    "description": "Forja uma arma com perfil mecânico derivado de material-iron.",
+    "inputs": {
+      "material-iron": 4
+    },
+    "resultItemId": "gear:iron-weapon",
+    "skillId": "forging-skill",
+    "requiredSkillLevel": 3,
+    "station": "forge",
+    "source": "Adaptação jogável v1.0"
+  },
+  {
+    "id": "forge:iron-armor",
+    "kind": "recipe",
+    "name": "Forjar armadura de minério de ferro",
+    "description": "Forja uma peça defensiva com propriedades de material-iron.",
+    "inputs": {
+      "material-iron": 6
+    },
+    "resultItemId": "gear:iron-armor",
+    "skillId": "forging-skill",
+    "requiredSkillLevel": 4,
+    "station": "forge",
+    "source": "Adaptação jogável v1.0"
+  },
+  {
+    "id": "forge:silver-weapon",
+    "kind": "recipe",
+    "name": "Forjar arma de minério de prata",
+    "description": "Forja uma arma com perfil mecânico derivado de material-silver.",
+    "inputs": {
+      "material-silver": 3,
+      "material-iron": 1
+    },
+    "resultItemId": "gear:silver-weapon",
+    "skillId": "forging-skill",
+    "requiredSkillLevel": 4,
+    "station": "forge",
+    "source": "Adaptação jogável v1.0"
+  },
+  {
+    "id": "forge:silver-armor",
+    "kind": "recipe",
+    "name": "Forjar armadura de minério de prata",
+    "description": "Forja uma peça defensiva com propriedades de material-silver.",
+    "inputs": {
+      "material-silver": 4,
+      "material-iron": 2
+    },
+    "resultItemId": "gear:silver-armor",
+    "skillId": "forging-skill",
+    "requiredSkillLevel": 4,
+    "station": "forge",
+    "source": "Adaptação jogável v1.0"
+  },
+  {
+    "id": "forge:gold-weapon",
+    "kind": "recipe",
+    "name": "Forjar arma de minério de ouro",
+    "description": "Forja uma arma com perfil mecânico derivado de material-gold.",
+    "inputs": {
+      "material-gold": 3,
+      "material-iron": 1
+    },
+    "resultItemId": "gear:gold-weapon",
+    "skillId": "forging-skill",
+    "requiredSkillLevel": 4,
+    "station": "forge",
+    "source": "Adaptação jogável v1.0"
+  },
+  {
+    "id": "forge:gold-armor",
+    "kind": "recipe",
+    "name": "Forjar armadura de minério de ouro",
+    "description": "Forja uma peça defensiva com propriedades de material-gold.",
+    "inputs": {
+      "material-gold": 4,
+      "material-iron": 2
+    },
+    "resultItemId": "gear:gold-armor",
+    "skillId": "forging-skill",
+    "requiredSkillLevel": 5,
+    "station": "forge",
+    "source": "Adaptação jogável v1.0"
+  },
+  {
+    "id": "forge:orichalcum-weapon",
+    "kind": "recipe",
+    "name": "Forjar arma de veio de oricalco",
+    "description": "Forja uma arma com perfil mecânico derivado de material-orichalcum.",
+    "inputs": {
+      "material-orichalcum": 3,
+      "material-iron": 1
+    },
+    "resultItemId": "gear:orichalcum-weapon",
+    "skillId": "forging-skill",
+    "requiredSkillLevel": 5,
+    "station": "forge",
+    "source": "Adaptação jogável v1.0"
+  },
+  {
+    "id": "forge:orichalcum-armor",
+    "kind": "recipe",
+    "name": "Forjar armadura de veio de oricalco",
+    "description": "Forja uma peça defensiva com propriedades de material-orichalcum.",
+    "inputs": {
+      "material-orichalcum": 4,
+      "material-iron": 2
+    },
+    "resultItemId": "gear:orichalcum-armor",
+    "skillId": "forging-skill",
+    "requiredSkillLevel": 5,
+    "station": "forge",
+    "source": "Adaptação jogável v1.0"
+  },
+  {
+    "id": "forge:adamantite-weapon",
+    "kind": "recipe",
+    "name": "Forjar arma de nódulo de adamantita",
+    "description": "Forja uma arma com perfil mecânico derivado de material-adamantite.",
+    "inputs": {
+      "material-adamantite": 3,
+      "material-iron": 1
+    },
+    "resultItemId": "gear:adamantite-weapon",
+    "skillId": "forging-skill",
+    "requiredSkillLevel": 5,
+    "station": "forge",
+    "source": "Adaptação jogável v1.0"
+  },
+  {
+    "id": "forge:adamantite-armor",
+    "kind": "recipe",
+    "name": "Forjar armadura de nódulo de adamantita",
+    "description": "Forja uma peça defensiva com propriedades de material-adamantite.",
+    "inputs": {
+      "material-adamantite": 4,
+      "material-iron": 2
+    },
+    "resultItemId": "gear:adamantite-armor",
+    "skillId": "forging-skill",
+    "requiredSkillLevel": 6,
+    "station": "forge",
+    "source": "Adaptação jogável v1.0"
+  },
+  {
+    "id": "forge:mithril-weapon",
+    "kind": "recipe",
+    "name": "Forjar arma de veio de mithril",
+    "description": "Forja uma arma com perfil mecânico derivado de material-mithril.",
+    "inputs": {
+      "material-mithril": 3,
+      "material-iron": 1
+    },
+    "resultItemId": "gear:mithril-weapon",
+    "skillId": "forging-skill",
+    "requiredSkillLevel": 6,
+    "station": "forge",
+    "source": "Adaptação jogável v1.0"
+  },
+  {
+    "id": "forge:mithril-armor",
+    "kind": "recipe",
+    "name": "Forjar armadura de veio de mithril",
+    "description": "Forja uma peça defensiva com propriedades de material-mithril.",
+    "inputs": {
+      "material-mithril": 4,
+      "material-iron": 2
+    },
+    "resultItemId": "gear:mithril-armor",
+    "skillId": "forging-skill",
+    "requiredSkillLevel": 6,
+    "station": "forge",
+    "source": "Adaptação jogável v1.0"
+  },
+  {
+    "id": "forge:unobtanio-weapon",
+    "kind": "recipe",
+    "name": "Forjar arma de fragmento de unobtanio",
+    "description": "Forja uma arma com perfil mecânico derivado de material-unobtanio.",
+    "inputs": {
+      "material-unobtanio": 3,
+      "material-iron": 1
+    },
+    "resultItemId": "gear:unobtanio-weapon",
+    "skillId": "forging-skill",
+    "requiredSkillLevel": 6,
+    "station": "forge",
+    "source": "Adaptação jogável v1.0"
+  },
+  {
+    "id": "forge:unobtanio-armor",
+    "kind": "recipe",
+    "name": "Forjar armadura de fragmento de unobtanio",
+    "description": "Forja uma peça defensiva com propriedades de material-unobtanio.",
+    "inputs": {
+      "material-unobtanio": 4,
+      "material-iron": 2
+    },
+    "resultItemId": "gear:unobtanio-armor",
+    "skillId": "forging-skill",
+    "requiredSkillLevel": 7,
+    "station": "forge",
+    "source": "Adaptação jogável v1.0"
+  },
+  {
+    "id": "forge:vibranium-weapon",
+    "kind": "recipe",
+    "name": "Forjar arma de veio de vibranio",
+    "description": "Forja uma arma com perfil mecânico derivado de material-vibranium.",
+    "inputs": {
+      "material-vibranium": 3,
+      "material-iron": 1
+    },
+    "resultItemId": "gear:vibranium-weapon",
+    "skillId": "forging-skill",
+    "requiredSkillLevel": 7,
+    "station": "forge",
+    "source": "Adaptação jogável v1.0"
+  },
+  {
+    "id": "forge:vibranium-armor",
+    "kind": "recipe",
+    "name": "Forjar armadura de veio de vibranio",
+    "description": "Forja uma peça defensiva com propriedades de material-vibranium.",
+    "inputs": {
+      "material-vibranium": 4,
+      "material-iron": 2
+    },
+    "resultItemId": "gear:vibranium-armor",
+    "skillId": "forging-skill",
+    "requiredSkillLevel": 7,
+    "station": "forge",
+    "source": "Adaptação jogável v1.0"
+  },
+  {
+    "id": "forge:dilthio-weapon",
+    "kind": "recipe",
+    "name": "Forjar arma de cristal de dilthio",
+    "description": "Forja uma arma com perfil mecânico derivado de material-dilthio.",
+    "inputs": {
+      "material-dilthio": 3,
+      "material-iron": 1
+    },
+    "resultItemId": "gear:dilthio-weapon",
+    "skillId": "forging-skill",
+    "requiredSkillLevel": 7,
+    "station": "forge",
+    "source": "Adaptação jogável v1.0"
+  },
+  {
+    "id": "forge:dilthio-armor",
+    "kind": "recipe",
+    "name": "Forjar armadura de cristal de dilthio",
+    "description": "Forja uma peça defensiva com propriedades de material-dilthio.",
+    "inputs": {
+      "material-dilthio": 4,
+      "material-iron": 2
+    },
+    "resultItemId": "gear:dilthio-armor",
+    "skillId": "forging-skill",
+    "requiredSkillLevel": 8,
+    "station": "forge",
+    "source": "Adaptação jogável v1.0"
+  },
+  {
+    "id": "forge:chlorophyte-weapon",
+    "kind": "recipe",
+    "name": "Forjar arma de clorofita bruta",
+    "description": "Forja uma arma com perfil mecânico derivado de material-chlorophyte.",
+    "inputs": {
+      "material-chlorophyte": 3,
+      "material-iron": 1
+    },
+    "resultItemId": "gear:chlorophyte-weapon",
+    "skillId": "forging-skill",
+    "requiredSkillLevel": 8,
+    "station": "forge",
+    "source": "Adaptação jogável v1.0"
+  },
+  {
+    "id": "forge:chlorophyte-armor",
+    "kind": "recipe",
+    "name": "Forjar armadura de clorofita bruta",
+    "description": "Forja uma peça defensiva com propriedades de material-chlorophyte.",
+    "inputs": {
+      "material-chlorophyte": 4,
+      "material-iron": 2
+    },
+    "resultItemId": "gear:chlorophyte-armor",
+    "skillId": "forging-skill",
+    "requiredSkillLevel": 8,
+    "station": "forge",
+    "source": "Adaptação jogável v1.0"
+  },
+  {
+    "id": "forge:sacrite-weapon",
+    "kind": "recipe",
+    "name": "Forjar arma de nódulo de sacrito",
+    "description": "Forja uma arma com perfil mecânico derivado de material-sacrite.",
+    "inputs": {
+      "material-sacrite": 3,
+      "material-iron": 1
+    },
+    "resultItemId": "gear:sacrite-weapon",
+    "skillId": "forging-skill",
+    "requiredSkillLevel": 8,
+    "station": "forge",
+    "source": "Adaptação jogável v1.0"
+  },
+  {
+    "id": "forge:sacrite-armor",
+    "kind": "recipe",
+    "name": "Forjar armadura de nódulo de sacrito",
+    "description": "Forja uma peça defensiva com propriedades de material-sacrite.",
+    "inputs": {
+      "material-sacrite": 4,
+      "material-iron": 2
+    },
+    "resultItemId": "gear:sacrite-armor",
+    "skillId": "forging-skill",
+    "requiredSkillLevel": 9,
+    "station": "forge",
+    "source": "Adaptação jogável v1.0"
+  },
+  {
+    "id": "alchemy:healing-potion",
+    "kind": "recipe",
+    "name": "Preparar poção de cura",
+    "description": "Infusão de ervas medicinais e água filtrada.",
+    "inputs": {
+      "medicinal-herb": 2,
+      "water-flask": 1
+    },
+    "resultItemId": "healing-potion",
+    "resultQuantity": 1,
+    "skillId": "alchemy-skill",
+    "requiredSkillLevel": 1,
+    "source": "Adaptação jogável v1.0"
+  },
+  {
+    "id": "alchemy:mana-potion",
+    "kind": "recipe",
+    "name": "Destilar poção de Mana",
+    "description": "Concentra cristal arcano em uma solução consumível.",
+    "inputs": {
+      "arcane-crystal": 2,
+      "wild-herb": 1
+    },
+    "resultItemId": "mana-potion",
+    "resultQuantity": 1,
+    "skillId": "alchemy-skill",
+    "requiredSkillLevel": 2,
+    "source": "Adaptação jogável v1.0"
+  },
+  {
+    "id": "alchemy:aura-tonic",
+    "kind": "recipe",
+    "name": "Preparar tônico de Aura",
+    "description": "Extrai propriedades vitais de ingredientes vegetais.",
+    "inputs": {
+      "medicinal-herb": 1,
+      "moonberry": 1
+    },
+    "resultItemId": "aura-tonic",
+    "resultQuantity": 1,
+    "skillId": "alchemy-skill",
+    "requiredSkillLevel": 2,
+    "source": "Adaptação jogável v1.0"
+  },
+  {
+    "id": "cooking:hearty-stew",
+    "kind": "recipe",
+    "name": "Cozinhar ensopado",
+    "description": "Refeição de trigo, peixe e ervas.",
+    "inputs": {
+      "wheat": 2,
+      "river-carp": 1,
+      "wild-herb": 1
+    },
+    "resultItemId": "hearty-stew",
+    "skillId": "culinary-skill",
+    "requiredSkillLevel": 1,
+    "source": "Adaptação jogável v1.0"
+  },
+  {
+    "id": "cooking:smoked-fish",
+    "kind": "recipe",
+    "name": "Defumar peixe",
+    "description": "Preserva a captura para uso em viagens.",
+    "inputs": {
+      "azure-fish": 1,
+      "oak-log": 1
+    },
+    "resultItemId": "smoked-fish",
+    "skillId": "culinary-skill",
+    "requiredSkillLevel": 1,
+    "source": "Adaptação jogável v1.0"
+  },
+  {
+    "id": "jewelry:silver-ring",
+    "kind": "recipe",
+    "name": "Criar anel de prata",
+    "description": "Molda prata e gema em acessório equipado.",
+    "inputs": {
+      "material-silver": 2,
+      "jewel-shard": 1
+    },
+    "resultItemId": "silver-ring",
+    "skillId": "jewelry-skill",
+    "requiredSkillLevel": 1,
+    "source": "Adaptação jogável v1.0"
   }
 ]

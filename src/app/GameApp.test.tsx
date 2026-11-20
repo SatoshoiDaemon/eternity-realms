@@ -1,6 +1,8 @@
 import { act, cleanup, fireEvent, render, screen, waitFor, within } from '@testing-library/react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { loadContentPacks, loadOfficialContent } from '../content/registry';
+import type { ContentCatalog } from '../content/registry';
+import type { SystemDefinition, ItemDefinition } from '../content/schema';
 import { createCharacter, createInitialGameState } from '../domain/model';
 import type { GameState } from '../domain/types';
 import { testCatalog, testPack } from '../test/fixtures';
@@ -212,6 +214,10 @@ describe('Eternity Realms navigation and play flow', () => {
       await screen.findByRole('heading', { name: 'Atividades e sessões' }),
     ).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Adicionar sessão' })).toBeDisabled();
+    fireEvent.click(screen.getByRole('button', { name: 'Mercado' }));
+    expect(
+      screen.getByText('Crie um personagem na tela Início para acessar os sistemas de personagem.'),
+    ).toBeInTheDocument();
 
     tab('Combate');
     expect(
@@ -573,9 +579,7 @@ describe('Eternity Realms navigation and play flow', () => {
     tab('Atividades');
     expect(screen.getByRole('heading', { name: 'Atividades e sessões' })).toBeInTheDocument();
     fireEvent.click(screen.getByRole('button', { name: 'Treinamentos' }));
-    expect(
-      screen.getByText('Nenhuma atividade nesta categoria foi incluída no conteúdo ativo.'),
-    ).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'Meditação de Mana' })).toBeInTheDocument();
     fireEvent.click(screen.getByRole('button', { name: 'Todas' }));
 
     tab('Combate');
@@ -1797,6 +1801,151 @@ describe('Eternity Realms navigation and play flow', () => {
     expect(rows.findIndex((row) => row.textContent?.includes('Minério de ferro'))).toBeLessThan(
       rows.findIndex((row) => row.textContent?.includes('Erva silvestre')),
     );
+  });
+
+  it('uses a healing potion from the mobile inventory screen', async () => {
+    const state = gameWithCharacter('Healer');
+    state.character!.inventory['healing-potion'] = 1;
+    state.character!.extensions.combatHp = 2;
+    const { repository } = await mountApp({ state, clock: () => 1_000 });
+    tab('Personagem');
+    fireEvent.click(screen.getByRole('tab', { name: 'Inventário' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Usar Poção de cura' }));
+    await waitFor(() => expect(repository.state?.character?.inventory['healing-potion']).toBe(0));
+    expect(repository.state?.character?.extensions.combatHp).toBe(5);
+    expect(repository.state?.events.map((event) => event.type)).toContain('item.consumed');
+  });
+
+  it('installs an owned alchemical implant from the character screen', async () => {
+    const state = gameWithCharacter('Implanter');
+    state.character!.inventory['alchemical-implant-01'] = 1;
+    state.character!.extensions.wallet = { fragments: 10_000 };
+    state.character!.extensions.alchemicalCapacity = 5;
+    const { repository } = await mountApp({ state, clock: () => 1_000 });
+    tab('Personagem');
+    fireEvent.click(screen.getByRole('tab', { name: 'Implantes' }));
+    expect(screen.getByRole('heading', { name: 'Implantes alquímicos' })).toBeInTheDocument();
+    fireEvent.click(screen.getByRole('button', { name: 'Instalar' }));
+    await waitFor(() =>
+      expect(repository.state?.character?.extensions.installedImplants).toEqual(['implant-01']),
+    );
+    expect(repository.state?.character?.inventory['alchemical-implant-01']).toBe(0);
+    expect(repository.state?.character?.extensions.wallet).toEqual({ fragments: 0 });
+    expect(repository.state?.events.at(-1)).toMatchObject({
+      type: 'implant.installed',
+      implantId: 'implant-01',
+      capacity: 5,
+      load: 1,
+    });
+  });
+
+  it('spends attribute points on physical and energetic stats from the character overview', async () => {
+    const state = gameWithCharacter('Attributes');
+    state.character!.extensions.attributePoints = 2;
+    state.character!.attributes.energetic.mana = 1;
+    const { repository } = await mountApp({ state });
+    tab('Personagem');
+    fireEvent.click(screen.getByRole('button', { name: 'Aumentar Força' }));
+    await waitFor(() => expect(repository.state?.character?.attributes.physical.strength).toBe(2));
+    fireEvent.click(screen.getByRole('button', { name: 'Aumentar Mana' }));
+    await waitFor(() => expect(repository.state?.character?.attributes.energetic.mana).toBe(2));
+    expect(repository.state?.character?.extensions.attributePoints).toBe(0);
+  });
+
+  it('renders currency rewards in the mission catalog', async () => {
+    const official = loadOfficialContent();
+    const baseMission = [...official.missions.values()][0]!;
+    const missions = new Map(official.missions)
+      .set('test:currency-reward', {
+        ...baseMission,
+        id: 'test:currency-reward',
+        name: 'Contrato de recompensa',
+        reward: { ...baseMission.reward, currencies: { fragments: 125 } },
+      })
+      .set('test:no-currency-reward', {
+        ...baseMission,
+        id: 'test:no-currency-reward',
+        name: 'Contrato sem moeda',
+        reward: { ...baseMission.reward, currencies: undefined },
+      } as unknown as typeof baseMission);
+    const content = { ...official, missions };
+    await mountApp({ state: gameWithCharacter('Mission rewards'), content });
+    tab('Missões');
+    expect(await screen.findByText('+125 fragments')).toBeInTheDocument();
+  });
+
+  it('offers missing implant devices in the market and renders catalog fallbacks', async () => {
+    const official = loadOfficialContent();
+    const system = official.systems.get('system:alchemy')!;
+    const entries = system.entries.map((entry) =>
+      entry.id === 'implant-01'
+        ? { ...entry, description: undefined, acquisitionPriceFragments: undefined }
+        : entry,
+    );
+    const systems = new Map(official.systems).set('system:alchemy', {
+      ...system,
+      entries,
+    } as SystemDefinition);
+    const potion = official.items.get('healing-potion')!;
+    const items = new Map(official.items).set('healing-potion', {
+      ...potion,
+      name: undefined,
+    } as unknown as ItemDefinition);
+    const content = { ...official, systems, items } as ContentCatalog;
+    const state = gameWithCharacter('Market implant');
+    state.character!.extensions.wallet = { fragments: undefined };
+    state.character!.inventory['healing-potion'] = 1;
+    const { repository } = await mountApp({ state, content });
+    tab('Personagem');
+    fireEvent.click(screen.getByRole('tab', { name: 'Inventário' }));
+    expect(screen.getByRole('button', { name: 'Usar healing-potion' })).toBeInTheDocument();
+    fireEvent.click(screen.getByRole('tab', { name: 'Implantes' }));
+    fireEvent.click(screen.getAllByRole('button', { name: 'Adquirir na Loja de Fragmentos' })[0]!);
+    expect(await screen.findByRole('heading', { name: 'Mercado e orbes' })).toBeInTheDocument();
+    expect(repository.state?.character?.extensions.wallet).toEqual({ fragments: undefined });
+  });
+
+  it('handles stale character actions when a transaction reload returns an empty save', async () => {
+    const state = gameWithCharacter('Stale action');
+    state.character!.inventory['healing-potion'] = 1;
+    state.character!.inventory['alchemical-implant-01'] = 1;
+    state.character!.extensions.wallet = { fragments: 10_000 };
+    state.character!.extensions.alchemicalCapacity = 5;
+    state.character!.extensions.installedImplants = ['implant-20'];
+    state.character!.extensions.brokenImplants = ['implant-20'];
+    const { repository } = await mountApp({ state });
+    tab('Personagem');
+    fireEvent.click(screen.getByRole('tab', { name: 'Implantes' }));
+    repository.returnNullNext = true;
+    fireEvent.click(screen.getByRole('button', { name: 'Instalar' }));
+    expect(await screen.findByRole('alert')).toBeInTheDocument();
+
+    fireEvent.click(screen.getByRole('tab', { name: 'Inventário' }));
+    repository.returnNullNext = true;
+    fireEvent.click(screen.getByRole('button', { name: 'Usar Poção de cura' }));
+    expect(await screen.findByRole('alert')).toBeInTheDocument();
+
+    fireEvent.click(screen.getByRole('tab', { name: 'Implantes' }));
+    repository.returnNullNext = true;
+    fireEvent.click(screen.getByRole('button', { name: 'Remover implante quebrado' }));
+    expect(await screen.findByRole('alert')).toBeInTheDocument();
+  });
+
+  it('lets the player remove a soul anchor after its one use', async () => {
+    const state = gameWithCharacter('Anchor');
+    state.character!.extensions.installedImplants = ['implant-20'];
+    state.character!.extensions.brokenImplants = ['implant-20'];
+    state.character!.extensions.alchemicalCapacity = 5;
+    state.character!.extensions.alchemicalLoad = 1;
+    const { repository } = await mountApp({ state, clock: () => 1_000 });
+    tab('Personagem');
+    fireEvent.click(screen.getByRole('tab', { name: 'Implantes' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Remover implante quebrado' }));
+    await waitFor(() =>
+      expect(repository.state?.character?.extensions.installedImplants).toEqual([]),
+    );
+    expect(repository.state?.character?.extensions.brokenImplants).toEqual([]);
+    expect(repository.state?.character?.extensions.alchemicalLoad).toBe(0);
   });
 
   it('uses equipment slots and the forge to craft and equip a weapon', async () => {

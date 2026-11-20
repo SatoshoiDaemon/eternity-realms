@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import type { CombatActor, CombatAction } from './types';
 import { advanceCombat, createCombatState } from './combat-engine';
 import { BASE_ENEMY_TAGS, loadTagRegistry } from './tag-registry';
+import { loadOfficialContent } from '../content/registry';
 
 const strike: CombatAction = {
   id: 'base:strike',
@@ -48,6 +49,117 @@ function actor(
 }
 
 describe('deterministic event combat', () => {
+  it('applies an Oni racial trait as a fixed ten HP heal after each successful hit', () => {
+    const content = loadOfficialContent();
+    const oni = actor('oni', 'party', {
+      hp: { current: 80, maximum: 100 },
+      tags: ['race:oni'],
+    });
+    const state = createCombatState('oni-feeding', [oni, actor('victim', 'enemy')], 21, {}, [
+      ...content.enemyTags.values(),
+    ]);
+
+    const result = advanceCombat(state, 0);
+    expect(result.actors.find((entry) => entry.id === 'oni')?.hp.current).toBe(50);
+    expect(result.log.find((entry) => entry.actorId === 'oni')?.effectsApplied).toContain(
+      'flat_vampirism:10',
+    );
+  });
+
+  it('applies a character regeneration implant on turns and respects recorded suppression', () => {
+    const regenerator = actor('a-regenerator', 'party', {
+      hp: { current: 20, maximum: 100 },
+      regenerationPerAction: 5,
+    });
+    const first = advanceCombat(
+      createCombatState(
+        'implant-regeneration',
+        [regenerator, actor('z-target', 'enemy', { actions: [] })],
+        1,
+      ),
+      0,
+    );
+    expect(first.actors.find((entry) => entry.id === 'a-regenerator')?.hp.current).toBe(25);
+    expect(first.log.find((entry) => entry.actorId === 'a-regenerator')?.effectsApplied).toContain(
+      'regeneration:5',
+    );
+
+    const suppressed = advanceCombat(
+      createCombatState(
+        'suppressed-implant-regeneration',
+        [
+          actor('a-regenerator', 'party', {
+            hp: { current: 20, maximum: 100 },
+            regenerationPerAction: 5,
+            effects: [
+              { id: 'base:regeneration-suppressed', category: 'debuff', potency: 1, counter: 2 },
+            ],
+          }),
+          actor('z-target', 'enemy', { actions: [] }),
+        ],
+        1,
+      ),
+      0,
+    );
+    expect(suppressed.actors.find((entry) => entry.id === 'a-regenerator')?.hp.current).toBe(20);
+
+    const full = advanceCombat(
+      createCombatState(
+        'full-implant-regeneration',
+        [
+          actor('a-regenerator', 'party', { regenerationPerAction: 5 }),
+          actor('z-target', 'enemy', { actions: [] }),
+        ],
+        1,
+      ),
+      0,
+    );
+    expect(full.actors.find((entry) => entry.id === 'a-regenerator')?.hp.current).toBe(100);
+    expect(
+      full.log.find((entry) => entry.actorId === 'a-regenerator')?.effectsApplied,
+    ).not.toContain('regeneration:0');
+  });
+
+  it('resurrects once at 1 HP with the soul anchor marked broken', () => {
+    const revived = advanceCombat(
+      createCombatState(
+        'soul-anchor',
+        [
+          actor('a-anchored', 'party', {
+            hp: { current: 20, maximum: 100 },
+            soulAnchorAvailable: true,
+          }),
+          actor('z-enemy', 'enemy', {
+            actions: [
+              {
+                ...strike,
+                id: 'enemy:lethal',
+                damage: {
+                  ...strike.damage!,
+                  amount: 40,
+                  origin: { kind: 'ability', id: 'enemy:lethal' },
+                },
+              },
+            ],
+            actionPriority: ['enemy:lethal'],
+          }),
+        ],
+        1,
+      ),
+      0,
+    );
+    const anchor = revived.actors.find((entry) => entry.id === 'a-anchored');
+    const lethalLog = revived.log.find((entry) => entry.actorId === 'z-enemy');
+    expect(anchor).toMatchObject({
+      hp: { current: 1, maximum: 100 },
+      state: 'alive',
+      soulAnchorAvailable: false,
+      soulAnchorUsed: true,
+    });
+    expect(lethalLog).toMatchObject({ killed: false });
+    expect(lethalLog?.effectsApplied).toContain('soul-anchor:resurrected-and-broken');
+  });
+
   it('resolves the same ordered events when continuous or resumed in offline batches', () => {
     const actors = [actor('hero', 'party'), actor('beast', 'enemy')];
     const continuous = advanceCombat(createCombatState('run-1', actors, 1234), 4_000);
@@ -541,6 +653,9 @@ describe('deterministic event combat', () => {
       [{ hp: { current: Number.NaN, maximum: 10 } }, 'invalid HP'],
       [{ hp: { current: 1, maximum: 0 } }, 'invalid HP'],
       [{ tenacity: { current: 1.5, maximum: 2 } }, 'invalid Tenacity'],
+      [{ regenerationPerAction: -1 }, 'invalid regeneration'],
+      [{ soulAnchorAvailable: 'yes' as never }, 'invalid soul anchor state'],
+      [{ soulAnchorAvailable: false, soulAnchorUsed: 1 as never }, 'invalid soul anchor state'],
       [{ attributes: { ...hero.attributes, speed: 0 } }, 'positive Speed'],
       [{ mitigation: { physical: 1, magical: 0 } }, 'mitigation'],
       [{ evasion: { chance: 2, guaranteed: 0 } }, 'invalid evasion'],

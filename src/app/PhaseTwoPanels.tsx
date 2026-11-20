@@ -24,6 +24,7 @@ interface PhaseTwoPanelsProps {
   content: ContentCatalog;
   clock: () => number;
   updateCharacter: (update: (character: Character) => Character) => Promise<void>;
+  onCraft?: (recipeId: string) => Promise<void>;
   view?: 'expeditions' | 'bestiary' | 'forge' | 'nodes' | 'arena' | 'records';
   expeditionKind?: 'quest' | 'dungeon' | 'raid';
 }
@@ -70,6 +71,7 @@ export const PhaseTwoPanels = memo(function PhaseTwoPanels({
   content,
   clock,
   updateCharacter,
+  onCraft,
   view,
   expeditionKind,
 }: PhaseTwoPanelsProps) {
@@ -227,9 +229,14 @@ export const PhaseTwoPanels = memo(function PhaseTwoPanels({
         content.glyphs,
         content.sigils,
       ).action;
-      const actor = createCharacterCombatActor(character!, content.items, content.rules.combat, [
-        action,
-      ]);
+      const actor = createCharacterCombatActor(
+        character!,
+        content.items,
+        content.rules.combat,
+        [action],
+        content.races.get(character!.raceId),
+        content.systems,
+      );
       actor.side = 'party';
       actor.actionPriority = [action.id, ...actor.actionPriority];
       const initial = createCombatState(
@@ -441,7 +448,11 @@ export const PhaseTwoPanels = memo(function PhaseTwoPanels({
           />
           <button
             className="primary-button"
-            onClick={() => void persist((current) => forgeItem(current, content, recipeId))}
+            onClick={() =>
+              void (onCraft
+                ? onCraft(recipeId)
+                : persist((current) => forgeItem(current, content, recipeId)))
+            }
             type="button"
           >
             {t('phase.craftEquipment')}

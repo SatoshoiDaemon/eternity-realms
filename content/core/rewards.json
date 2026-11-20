@@ -2,18 +2,30 @@
   {
     "id": "mining-iron",
     "kind": "reward",
-    "name": "Resultado da mineração",
-    "description": "Recompensa provisória, configurada como conteúdo.",
+    "name": "Recompensa: Mineração de ferro",
+    "description": "Recursos obtidos em Apexia.",
     "experience": 25,
-    "items": [{ "itemId": "iron-ore", "quantity": 1 }]
+    "items": [
+      {
+        "itemId": "iron-ore",
+        "quantity": 2
+      }
+    ],
+    "source": "Adaptação jogável v1.0"
   },
   {
     "id": "foraging-herbs",
     "kind": "reward",
-    "name": "Resultado da coleta",
-    "description": "Recompensa provisória, configurada como conteúdo.",
+    "name": "Recompensa: Coleta de ervas",
+    "description": "Recursos obtidos em Apexia.",
     "experience": 10,
-    "items": [{ "itemId": "wild-herb", "quantity": 1 }]
+    "items": [
+      {
+        "itemId": "wild-herb",
+        "quantity": 2
+      }
+    ],
+    "source": "Adaptação jogável v1.0"
   },
   {
     "id": "expedition-entry",
@@ -28,6 +40,1147 @@
     "kind": "reward",
     "name": "Recompensa da Raid",
     "description": "A experiência e os itens vêm da resolução do encontro com o chefe.",
+    "experience": 0,
+    "items": []
+  },
+  {
+    "id": "reward:mine-silver",
+    "kind": "reward",
+    "name": "Recompensa: Mineração de prata",
+    "description": "Recursos obtidos em Mourland.",
+    "experience": 40,
+    "items": [
+      {
+        "itemId": "ore-silver",
+        "quantity": 2
+      }
+    ],
+    "source": "Adaptação jogável v1.0"
+  },
+  {
+    "id": "reward:mine-gold",
+    "kind": "reward",
+    "name": "Recompensa: Mineração de ouro",
+    "description": "Recursos obtidos em Vrakkas.",
+    "experience": 60,
+    "items": [
+      {
+        "itemId": "ore-gold",
+        "quantity": 3
+      }
+    ],
+    "source": "Adaptação jogável v1.0"
+  },
+  {
+    "id": "reward:mine-orichalcum",
+    "kind": "reward",
+    "name": "Recompensa: Mineração de oricalco",
+    "description": "Recursos obtidos em Caelum.",
+    "experience": 90,
+    "items": [
+      {
+        "itemId": "ore-orichalcum",
+        "quantity": 4
+      }
+    ],
+    "source": "Adaptação jogável v1.0"
+  },
+  {
+    "id": "reward:mine-adamantite",
+    "kind": "reward",
+    "name": "Recompensa: Mineração de adamantita",
+    "description": "Recursos obtidos em Kryos.",
+    "experience": 110,
+    "items": [
+      {
+        "itemId": "ore-adamantite",
+        "quantity": 4
+      }
+    ],
+    "source": "Adaptação jogável v1.0"
+  },
+  {
+    "id": "reward:mine-mithril",
+    "kind": "reward",
+    "name": "Recompensa: Mineração de mithril",
+    "description": "Recursos obtidos em Vaeloria.",
+    "experience": 100,
+    "items": [
+      {
+        "itemId": "ore-mithril",
+        "quantity": 4
+      }
+    ],
+    "source": "Adaptação jogável v1.0"
+  },
+  {
+    "id": "reward:mine-unobtanio",
+    "kind": "reward",
+    "name": "Recompensa: Mineração de unobtanio",
+    "description": "Recursos obtidos em Caelum.",
+    "experience": 140,
+    "items": [
+      {
+        "itemId": "ore-unobtanio",
+        "quantity": 5
+      }
+    ],
+    "source": "Adaptação jogável v1.0"
+  },
+  {
+    "id": "reward:mine-vibranium",
+    "kind": "reward",
+    "name": "Recompensa: Mineração de vibranio",
+    "description": "Recursos obtidos em Xochitlan.",
+    "experience": 150,
+    "items": [
+      {
+        "itemId": "ore-vibranium",
+        "quantity": 5
+      }
+    ],
+    "source": "Adaptação jogável v1.0"
+  },
+  {
+    "id": "reward:mine-dilthio",
+    "kind": "reward",
+    "name": "Recompensa: Extração de dilthio",
+    "description": "Recursos obtidos em Dross.",
+    "experience": 80,
+    "items": [
+      {
+        "itemId": "ore-dilthio",
+        "quantity": 3
+      }
+    ],
+    "source": "Adaptação jogável v1.0"
+  },
+  {
+    "id": "reward:mine-chlorophyte",
+    "kind": "reward",
+    "name": "Recompensa: Coleta de clorofita",
+    "description": "Recursos obtidos em Riptide.",
+    "experience": 75,
+    "items": [
+      {
+        "itemId": "ore-chlorophyte",
+        "quantity": 3
+      }
+    ],
+    "source": "Adaptação jogável v1.0"
+  },
+  {
+    "id": "reward:mine-sacrite",
+    "kind": "reward",
+    "name": "Recompensa: Mineração de sacrito",
+    "description": "Recursos obtidos em Mourland.",
+    "experience": 180,
+    "items": [
+      {
+        "itemId": "ore-sacrite",
+        "quantity": 5
+      }
+    ],
+    "source": "Adaptação jogável v1.0"
+  },
+  {
+    "id": "reward:smith-practice",
+    "kind": "reward",
+    "name": "Recompensa: Prática de forja",
+    "description": "Recursos obtidos em Vaeloria.",
+    "experience": 20,
+    "items": [
+      {
+        "itemId": "material-iron",
+        "quantity": 1
+      }
+    ],
+    "source": "Adaptação jogável v1.0"
+  },
+  {
+    "id": "reward:smelt-iron",
+    "kind": "reward",
+    "name": "Recompensa: Fundição de ferro",
+    "description": "Recursos obtidos em Apexia.",
+    "experience": 25,
+    "items": [
+      {
+        "itemId": "material-iron",
+        "quantity": 2
+      }
+    ],
+    "source": "Adaptação jogável v1.0"
+  },
+  {
+    "id": "reward:smithing-workshop",
+    "kind": "reward",
+    "name": "Recompensa: Oficina de armamentos",
+    "description": "Recursos obtidos em Vrakkas.",
+    "experience": 35,
+    "items": [
+      {
+        "itemId": "material-silver",
+        "quantity": 2
+      }
+    ],
+    "source": "Adaptação jogável v1.0"
+  },
+  {
+    "id": "reward:alchemy-study",
+    "kind": "reward",
+    "name": "Recompensa: Estudo alquímico",
+    "description": "Recursos obtidos em Dross.",
+    "experience": 25,
+    "items": [
+      {
+        "itemId": "wild-herb",
+        "quantity": 1
+      }
+    ],
+    "source": "Adaptação jogável v1.0"
+  },
+  {
+    "id": "reward:brew-healing",
+    "kind": "reward",
+    "name": "Recompensa: Preparar poções de cura",
+    "description": "Recursos obtidos em Dross.",
+    "experience": 35,
+    "items": [
+      {
+        "itemId": "healing-potion",
+        "quantity": 1
+      }
+    ],
+    "source": "Adaptação jogável v1.0"
+  },
+  {
+    "id": "reward:brew-energy",
+    "kind": "reward",
+    "name": "Recompensa: Destilar tônico energético",
+    "description": "Recursos obtidos em Apexia.",
+    "experience": 45,
+    "items": [
+      {
+        "itemId": "mana-potion",
+        "quantity": 1
+      }
+    ],
+    "source": "Adaptação jogável v1.0"
+  },
+  {
+    "id": "reward:mana-meditation",
+    "kind": "reward",
+    "name": "Recompensa: Meditação de Mana",
+    "description": "Recursos obtidos em Caelum.",
+    "experience": 30,
+    "items": [
+      {
+        "itemId": "arcane-crystal",
+        "quantity": 1
+      }
+    ],
+    "source": "Adaptação jogável v1.0"
+  },
+  {
+    "id": "reward:elemental-practice",
+    "kind": "reward",
+    "name": "Recompensa: Prática elemental",
+    "description": "Recursos obtidos em Xochitlan.",
+    "experience": 40,
+    "items": [
+      {
+        "itemId": "arcane-crystal",
+        "quantity": 1
+      }
+    ],
+    "source": "Adaptação jogável v1.0"
+  },
+  {
+    "id": "reward:spell-research",
+    "kind": "reward",
+    "name": "Recompensa: Pesquisa de feitiços",
+    "description": "Recursos obtidos em Apexia.",
+    "experience": 50,
+    "items": [
+      {
+        "itemId": "rune-token",
+        "quantity": 1
+      }
+    ],
+    "source": "Adaptação jogável v1.0"
+  },
+  {
+    "id": "reward:bow-drill",
+    "kind": "reward",
+    "name": "Recompensa: Treino de arco",
+    "description": "Recursos obtidos em Vaeloria.",
+    "experience": 25,
+    "items": [
+      {
+        "itemId": "enchanted-arrow",
+        "quantity": 1
+      }
+    ],
+    "source": "Adaptação jogável v1.0"
+  },
+  {
+    "id": "reward:field-archery",
+    "kind": "reward",
+    "name": "Recompensa: Tiro de campo",
+    "description": "Recursos obtidos em Kryos.",
+    "experience": 35,
+    "items": [
+      {
+        "itemId": "beast-hide",
+        "quantity": 1
+      }
+    ],
+    "source": "Adaptação jogável v1.0"
+  },
+  {
+    "id": "reward:arcane-archery",
+    "kind": "reward",
+    "name": "Recompensa: Arquearia arcana",
+    "description": "Recursos obtidos em Caelum.",
+    "experience": 55,
+    "items": [
+      {
+        "itemId": "arcane-crystal",
+        "quantity": 1
+      }
+    ],
+    "source": "Adaptação jogável v1.0"
+  },
+  {
+    "id": "reward:target-range",
+    "kind": "reward",
+    "name": "Recompensa: Treino de precisão",
+    "description": "Recursos obtidos em Vrakkas.",
+    "experience": 20,
+    "items": [
+      {
+        "itemId": "enchanted-arrow",
+        "quantity": 1
+      }
+    ],
+    "source": "Adaptação jogável v1.0"
+  },
+  {
+    "id": "reward:moving-target",
+    "kind": "reward",
+    "name": "Recompensa: Alvos móveis",
+    "description": "Recursos obtidos em Apexia.",
+    "experience": 35,
+    "items": [
+      {
+        "itemId": "beast-hide",
+        "quantity": 1
+      }
+    ],
+    "source": "Adaptação jogável v1.0"
+  },
+  {
+    "id": "reward:long-range",
+    "kind": "reward",
+    "name": "Recompensa: Disparo de longa distância",
+    "description": "Recursos obtidos em Kryos.",
+    "experience": 45,
+    "items": [
+      {
+        "itemId": "ore-silver",
+        "quantity": 1
+      }
+    ],
+    "source": "Adaptação jogável v1.0"
+  },
+  {
+    "id": "reward:cook-stew",
+    "kind": "reward",
+    "name": "Recompensa: Cozinhar ensopado",
+    "description": "Recursos obtidos em Vaeloria.",
+    "experience": 25,
+    "items": [
+      {
+        "itemId": "hearty-stew",
+        "quantity": 1
+      }
+    ],
+    "source": "Adaptação jogável v1.0"
+  },
+  {
+    "id": "reward:smoke-fish",
+    "kind": "reward",
+    "name": "Recompensa: Defumar peixe",
+    "description": "Recursos obtidos em Riptide.",
+    "experience": 30,
+    "items": [
+      {
+        "itemId": "smoked-fish",
+        "quantity": 1
+      }
+    ],
+    "source": "Adaptação jogável v1.0"
+  },
+  {
+    "id": "reward:field-rations",
+    "kind": "reward",
+    "name": "Recompensa: Preparar rações",
+    "description": "Recursos obtidos em Vrakkas.",
+    "experience": 35,
+    "items": [
+      {
+        "itemId": "wheat",
+        "quantity": 2
+      }
+    ],
+    "source": "Adaptação jogável v1.0"
+  },
+  {
+    "id": "reward:grow-wheat",
+    "kind": "reward",
+    "name": "Recompensa: Cultivar trigo",
+    "description": "Recursos obtidos em Vaeloria.",
+    "experience": 25,
+    "items": [
+      {
+        "itemId": "wheat",
+        "quantity": 3
+      }
+    ],
+    "source": "Adaptação jogável v1.0"
+  },
+  {
+    "id": "reward:grow-moonberry",
+    "kind": "reward",
+    "name": "Recompensa: Cultivar fruta-lua",
+    "description": "Recursos obtidos em Xochitlan.",
+    "experience": 40,
+    "items": [
+      {
+        "itemId": "moonberry",
+        "quantity": 2
+      }
+    ],
+    "source": "Adaptação jogável v1.0"
+  },
+  {
+    "id": "reward:grow-saltroot",
+    "kind": "reward",
+    "name": "Recompensa: Cultivar raiz-salina",
+    "description": "Recursos obtidos em Riptide.",
+    "experience": 35,
+    "items": [
+      {
+        "itemId": "saltroot",
+        "quantity": 2
+      }
+    ],
+    "source": "Adaptação jogável v1.0"
+  },
+  {
+    "id": "reward:fish-river",
+    "kind": "reward",
+    "name": "Recompensa: Pescar carpas",
+    "description": "Recursos obtidos em Apexia.",
+    "experience": 25,
+    "items": [
+      {
+        "itemId": "river-carp",
+        "quantity": 2
+      }
+    ],
+    "source": "Adaptação jogável v1.0"
+  },
+  {
+    "id": "reward:fish-cage",
+    "kind": "reward",
+    "name": "Recompensa: Pescar Peixe Jaula",
+    "description": "Recursos obtidos em Riptide.",
+    "experience": 90,
+    "items": [
+      {
+        "itemId": "cage-fish",
+        "quantity": 1
+      }
+    ],
+    "source": "Adaptação jogável v1.0"
+  },
+  {
+    "id": "reward:fish-storm",
+    "kind": "reward",
+    "name": "Recompensa: Pescar enguias-tempestade",
+    "description": "Recursos obtidos em Riptide.",
+    "experience": 75,
+    "items": [
+      {
+        "itemId": "storm-eel",
+        "quantity": 1
+      }
+    ],
+    "source": "Adaptação jogável v1.0"
+  },
+  {
+    "id": "reward:fish-deep",
+    "kind": "reward",
+    "name": "Recompensa: Pescar no mar profundo",
+    "description": "Recursos obtidos em Riptide.",
+    "experience": 110,
+    "items": [
+      {
+        "itemId": "deep-sea-fish",
+        "quantity": 1
+      }
+    ],
+    "source": "Adaptação jogável v1.0"
+  },
+  {
+    "id": "reward:fish-azure",
+    "kind": "reward",
+    "name": "Recompensa: Pescar peixe-azul",
+    "description": "Recursos obtidos em Riptide.",
+    "experience": 35,
+    "items": [
+      {
+        "itemId": "azure-fish",
+        "quantity": 2
+      }
+    ],
+    "source": "Adaptação jogável v1.0"
+  },
+  {
+    "id": "reward:lift-purse",
+    "kind": "reward",
+    "name": "Recompensa: Furto de bolsos",
+    "description": "Recursos obtidos em Dross.",
+    "experience": 30,
+    "items": [
+      {
+        "itemId": "rune-token",
+        "quantity": 1
+      }
+    ],
+    "source": "Adaptação jogável v1.0"
+  },
+  {
+    "id": "reward:smuggle-goods",
+    "kind": "reward",
+    "name": "Recompensa: Contrabando",
+    "description": "Recursos obtidos em Dross.",
+    "experience": 45,
+    "items": [
+      {
+        "itemId": "jewel-shard",
+        "quantity": 1
+      }
+    ],
+    "source": "Adaptação jogável v1.0"
+  },
+  {
+    "id": "reward:recover-cache",
+    "kind": "reward",
+    "name": "Recompensa: Recuperar esconderijo",
+    "description": "Recursos obtidos em Riptide.",
+    "experience": 55,
+    "items": [
+      {
+        "itemId": "ore-silver",
+        "quantity": 1
+      }
+    ],
+    "source": "Adaptação jogável v1.0"
+  },
+  {
+    "id": "reward:negotiate-market",
+    "kind": "reward",
+    "name": "Recompensa: Negociar no mercado",
+    "description": "Recursos obtidos em Vrakkas.",
+    "experience": 25,
+    "items": [
+      {
+        "itemId": "jewel-shard",
+        "quantity": 1
+      }
+    ],
+    "source": "Adaptação jogável v1.0"
+  },
+  {
+    "id": "reward:rally-allies",
+    "kind": "reward",
+    "name": "Recompensa: Reunir aliados",
+    "description": "Recursos obtidos em Vaeloria.",
+    "experience": 35,
+    "items": [
+      {
+        "itemId": "hearty-stew",
+        "quantity": 1
+      }
+    ],
+    "source": "Adaptação jogável v1.0"
+  },
+  {
+    "id": "reward:broker-contract",
+    "kind": "reward",
+    "name": "Recompensa: Intermediar contrato",
+    "description": "Recursos obtidos em Apexia.",
+    "experience": 50,
+    "items": [
+      {
+        "itemId": "rune-token",
+        "quantity": 1
+      }
+    ],
+    "source": "Adaptação jogável v1.0"
+  },
+  {
+    "id": "reward:shadow-route",
+    "kind": "reward",
+    "name": "Recompensa: Percorrer rota oculta",
+    "description": "Recursos obtidos em Dross.",
+    "experience": 30,
+    "items": [
+      {
+        "itemId": "dross-mushroom",
+        "quantity": 1
+      }
+    ],
+    "source": "Adaptação jogável v1.0"
+  },
+  {
+    "id": "reward:night-scout",
+    "kind": "reward",
+    "name": "Recompensa: Reconhecimento noturno",
+    "description": "Recursos obtidos em Mourland.",
+    "experience": 40,
+    "items": [
+      {
+        "itemId": "spectral-dust",
+        "quantity": 1
+      }
+    ],
+    "source": "Adaptação jogável v1.0"
+  },
+  {
+    "id": "reward:silent-infiltration",
+    "kind": "reward",
+    "name": "Recompensa: Infiltração silenciosa",
+    "description": "Recursos obtidos em Apexia.",
+    "experience": 60,
+    "items": [
+      {
+        "itemId": "jewel-shard",
+        "quantity": 1
+      }
+    ],
+    "source": "Adaptação jogável v1.0"
+  },
+  {
+    "id": "reward:fell-oak",
+    "kind": "reward",
+    "name": "Recompensa: Cortar carvalho",
+    "description": "Recursos obtidos em Apexia.",
+    "experience": 25,
+    "items": [
+      {
+        "itemId": "oak-log",
+        "quantity": 2
+      }
+    ],
+    "source": "Adaptação jogável v1.0"
+  },
+  {
+    "id": "reward:fell-frostwood",
+    "kind": "reward",
+    "name": "Recompensa: Cortar madeira gélida",
+    "description": "Recursos obtidos em Kryos.",
+    "experience": 55,
+    "items": [
+      {
+        "itemId": "frostwood-log",
+        "quantity": 2
+      }
+    ],
+    "source": "Adaptação jogável v1.0"
+  },
+  {
+    "id": "reward:collect-driftwood",
+    "kind": "reward",
+    "name": "Recompensa: Recolher madeira à deriva",
+    "description": "Recursos obtidos em Riptide.",
+    "experience": 30,
+    "items": [
+      {
+        "itemId": "driftwood",
+        "quantity": 2
+      }
+    ],
+    "source": "Adaptação jogável v1.0"
+  },
+  {
+    "id": "reward:fell-crystalwood",
+    "kind": "reward",
+    "name": "Recompensa: Cortar madeira cristalina",
+    "description": "Recursos obtidos em Xochitlan.",
+    "experience": 75,
+    "items": [
+      {
+        "itemId": "crystalwood",
+        "quantity": 1
+      }
+    ],
+    "source": "Adaptação jogável v1.0"
+  },
+  {
+    "id": "reward:trade-materials",
+    "kind": "reward",
+    "name": "Recompensa: Trocar materiais",
+    "description": "Recursos obtidos em Vrakkas.",
+    "experience": 30,
+    "items": [
+      {
+        "itemId": "material-iron",
+        "quantity": 1
+      }
+    ],
+    "source": "Adaptação jogável v1.0"
+  },
+  {
+    "id": "reward:supply-caravan",
+    "kind": "reward",
+    "name": "Recompensa: Abastecer caravana",
+    "description": "Recursos obtidos em Vaeloria.",
+    "experience": 45,
+    "items": [
+      {
+        "itemId": "wheat",
+        "quantity": 1
+      }
+    ],
+    "source": "Adaptação jogável v1.0"
+  },
+  {
+    "id": "reward:broker-relics",
+    "kind": "reward",
+    "name": "Recompensa: Intermediar relíquias",
+    "description": "Recursos obtidos em Caelum.",
+    "experience": 70,
+    "items": [
+      {
+        "itemId": "rune-token",
+        "quantity": 1
+      }
+    ],
+    "source": "Adaptação jogável v1.0"
+  },
+  {
+    "id": "reward:herb-medicinal",
+    "kind": "reward",
+    "name": "Recompensa: Colher ervas medicinais",
+    "description": "Recursos obtidos em Mourland.",
+    "experience": 25,
+    "items": [
+      {
+        "itemId": "medicinal-herb",
+        "quantity": 2
+      }
+    ],
+    "source": "Adaptação jogável v1.0"
+  },
+  {
+    "id": "reward:herb-frostflower",
+    "kind": "reward",
+    "name": "Recompensa: Colher flores de geada",
+    "description": "Recursos obtidos em Kryos.",
+    "experience": 45,
+    "items": [
+      {
+        "itemId": "frostflower",
+        "quantity": 2
+      }
+    ],
+    "source": "Adaptação jogável v1.0"
+  },
+  {
+    "id": "reward:herb-emberleaf",
+    "kind": "reward",
+    "name": "Recompensa: Colher folhas de brasa",
+    "description": "Recursos obtidos em Vaeloria.",
+    "experience": 40,
+    "items": [
+      {
+        "itemId": "emberleaf",
+        "quantity": 2
+      }
+    ],
+    "source": "Adaptação jogável v1.0"
+  },
+  {
+    "id": "reward:herb-dross-mushroom",
+    "kind": "reward",
+    "name": "Recompensa: Coletar cogumelos de Dross",
+    "description": "Recursos obtidos em Dross.",
+    "experience": 35,
+    "items": [
+      {
+        "itemId": "dross-mushroom",
+        "quantity": 2
+      }
+    ],
+    "source": "Adaptação jogável v1.0"
+  },
+  {
+    "id": "reward:jeweler-practice",
+    "kind": "reward",
+    "name": "Recompensa: Prática de lapidação",
+    "description": "Recursos obtidos em Vrakkas.",
+    "experience": 25,
+    "items": [
+      {
+        "itemId": "jewel-shard",
+        "quantity": 1
+      }
+    ],
+    "source": "Adaptação jogável v1.0"
+  },
+  {
+    "id": "reward:make-silver-ring",
+    "kind": "reward",
+    "name": "Recompensa: Montar anel de prata",
+    "description": "Recursos obtidos em Apexia.",
+    "experience": 40,
+    "items": [
+      {
+        "itemId": "silver-ring",
+        "quantity": 1
+      }
+    ],
+    "source": "Adaptação jogável v1.0"
+  },
+  {
+    "id": "reward:rune-setting",
+    "kind": "reward",
+    "name": "Recompensa: Cravar selo rúnico",
+    "description": "Recursos obtidos em Caelum.",
+    "experience": 70,
+    "items": [
+      {
+        "itemId": "rune-token",
+        "quantity": 1
+      }
+    ],
+    "source": "Adaptação jogável v1.0"
+  },
+  {
+    "id": "reward:train-physical",
+    "kind": "reward",
+    "name": "Recompensa: Treinamento físico",
+    "description": "Treino de Força, Vigor, Resistência, Velocidade, Destreza ou Precisão.",
+    "experience": 20,
+    "items": [],
+    "source": "Adaptação jogável v1.0"
+  },
+  {
+    "id": "reward:meditate-aura",
+    "kind": "reward",
+    "name": "Recompensa: Meditação e cultivo de Aura",
+    "description": "Cultivo de Chi e Aura, sem transformar Chi em atributo distribuível.",
+    "experience": 20,
+    "items": [],
+    "source": "Adaptação jogável v1.0"
+  },
+  {
+    "id": "reward:study-mana",
+    "kind": "reward",
+    "name": "Recompensa: Estudo e cultivo de Mana",
+    "description": "Estudo de elementos, núcleo de Mana e técnicas.",
+    "experience": 20,
+    "items": [],
+    "source": "Adaptação jogável v1.0"
+  },
+  {
+    "id": "reward:expedition:apexia:quest:1",
+    "kind": "reward",
+    "name": "Recompensa: Apexia: reconhecimento",
+    "description": "A recompensa de combate é calculada por encontros e loot; o resultado base não concede itens duplicados.",
+    "experience": 0,
+    "items": []
+  },
+  {
+    "id": "reward:expedition:apexia:quest:2",
+    "kind": "reward",
+    "name": "Recompensa: Apexia: rota de risco",
+    "description": "A recompensa de combate é calculada por encontros e loot; o resultado base não concede itens duplicados.",
+    "experience": 0,
+    "items": []
+  },
+  {
+    "id": "reward:expedition:apexia:dungeon:3",
+    "kind": "reward",
+    "name": "Recompensa: Apexia: masmorra regional",
+    "description": "A recompensa de combate é calculada por encontros e loot; o resultado base não concede itens duplicados.",
+    "experience": 0,
+    "items": []
+  },
+  {
+    "id": "reward:expedition:apexia:raid:4",
+    "kind": "reward",
+    "name": "Recompensa: Apexia: incursão de chefe",
+    "description": "A recompensa de combate é calculada por encontros e loot; o resultado base não concede itens duplicados.",
+    "experience": 0,
+    "items": []
+  },
+  {
+    "id": "reward:expedition:dross:quest:1",
+    "kind": "reward",
+    "name": "Recompensa: Dross: reconhecimento",
+    "description": "A recompensa de combate é calculada por encontros e loot; o resultado base não concede itens duplicados.",
+    "experience": 0,
+    "items": []
+  },
+  {
+    "id": "reward:expedition:dross:quest:2",
+    "kind": "reward",
+    "name": "Recompensa: Dross: rota de risco",
+    "description": "A recompensa de combate é calculada por encontros e loot; o resultado base não concede itens duplicados.",
+    "experience": 0,
+    "items": []
+  },
+  {
+    "id": "reward:expedition:dross:dungeon:3",
+    "kind": "reward",
+    "name": "Recompensa: Dross: masmorra regional",
+    "description": "A recompensa de combate é calculada por encontros e loot; o resultado base não concede itens duplicados.",
+    "experience": 0,
+    "items": []
+  },
+  {
+    "id": "reward:expedition:dross:raid:4",
+    "kind": "reward",
+    "name": "Recompensa: Dross: incursão de chefe",
+    "description": "A recompensa de combate é calculada por encontros e loot; o resultado base não concede itens duplicados.",
+    "experience": 0,
+    "items": []
+  },
+  {
+    "id": "reward:expedition:vaeloria:quest:1",
+    "kind": "reward",
+    "name": "Recompensa: Vaeloria: reconhecimento",
+    "description": "A recompensa de combate é calculada por encontros e loot; o resultado base não concede itens duplicados.",
+    "experience": 0,
+    "items": []
+  },
+  {
+    "id": "reward:expedition:vaeloria:quest:2",
+    "kind": "reward",
+    "name": "Recompensa: Vaeloria: rota de risco",
+    "description": "A recompensa de combate é calculada por encontros e loot; o resultado base não concede itens duplicados.",
+    "experience": 0,
+    "items": []
+  },
+  {
+    "id": "reward:expedition:vaeloria:dungeon:3",
+    "kind": "reward",
+    "name": "Recompensa: Vaeloria: masmorra regional",
+    "description": "A recompensa de combate é calculada por encontros e loot; o resultado base não concede itens duplicados.",
+    "experience": 0,
+    "items": []
+  },
+  {
+    "id": "reward:expedition:vaeloria:raid:4",
+    "kind": "reward",
+    "name": "Recompensa: Vaeloria: incursão de chefe",
+    "description": "A recompensa de combate é calculada por encontros e loot; o resultado base não concede itens duplicados.",
+    "experience": 0,
+    "items": []
+  },
+  {
+    "id": "reward:expedition:vrakkas:quest:1",
+    "kind": "reward",
+    "name": "Recompensa: Vrakkas: reconhecimento",
+    "description": "A recompensa de combate é calculada por encontros e loot; o resultado base não concede itens duplicados.",
+    "experience": 0,
+    "items": []
+  },
+  {
+    "id": "reward:expedition:vrakkas:quest:2",
+    "kind": "reward",
+    "name": "Recompensa: Vrakkas: rota de risco",
+    "description": "A recompensa de combate é calculada por encontros e loot; o resultado base não concede itens duplicados.",
+    "experience": 0,
+    "items": []
+  },
+  {
+    "id": "reward:expedition:vrakkas:dungeon:3",
+    "kind": "reward",
+    "name": "Recompensa: Vrakkas: masmorra regional",
+    "description": "A recompensa de combate é calculada por encontros e loot; o resultado base não concede itens duplicados.",
+    "experience": 0,
+    "items": []
+  },
+  {
+    "id": "reward:expedition:vrakkas:raid:4",
+    "kind": "reward",
+    "name": "Recompensa: Vrakkas: incursão de chefe",
+    "description": "A recompensa de combate é calculada por encontros e loot; o resultado base não concede itens duplicados.",
+    "experience": 0,
+    "items": []
+  },
+  {
+    "id": "reward:expedition:kryos:quest:1",
+    "kind": "reward",
+    "name": "Recompensa: Kryos: reconhecimento",
+    "description": "A recompensa de combate é calculada por encontros e loot; o resultado base não concede itens duplicados.",
+    "experience": 0,
+    "items": []
+  },
+  {
+    "id": "reward:expedition:kryos:quest:2",
+    "kind": "reward",
+    "name": "Recompensa: Kryos: rota de risco",
+    "description": "A recompensa de combate é calculada por encontros e loot; o resultado base não concede itens duplicados.",
+    "experience": 0,
+    "items": []
+  },
+  {
+    "id": "reward:expedition:kryos:dungeon:3",
+    "kind": "reward",
+    "name": "Recompensa: Kryos: masmorra regional",
+    "description": "A recompensa de combate é calculada por encontros e loot; o resultado base não concede itens duplicados.",
+    "experience": 0,
+    "items": []
+  },
+  {
+    "id": "reward:expedition:kryos:raid:4",
+    "kind": "reward",
+    "name": "Recompensa: Kryos: incursão de chefe",
+    "description": "A recompensa de combate é calculada por encontros e loot; o resultado base não concede itens duplicados.",
+    "experience": 0,
+    "items": []
+  },
+  {
+    "id": "reward:expedition:riptide:quest:1",
+    "kind": "reward",
+    "name": "Recompensa: Riptide: reconhecimento",
+    "description": "A recompensa de combate é calculada por encontros e loot; o resultado base não concede itens duplicados.",
+    "experience": 0,
+    "items": []
+  },
+  {
+    "id": "reward:expedition:riptide:quest:2",
+    "kind": "reward",
+    "name": "Recompensa: Riptide: rota de risco",
+    "description": "A recompensa de combate é calculada por encontros e loot; o resultado base não concede itens duplicados.",
+    "experience": 0,
+    "items": []
+  },
+  {
+    "id": "reward:expedition:riptide:dungeon:3",
+    "kind": "reward",
+    "name": "Recompensa: Riptide: masmorra regional",
+    "description": "A recompensa de combate é calculada por encontros e loot; o resultado base não concede itens duplicados.",
+    "experience": 0,
+    "items": []
+  },
+  {
+    "id": "reward:expedition:riptide:raid:4",
+    "kind": "reward",
+    "name": "Recompensa: Riptide: incursão de chefe",
+    "description": "A recompensa de combate é calculada por encontros e loot; o resultado base não concede itens duplicados.",
+    "experience": 0,
+    "items": []
+  },
+  {
+    "id": "reward:expedition:caelum:quest:1",
+    "kind": "reward",
+    "name": "Recompensa: Caelum: reconhecimento",
+    "description": "A recompensa de combate é calculada por encontros e loot; o resultado base não concede itens duplicados.",
+    "experience": 0,
+    "items": []
+  },
+  {
+    "id": "reward:expedition:caelum:quest:2",
+    "kind": "reward",
+    "name": "Recompensa: Caelum: rota de risco",
+    "description": "A recompensa de combate é calculada por encontros e loot; o resultado base não concede itens duplicados.",
+    "experience": 0,
+    "items": []
+  },
+  {
+    "id": "reward:expedition:caelum:dungeon:3",
+    "kind": "reward",
+    "name": "Recompensa: Caelum: masmorra regional",
+    "description": "A recompensa de combate é calculada por encontros e loot; o resultado base não concede itens duplicados.",
+    "experience": 0,
+    "items": []
+  },
+  {
+    "id": "reward:expedition:caelum:raid:4",
+    "kind": "reward",
+    "name": "Recompensa: Caelum: incursão de chefe",
+    "description": "A recompensa de combate é calculada por encontros e loot; o resultado base não concede itens duplicados.",
+    "experience": 0,
+    "items": []
+  },
+  {
+    "id": "reward:expedition:mourland:quest:1",
+    "kind": "reward",
+    "name": "Recompensa: Mourland: reconhecimento",
+    "description": "A recompensa de combate é calculada por encontros e loot; o resultado base não concede itens duplicados.",
+    "experience": 0,
+    "items": []
+  },
+  {
+    "id": "reward:expedition:mourland:quest:2",
+    "kind": "reward",
+    "name": "Recompensa: Mourland: rota de risco",
+    "description": "A recompensa de combate é calculada por encontros e loot; o resultado base não concede itens duplicados.",
+    "experience": 0,
+    "items": []
+  },
+  {
+    "id": "reward:expedition:mourland:dungeon:3",
+    "kind": "reward",
+    "name": "Recompensa: Mourland: masmorra regional",
+    "description": "A recompensa de combate é calculada por encontros e loot; o resultado base não concede itens duplicados.",
+    "experience": 0,
+    "items": []
+  },
+  {
+    "id": "reward:expedition:mourland:raid:4",
+    "kind": "reward",
+    "name": "Recompensa: Mourland: incursão de chefe",
+    "description": "A recompensa de combate é calculada por encontros e loot; o resultado base não concede itens duplicados.",
+    "experience": 0,
+    "items": []
+  },
+  {
+    "id": "reward:expedition:xochitlan:quest:1",
+    "kind": "reward",
+    "name": "Recompensa: Xochitlan: reconhecimento",
+    "description": "A recompensa de combate é calculada por encontros e loot; o resultado base não concede itens duplicados.",
+    "experience": 0,
+    "items": []
+  },
+  {
+    "id": "reward:expedition:xochitlan:quest:2",
+    "kind": "reward",
+    "name": "Recompensa: Xochitlan: rota de risco",
+    "description": "A recompensa de combate é calculada por encontros e loot; o resultado base não concede itens duplicados.",
+    "experience": 0,
+    "items": []
+  },
+  {
+    "id": "reward:expedition:xochitlan:dungeon:3",
+    "kind": "reward",
+    "name": "Recompensa: Xochitlan: masmorra regional",
+    "description": "A recompensa de combate é calculada por encontros e loot; o resultado base não concede itens duplicados.",
+    "experience": 0,
+    "items": []
+  },
+  {
+    "id": "reward:expedition:xochitlan:raid:4",
+    "kind": "reward",
+    "name": "Recompensa: Xochitlan: incursão de chefe",
+    "description": "A recompensa de combate é calculada por encontros e loot; o resultado base não concede itens duplicados.",
     "experience": 0,
     "items": []
   }

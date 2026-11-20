@@ -1,0 +1,101 @@
+[
+  {
+    "id": "energy:mana",
+    "kind": "energy",
+    "name": "Mana",
+    "description": "Energia do universo, originada em Kha; versátil em elementos, ataque, defesa, utilidade e suporte.",
+    "origin": "Kha",
+    "resources": ["mana", "spirit"],
+    "progression": [
+      {
+        "stage": "núcleo",
+        "attribute": "mana",
+        "reservePerPoint": 10,
+        "canon": "RP: cada ponto de Mana concede +10 reserva."
+      },
+      {
+        "stage": "domínio elemental",
+        "elements": ["fire", "water", "earth", "air", "light", "shadow", "arcane"],
+        "adaptation": "Seven starter affinities exposed in content; advanced combos are registry entries."
+      },
+      {
+        "stage": "espírito",
+        "attribute": "spirit",
+        "damagePerTwoPoints": 7,
+        "canon": "RP: +7 damage to elemental/magic actions per 2 Spirit."
+      }
+    ],
+    "source": "Notion: Sistemas originais do RP, Energias e Sem Afinidade (2026-11-08)",
+    "adaptationNotes": "Progressão por sessões e afinidades selecionáveis é adaptação. Os sete elementos listados no RP original were Fogo, Frio, Vento e outros; exact complete list is not assumed."
+  },
+  {
+    "id": "energy:aura",
+    "kind": "energy",
+    "name": "Aura",
+    "description": "Energia do Eu, originada em Kho; cultivo interno que fortalece sobretudo resistência, força e velocidade.",
+    "origin": "Kho",
+    "resources": ["aura", "chi", "ego", "superego"],
+    "progression": [
+      {
+        "stage": "cultivo de chi",
+        "attribute": "chi",
+        "reservePerPoint": 1,
+        "canon": "RP: cada ponto de Chi cultivado concede +1 reserva de Aura; Chi não é distribuível normalmente."
+      },
+      {
+        "stage": "ego",
+        "paths": [
+          "mental",
+          "physical",
+          "spiritual",
+          "existential",
+          "environmental",
+          "transcendent"
+        ],
+        "source": "Canonical types vary by documentation and remain represented as separate unlock entries."
+      },
+      {
+        "stage": "reinos de cultivo",
+        "method": "training-session",
+        "adaptation": "Offline session cycles replace text-counted roleplay training."
+      }
+    ],
+    "source": "Notion: Sistemas originais do RP, Energias e Sem Afinidade (2026-11-08)",
+    "adaptationNotes": "Reinos de cultivo têm nomes e regras detalhadas em documentos adicionais; não presumir progressão universal."
+  },
+  {
+    "id": "energy:unaffiliated",
+    "kind": "energy",
+    "name": "Sem Afinidade",
+    "description": "Condição rara de Energia escassa ou ausente, sem afinidade natural com Mana ou Aura.",
+    "origin": "Kha/Kho",
+    "resources": ["incomplete", "celestial-restriction"],
+    "progression": [
+      {
+        "stage": "incompleto",
+        "damageReduction": 0.2,
+        "physicalAttributeBonus": 40,
+        "canon": "RP values; idle adaptation applies to combat and training services."
+      },
+      {
+        "stage": "restrição-celestial",
+        "damageReduction": 0.4,
+        "physicalAttributeBonus": 150,
+        "canon": "RP values; physical body reduces direct Mana/Aura effects by 80%."
+      },
+      {
+        "stage": "traits",
+        "values": [
+          "energy-sense",
+          "intuitive-aptitude",
+          "invisibility",
+          "vitality-drain",
+          "wall-walking",
+          "anti-illusion"
+        ]
+      }
+    ],
+    "source": "Notion: Sistemas originais do RP, Energias e Sem Afinidade (2026-11-08)",
+    "adaptationNotes": "A evolução a Restrição Celestial não recebe um gatilho aleatório no single-player; desbloqueio por eventos de jogo será explicitado em conteúdo."
+  }
+]

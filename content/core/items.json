@@ -24,7 +24,13 @@
       "properties": ["silver"],
       "weaponProperties": ["silver"],
       "armorProperties": ["silver-inlaid"],
-      "combatEffects": [{ "operation": "tag-counter", "tag": "base:cursed", "property": "silver" }]
+      "combatEffects": [
+        {
+          "operation": "tag-counter",
+          "tag": "base:cursed",
+          "property": "silver"
+        }
+      ]
     }
   },
   {
@@ -38,7 +44,12 @@
       "properties": ["iron"],
       "weaponProperties": ["iron"],
       "armorProperties": ["reinforced"],
-      "combatEffects": [{ "operation": "reinforcement", "physicalMitigation": 0.05 }]
+      "combatEffects": [
+        {
+          "operation": "reinforcement",
+          "physicalMitigation": 0.05
+        }
+      ]
     }
   },
   {
@@ -52,7 +63,12 @@
       "properties": ["gold", "conductive"],
       "weaponProperties": ["conductive"],
       "armorProperties": ["conductive"],
-      "combatEffects": [{ "operation": "conduction", "element": "lightning" }]
+      "combatEffects": [
+        {
+          "operation": "conduction",
+          "element": "lightning"
+        }
+      ]
     }
   },
   {
@@ -66,7 +82,12 @@
       "properties": ["orichalcum", "arcane-conduit"],
       "weaponProperties": ["arcane-conduit"],
       "armorProperties": ["arcane-conduit"],
-      "combatEffects": [{ "operation": "energy-conduit", "energy": "mana" }]
+      "combatEffects": [
+        {
+          "operation": "energy-conduit",
+          "energy": "mana"
+        }
+      ]
     }
   },
   {
@@ -80,7 +101,12 @@
       "properties": ["adamantite"],
       "weaponProperties": ["armor-penetrating"],
       "armorProperties": ["reinforced"],
-      "combatEffects": [{ "operation": "armor-interaction", "property": "armor-penetrating" }]
+      "combatEffects": [
+        {
+          "operation": "armor-interaction",
+          "property": "armor-penetrating"
+        }
+      ]
     }
   },
   {
@@ -94,7 +120,12 @@
       "properties": ["mithril", "lightweight"],
       "weaponProperties": ["lightweight"],
       "armorProperties": ["lightweight"],
-      "combatEffects": [{ "operation": "speed-adjustment", "value": 2 }]
+      "combatEffects": [
+        {
+          "operation": "speed-adjustment",
+          "value": 2
+        }
+      ]
     }
   },
   {
@@ -108,7 +139,12 @@
       "properties": ["unobtanio"],
       "weaponProperties": ["anchoring"],
       "armorProperties": ["anchoring"],
-      "combatEffects": [{ "operation": "phase-anchor", "property": "anchoring" }]
+      "combatEffects": [
+        {
+          "operation": "phase-anchor",
+          "property": "anchoring"
+        }
+      ]
     }
   },
   {
@@ -122,7 +158,12 @@
       "properties": ["vibranium"],
       "weaponProperties": ["impact-absorbing"],
       "armorProperties": ["impact-absorbing"],
-      "combatEffects": [{ "operation": "impact-absorption", "channels": ["physical"] }]
+      "combatEffects": [
+        {
+          "operation": "impact-absorption",
+          "channels": ["physical"]
+        }
+      ]
     }
   },
   {
@@ -136,7 +177,12 @@
       "properties": ["dilthio", "energy-conductive"],
       "weaponProperties": ["energy-conductive"],
       "armorProperties": ["energy-conductive"],
-      "combatEffects": [{ "operation": "energy-reserve", "resource": "mana" }]
+      "combatEffects": [
+        {
+          "operation": "energy-reserve",
+          "resource": "mana"
+        }
+      ]
     }
   },
   {
@@ -151,7 +197,11 @@
       "weaponProperties": ["regenerative"],
       "armorProperties": ["regenerative"],
       "combatEffects": [
-        { "operation": "environmental-regeneration", "condition": "fertile", "value": 2 }
+        {
+          "operation": "environmental-regeneration",
+          "condition": "fertile",
+          "value": 2
+        }
       ]
     }
   },
@@ -166,7 +216,12 @@
       "properties": ["sacrite"],
       "weaponProperties": ["holy", "anchoring"],
       "armorProperties": ["holy", "anchoring"],
-      "combatEffects": [{ "operation": "sanctified-strike", "element": "holy" }]
+      "combatEffects": [
+        {
+          "operation": "sanctified-strike",
+          "element": "holy"
+        }
+      ]
     }
   },
   {
@@ -183,7 +238,10 @@
         "channel": "physical",
         "subtype": "crushing",
         "properties": ["iron"],
-        "origin": { "kind": "weapon", "id": "gear:iron-maul" }
+        "origin": {
+          "kind": "weapon",
+          "id": "gear:iron-maul"
+        }
       }
     }
   },
@@ -201,7 +259,10 @@
         "channel": "physical",
         "subtype": "cutting",
         "properties": ["silver"],
-        "origin": { "kind": "weapon", "id": "gear:silver-sabre" }
+        "origin": {
+          "kind": "weapon",
+          "id": "gear:silver-sabre"
+        }
       }
     }
   },
@@ -219,7 +280,10 @@
         "channel": "physical",
         "subtype": "piercing",
         "properties": ["lightweight"],
-        "origin": { "kind": "weapon", "id": "gear:mithril-spear" }
+        "origin": {
+          "kind": "weapon",
+          "id": "gear:mithril-spear"
+        }
       },
       "speed": 2
     }
@@ -238,7 +302,10 @@
         "channel": "physical",
         "subtype": "crushing",
         "properties": ["armor-penetrating"],
-        "origin": { "kind": "weapon", "id": "gear:adamantite-breaker" }
+        "origin": {
+          "kind": "weapon",
+          "id": "gear:adamantite-breaker"
+        }
       }
     }
   },
@@ -257,7 +324,10 @@
         "subtype": "crushing",
         "element": "holy",
         "properties": ["holy", "anchoring"],
-        "origin": { "kind": "weapon", "id": "gear:sacrite-mace" }
+        "origin": {
+          "kind": "weapon",
+          "id": "gear:sacrite-mace"
+        }
       }
     }
   },
@@ -269,7 +339,12 @@
     "stackable": false,
     "slot": "chest",
     "properties": ["impact-absorbing"],
-    "combat": { "mitigation": { "physical": 0.2, "magical": 0 } }
+    "combat": {
+      "mitigation": {
+        "physical": 0.2,
+        "magical": 0
+      }
+    }
   },
   {
     "id": "gear:iron-plate",
@@ -279,7 +354,12 @@
     "stackable": false,
     "slot": "chest",
     "properties": ["reinforced"],
-    "combat": { "mitigation": { "physical": 0.1, "magical": 0 } }
+    "combat": {
+      "mitigation": {
+        "physical": 0.1,
+        "magical": 0
+      }
+    }
   },
   {
     "id": "gear:gold-conductor",
@@ -295,7 +375,10 @@
         "channel": "magical",
         "element": "lightning",
         "properties": ["conductive"],
-        "origin": { "kind": "weapon", "id": "gear:gold-conductor" }
+        "origin": {
+          "kind": "weapon",
+          "id": "gear:gold-conductor"
+        }
       }
     }
   },
@@ -313,9 +396,15 @@
         "channel": "magical",
         "element": "arcane",
         "properties": ["arcane-conduit"],
-        "origin": { "kind": "weapon", "id": "gear:orichalcum-focus" }
+        "origin": {
+          "kind": "weapon",
+          "id": "gear:orichalcum-focus"
+        }
       },
-      "cost": { "resource": "mana", "amount": 2 }
+      "cost": {
+        "resource": "mana",
+        "amount": 2
+      }
     }
   },
   {
@@ -332,7 +421,10 @@
         "channel": "physical",
         "subtype": "piercing",
         "properties": ["anchoring"],
-        "origin": { "kind": "weapon", "id": "gear:unobtanio-spear" }
+        "origin": {
+          "kind": "weapon",
+          "id": "gear:unobtanio-spear"
+        }
       }
     }
   },
@@ -350,10 +442,18 @@
         "channel": "magical",
         "element": "arcane",
         "properties": ["energy-conductive"],
-        "origin": { "kind": "weapon", "id": "gear:dilthio-wand" }
+        "origin": {
+          "kind": "weapon",
+          "id": "gear:dilthio-wand"
+        }
       },
-      "cost": { "resource": "mana", "amount": 1 },
-      "energyBonus": { "mana": 5 }
+      "cost": {
+        "resource": "mana",
+        "amount": 1
+      },
+      "energyBonus": {
+        "mana": 5
+      }
     }
   },
   {
@@ -364,6 +464,1010 @@
     "stackable": false,
     "slot": "chest",
     "properties": ["chlorophyte", "regenerative", "lightweight"],
-    "combat": { "mitigation": { "physical": 0.08, "magical": 0.04 }, "speed": 1 }
+    "combat": {
+      "mitigation": {
+        "physical": 0.08,
+        "magical": 0.04
+      },
+      "speed": 1
+    }
+  },
+  {
+    "id": "ore-iron",
+    "kind": "item",
+    "name": "Minério de ferro",
+    "description": "Matéria-prima extraída em Apexia; pode ser refinada para produzir material-iron.",
+    "stackable": true,
+    "resourceType": "ore",
+    "regionId": "apexia",
+    "source": "Adaptação jogável de coleta; o material refinado é canônico."
+  },
+  {
+    "id": "ore-silver",
+    "kind": "item",
+    "name": "Minério de prata",
+    "description": "Matéria-prima extraída em Mourland; pode ser refinada para produzir material-silver.",
+    "stackable": true,
+    "resourceType": "ore",
+    "regionId": "mourland",
+    "source": "Adaptação jogável de coleta; o material refinado é canônico."
+  },
+  {
+    "id": "ore-gold",
+    "kind": "item",
+    "name": "Minério de ouro",
+    "description": "Matéria-prima extraída em Vrakkas; pode ser refinada para produzir material-gold.",
+    "stackable": true,
+    "resourceType": "ore",
+    "regionId": "vrakkas",
+    "source": "Adaptação jogável de coleta; o material refinado é canônico."
+  },
+  {
+    "id": "ore-orichalcum",
+    "kind": "item",
+    "name": "Veio de oricalco",
+    "description": "Matéria-prima extraída em Caelum; pode ser refinada para produzir material-orichalcum.",
+    "stackable": true,
+    "resourceType": "ore",
+    "regionId": "caelum",
+    "source": "Adaptação jogável de coleta; o material refinado é canônico."
+  },
+  {
+    "id": "ore-adamantite",
+    "kind": "item",
+    "name": "Nódulo de adamantita",
+    "description": "Matéria-prima extraída em Kryos; pode ser refinada para produzir material-adamantite.",
+    "stackable": true,
+    "resourceType": "ore",
+    "regionId": "kryos",
+    "source": "Adaptação jogável de coleta; o material refinado é canônico."
+  },
+  {
+    "id": "ore-mithril",
+    "kind": "item",
+    "name": "Veio de mithril",
+    "description": "Matéria-prima extraída em Vaeloria; pode ser refinada para produzir material-mithril.",
+    "stackable": true,
+    "resourceType": "ore",
+    "regionId": "vaeloria",
+    "source": "Adaptação jogável de coleta; o material refinado é canônico."
+  },
+  {
+    "id": "ore-unobtanio",
+    "kind": "item",
+    "name": "Fragmento de unobtanio",
+    "description": "Matéria-prima extraída em Caelum; pode ser refinada para produzir material-unobtanio.",
+    "stackable": true,
+    "resourceType": "ore",
+    "regionId": "caelum",
+    "source": "Adaptação jogável de coleta; o material refinado é canônico."
+  },
+  {
+    "id": "ore-vibranium",
+    "kind": "item",
+    "name": "Veio de vibranio",
+    "description": "Matéria-prima extraída em Xochitlan; pode ser refinada para produzir material-vibranium.",
+    "stackable": true,
+    "resourceType": "ore",
+    "regionId": "xochitlan",
+    "source": "Adaptação jogável de coleta; o material refinado é canônico."
+  },
+  {
+    "id": "ore-dilthio",
+    "kind": "item",
+    "name": "Cristal de dilthio",
+    "description": "Matéria-prima extraída em Dross; pode ser refinada para produzir material-dilthio.",
+    "stackable": true,
+    "resourceType": "ore",
+    "regionId": "dross",
+    "source": "Adaptação jogável de coleta; o material refinado é canônico."
+  },
+  {
+    "id": "ore-chlorophyte",
+    "kind": "item",
+    "name": "Clorofita bruta",
+    "description": "Matéria-prima extraída em Riptide; pode ser refinada para produzir material-chlorophyte.",
+    "stackable": true,
+    "resourceType": "ore",
+    "regionId": "riptide",
+    "source": "Adaptação jogável de coleta; o material refinado é canônico."
+  },
+  {
+    "id": "ore-sacrite",
+    "kind": "item",
+    "name": "Nódulo de sacrito",
+    "description": "Matéria-prima extraída em Mourland; pode ser refinada para produzir material-sacrite.",
+    "stackable": true,
+    "resourceType": "ore",
+    "regionId": "mourland",
+    "source": "Adaptação jogável de coleta; o material refinado é canônico."
+  },
+  {
+    "id": "oak-log",
+    "kind": "item",
+    "name": "Madeira de carvalho",
+    "description": "Madeira de carvalho: recurso e insumo de atividades e receitas da adaptação de jogo.",
+    "stackable": true,
+    "source": "Adaptação jogável v1.0"
+  },
+  {
+    "id": "frostwood-log",
+    "kind": "item",
+    "name": "Madeira gélida",
+    "description": "Madeira gélida: recurso e insumo de atividades e receitas da adaptação de jogo.",
+    "stackable": true,
+    "source": "Adaptação jogável v1.0"
+  },
+  {
+    "id": "driftwood",
+    "kind": "item",
+    "name": "Madeira à deriva",
+    "description": "Madeira à deriva: recurso e insumo de atividades e receitas da adaptação de jogo.",
+    "stackable": true,
+    "source": "Adaptação jogável v1.0"
+  },
+  {
+    "id": "crystalwood",
+    "kind": "item",
+    "name": "Madeira cristalina",
+    "description": "Madeira cristalina: recurso e insumo de atividades e receitas da adaptação de jogo.",
+    "stackable": true,
+    "source": "Adaptação jogável v1.0"
+  },
+  {
+    "id": "wheat",
+    "kind": "item",
+    "name": "Trigo",
+    "description": "Trigo: recurso e insumo de atividades e receitas da adaptação de jogo.",
+    "stackable": true,
+    "source": "Adaptação jogável v1.0"
+  },
+  {
+    "id": "moonberry",
+    "kind": "item",
+    "name": "Fruta-lua",
+    "description": "Fruta-lua: recurso e insumo de atividades e receitas da adaptação de jogo.",
+    "stackable": true,
+    "source": "Adaptação jogável v1.0"
+  },
+  {
+    "id": "saltroot",
+    "kind": "item",
+    "name": "Raiz-salina",
+    "description": "Raiz-salina: recurso e insumo de atividades e receitas da adaptação de jogo.",
+    "stackable": true,
+    "source": "Adaptação jogável v1.0"
+  },
+  {
+    "id": "azure-fish",
+    "kind": "item",
+    "name": "Peixe-azul",
+    "description": "Peixe-azul: recurso e insumo de atividades e receitas da adaptação de jogo.",
+    "stackable": true,
+    "source": "Adaptação jogável v1.0"
+  },
+  {
+    "id": "cage-fish",
+    "kind": "item",
+    "name": "Peixe Jaula",
+    "description": "Peixe Jaula: recurso e insumo de atividades e receitas da adaptação de jogo.",
+    "stackable": true,
+    "source": "Adaptação jogável v1.0"
+  },
+  {
+    "id": "storm-eel",
+    "kind": "item",
+    "name": "Enguia-tempestade",
+    "description": "Enguia-tempestade: recurso e insumo de atividades e receitas da adaptação de jogo.",
+    "stackable": true,
+    "source": "Adaptação jogável v1.0"
+  },
+  {
+    "id": "deep-sea-fish",
+    "kind": "item",
+    "name": "Peixe abissal",
+    "description": "Peixe abissal: recurso e insumo de atividades e receitas da adaptação de jogo.",
+    "stackable": true,
+    "source": "Adaptação jogável v1.0"
+  },
+  {
+    "id": "river-carp",
+    "kind": "item",
+    "name": "Carpa fluvial",
+    "description": "Carpa fluvial: recurso e insumo de atividades e receitas da adaptação de jogo.",
+    "stackable": true,
+    "source": "Adaptação jogável v1.0"
+  },
+  {
+    "id": "medicinal-herb",
+    "kind": "item",
+    "name": "Erva medicinal",
+    "description": "Erva medicinal: recurso e insumo de atividades e receitas da adaptação de jogo.",
+    "stackable": true,
+    "source": "Adaptação jogável v1.0"
+  },
+  {
+    "id": "frostflower",
+    "kind": "item",
+    "name": "Flor de geada",
+    "description": "Flor de geada: recurso e insumo de atividades e receitas da adaptação de jogo.",
+    "stackable": true,
+    "source": "Adaptação jogável v1.0"
+  },
+  {
+    "id": "dross-mushroom",
+    "kind": "item",
+    "name": "Cogumelo de Dross",
+    "description": "Cogumelo de Dross: recurso e insumo de atividades e receitas da adaptação de jogo.",
+    "stackable": true,
+    "source": "Adaptação jogável v1.0"
+  },
+  {
+    "id": "emberleaf",
+    "kind": "item",
+    "name": "Folha de brasa",
+    "description": "Folha de brasa: recurso e insumo de atividades e receitas da adaptação de jogo.",
+    "stackable": true,
+    "source": "Adaptação jogável v1.0"
+  },
+  {
+    "id": "beast-hide",
+    "kind": "item",
+    "name": "Couro de fera",
+    "description": "Couro de fera: recurso e insumo de atividades e receitas da adaptação de jogo.",
+    "stackable": true,
+    "source": "Adaptação jogável v1.0"
+  },
+  {
+    "id": "venom-sac",
+    "kind": "item",
+    "name": "Saco de veneno",
+    "description": "Saco de veneno: recurso e insumo de atividades e receitas da adaptação de jogo.",
+    "stackable": true,
+    "source": "Adaptação jogável v1.0"
+  },
+  {
+    "id": "spectral-dust",
+    "kind": "item",
+    "name": "Pó espectral",
+    "description": "Pó espectral: recurso e insumo de atividades e receitas da adaptação de jogo.",
+    "stackable": true,
+    "source": "Adaptação jogável v1.0"
+  },
+  {
+    "id": "dragon-scale",
+    "kind": "item",
+    "name": "Escama dracônica",
+    "description": "Escama dracônica: recurso e insumo de atividades e receitas da adaptação de jogo.",
+    "stackable": true,
+    "source": "Adaptação jogável v1.0"
+  },
+  {
+    "id": "water-flask",
+    "kind": "item",
+    "name": "Frasco de água",
+    "description": "Frasco de água: recurso e insumo de atividades e receitas da adaptação de jogo.",
+    "stackable": true,
+    "source": "Adaptação jogável v1.0"
+  },
+  {
+    "id": "arcane-crystal",
+    "kind": "item",
+    "name": "Cristal arcano",
+    "description": "Cristal arcano: recurso e insumo de atividades e receitas da adaptação de jogo.",
+    "stackable": true,
+    "source": "Adaptação jogável v1.0"
+  },
+  {
+    "id": "healing-potion",
+    "kind": "item",
+    "name": "Poção de cura",
+    "description": "Poção de cura: recurso e insumo de atividades e receitas da adaptação de jogo.",
+    "stackable": true,
+    "source": "Adaptação jogável v1.0",
+    "consumable": {
+      "effect": "heal",
+      "amount": 50
+    }
+  },
+  {
+    "id": "mana-potion",
+    "kind": "item",
+    "name": "Poção de mana",
+    "description": "Poção de mana: recurso e insumo de atividades e receitas da adaptação de jogo.",
+    "stackable": true,
+    "source": "Adaptação jogável v1.0",
+    "consumable": {
+      "effect": "restore-resource",
+      "resource": "mana",
+      "amount": 30
+    }
+  },
+  {
+    "id": "aura-tonic",
+    "kind": "item",
+    "name": "Tônico de Aura",
+    "description": "Tônico de Aura: recurso e insumo de atividades e receitas da adaptação de jogo.",
+    "stackable": true,
+    "source": "Adaptação jogável v1.0",
+    "consumable": {
+      "effect": "restore-resource",
+      "resource": "aura",
+      "amount": 30
+    }
+  },
+  {
+    "id": "hearty-stew",
+    "kind": "item",
+    "name": "Ensopado nutritivo",
+    "description": "Ensopado nutritivo: recurso e insumo de atividades e receitas da adaptação de jogo.",
+    "stackable": true,
+    "source": "Adaptação jogável v1.0"
+  },
+  {
+    "id": "smoked-fish",
+    "kind": "item",
+    "name": "Peixe defumado",
+    "description": "Peixe defumado: recurso e insumo de atividades e receitas da adaptação de jogo.",
+    "stackable": true,
+    "source": "Adaptação jogável v1.0"
+  },
+  {
+    "id": "enchanted-arrow",
+    "kind": "item",
+    "name": "Flecha encantada",
+    "description": "Flecha encantada: recurso e insumo de atividades e receitas da adaptação de jogo.",
+    "stackable": true,
+    "source": "Adaptação jogável v1.0"
+  },
+  {
+    "id": "jewel-shard",
+    "kind": "item",
+    "name": "Fragmento de gema",
+    "description": "Fragmento de gema: recurso e insumo de atividades e receitas da adaptação de jogo.",
+    "stackable": true,
+    "source": "Adaptação jogável v1.0"
+  },
+  {
+    "id": "silver-ring",
+    "kind": "item",
+    "name": "Anel de prata",
+    "description": "Anel de prata: recurso e insumo de atividades e receitas da adaptação de jogo.",
+    "stackable": false,
+    "source": "Adaptação jogável v1.0",
+    "slot": "accessory",
+    "properties": ["silver"]
+  },
+  {
+    "id": "rune-token",
+    "kind": "item",
+    "name": "Selo rúnico",
+    "description": "Selo rúnico: recurso e insumo de atividades e receitas da adaptação de jogo.",
+    "stackable": true,
+    "source": "Adaptação jogável v1.0"
+  },
+  {
+    "id": "gear:iron-weapon",
+    "kind": "item",
+    "name": "Arma de minério de ferro",
+    "description": "Arma de minério de ferro com propriedades do material material-iron.",
+    "stackable": false,
+    "slot": "primary",
+    "properties": ["iron"],
+    "combat": {
+      "damage": {
+        "amount": 36,
+        "channel": "physical",
+        "subtype": "cutting",
+        "properties": ["iron"],
+        "origin": {
+          "kind": "weapon",
+          "id": "gear:iron-weapon"
+        }
+      }
+    }
+  },
+  {
+    "id": "gear:iron-armor",
+    "kind": "item",
+    "name": "Armadura de minério de ferro",
+    "description": "Armadura de minério de ferro com as propriedades defensivas de material-iron.",
+    "stackable": false,
+    "slot": "chest",
+    "properties": ["iron", "reinforced"],
+    "combat": {
+      "mitigation": {
+        "physical": 0.27,
+        "magical": 0.02
+      }
+    }
+  },
+  {
+    "id": "gear:silver-weapon",
+    "kind": "item",
+    "name": "Arma de minério de prata",
+    "description": "Arma de minério de prata com propriedades do material material-silver.",
+    "stackable": false,
+    "slot": "primary",
+    "properties": ["silver"],
+    "combat": {
+      "damage": {
+        "amount": 40,
+        "channel": "physical",
+        "subtype": "cutting",
+        "properties": ["silver"],
+        "origin": {
+          "kind": "weapon",
+          "id": "gear:silver-weapon"
+        }
+      }
+    }
+  },
+  {
+    "id": "gear:silver-armor",
+    "kind": "item",
+    "name": "Armadura de minério de prata",
+    "description": "Armadura de minério de prata com as propriedades defensivas de material-silver.",
+    "stackable": false,
+    "slot": "chest",
+    "properties": ["silver", "silver-inlaid"],
+    "combat": {
+      "mitigation": {
+        "physical": 0.31,
+        "magical": 0.02
+      }
+    }
+  },
+  {
+    "id": "gear:gold-weapon",
+    "kind": "item",
+    "name": "Arma de minério de ouro",
+    "description": "Arma de minério de ouro com propriedades do material material-gold.",
+    "stackable": false,
+    "slot": "primary",
+    "properties": ["gold", "conductive"],
+    "combat": {
+      "damage": {
+        "amount": 44,
+        "channel": "physical",
+        "subtype": "cutting",
+        "properties": ["gold", "conductive"],
+        "origin": {
+          "kind": "weapon",
+          "id": "gear:gold-weapon"
+        }
+      }
+    }
+  },
+  {
+    "id": "gear:gold-armor",
+    "kind": "item",
+    "name": "Armadura de minério de ouro",
+    "description": "Armadura de minério de ouro com as propriedades defensivas de material-gold.",
+    "stackable": false,
+    "slot": "chest",
+    "properties": ["gold", "conductive"],
+    "combat": {
+      "mitigation": {
+        "physical": 0.35,
+        "magical": 0.02
+      }
+    }
+  },
+  {
+    "id": "gear:orichalcum-weapon",
+    "kind": "item",
+    "name": "Arma de veio de oricalco",
+    "description": "Arma de veio de oricalco com propriedades do material material-orichalcum.",
+    "stackable": false,
+    "slot": "primary",
+    "properties": ["orichalcum", "arcane-conduit"],
+    "combat": {
+      "damage": {
+        "amount": 48,
+        "channel": "physical",
+        "subtype": "cutting",
+        "properties": ["orichalcum", "arcane-conduit"],
+        "origin": {
+          "kind": "weapon",
+          "id": "gear:orichalcum-weapon"
+        }
+      }
+    }
+  },
+  {
+    "id": "gear:orichalcum-armor",
+    "kind": "item",
+    "name": "Armadura de veio de oricalco",
+    "description": "Armadura de veio de oricalco com as propriedades defensivas de material-orichalcum.",
+    "stackable": false,
+    "slot": "chest",
+    "properties": ["orichalcum", "arcane-conduit"],
+    "combat": {
+      "mitigation": {
+        "physical": 0.39,
+        "magical": 0.02
+      }
+    }
+  },
+  {
+    "id": "gear:adamantite-weapon",
+    "kind": "item",
+    "name": "Arma de nódulo de adamantita",
+    "description": "Arma de nódulo de adamantita com propriedades do material material-adamantite.",
+    "stackable": false,
+    "slot": "primary",
+    "properties": ["adamantite", "armor-penetrating"],
+    "combat": {
+      "damage": {
+        "amount": 52,
+        "channel": "physical",
+        "subtype": "cutting",
+        "properties": ["adamantite", "armor-penetrating"],
+        "origin": {
+          "kind": "weapon",
+          "id": "gear:adamantite-weapon"
+        }
+      }
+    }
+  },
+  {
+    "id": "gear:adamantite-armor",
+    "kind": "item",
+    "name": "Armadura de nódulo de adamantita",
+    "description": "Armadura de nódulo de adamantita com as propriedades defensivas de material-adamantite.",
+    "stackable": false,
+    "slot": "chest",
+    "properties": ["adamantite", "reinforced"],
+    "combat": {
+      "mitigation": {
+        "physical": 0.43,
+        "magical": 0.02
+      }
+    }
+  },
+  {
+    "id": "gear:mithril-weapon",
+    "kind": "item",
+    "name": "Arma de veio de mithril",
+    "description": "Arma de veio de mithril com propriedades do material material-mithril.",
+    "stackable": false,
+    "slot": "primary",
+    "properties": ["mithril", "lightweight"],
+    "combat": {
+      "damage": {
+        "amount": 56,
+        "channel": "physical",
+        "subtype": "cutting",
+        "properties": ["mithril", "lightweight"],
+        "origin": {
+          "kind": "weapon",
+          "id": "gear:mithril-weapon"
+        }
+      }
+    }
+  },
+  {
+    "id": "gear:mithril-armor",
+    "kind": "item",
+    "name": "Armadura de veio de mithril",
+    "description": "Armadura de veio de mithril com as propriedades defensivas de material-mithril.",
+    "stackable": false,
+    "slot": "chest",
+    "properties": ["mithril", "lightweight"],
+    "combat": {
+      "mitigation": {
+        "physical": 0.47,
+        "magical": 0.02
+      }
+    }
+  },
+  {
+    "id": "gear:unobtanio-weapon",
+    "kind": "item",
+    "name": "Arma de fragmento de unobtanio",
+    "description": "Arma de fragmento de unobtanio com propriedades do material material-unobtanio.",
+    "stackable": false,
+    "slot": "primary",
+    "properties": ["unobtanio", "anchoring"],
+    "combat": {
+      "damage": {
+        "amount": 60,
+        "channel": "physical",
+        "subtype": "cutting",
+        "properties": ["unobtanio", "anchoring"],
+        "origin": {
+          "kind": "weapon",
+          "id": "gear:unobtanio-weapon"
+        }
+      }
+    }
+  },
+  {
+    "id": "gear:unobtanio-armor",
+    "kind": "item",
+    "name": "Armadura de fragmento de unobtanio",
+    "description": "Armadura de fragmento de unobtanio com as propriedades defensivas de material-unobtanio.",
+    "stackable": false,
+    "slot": "chest",
+    "properties": ["unobtanio", "anchoring"],
+    "combat": {
+      "mitigation": {
+        "physical": 0.51,
+        "magical": 0.02
+      }
+    }
+  },
+  {
+    "id": "gear:vibranium-weapon",
+    "kind": "item",
+    "name": "Arma de veio de vibranio",
+    "description": "Arma de veio de vibranio com propriedades do material material-vibranium.",
+    "stackable": false,
+    "slot": "primary",
+    "properties": ["vibranium", "impact-absorbing"],
+    "combat": {
+      "damage": {
+        "amount": 64,
+        "channel": "physical",
+        "subtype": "cutting",
+        "properties": ["vibranium", "impact-absorbing"],
+        "origin": {
+          "kind": "weapon",
+          "id": "gear:vibranium-weapon"
+        }
+      }
+    }
+  },
+  {
+    "id": "gear:vibranium-armor",
+    "kind": "item",
+    "name": "Armadura de veio de vibranio",
+    "description": "Armadura de veio de vibranio com as propriedades defensivas de material-vibranium.",
+    "stackable": false,
+    "slot": "chest",
+    "properties": ["vibranium", "impact-absorbing"],
+    "combat": {
+      "mitigation": {
+        "physical": 0.55,
+        "magical": 0.02
+      }
+    }
+  },
+  {
+    "id": "gear:dilthio-weapon",
+    "kind": "item",
+    "name": "Arma de cristal de dilthio",
+    "description": "Arma de cristal de dilthio com propriedades do material material-dilthio.",
+    "stackable": false,
+    "slot": "primary",
+    "properties": ["dilthio", "energy-conductive"],
+    "combat": {
+      "damage": {
+        "amount": 68,
+        "channel": "physical",
+        "subtype": "cutting",
+        "properties": ["dilthio", "energy-conductive"],
+        "origin": {
+          "kind": "weapon",
+          "id": "gear:dilthio-weapon"
+        }
+      }
+    }
+  },
+  {
+    "id": "gear:dilthio-armor",
+    "kind": "item",
+    "name": "Armadura de cristal de dilthio",
+    "description": "Armadura de cristal de dilthio com as propriedades defensivas de material-dilthio.",
+    "stackable": false,
+    "slot": "chest",
+    "properties": ["dilthio", "energy-conductive"],
+    "combat": {
+      "mitigation": {
+        "physical": 0.5900000000000001,
+        "magical": 0.02
+      }
+    }
+  },
+  {
+    "id": "gear:chlorophyte-weapon",
+    "kind": "item",
+    "name": "Arma de clorofita bruta",
+    "description": "Arma de clorofita bruta com propriedades do material material-chlorophyte.",
+    "stackable": false,
+    "slot": "primary",
+    "properties": ["chlorophyte", "regenerative"],
+    "combat": {
+      "damage": {
+        "amount": 72,
+        "channel": "physical",
+        "subtype": "cutting",
+        "properties": ["chlorophyte", "regenerative"],
+        "origin": {
+          "kind": "weapon",
+          "id": "gear:chlorophyte-weapon"
+        }
+      }
+    }
+  },
+  {
+    "id": "gear:chlorophyte-armor",
+    "kind": "item",
+    "name": "Armadura de clorofita bruta",
+    "description": "Armadura de clorofita bruta com as propriedades defensivas de material-chlorophyte.",
+    "stackable": false,
+    "slot": "chest",
+    "properties": ["chlorophyte", "regenerative"],
+    "combat": {
+      "mitigation": {
+        "physical": 0.63,
+        "magical": 0.02
+      }
+    }
+  },
+  {
+    "id": "gear:sacrite-weapon",
+    "kind": "item",
+    "name": "Arma de nódulo de sacrito",
+    "description": "Arma de nódulo de sacrito com propriedades do material material-sacrite.",
+    "stackable": false,
+    "slot": "primary",
+    "properties": ["sacrite", "holy", "anchoring"],
+    "combat": {
+      "damage": {
+        "amount": 76,
+        "channel": "physical",
+        "subtype": "cutting",
+        "properties": ["sacrite", "holy", "anchoring"],
+        "origin": {
+          "kind": "weapon",
+          "id": "gear:sacrite-weapon"
+        }
+      }
+    }
+  },
+  {
+    "id": "gear:sacrite-armor",
+    "kind": "item",
+    "name": "Armadura de nódulo de sacrito",
+    "description": "Armadura de nódulo de sacrito com as propriedades defensivas de material-sacrite.",
+    "stackable": false,
+    "slot": "chest",
+    "properties": ["sacrite", "holy", "anchoring"],
+    "combat": {
+      "mitigation": {
+        "physical": 0.67,
+        "magical": 0.02
+      }
+    }
+  },
+  {
+    "id": "green-orb",
+    "kind": "item",
+    "name": "Orbe Verde",
+    "description": "Orbe Verde; conversão canônica: 10 unidades equivalem a 1 da próxima cor.",
+    "stackable": true,
+    "currency": true
+  },
+  {
+    "id": "blue-orb",
+    "kind": "item",
+    "name": "Orbe Azul",
+    "description": "Orbe Azul; conversão canônica: 10 unidades equivalem a 1 da próxima cor.",
+    "stackable": true,
+    "currency": true
+  },
+  {
+    "id": "orange-orb",
+    "kind": "item",
+    "name": "Orbe Laranja",
+    "description": "Orbe Laranja; conversão canônica: 10 unidades equivalem a 1 da próxima cor.",
+    "stackable": true,
+    "currency": true
+  },
+  {
+    "id": "red-orb",
+    "kind": "item",
+    "name": "Orbe Vermelho",
+    "description": "Orbe Vermelho; conversão canônica: 10 unidades equivalem a 1 da próxima cor.",
+    "stackable": true,
+    "currency": true
+  },
+  {
+    "id": "black-orb",
+    "kind": "item",
+    "name": "Orbe Negro",
+    "description": "Orbe Negro; conversão canônica: 10 unidades equivalem a 1 da próxima cor.",
+    "stackable": true,
+    "currency": true
+  },
+  {
+    "id": "gold-orb",
+    "kind": "item",
+    "name": "Orbe Dourado",
+    "description": "Orbe Dourado; conversão canônica: 10 unidades equivalem a 1 da próxima cor.",
+    "stackable": true,
+    "currency": true
+  },
+  {
+    "id": "alchemical-implant-01",
+    "kind": "item",
+    "name": "Dispositivo alquímico — Braço Mecânico",
+    "description": "Braço mecânico substitui o braço e concede +100 de Força; permite agir apesar de ferimentos em músculos ou tendões. Requer instalação cirúrgica por 10.000 Fragmentos.",
+    "stackable": true,
+    "implantId": "implant-01",
+    "rank": "common"
+  },
+  {
+    "id": "alchemical-implant-02",
+    "kind": "item",
+    "name": "Dispositivo alquímico — Pernas Articuladas",
+    "description": "Pernas articuladas concedem +100 de Velocidade, amortecem quedas e permitem saltos propulsados. Requer instalação cirúrgica por 10.000 Fragmentos.",
+    "stackable": true,
+    "implantId": "implant-02",
+    "rank": "common"
+  },
+  {
+    "id": "alchemical-implant-03",
+    "kind": "item",
+    "name": "Dispositivo alquímico — Olho Alquímico",
+    "description": "Olho alquímico oferece visão noturna, zoom de 10× e leitura de detalhes. Requer instalação cirúrgica por 10.000 Fragmentos.",
+    "stackable": true,
+    "implantId": "implant-03",
+    "rank": "common"
+  },
+  {
+    "id": "alchemical-implant-04",
+    "kind": "item",
+    "name": "Dispositivo alquímico — Pulmões Filtrantes",
+    "description": "Pulmões filtrantes separam gases, fumaça e toxinas enquanto houver oxigênio. Requer instalação cirúrgica por 10.000 Fragmentos.",
+    "stackable": true,
+    "implantId": "implant-04",
+    "rank": "common"
+  },
+  {
+    "id": "alchemical-implant-05",
+    "kind": "item",
+    "name": "Dispositivo alquímico — Coluna Reforçada",
+    "description": "Coluna reforçada concede +100 de Resistência e estabilidade contra impactos. Requer instalação cirúrgica por 10.000 Fragmentos.",
+    "stackable": true,
+    "implantId": "implant-05",
+    "rank": "common"
+  },
+  {
+    "id": "alchemical-implant-06",
+    "kind": "item",
+    "name": "Dispositivo alquímico — Módulo de IA",
+    "description": "Módulo de IA remove a desvantagem de treinamento dos Warforged. Requer instalação cirúrgica por 10.000 Fragmentos.",
+    "stackable": true,
+    "implantId": "implant-06",
+    "rank": "common"
+  },
+  {
+    "id": "alchemical-implant-07",
+    "kind": "item",
+    "name": "Dispositivo alquímico — Acelerador Neural",
+    "description": "Acelerador neural concede Aceleração 7/3 e imunidade a Lentidão e Atordoamento quando ativado. Requer instalação cirúrgica por 10.000 Fragmentos.",
+    "stackable": true,
+    "implantId": "implant-07",
+    "rank": "epic"
+  },
+  {
+    "id": "alchemical-implant-08",
+    "kind": "item",
+    "name": "Dispositivo alquímico — Lâmina Mantis",
+    "description": "Lâmina Mantis instala duas lâminas retráteis de até 80 cm, armas naturais encantadas junto ao usuário e escaladas por Destreza. Requer instalação cirúrgica por 10.000 Fragmentos.",
+    "stackable": true,
+    "implantId": "implant-08",
+    "rank": "epic"
+  },
+  {
+    "id": "alchemical-implant-09",
+    "kind": "item",
+    "name": "Dispositivo alquímico — Coração Catalítico",
+    "description": "Coração catalítico aumenta em 50% a potência de efeitos positivos de poções consumidas. Requer instalação cirúrgica por 10.000 Fragmentos.",
+    "stackable": true,
+    "implantId": "implant-09",
+    "rank": "epic"
+  },
+  {
+    "id": "alchemical-implant-10",
+    "kind": "item",
+    "name": "Dispositivo alquímico — Lançador de Arpéu",
+    "description": "Lançador de arpéu usa cabo reforçado de 30 m para alcançar superfícies e puxar o usuário ou objetos. Requer instalação cirúrgica por 10.000 Fragmentos.",
+    "stackable": true,
+    "implantId": "implant-10",
+    "rank": "epic"
+  },
+  {
+    "id": "alchemical-implant-11",
+    "kind": "item",
+    "name": "Dispositivo alquímico — Retina Espectral",
+    "description": "Retina espectral revela fluxos e concentrações de Mana, Aura e outras energias. Requer instalação cirúrgica por 10.000 Fragmentos.",
+    "stackable": true,
+    "implantId": "implant-11",
+    "rank": "epic"
+  },
+  {
+    "id": "alchemical-implant-12",
+    "kind": "item",
+    "name": "Dispositivo alquímico — Sandevistam",
+    "description": "Sandevistan concede +100% de Velocidade e Destreza por 3 turnos; recarga de 8 turnos. Requer instalação cirúrgica por 10.000 Fragmentos.",
+    "stackable": true,
+    "implantId": "implant-12",
+    "rank": "legendary"
+  },
+  {
+    "id": "alchemical-implant-13",
+    "kind": "item",
+    "name": "Dispositivo alquímico — Esqueleto de Adamantita",
+    "description": "Esqueleto de adamantita concede +50% de Resistência; ossos não se quebram por meios convencionais. Requer instalação cirúrgica por 10.000 Fragmentos.",
+    "stackable": true,
+    "implantId": "implant-13",
+    "rank": "legendary"
+  },
+  {
+    "id": "alchemical-implant-14",
+    "kind": "item",
+    "name": "Dispositivo alquímico — Núcleo de Regeneração",
+    "description": "Núcleo de regeneração recupera 5% da Vida máxima por turno e reconstrói tecidos e órgãos gradualmente. Requer instalação cirúrgica por 10.000 Fragmentos.",
+    "stackable": true,
+    "implantId": "implant-14",
+    "rank": "legendary"
+  },
+  {
+    "id": "alchemical-implant-15",
+    "kind": "item",
+    "name": "Dispositivo alquímico — Arsenal Metamórgico",
+    "description": "Arsenal metamórgico transforma os braços em lâminas, escudos, lanças e outras formas incorporadas. Requer instalação cirúrgica por 10.000 Fragmentos.",
+    "stackable": true,
+    "implantId": "implant-15",
+    "rank": "legendary"
+  },
+  {
+    "id": "alchemical-implant-16",
+    "kind": "item",
+    "name": "Dispositivo alquímico — Córtex Oracular",
+    "description": "Córtex oracular lê movimentos físicos, trajetórias e padrões de combate por pistas musculares e comportamentais. Requer instalação cirúrgica por 10.000 Fragmentos.",
+    "stackable": true,
+    "implantId": "implant-16",
+    "rank": "legendary"
+  },
+  {
+    "id": "alchemical-implant-17",
+    "kind": "item",
+    "name": "Dispositivo alquímico — Segundo Cérebro",
+    "description": "Segundo cérebro processa mecanismos em paralelo e controla implantes e dispositivos de forma independente. Requer instalação cirúrgica por 10.000 Fragmentos.",
+    "stackable": true,
+    "implantId": "implant-17",
+    "rank": "special"
+  },
+  {
+    "id": "alchemical-implant-18",
+    "kind": "item",
+    "name": "Dispositivo alquímico — Coração de Sangue",
+    "description": "Coração de sangue converte sangue absorvido de outras criaturas em energia regenerativa e permite armazená-lo. Requer instalação cirúrgica por 10.000 Fragmentos.",
+    "stackable": true,
+    "implantId": "implant-18",
+    "rank": "special"
+  },
+  {
+    "id": "alchemical-implant-19",
+    "kind": "item",
+    "name": "Dispositivo alquímico — Carne de Mercúrio",
+    "description": "Carne de mercúrio substitui uma área corporal por metal alquímico maleável, moldável em ferramentas e capaz de reconstruir deformidades. Requer instalação cirúrgica por 10.000 Fragmentos.",
+    "stackable": true,
+    "implantId": "implant-19",
+    "rank": "special"
+  },
+  {
+    "id": "alchemical-implant-20",
+    "kind": "item",
+    "name": "Dispositivo alquímico — Âncora da Alma",
+    "description": "Âncora da alma mantém a ligação entre corpo e alma, permite uma ressurreição e quebra após o uso; então deve ser removida. Requer instalação cirúrgica por 10.000 Fragmentos.",
+    "stackable": true,
+    "implantId": "implant-20",
+    "rank": "special"
   }
 ]

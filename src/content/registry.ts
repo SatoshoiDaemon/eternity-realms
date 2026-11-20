@@ -15,6 +15,10 @@ import recipesContent from '../../content/core/recipes.json';
 import nodesContent from '../../content/core/nodes.json';
 import glyphsContent from '../../content/core/glyphs.json';
 import sigilsContent from '../../content/core/sigils.json';
+import regionsContent from '../../content/core/regions.json';
+import shopsContent from '../../content/core/shops.json';
+import energiesContent from '../../content/core/energies.json';
+import systemsContent from '../../content/core/systems.json';
 import {
   ContentPackSchema,
   type ActivityDefinition,
@@ -32,6 +36,10 @@ import {
   type RecipeDefinition,
   type EnemyTagRecord,
   type CombatDefaults,
+  type RegionDefinition,
+  type ShopDefinition,
+  type EnergyDefinition,
+  type SystemDefinition,
 } from './schema';
 import { BASE_ENEMY_TAGS, loadTagRegistry, type EnemyTagDefinition } from '../combat/tag-registry';
 import {
@@ -57,10 +65,19 @@ export interface ContentCatalog {
   expeditions: Map<string, ExpeditionDefinition>;
   lootTables: Map<string, LootTableDefinition>;
   recipes: Map<string, RecipeDefinition>;
+  regions: Map<string, RegionDefinition>;
+  shops: Map<string, ShopDefinition>;
+  energies: Map<string, EnergyDefinition>;
+  systems: Map<string, SystemDefinition>;
   nodes: NodeDefinition[];
   glyphs: GlyphDefinition[];
   sigils: SigilDefinition[];
-  rules: { experiencePerLevel: number; combat: CombatDefaults };
+  rules: {
+    experiencePerLevel: number;
+    maxLevel: number;
+    attributePointsPerLevel: number;
+    combat: CombatDefaults;
+  };
   packIds: string[];
 }
 
@@ -76,7 +93,12 @@ export function loadContentPacks(inputs: unknown[]): ContentCatalog {
   const packs = inputs.map((input) => ContentPackSchema.parse(input));
   const packIds = new Set<string>();
   const records: ContentRecord[] = [];
-  const rules = { experiencePerLevel: 100, combat: { accuracy: 0.9, intervalMs: 1_000 } };
+  const rules = {
+    experiencePerLevel: 100,
+    maxLevel: 1_000,
+    attributePointsPerLevel: 8,
+    combat: { accuracy: 0.9, intervalMs: 1_000 },
+  };
 
   for (const pack of packs) {
     if (packIds.has(pack.manifest.id)) {
@@ -93,6 +115,9 @@ export function loadContentPacks(inputs: unknown[]): ContentCatalog {
     }
     if (pack.rules) {
       rules.experiencePerLevel = pack.rules.experiencePerLevel;
+      rules.maxLevel = pack.rules.maxLevel ?? rules.maxLevel;
+      rules.attributePointsPerLevel =
+        pack.rules.attributePointsPerLevel ?? rules.attributePointsPerLevel;
       if (pack.rules.combat) {
         rules.combat = { ...pack.rules.combat };
       }
@@ -111,12 +136,25 @@ export function loadContentPacks(inputs: unknown[]): ContentCatalog {
   const expeditions = indexOfKind(records, 'expedition');
   const lootTables = indexOfKind(records, 'loot_table');
   const recipes = indexOfKind(records, 'recipe');
+  const regions = indexOfKind(records, 'region');
+  const shops = indexOfKind(records, 'shop');
+  const energies = indexOfKind(records, 'energy');
+  const systems = indexOfKind(records, 'system');
   const suppliedTags = records.filter(
     (record): record is EnemyTagRecord => record.kind === 'enemy_tag',
   );
   const mergedTags = new Map<string, unknown>(
     BASE_ENEMY_TAGS.map((tag) => [(tag as { id: string }).id, tag]),
   );
+  for (const race of races.values()) {
+    if (race.combatTag) {
+      mergedTags.set(race.combatTag.id, {
+        ...race.combatTag,
+        kind: 'enemy_tag',
+        origin: `official-race:${race.id}`,
+      });
+    }
+  }
   for (const tag of suppliedTags) {
     mergedTags.set(tag.id, tag);
   }
@@ -208,6 +246,91 @@ export function loadContentPacks(inputs: unknown[]): ContentCatalog {
       }
     }
   }
+  for (const race of races.values()) {
+    for (const tagId of race.combatTags ?? []) {
+      if (!enemyTags.has(tagId)) {
+        throw new Error(`Race "${race.id}" references missing combat tag "${tagId}".`);
+      }
+    }
+    for (const bonus of race.activityBonuses ?? []) {
+      if (!skillRecords.has(bonus.skillId)) {
+        throw new Error(`Race "${race.id}" references missing skill "${bonus.skillId}".`);
+      }
+    }
+  }
+  for (const activity of activityRecords.values()) {
+    if (activity.skillId && !skillRecords.has(activity.skillId)) {
+      throw new Error(`Activity "${activity.id}" references missing skill "${activity.skillId}".`);
+    }
+    if (activity.regionId && !regions.has(activity.regionId)) {
+      throw new Error(
+        `Activity "${activity.id}" references missing region "${activity.regionId}".`,
+      );
+    }
+    if (activity.outputItemId && !itemRecords.has(activity.outputItemId)) {
+      throw new Error(
+        `Activity "${activity.id}" references missing output item "${activity.outputItemId}".`,
+      );
+    }
+  }
+  for (const region of regions.values()) {
+    for (const itemId of region.materials) {
+      if (!itemRecords.has(itemId)) {
+        throw new Error(`Region "${region.id}" references missing material "${itemId}".`);
+      }
+    }
+    for (const enemyId of region.enemies) {
+      if (!enemies.has(enemyId)) {
+        throw new Error(`Region "${region.id}" references missing enemy "${enemyId}".`);
+      }
+    }
+    for (const expeditionId of region.expeditionIds) {
+      if (!expeditions.has(expeditionId)) {
+        throw new Error(`Region "${region.id}" references missing expedition "${expeditionId}".`);
+      }
+    }
+    for (const activityId of region.activityIds) {
+      if (!activityRecords.has(activityId)) {
+        throw new Error(`Region "${region.id}" references missing activity "${activityId}".`);
+      }
+    }
+    for (const regionId of region.unlockRequirements?.regionIds ?? []) {
+      if (!regions.has(regionId)) {
+        throw new Error(`Region "${region.id}" requires missing region "${regionId}".`);
+      }
+    }
+  }
+  for (const shop of shops.values()) {
+    for (const entry of shop.entries) {
+      if (!itemRecords.has(entry.itemId)) {
+        throw new Error(`Shop "${shop.id}" references missing item "${entry.itemId}".`);
+      }
+      if (entry.requiredSkill && !skillRecords.has(entry.requiredSkill)) {
+        throw new Error(`Shop "${shop.id}" references missing skill "${entry.requiredSkill}".`);
+      }
+    }
+    if (shop.regionId && !regions.has(shop.regionId)) {
+      throw new Error(`Shop "${shop.id}" references missing region "${shop.regionId}".`);
+    }
+  }
+  for (const system of systems.values()) {
+    if (system.systemType !== 'alchemy') continue;
+    for (const entry of system.entries) {
+      if (typeof entry.id !== 'string' || !entry.id.startsWith('implant-')) continue;
+      if (typeof entry.deviceItemId !== 'string' || !itemRecords.has(entry.deviceItemId)) {
+        throw new Error(
+          `Alchemical implant "${entry.id}" references missing device "${String(entry.deviceItemId)}".`,
+        );
+      }
+      if (
+        typeof entry.installationCostFragments !== 'number' ||
+        !Number.isSafeInteger(entry.installationCostFragments) ||
+        entry.installationCostFragments < 0
+      ) {
+        throw new Error(`Alchemical implant "${entry.id}" has an invalid surgery cost.`);
+      }
+    }
+  }
   for (const mission of missions.values()) {
     for (const itemId of Object.keys(mission.reward.items)) {
       if (!itemRecords.has(itemId)) {
@@ -230,6 +353,10 @@ export function loadContentPacks(inputs: unknown[]): ContentCatalog {
     expeditions,
     lootTables,
     recipes,
+    regions,
+    shops,
+    energies,
+    systems,
     nodes,
     glyphs,
     sigils,
@@ -255,6 +382,10 @@ export function loadOfficialContent(additionalPacks: unknown[] = []): ContentCat
         ...expeditionsContent,
         ...lootTablesContent,
         ...recipesContent,
+        ...regionsContent,
+        ...shopsContent,
+        ...energiesContent,
+        ...systemsContent,
       ],
       rules,
     },
