@@ -21,11 +21,32 @@
       }
     },
     "encounters": [
-      { "id": "stalker-patrol", "enemyId": "core:quarry-stalker", "weight": 5, "count": 2 },
-      { "id": "venom-burrow", "enemyId": "core:venom-crawler", "weight": 4 },
-      { "id": "sentinel-guard", "enemyId": "core:iron-sentinel", "weight": 4 },
-      { "id": "wraith-passage", "enemyId": "core:echo-wraith", "weight": 3 },
-      { "id": "arcanist-ambush", "enemyId": "core:rift-arcanist", "weight": 3 },
+      {
+        "id": "stalker-patrol",
+        "enemyId": "core:quarry-stalker",
+        "weight": 5,
+        "count": 2
+      },
+      {
+        "id": "venom-burrow",
+        "enemyId": "core:venom-crawler",
+        "weight": 4
+      },
+      {
+        "id": "sentinel-guard",
+        "enemyId": "core:iron-sentinel",
+        "weight": 4
+      },
+      {
+        "id": "wraith-passage",
+        "enemyId": "core:echo-wraith",
+        "weight": 3
+      },
+      {
+        "id": "arcanist-ambush",
+        "enemyId": "core:rift-arcanist",
+        "weight": 3
+      },
       {
         "id": "sovereign-chamber",
         "enemyId": "core:ashen-sovereign",
@@ -78,5 +99,1985 @@
       "core:effect-summon",
       "core:modifier-amplify"
     ]
+  },
+  {
+    "id": "core:p4-apexia-quest-1",
+    "kind": "expedition",
+    "name": "Apexia: reconhecimento",
+    "description": "Quest em Apexia com encontros, risco, ambiente e loot regional próprios.",
+    "activityKind": "quest",
+    "spawnIntervalMs": 45000,
+    "deathRewardRetention": 0.25,
+    "environment": {
+      "type": "urban",
+      "condition": "temperate",
+      "hazard": "unstable-portal",
+      "timeOfDay": "day",
+      "elementOpposites": {
+        "fire": ["frost", "water"],
+        "frost": ["fire"],
+        "light": ["shadow"],
+        "shadow": ["light", "holy"],
+        "water": ["lightning"],
+        "earth": ["air"],
+        "lightning": ["earth"]
+      }
+    },
+    "encounters": [
+      {
+        "id": "core:p4-apexia-quest-1-enc-1",
+        "enemyId": "core:p4-apexia-1",
+        "weight": 5,
+        "count": 2
+      },
+      {
+        "id": "core:p4-apexia-quest-1-enc-2",
+        "enemyId": "core:p4-apexia-2",
+        "weight": 4,
+        "count": 1
+      },
+      {
+        "id": "core:p4-apexia-quest-1-enc-3",
+        "enemyId": "core:p4-apexia-3",
+        "weight": 3,
+        "count": 1
+      }
+    ],
+    "nodeUnlocks": ["core:effect-damage"],
+    "requiredLevel": 1,
+    "source": "Adaptação jogável de geografia canônica; encontros e níveis são conteúdo novo."
+  },
+  {
+    "id": "core:p4-apexia-quest-2",
+    "kind": "expedition",
+    "name": "Apexia: rota de risco",
+    "description": "Quest em Apexia com encontros, risco, ambiente e loot regional próprios.",
+    "activityKind": "quest",
+    "spawnIntervalMs": 45000,
+    "deathRewardRetention": 0.25,
+    "environment": {
+      "type": "urban",
+      "condition": "temperate",
+      "hazard": "unstable-portal",
+      "timeOfDay": "day",
+      "elementOpposites": {
+        "fire": ["frost", "water"],
+        "frost": ["fire"],
+        "light": ["shadow"],
+        "shadow": ["light", "holy"],
+        "water": ["lightning"],
+        "earth": ["air"],
+        "lightning": ["earth"]
+      }
+    },
+    "encounters": [
+      {
+        "id": "core:p4-apexia-quest-2-enc-1",
+        "enemyId": "core:p4-apexia-2",
+        "weight": 5,
+        "count": 2
+      },
+      {
+        "id": "core:p4-apexia-quest-2-enc-2",
+        "enemyId": "core:p4-apexia-3",
+        "weight": 4,
+        "count": 1
+      },
+      {
+        "id": "core:p4-apexia-quest-2-enc-3",
+        "enemyId": "core:p4-apexia-4",
+        "weight": 3,
+        "count": 1
+      },
+      {
+        "id": "core:p4-apexia-quest-2-enc-4",
+        "enemyId": "core:p4-boss-apexia",
+        "weight": 2,
+        "count": 1
+      }
+    ],
+    "nodeUnlocks": ["core:effect-damage"],
+    "requiredLevel": 3,
+    "source": "Adaptação jogável de geografia canônica; encontros e níveis são conteúdo novo."
+  },
+  {
+    "id": "core:p4-apexia-dungeon-3",
+    "kind": "expedition",
+    "name": "Apexia: masmorra regional",
+    "description": "Dungeon em Apexia com encontros, risco, ambiente e loot regional próprios.",
+    "activityKind": "dungeon",
+    "spawnIntervalMs": 60000,
+    "deathRewardRetention": 0.25,
+    "environment": {
+      "type": "urban",
+      "condition": "temperate",
+      "hazard": "unstable-portal",
+      "timeOfDay": "day",
+      "elementOpposites": {
+        "fire": ["frost", "water"],
+        "frost": ["fire"],
+        "light": ["shadow"],
+        "shadow": ["light", "holy"],
+        "water": ["lightning"],
+        "earth": ["air"],
+        "lightning": ["earth"]
+      }
+    },
+    "encounters": [
+      {
+        "id": "core:p4-apexia-dungeon-3-enc-1",
+        "enemyId": "core:p4-apexia-1",
+        "weight": 5,
+        "count": 1
+      },
+      {
+        "id": "core:p4-apexia-dungeon-3-enc-2",
+        "enemyId": "core:p4-apexia-2",
+        "weight": 4,
+        "count": 1
+      },
+      {
+        "id": "core:p4-apexia-dungeon-3-enc-3",
+        "enemyId": "core:p4-apexia-3",
+        "weight": 3,
+        "count": 1
+      },
+      {
+        "id": "core:p4-apexia-dungeon-3-enc-4",
+        "enemyId": "core:p4-apexia-4",
+        "weight": 2,
+        "count": 1
+      },
+      {
+        "id": "core:p4-apexia-dungeon-3-enc-5",
+        "enemyId": "core:p4-boss-apexia",
+        "weight": 1,
+        "count": 1,
+        "variantId": "elite"
+      }
+    ],
+    "nodeUnlocks": ["core:effect-damage", "core:effect-heal"],
+    "requiredLevel": 5,
+    "source": "Adaptação jogável de geografia canônica; encontros e níveis são conteúdo novo."
+  },
+  {
+    "id": "core:p4-apexia-raid-4",
+    "kind": "expedition",
+    "name": "Apexia: incursão de chefe",
+    "description": "Raid em Apexia com encontros, risco, ambiente e loot regional próprios.",
+    "activityKind": "raid",
+    "spawnIntervalMs": 90000,
+    "deathRewardRetention": 0.25,
+    "environment": {
+      "type": "urban",
+      "condition": "temperate",
+      "hazard": "unstable-portal",
+      "timeOfDay": "day",
+      "elementOpposites": {
+        "fire": ["frost", "water"],
+        "frost": ["fire"],
+        "light": ["shadow"],
+        "shadow": ["light", "holy"],
+        "water": ["lightning"],
+        "earth": ["air"],
+        "lightning": ["earth"]
+      }
+    },
+    "encounters": [
+      {
+        "id": "core:p4-apexia-raid-4-enc-1",
+        "enemyId": "core:p4-apexia-2",
+        "weight": 5,
+        "count": 1
+      },
+      {
+        "id": "core:p4-apexia-raid-4-enc-2",
+        "enemyId": "core:p4-apexia-3",
+        "weight": 4,
+        "count": 1
+      },
+      {
+        "id": "core:p4-apexia-raid-4-enc-3",
+        "enemyId": "core:p4-apexia-4",
+        "weight": 3,
+        "count": 1
+      },
+      {
+        "id": "core:p4-apexia-raid-4-enc-4",
+        "enemyId": "core:p4-boss-apexia",
+        "weight": 2,
+        "count": 1
+      },
+      {
+        "id": "core:p4-apexia-raid-4-enc-5",
+        "enemyId": "core:p4-boss-apexia",
+        "weight": 1,
+        "count": 1,
+        "variantId": "elite"
+      }
+    ],
+    "nodeUnlocks": ["core:effect-damage", "core:effect-heal"],
+    "requiredLevel": 7,
+    "source": "Adaptação jogável de geografia canônica; encontros e níveis são conteúdo novo."
+  },
+  {
+    "id": "core:p4-dross-quest-1",
+    "kind": "expedition",
+    "name": "Dross: reconhecimento",
+    "description": "Quest em Dross com encontros, risco, ambiente e loot regional próprios.",
+    "activityKind": "quest",
+    "spawnIntervalMs": 45000,
+    "deathRewardRetention": 0.25,
+    "environment": {
+      "type": "urban",
+      "condition": "temperate",
+      "hazard": "quimtec-contamination",
+      "timeOfDay": "night",
+      "elementOpposites": {
+        "fire": ["frost", "water"],
+        "frost": ["fire"],
+        "light": ["shadow"],
+        "shadow": ["light", "holy"],
+        "water": ["lightning"],
+        "earth": ["air"],
+        "lightning": ["earth"]
+      }
+    },
+    "encounters": [
+      {
+        "id": "core:p4-dross-quest-1-enc-1",
+        "enemyId": "core:p4-dross-1",
+        "weight": 5,
+        "count": 2
+      },
+      {
+        "id": "core:p4-dross-quest-1-enc-2",
+        "enemyId": "core:p4-dross-2",
+        "weight": 4,
+        "count": 1
+      },
+      {
+        "id": "core:p4-dross-quest-1-enc-3",
+        "enemyId": "core:p4-dross-3",
+        "weight": 3,
+        "count": 1
+      }
+    ],
+    "nodeUnlocks": ["core:effect-damage"],
+    "requiredLevel": 4,
+    "source": "Adaptação jogável de geografia canônica; encontros e níveis são conteúdo novo."
+  },
+  {
+    "id": "core:p4-dross-quest-2",
+    "kind": "expedition",
+    "name": "Dross: rota de risco",
+    "description": "Quest em Dross com encontros, risco, ambiente e loot regional próprios.",
+    "activityKind": "quest",
+    "spawnIntervalMs": 45000,
+    "deathRewardRetention": 0.25,
+    "environment": {
+      "type": "urban",
+      "condition": "temperate",
+      "hazard": "quimtec-contamination",
+      "timeOfDay": "night",
+      "elementOpposites": {
+        "fire": ["frost", "water"],
+        "frost": ["fire"],
+        "light": ["shadow"],
+        "shadow": ["light", "holy"],
+        "water": ["lightning"],
+        "earth": ["air"],
+        "lightning": ["earth"]
+      }
+    },
+    "encounters": [
+      {
+        "id": "core:p4-dross-quest-2-enc-1",
+        "enemyId": "core:p4-dross-2",
+        "weight": 5,
+        "count": 2
+      },
+      {
+        "id": "core:p4-dross-quest-2-enc-2",
+        "enemyId": "core:p4-dross-3",
+        "weight": 4,
+        "count": 1
+      },
+      {
+        "id": "core:p4-dross-quest-2-enc-3",
+        "enemyId": "core:p4-dross-4",
+        "weight": 3,
+        "count": 1
+      },
+      {
+        "id": "core:p4-dross-quest-2-enc-4",
+        "enemyId": "core:p4-boss-dross",
+        "weight": 2,
+        "count": 1
+      }
+    ],
+    "nodeUnlocks": ["core:effect-damage"],
+    "requiredLevel": 6,
+    "source": "Adaptação jogável de geografia canônica; encontros e níveis são conteúdo novo."
+  },
+  {
+    "id": "core:p4-dross-dungeon-3",
+    "kind": "expedition",
+    "name": "Dross: masmorra regional",
+    "description": "Dungeon em Dross com encontros, risco, ambiente e loot regional próprios.",
+    "activityKind": "dungeon",
+    "spawnIntervalMs": 60000,
+    "deathRewardRetention": 0.25,
+    "environment": {
+      "type": "urban",
+      "condition": "temperate",
+      "hazard": "quimtec-contamination",
+      "timeOfDay": "night",
+      "elementOpposites": {
+        "fire": ["frost", "water"],
+        "frost": ["fire"],
+        "light": ["shadow"],
+        "shadow": ["light", "holy"],
+        "water": ["lightning"],
+        "earth": ["air"],
+        "lightning": ["earth"]
+      }
+    },
+    "encounters": [
+      {
+        "id": "core:p4-dross-dungeon-3-enc-1",
+        "enemyId": "core:p4-dross-1",
+        "weight": 5,
+        "count": 1
+      },
+      {
+        "id": "core:p4-dross-dungeon-3-enc-2",
+        "enemyId": "core:p4-dross-2",
+        "weight": 4,
+        "count": 1
+      },
+      {
+        "id": "core:p4-dross-dungeon-3-enc-3",
+        "enemyId": "core:p4-dross-3",
+        "weight": 3,
+        "count": 1
+      },
+      {
+        "id": "core:p4-dross-dungeon-3-enc-4",
+        "enemyId": "core:p4-dross-4",
+        "weight": 2,
+        "count": 1
+      },
+      {
+        "id": "core:p4-dross-dungeon-3-enc-5",
+        "enemyId": "core:p4-boss-dross",
+        "weight": 1,
+        "count": 1,
+        "variantId": "elite"
+      }
+    ],
+    "nodeUnlocks": ["core:effect-damage", "core:effect-heal"],
+    "requiredLevel": 8,
+    "source": "Adaptação jogável de geografia canônica; encontros e níveis são conteúdo novo."
+  },
+  {
+    "id": "core:p4-dross-raid-4",
+    "kind": "expedition",
+    "name": "Dross: incursão de chefe",
+    "description": "Raid em Dross com encontros, risco, ambiente e loot regional próprios.",
+    "activityKind": "raid",
+    "spawnIntervalMs": 90000,
+    "deathRewardRetention": 0.25,
+    "environment": {
+      "type": "urban",
+      "condition": "temperate",
+      "hazard": "quimtec-contamination",
+      "timeOfDay": "night",
+      "elementOpposites": {
+        "fire": ["frost", "water"],
+        "frost": ["fire"],
+        "light": ["shadow"],
+        "shadow": ["light", "holy"],
+        "water": ["lightning"],
+        "earth": ["air"],
+        "lightning": ["earth"]
+      }
+    },
+    "encounters": [
+      {
+        "id": "core:p4-dross-raid-4-enc-1",
+        "enemyId": "core:p4-dross-2",
+        "weight": 5,
+        "count": 1
+      },
+      {
+        "id": "core:p4-dross-raid-4-enc-2",
+        "enemyId": "core:p4-dross-3",
+        "weight": 4,
+        "count": 1
+      },
+      {
+        "id": "core:p4-dross-raid-4-enc-3",
+        "enemyId": "core:p4-dross-4",
+        "weight": 3,
+        "count": 1
+      },
+      {
+        "id": "core:p4-dross-raid-4-enc-4",
+        "enemyId": "core:p4-boss-dross",
+        "weight": 2,
+        "count": 1
+      },
+      {
+        "id": "core:p4-dross-raid-4-enc-5",
+        "enemyId": "core:p4-boss-dross",
+        "weight": 1,
+        "count": 1,
+        "variantId": "elite"
+      }
+    ],
+    "nodeUnlocks": ["core:effect-damage", "core:effect-heal"],
+    "requiredLevel": 10,
+    "source": "Adaptação jogável de geografia canônica; encontros e níveis são conteúdo novo."
+  },
+  {
+    "id": "core:p4-vaeloria-quest-1",
+    "kind": "expedition",
+    "name": "Vaeloria: reconhecimento",
+    "description": "Quest em Vaeloria com encontros, risco, ambiente e loot regional próprios.",
+    "activityKind": "quest",
+    "spawnIntervalMs": 45000,
+    "deathRewardRetention": 0.25,
+    "environment": {
+      "type": "plains",
+      "condition": "temperate",
+      "hazard": "mana-ban-zone",
+      "timeOfDay": "day",
+      "elementOpposites": {
+        "fire": ["frost", "water"],
+        "frost": ["fire"],
+        "light": ["shadow"],
+        "shadow": ["light", "holy"],
+        "water": ["lightning"],
+        "earth": ["air"],
+        "lightning": ["earth"]
+      }
+    },
+    "encounters": [
+      {
+        "id": "core:p4-vaeloria-quest-1-enc-1",
+        "enemyId": "core:p4-vaeloria-1",
+        "weight": 5,
+        "count": 2
+      },
+      {
+        "id": "core:p4-vaeloria-quest-1-enc-2",
+        "enemyId": "core:p4-vaeloria-2",
+        "weight": 4,
+        "count": 1
+      },
+      {
+        "id": "core:p4-vaeloria-quest-1-enc-3",
+        "enemyId": "core:p4-vaeloria-3",
+        "weight": 3,
+        "count": 1
+      }
+    ],
+    "nodeUnlocks": ["core:effect-damage"],
+    "requiredLevel": 3,
+    "source": "Adaptação jogável de geografia canônica; encontros e níveis são conteúdo novo."
+  },
+  {
+    "id": "core:p4-vaeloria-quest-2",
+    "kind": "expedition",
+    "name": "Vaeloria: rota de risco",
+    "description": "Quest em Vaeloria com encontros, risco, ambiente e loot regional próprios.",
+    "activityKind": "quest",
+    "spawnIntervalMs": 45000,
+    "deathRewardRetention": 0.25,
+    "environment": {
+      "type": "plains",
+      "condition": "temperate",
+      "hazard": "mana-ban-zone",
+      "timeOfDay": "day",
+      "elementOpposites": {
+        "fire": ["frost", "water"],
+        "frost": ["fire"],
+        "light": ["shadow"],
+        "shadow": ["light", "holy"],
+        "water": ["lightning"],
+        "earth": ["air"],
+        "lightning": ["earth"]
+      }
+    },
+    "encounters": [
+      {
+        "id": "core:p4-vaeloria-quest-2-enc-1",
+        "enemyId": "core:p4-vaeloria-2",
+        "weight": 5,
+        "count": 2
+      },
+      {
+        "id": "core:p4-vaeloria-quest-2-enc-2",
+        "enemyId": "core:p4-vaeloria-3",
+        "weight": 4,
+        "count": 1
+      },
+      {
+        "id": "core:p4-vaeloria-quest-2-enc-3",
+        "enemyId": "core:p4-vaeloria-4",
+        "weight": 3,
+        "count": 1
+      },
+      {
+        "id": "core:p4-vaeloria-quest-2-enc-4",
+        "enemyId": "core:p4-boss-vaeloria",
+        "weight": 2,
+        "count": 1
+      }
+    ],
+    "nodeUnlocks": ["core:effect-damage"],
+    "requiredLevel": 5,
+    "source": "Adaptação jogável de geografia canônica; encontros e níveis são conteúdo novo."
+  },
+  {
+    "id": "core:p4-vaeloria-dungeon-3",
+    "kind": "expedition",
+    "name": "Vaeloria: masmorra regional",
+    "description": "Dungeon em Vaeloria com encontros, risco, ambiente e loot regional próprios.",
+    "activityKind": "dungeon",
+    "spawnIntervalMs": 60000,
+    "deathRewardRetention": 0.25,
+    "environment": {
+      "type": "plains",
+      "condition": "temperate",
+      "hazard": "mana-ban-zone",
+      "timeOfDay": "day",
+      "elementOpposites": {
+        "fire": ["frost", "water"],
+        "frost": ["fire"],
+        "light": ["shadow"],
+        "shadow": ["light", "holy"],
+        "water": ["lightning"],
+        "earth": ["air"],
+        "lightning": ["earth"]
+      }
+    },
+    "encounters": [
+      {
+        "id": "core:p4-vaeloria-dungeon-3-enc-1",
+        "enemyId": "core:p4-vaeloria-1",
+        "weight": 5,
+        "count": 1
+      },
+      {
+        "id": "core:p4-vaeloria-dungeon-3-enc-2",
+        "enemyId": "core:p4-vaeloria-2",
+        "weight": 4,
+        "count": 1
+      },
+      {
+        "id": "core:p4-vaeloria-dungeon-3-enc-3",
+        "enemyId": "core:p4-vaeloria-3",
+        "weight": 3,
+        "count": 1
+      },
+      {
+        "id": "core:p4-vaeloria-dungeon-3-enc-4",
+        "enemyId": "core:p4-vaeloria-4",
+        "weight": 2,
+        "count": 1
+      },
+      {
+        "id": "core:p4-vaeloria-dungeon-3-enc-5",
+        "enemyId": "core:p4-boss-vaeloria",
+        "weight": 1,
+        "count": 1,
+        "variantId": "elite"
+      }
+    ],
+    "nodeUnlocks": ["core:effect-damage", "core:effect-heal"],
+    "requiredLevel": 7,
+    "source": "Adaptação jogável de geografia canônica; encontros e níveis são conteúdo novo."
+  },
+  {
+    "id": "core:p4-vaeloria-raid-4",
+    "kind": "expedition",
+    "name": "Vaeloria: incursão de chefe",
+    "description": "Raid em Vaeloria com encontros, risco, ambiente e loot regional próprios.",
+    "activityKind": "raid",
+    "spawnIntervalMs": 90000,
+    "deathRewardRetention": 0.25,
+    "environment": {
+      "type": "plains",
+      "condition": "temperate",
+      "hazard": "mana-ban-zone",
+      "timeOfDay": "day",
+      "elementOpposites": {
+        "fire": ["frost", "water"],
+        "frost": ["fire"],
+        "light": ["shadow"],
+        "shadow": ["light", "holy"],
+        "water": ["lightning"],
+        "earth": ["air"],
+        "lightning": ["earth"]
+      }
+    },
+    "encounters": [
+      {
+        "id": "core:p4-vaeloria-raid-4-enc-1",
+        "enemyId": "core:p4-vaeloria-2",
+        "weight": 5,
+        "count": 1
+      },
+      {
+        "id": "core:p4-vaeloria-raid-4-enc-2",
+        "enemyId": "core:p4-vaeloria-3",
+        "weight": 4,
+        "count": 1
+      },
+      {
+        "id": "core:p4-vaeloria-raid-4-enc-3",
+        "enemyId": "core:p4-vaeloria-4",
+        "weight": 3,
+        "count": 1
+      },
+      {
+        "id": "core:p4-vaeloria-raid-4-enc-4",
+        "enemyId": "core:p4-boss-vaeloria",
+        "weight": 2,
+        "count": 1
+      },
+      {
+        "id": "core:p4-vaeloria-raid-4-enc-5",
+        "enemyId": "core:p4-boss-vaeloria",
+        "weight": 1,
+        "count": 1,
+        "variantId": "elite"
+      }
+    ],
+    "nodeUnlocks": ["core:effect-damage", "core:effect-heal"],
+    "requiredLevel": 9,
+    "source": "Adaptação jogável de geografia canônica; encontros e níveis são conteúdo novo."
+  },
+  {
+    "id": "core:p4-vrakkas-quest-1",
+    "kind": "expedition",
+    "name": "Vrakkas: reconhecimento",
+    "description": "Quest em Vrakkas com encontros, risco, ambiente e loot regional próprios.",
+    "activityKind": "quest",
+    "spawnIntervalMs": 45000,
+    "deathRewardRetention": 0.25,
+    "environment": {
+      "type": "imperial-city",
+      "condition": "continental",
+      "hazard": "arena-pressure",
+      "timeOfDay": "day",
+      "elementOpposites": {
+        "fire": ["frost", "water"],
+        "frost": ["fire"],
+        "light": ["shadow"],
+        "shadow": ["light", "holy"],
+        "water": ["lightning"],
+        "earth": ["air"],
+        "lightning": ["earth"]
+      }
+    },
+    "encounters": [
+      {
+        "id": "core:p4-vrakkas-quest-1-enc-1",
+        "enemyId": "core:p4-vrakkas-1",
+        "weight": 5,
+        "count": 2
+      },
+      {
+        "id": "core:p4-vrakkas-quest-1-enc-2",
+        "enemyId": "core:p4-vrakkas-2",
+        "weight": 4,
+        "count": 1
+      },
+      {
+        "id": "core:p4-vrakkas-quest-1-enc-3",
+        "enemyId": "core:p4-vrakkas-3",
+        "weight": 3,
+        "count": 1
+      }
+    ],
+    "nodeUnlocks": ["core:effect-damage"],
+    "requiredLevel": 6,
+    "source": "Adaptação jogável de geografia canônica; encontros e níveis são conteúdo novo."
+  },
+  {
+    "id": "core:p4-vrakkas-quest-2",
+    "kind": "expedition",
+    "name": "Vrakkas: rota de risco",
+    "description": "Quest em Vrakkas com encontros, risco, ambiente e loot regional próprios.",
+    "activityKind": "quest",
+    "spawnIntervalMs": 45000,
+    "deathRewardRetention": 0.25,
+    "environment": {
+      "type": "imperial-city",
+      "condition": "continental",
+      "hazard": "arena-pressure",
+      "timeOfDay": "day",
+      "elementOpposites": {
+        "fire": ["frost", "water"],
+        "frost": ["fire"],
+        "light": ["shadow"],
+        "shadow": ["light", "holy"],
+        "water": ["lightning"],
+        "earth": ["air"],
+        "lightning": ["earth"]
+      }
+    },
+    "encounters": [
+      {
+        "id": "core:p4-vrakkas-quest-2-enc-1",
+        "enemyId": "core:p4-vrakkas-2",
+        "weight": 5,
+        "count": 2
+      },
+      {
+        "id": "core:p4-vrakkas-quest-2-enc-2",
+        "enemyId": "core:p4-vrakkas-3",
+        "weight": 4,
+        "count": 1
+      },
+      {
+        "id": "core:p4-vrakkas-quest-2-enc-3",
+        "enemyId": "core:p4-vrakkas-4",
+        "weight": 3,
+        "count": 1
+      },
+      {
+        "id": "core:p4-vrakkas-quest-2-enc-4",
+        "enemyId": "core:p4-boss-vrakkas",
+        "weight": 2,
+        "count": 1
+      }
+    ],
+    "nodeUnlocks": ["core:effect-damage"],
+    "requiredLevel": 8,
+    "source": "Adaptação jogável de geografia canônica; encontros e níveis são conteúdo novo."
+  },
+  {
+    "id": "core:p4-vrakkas-dungeon-3",
+    "kind": "expedition",
+    "name": "Vrakkas: masmorra regional",
+    "description": "Dungeon em Vrakkas com encontros, risco, ambiente e loot regional próprios.",
+    "activityKind": "dungeon",
+    "spawnIntervalMs": 60000,
+    "deathRewardRetention": 0.25,
+    "environment": {
+      "type": "imperial-city",
+      "condition": "continental",
+      "hazard": "arena-pressure",
+      "timeOfDay": "day",
+      "elementOpposites": {
+        "fire": ["frost", "water"],
+        "frost": ["fire"],
+        "light": ["shadow"],
+        "shadow": ["light", "holy"],
+        "water": ["lightning"],
+        "earth": ["air"],
+        "lightning": ["earth"]
+      }
+    },
+    "encounters": [
+      {
+        "id": "core:p4-vrakkas-dungeon-3-enc-1",
+        "enemyId": "core:p4-vrakkas-1",
+        "weight": 5,
+        "count": 1
+      },
+      {
+        "id": "core:p4-vrakkas-dungeon-3-enc-2",
+        "enemyId": "core:p4-vrakkas-2",
+        "weight": 4,
+        "count": 1
+      },
+      {
+        "id": "core:p4-vrakkas-dungeon-3-enc-3",
+        "enemyId": "core:p4-vrakkas-3",
+        "weight": 3,
+        "count": 1
+      },
+      {
+        "id": "core:p4-vrakkas-dungeon-3-enc-4",
+        "enemyId": "core:p4-vrakkas-4",
+        "weight": 2,
+        "count": 1
+      },
+      {
+        "id": "core:p4-vrakkas-dungeon-3-enc-5",
+        "enemyId": "core:p4-boss-vrakkas",
+        "weight": 1,
+        "count": 1,
+        "variantId": "elite"
+      }
+    ],
+    "nodeUnlocks": ["core:effect-damage", "core:effect-heal"],
+    "requiredLevel": 10,
+    "source": "Adaptação jogável de geografia canônica; encontros e níveis são conteúdo novo."
+  },
+  {
+    "id": "core:p4-vrakkas-raid-4",
+    "kind": "expedition",
+    "name": "Vrakkas: incursão de chefe",
+    "description": "Raid em Vrakkas com encontros, risco, ambiente e loot regional próprios.",
+    "activityKind": "raid",
+    "spawnIntervalMs": 90000,
+    "deathRewardRetention": 0.25,
+    "environment": {
+      "type": "imperial-city",
+      "condition": "continental",
+      "hazard": "arena-pressure",
+      "timeOfDay": "day",
+      "elementOpposites": {
+        "fire": ["frost", "water"],
+        "frost": ["fire"],
+        "light": ["shadow"],
+        "shadow": ["light", "holy"],
+        "water": ["lightning"],
+        "earth": ["air"],
+        "lightning": ["earth"]
+      }
+    },
+    "encounters": [
+      {
+        "id": "core:p4-vrakkas-raid-4-enc-1",
+        "enemyId": "core:p4-vrakkas-2",
+        "weight": 5,
+        "count": 1
+      },
+      {
+        "id": "core:p4-vrakkas-raid-4-enc-2",
+        "enemyId": "core:p4-vrakkas-3",
+        "weight": 4,
+        "count": 1
+      },
+      {
+        "id": "core:p4-vrakkas-raid-4-enc-3",
+        "enemyId": "core:p4-vrakkas-4",
+        "weight": 3,
+        "count": 1
+      },
+      {
+        "id": "core:p4-vrakkas-raid-4-enc-4",
+        "enemyId": "core:p4-boss-vrakkas",
+        "weight": 2,
+        "count": 1
+      },
+      {
+        "id": "core:p4-vrakkas-raid-4-enc-5",
+        "enemyId": "core:p4-boss-vrakkas",
+        "weight": 1,
+        "count": 1,
+        "variantId": "elite"
+      }
+    ],
+    "nodeUnlocks": ["core:effect-damage", "core:effect-heal"],
+    "requiredLevel": 12,
+    "source": "Adaptação jogável de geografia canônica; encontros e níveis são conteúdo novo."
+  },
+  {
+    "id": "core:p4-kryos-quest-1",
+    "kind": "expedition",
+    "name": "Kryos: reconhecimento",
+    "description": "Quest em Kryos com encontros, risco, ambiente e loot regional próprios.",
+    "activityKind": "quest",
+    "spawnIntervalMs": 45000,
+    "deathRewardRetention": 0.25,
+    "environment": {
+      "type": "tundra",
+      "condition": "eternal-winter",
+      "hazard": "blizzard",
+      "timeOfDay": "day",
+      "elementOpposites": {
+        "fire": ["frost", "water"],
+        "frost": ["fire"],
+        "light": ["shadow"],
+        "shadow": ["light", "holy"],
+        "water": ["lightning"],
+        "earth": ["air"],
+        "lightning": ["earth"]
+      }
+    },
+    "encounters": [
+      {
+        "id": "core:p4-kryos-quest-1-enc-1",
+        "enemyId": "core:p4-kryos-1",
+        "weight": 5,
+        "count": 2
+      },
+      {
+        "id": "core:p4-kryos-quest-1-enc-2",
+        "enemyId": "core:p4-kryos-2",
+        "weight": 4,
+        "count": 1
+      },
+      {
+        "id": "core:p4-kryos-quest-1-enc-3",
+        "enemyId": "core:p4-kryos-3",
+        "weight": 3,
+        "count": 1
+      }
+    ],
+    "nodeUnlocks": ["core:effect-damage"],
+    "requiredLevel": 10,
+    "source": "Adaptação jogável de geografia canônica; encontros e níveis são conteúdo novo."
+  },
+  {
+    "id": "core:p4-kryos-quest-2",
+    "kind": "expedition",
+    "name": "Kryos: rota de risco",
+    "description": "Quest em Kryos com encontros, risco, ambiente e loot regional próprios.",
+    "activityKind": "quest",
+    "spawnIntervalMs": 45000,
+    "deathRewardRetention": 0.25,
+    "environment": {
+      "type": "tundra",
+      "condition": "eternal-winter",
+      "hazard": "blizzard",
+      "timeOfDay": "day",
+      "elementOpposites": {
+        "fire": ["frost", "water"],
+        "frost": ["fire"],
+        "light": ["shadow"],
+        "shadow": ["light", "holy"],
+        "water": ["lightning"],
+        "earth": ["air"],
+        "lightning": ["earth"]
+      }
+    },
+    "encounters": [
+      {
+        "id": "core:p4-kryos-quest-2-enc-1",
+        "enemyId": "core:p4-kryos-2",
+        "weight": 5,
+        "count": 2
+      },
+      {
+        "id": "core:p4-kryos-quest-2-enc-2",
+        "enemyId": "core:p4-kryos-3",
+        "weight": 4,
+        "count": 1
+      },
+      {
+        "id": "core:p4-kryos-quest-2-enc-3",
+        "enemyId": "core:p4-kryos-4",
+        "weight": 3,
+        "count": 1
+      },
+      {
+        "id": "core:p4-kryos-quest-2-enc-4",
+        "enemyId": "core:p4-boss-kryos",
+        "weight": 2,
+        "count": 1
+      }
+    ],
+    "nodeUnlocks": ["core:effect-damage"],
+    "requiredLevel": 12,
+    "source": "Adaptação jogável de geografia canônica; encontros e níveis são conteúdo novo."
+  },
+  {
+    "id": "core:p4-kryos-dungeon-3",
+    "kind": "expedition",
+    "name": "Kryos: masmorra regional",
+    "description": "Dungeon em Kryos com encontros, risco, ambiente e loot regional próprios.",
+    "activityKind": "dungeon",
+    "spawnIntervalMs": 60000,
+    "deathRewardRetention": 0.25,
+    "environment": {
+      "type": "tundra",
+      "condition": "eternal-winter",
+      "hazard": "blizzard",
+      "timeOfDay": "day",
+      "elementOpposites": {
+        "fire": ["frost", "water"],
+        "frost": ["fire"],
+        "light": ["shadow"],
+        "shadow": ["light", "holy"],
+        "water": ["lightning"],
+        "earth": ["air"],
+        "lightning": ["earth"]
+      }
+    },
+    "encounters": [
+      {
+        "id": "core:p4-kryos-dungeon-3-enc-1",
+        "enemyId": "core:p4-kryos-1",
+        "weight": 5,
+        "count": 1
+      },
+      {
+        "id": "core:p4-kryos-dungeon-3-enc-2",
+        "enemyId": "core:p4-kryos-2",
+        "weight": 4,
+        "count": 1
+      },
+      {
+        "id": "core:p4-kryos-dungeon-3-enc-3",
+        "enemyId": "core:p4-kryos-3",
+        "weight": 3,
+        "count": 1
+      },
+      {
+        "id": "core:p4-kryos-dungeon-3-enc-4",
+        "enemyId": "core:p4-kryos-4",
+        "weight": 2,
+        "count": 1
+      },
+      {
+        "id": "core:p4-kryos-dungeon-3-enc-5",
+        "enemyId": "core:p4-boss-kryos",
+        "weight": 1,
+        "count": 1,
+        "variantId": "elite"
+      }
+    ],
+    "nodeUnlocks": ["core:effect-damage", "core:effect-heal"],
+    "requiredLevel": 14,
+    "source": "Adaptação jogável de geografia canônica; encontros e níveis são conteúdo novo."
+  },
+  {
+    "id": "core:p4-kryos-raid-4",
+    "kind": "expedition",
+    "name": "Kryos: incursão de chefe",
+    "description": "Raid em Kryos com encontros, risco, ambiente e loot regional próprios.",
+    "activityKind": "raid",
+    "spawnIntervalMs": 90000,
+    "deathRewardRetention": 0.25,
+    "environment": {
+      "type": "tundra",
+      "condition": "eternal-winter",
+      "hazard": "blizzard",
+      "timeOfDay": "day",
+      "elementOpposites": {
+        "fire": ["frost", "water"],
+        "frost": ["fire"],
+        "light": ["shadow"],
+        "shadow": ["light", "holy"],
+        "water": ["lightning"],
+        "earth": ["air"],
+        "lightning": ["earth"]
+      }
+    },
+    "encounters": [
+      {
+        "id": "core:p4-kryos-raid-4-enc-1",
+        "enemyId": "core:p4-kryos-2",
+        "weight": 5,
+        "count": 1
+      },
+      {
+        "id": "core:p4-kryos-raid-4-enc-2",
+        "enemyId": "core:p4-kryos-3",
+        "weight": 4,
+        "count": 1
+      },
+      {
+        "id": "core:p4-kryos-raid-4-enc-3",
+        "enemyId": "core:p4-kryos-4",
+        "weight": 3,
+        "count": 1
+      },
+      {
+        "id": "core:p4-kryos-raid-4-enc-4",
+        "enemyId": "core:p4-boss-kryos",
+        "weight": 2,
+        "count": 1
+      },
+      {
+        "id": "core:p4-kryos-raid-4-enc-5",
+        "enemyId": "core:p4-boss-kryos",
+        "weight": 1,
+        "count": 1,
+        "variantId": "elite"
+      }
+    ],
+    "nodeUnlocks": ["core:effect-damage", "core:effect-heal"],
+    "requiredLevel": 16,
+    "source": "Adaptação jogável de geografia canônica; encontros e níveis são conteúdo novo."
+  },
+  {
+    "id": "core:p4-riptide-quest-1",
+    "kind": "expedition",
+    "name": "Riptide: reconhecimento",
+    "description": "Quest em Riptide com encontros, risco, ambiente e loot regional próprios.",
+    "activityKind": "quest",
+    "spawnIntervalMs": 45000,
+    "deathRewardRetention": 0.25,
+    "environment": {
+      "type": "island",
+      "condition": "tropical",
+      "hazard": "storm-tide",
+      "timeOfDay": "day",
+      "elementOpposites": {
+        "fire": ["frost", "water"],
+        "frost": ["fire"],
+        "light": ["shadow"],
+        "shadow": ["light", "holy"],
+        "water": ["lightning"],
+        "earth": ["air"],
+        "lightning": ["earth"]
+      }
+    },
+    "encounters": [
+      {
+        "id": "core:p4-riptide-quest-1-enc-1",
+        "enemyId": "core:p4-riptide-1",
+        "weight": 5,
+        "count": 2
+      },
+      {
+        "id": "core:p4-riptide-quest-1-enc-2",
+        "enemyId": "core:p4-riptide-2",
+        "weight": 4,
+        "count": 1
+      },
+      {
+        "id": "core:p4-riptide-quest-1-enc-3",
+        "enemyId": "core:p4-riptide-3",
+        "weight": 3,
+        "count": 1
+      }
+    ],
+    "nodeUnlocks": ["core:effect-damage"],
+    "requiredLevel": 8,
+    "source": "Adaptação jogável de geografia canônica; encontros e níveis são conteúdo novo."
+  },
+  {
+    "id": "core:p4-riptide-quest-2",
+    "kind": "expedition",
+    "name": "Riptide: rota de risco",
+    "description": "Quest em Riptide com encontros, risco, ambiente e loot regional próprios.",
+    "activityKind": "quest",
+    "spawnIntervalMs": 45000,
+    "deathRewardRetention": 0.25,
+    "environment": {
+      "type": "island",
+      "condition": "tropical",
+      "hazard": "storm-tide",
+      "timeOfDay": "day",
+      "elementOpposites": {
+        "fire": ["frost", "water"],
+        "frost": ["fire"],
+        "light": ["shadow"],
+        "shadow": ["light", "holy"],
+        "water": ["lightning"],
+        "earth": ["air"],
+        "lightning": ["earth"]
+      }
+    },
+    "encounters": [
+      {
+        "id": "core:p4-riptide-quest-2-enc-1",
+        "enemyId": "core:p4-riptide-2",
+        "weight": 5,
+        "count": 2
+      },
+      {
+        "id": "core:p4-riptide-quest-2-enc-2",
+        "enemyId": "core:p4-riptide-3",
+        "weight": 4,
+        "count": 1
+      },
+      {
+        "id": "core:p4-riptide-quest-2-enc-3",
+        "enemyId": "core:p4-riptide-4",
+        "weight": 3,
+        "count": 1
+      },
+      {
+        "id": "core:p4-riptide-quest-2-enc-4",
+        "enemyId": "core:p4-boss-riptide",
+        "weight": 2,
+        "count": 1
+      }
+    ],
+    "nodeUnlocks": ["core:effect-damage"],
+    "requiredLevel": 10,
+    "source": "Adaptação jogável de geografia canônica; encontros e níveis são conteúdo novo."
+  },
+  {
+    "id": "core:p4-riptide-dungeon-3",
+    "kind": "expedition",
+    "name": "Riptide: masmorra regional",
+    "description": "Dungeon em Riptide com encontros, risco, ambiente e loot regional próprios.",
+    "activityKind": "dungeon",
+    "spawnIntervalMs": 60000,
+    "deathRewardRetention": 0.25,
+    "environment": {
+      "type": "island",
+      "condition": "tropical",
+      "hazard": "storm-tide",
+      "timeOfDay": "day",
+      "elementOpposites": {
+        "fire": ["frost", "water"],
+        "frost": ["fire"],
+        "light": ["shadow"],
+        "shadow": ["light", "holy"],
+        "water": ["lightning"],
+        "earth": ["air"],
+        "lightning": ["earth"]
+      }
+    },
+    "encounters": [
+      {
+        "id": "core:p4-riptide-dungeon-3-enc-1",
+        "enemyId": "core:p4-riptide-1",
+        "weight": 5,
+        "count": 1
+      },
+      {
+        "id": "core:p4-riptide-dungeon-3-enc-2",
+        "enemyId": "core:p4-riptide-2",
+        "weight": 4,
+        "count": 1
+      },
+      {
+        "id": "core:p4-riptide-dungeon-3-enc-3",
+        "enemyId": "core:p4-riptide-3",
+        "weight": 3,
+        "count": 1
+      },
+      {
+        "id": "core:p4-riptide-dungeon-3-enc-4",
+        "enemyId": "core:p4-riptide-4",
+        "weight": 2,
+        "count": 1
+      },
+      {
+        "id": "core:p4-riptide-dungeon-3-enc-5",
+        "enemyId": "core:p4-boss-riptide",
+        "weight": 1,
+        "count": 1,
+        "variantId": "elite"
+      }
+    ],
+    "nodeUnlocks": ["core:effect-damage", "core:effect-heal"],
+    "requiredLevel": 12,
+    "source": "Adaptação jogável de geografia canônica; encontros e níveis são conteúdo novo."
+  },
+  {
+    "id": "core:p4-riptide-raid-4",
+    "kind": "expedition",
+    "name": "Riptide: incursão de chefe",
+    "description": "Raid em Riptide com encontros, risco, ambiente e loot regional próprios.",
+    "activityKind": "raid",
+    "spawnIntervalMs": 90000,
+    "deathRewardRetention": 0.25,
+    "environment": {
+      "type": "island",
+      "condition": "tropical",
+      "hazard": "storm-tide",
+      "timeOfDay": "day",
+      "elementOpposites": {
+        "fire": ["frost", "water"],
+        "frost": ["fire"],
+        "light": ["shadow"],
+        "shadow": ["light", "holy"],
+        "water": ["lightning"],
+        "earth": ["air"],
+        "lightning": ["earth"]
+      }
+    },
+    "encounters": [
+      {
+        "id": "core:p4-riptide-raid-4-enc-1",
+        "enemyId": "core:p4-riptide-2",
+        "weight": 5,
+        "count": 1
+      },
+      {
+        "id": "core:p4-riptide-raid-4-enc-2",
+        "enemyId": "core:p4-riptide-3",
+        "weight": 4,
+        "count": 1
+      },
+      {
+        "id": "core:p4-riptide-raid-4-enc-3",
+        "enemyId": "core:p4-riptide-4",
+        "weight": 3,
+        "count": 1
+      },
+      {
+        "id": "core:p4-riptide-raid-4-enc-4",
+        "enemyId": "core:p4-boss-riptide",
+        "weight": 2,
+        "count": 1
+      },
+      {
+        "id": "core:p4-riptide-raid-4-enc-5",
+        "enemyId": "core:p4-boss-riptide",
+        "weight": 1,
+        "count": 1,
+        "variantId": "elite"
+      }
+    ],
+    "nodeUnlocks": ["core:effect-damage", "core:effect-heal"],
+    "requiredLevel": 14,
+    "source": "Adaptação jogável de geografia canônica; encontros e níveis são conteúdo novo."
+  },
+  {
+    "id": "core:p4-caelum-quest-1",
+    "kind": "expedition",
+    "name": "Caelum: reconhecimento",
+    "description": "Quest em Caelum com encontros, risco, ambiente e loot regional próprios.",
+    "activityKind": "quest",
+    "spawnIntervalMs": 45000,
+    "deathRewardRetention": 0.25,
+    "environment": {
+      "type": "mountain",
+      "condition": "alpine",
+      "hazard": "time-distortion",
+      "timeOfDay": "day",
+      "elementOpposites": {
+        "fire": ["frost", "water"],
+        "frost": ["fire"],
+        "light": ["shadow"],
+        "shadow": ["light", "holy"],
+        "water": ["lightning"],
+        "earth": ["air"],
+        "lightning": ["earth"]
+      }
+    },
+    "encounters": [
+      {
+        "id": "core:p4-caelum-quest-1-enc-1",
+        "enemyId": "core:p4-caelum-1",
+        "weight": 5,
+        "count": 2
+      },
+      {
+        "id": "core:p4-caelum-quest-1-enc-2",
+        "enemyId": "core:p4-caelum-2",
+        "weight": 4,
+        "count": 1
+      },
+      {
+        "id": "core:p4-caelum-quest-1-enc-3",
+        "enemyId": "core:p4-caelum-3",
+        "weight": 3,
+        "count": 1
+      }
+    ],
+    "nodeUnlocks": ["core:effect-damage"],
+    "requiredLevel": 15,
+    "source": "Adaptação jogável de geografia canônica; encontros e níveis são conteúdo novo."
+  },
+  {
+    "id": "core:p4-caelum-quest-2",
+    "kind": "expedition",
+    "name": "Caelum: rota de risco",
+    "description": "Quest em Caelum com encontros, risco, ambiente e loot regional próprios.",
+    "activityKind": "quest",
+    "spawnIntervalMs": 45000,
+    "deathRewardRetention": 0.25,
+    "environment": {
+      "type": "mountain",
+      "condition": "alpine",
+      "hazard": "time-distortion",
+      "timeOfDay": "day",
+      "elementOpposites": {
+        "fire": ["frost", "water"],
+        "frost": ["fire"],
+        "light": ["shadow"],
+        "shadow": ["light", "holy"],
+        "water": ["lightning"],
+        "earth": ["air"],
+        "lightning": ["earth"]
+      }
+    },
+    "encounters": [
+      {
+        "id": "core:p4-caelum-quest-2-enc-1",
+        "enemyId": "core:p4-caelum-2",
+        "weight": 5,
+        "count": 2
+      },
+      {
+        "id": "core:p4-caelum-quest-2-enc-2",
+        "enemyId": "core:p4-caelum-3",
+        "weight": 4,
+        "count": 1
+      },
+      {
+        "id": "core:p4-caelum-quest-2-enc-3",
+        "enemyId": "core:p4-caelum-4",
+        "weight": 3,
+        "count": 1
+      },
+      {
+        "id": "core:p4-caelum-quest-2-enc-4",
+        "enemyId": "core:p4-boss-caelum",
+        "weight": 2,
+        "count": 1
+      }
+    ],
+    "nodeUnlocks": ["core:effect-damage"],
+    "requiredLevel": 17,
+    "source": "Adaptação jogável de geografia canônica; encontros e níveis são conteúdo novo."
+  },
+  {
+    "id": "core:p4-caelum-dungeon-3",
+    "kind": "expedition",
+    "name": "Caelum: masmorra regional",
+    "description": "Dungeon em Caelum com encontros, risco, ambiente e loot regional próprios.",
+    "activityKind": "dungeon",
+    "spawnIntervalMs": 60000,
+    "deathRewardRetention": 0.25,
+    "environment": {
+      "type": "mountain",
+      "condition": "alpine",
+      "hazard": "time-distortion",
+      "timeOfDay": "day",
+      "elementOpposites": {
+        "fire": ["frost", "water"],
+        "frost": ["fire"],
+        "light": ["shadow"],
+        "shadow": ["light", "holy"],
+        "water": ["lightning"],
+        "earth": ["air"],
+        "lightning": ["earth"]
+      }
+    },
+    "encounters": [
+      {
+        "id": "core:p4-caelum-dungeon-3-enc-1",
+        "enemyId": "core:p4-caelum-1",
+        "weight": 5,
+        "count": 1
+      },
+      {
+        "id": "core:p4-caelum-dungeon-3-enc-2",
+        "enemyId": "core:p4-caelum-2",
+        "weight": 4,
+        "count": 1
+      },
+      {
+        "id": "core:p4-caelum-dungeon-3-enc-3",
+        "enemyId": "core:p4-caelum-3",
+        "weight": 3,
+        "count": 1
+      },
+      {
+        "id": "core:p4-caelum-dungeon-3-enc-4",
+        "enemyId": "core:p4-caelum-4",
+        "weight": 2,
+        "count": 1
+      },
+      {
+        "id": "core:p4-caelum-dungeon-3-enc-5",
+        "enemyId": "core:p4-boss-caelum",
+        "weight": 1,
+        "count": 1,
+        "variantId": "elite"
+      }
+    ],
+    "nodeUnlocks": ["core:effect-damage", "core:effect-heal"],
+    "requiredLevel": 19,
+    "source": "Adaptação jogável de geografia canônica; encontros e níveis são conteúdo novo."
+  },
+  {
+    "id": "core:p4-caelum-raid-4",
+    "kind": "expedition",
+    "name": "Caelum: incursão de chefe",
+    "description": "Raid em Caelum com encontros, risco, ambiente e loot regional próprios.",
+    "activityKind": "raid",
+    "spawnIntervalMs": 90000,
+    "deathRewardRetention": 0.25,
+    "environment": {
+      "type": "mountain",
+      "condition": "alpine",
+      "hazard": "time-distortion",
+      "timeOfDay": "day",
+      "elementOpposites": {
+        "fire": ["frost", "water"],
+        "frost": ["fire"],
+        "light": ["shadow"],
+        "shadow": ["light", "holy"],
+        "water": ["lightning"],
+        "earth": ["air"],
+        "lightning": ["earth"]
+      }
+    },
+    "encounters": [
+      {
+        "id": "core:p4-caelum-raid-4-enc-1",
+        "enemyId": "core:p4-caelum-2",
+        "weight": 5,
+        "count": 1
+      },
+      {
+        "id": "core:p4-caelum-raid-4-enc-2",
+        "enemyId": "core:p4-caelum-3",
+        "weight": 4,
+        "count": 1
+      },
+      {
+        "id": "core:p4-caelum-raid-4-enc-3",
+        "enemyId": "core:p4-caelum-4",
+        "weight": 3,
+        "count": 1
+      },
+      {
+        "id": "core:p4-caelum-raid-4-enc-4",
+        "enemyId": "core:p4-boss-caelum",
+        "weight": 2,
+        "count": 1
+      },
+      {
+        "id": "core:p4-caelum-raid-4-enc-5",
+        "enemyId": "core:p4-boss-caelum",
+        "weight": 1,
+        "count": 1,
+        "variantId": "elite"
+      }
+    ],
+    "nodeUnlocks": ["core:effect-damage", "core:effect-heal"],
+    "requiredLevel": 21,
+    "source": "Adaptação jogável de geografia canônica; encontros e níveis são conteúdo novo."
+  },
+  {
+    "id": "core:p4-mourland-quest-1",
+    "kind": "expedition",
+    "name": "Mourland: reconhecimento",
+    "description": "Quest em Mourland com encontros, risco, ambiente e loot regional próprios.",
+    "activityKind": "quest",
+    "spawnIntervalMs": 45000,
+    "deathRewardRetention": 0.25,
+    "environment": {
+      "type": "island",
+      "condition": "black-mist",
+      "hazard": "black-mist",
+      "timeOfDay": "night",
+      "elementOpposites": {
+        "fire": ["frost", "water"],
+        "frost": ["fire"],
+        "light": ["shadow"],
+        "shadow": ["light", "holy"],
+        "water": ["lightning"],
+        "earth": ["air"],
+        "lightning": ["earth"]
+      }
+    },
+    "encounters": [
+      {
+        "id": "core:p4-mourland-quest-1-enc-1",
+        "enemyId": "core:p4-mourland-1",
+        "weight": 5,
+        "count": 2
+      },
+      {
+        "id": "core:p4-mourland-quest-1-enc-2",
+        "enemyId": "core:p4-mourland-2",
+        "weight": 4,
+        "count": 1
+      },
+      {
+        "id": "core:p4-mourland-quest-1-enc-3",
+        "enemyId": "core:p4-mourland-3",
+        "weight": 3,
+        "count": 1
+      }
+    ],
+    "nodeUnlocks": ["core:effect-damage"],
+    "requiredLevel": 12,
+    "source": "Adaptação jogável de geografia canônica; encontros e níveis são conteúdo novo."
+  },
+  {
+    "id": "core:p4-mourland-quest-2",
+    "kind": "expedition",
+    "name": "Mourland: rota de risco",
+    "description": "Quest em Mourland com encontros, risco, ambiente e loot regional próprios.",
+    "activityKind": "quest",
+    "spawnIntervalMs": 45000,
+    "deathRewardRetention": 0.25,
+    "environment": {
+      "type": "island",
+      "condition": "black-mist",
+      "hazard": "black-mist",
+      "timeOfDay": "night",
+      "elementOpposites": {
+        "fire": ["frost", "water"],
+        "frost": ["fire"],
+        "light": ["shadow"],
+        "shadow": ["light", "holy"],
+        "water": ["lightning"],
+        "earth": ["air"],
+        "lightning": ["earth"]
+      }
+    },
+    "encounters": [
+      {
+        "id": "core:p4-mourland-quest-2-enc-1",
+        "enemyId": "core:p4-mourland-2",
+        "weight": 5,
+        "count": 2
+      },
+      {
+        "id": "core:p4-mourland-quest-2-enc-2",
+        "enemyId": "core:p4-mourland-3",
+        "weight": 4,
+        "count": 1
+      },
+      {
+        "id": "core:p4-mourland-quest-2-enc-3",
+        "enemyId": "core:p4-mourland-4",
+        "weight": 3,
+        "count": 1
+      },
+      {
+        "id": "core:p4-mourland-quest-2-enc-4",
+        "enemyId": "core:p4-boss-mourland",
+        "weight": 2,
+        "count": 1
+      }
+    ],
+    "nodeUnlocks": ["core:effect-damage"],
+    "requiredLevel": 14,
+    "source": "Adaptação jogável de geografia canônica; encontros e níveis são conteúdo novo."
+  },
+  {
+    "id": "core:p4-mourland-dungeon-3",
+    "kind": "expedition",
+    "name": "Mourland: masmorra regional",
+    "description": "Dungeon em Mourland com encontros, risco, ambiente e loot regional próprios.",
+    "activityKind": "dungeon",
+    "spawnIntervalMs": 60000,
+    "deathRewardRetention": 0.25,
+    "environment": {
+      "type": "island",
+      "condition": "black-mist",
+      "hazard": "black-mist",
+      "timeOfDay": "night",
+      "elementOpposites": {
+        "fire": ["frost", "water"],
+        "frost": ["fire"],
+        "light": ["shadow"],
+        "shadow": ["light", "holy"],
+        "water": ["lightning"],
+        "earth": ["air"],
+        "lightning": ["earth"]
+      }
+    },
+    "encounters": [
+      {
+        "id": "core:p4-mourland-dungeon-3-enc-1",
+        "enemyId": "core:p4-mourland-1",
+        "weight": 5,
+        "count": 1
+      },
+      {
+        "id": "core:p4-mourland-dungeon-3-enc-2",
+        "enemyId": "core:p4-mourland-2",
+        "weight": 4,
+        "count": 1
+      },
+      {
+        "id": "core:p4-mourland-dungeon-3-enc-3",
+        "enemyId": "core:p4-mourland-3",
+        "weight": 3,
+        "count": 1
+      },
+      {
+        "id": "core:p4-mourland-dungeon-3-enc-4",
+        "enemyId": "core:p4-mourland-4",
+        "weight": 2,
+        "count": 1
+      },
+      {
+        "id": "core:p4-mourland-dungeon-3-enc-5",
+        "enemyId": "core:p4-boss-mourland",
+        "weight": 1,
+        "count": 1,
+        "variantId": "elite"
+      }
+    ],
+    "nodeUnlocks": ["core:effect-damage", "core:effect-heal"],
+    "requiredLevel": 16,
+    "source": "Adaptação jogável de geografia canônica; encontros e níveis são conteúdo novo."
+  },
+  {
+    "id": "core:p4-mourland-raid-4",
+    "kind": "expedition",
+    "name": "Mourland: incursão de chefe",
+    "description": "Raid em Mourland com encontros, risco, ambiente e loot regional próprios.",
+    "activityKind": "raid",
+    "spawnIntervalMs": 90000,
+    "deathRewardRetention": 0.25,
+    "environment": {
+      "type": "island",
+      "condition": "black-mist",
+      "hazard": "black-mist",
+      "timeOfDay": "night",
+      "elementOpposites": {
+        "fire": ["frost", "water"],
+        "frost": ["fire"],
+        "light": ["shadow"],
+        "shadow": ["light", "holy"],
+        "water": ["lightning"],
+        "earth": ["air"],
+        "lightning": ["earth"]
+      }
+    },
+    "encounters": [
+      {
+        "id": "core:p4-mourland-raid-4-enc-1",
+        "enemyId": "core:p4-mourland-2",
+        "weight": 5,
+        "count": 1
+      },
+      {
+        "id": "core:p4-mourland-raid-4-enc-2",
+        "enemyId": "core:p4-mourland-3",
+        "weight": 4,
+        "count": 1
+      },
+      {
+        "id": "core:p4-mourland-raid-4-enc-3",
+        "enemyId": "core:p4-mourland-4",
+        "weight": 3,
+        "count": 1
+      },
+      {
+        "id": "core:p4-mourland-raid-4-enc-4",
+        "enemyId": "core:p4-boss-mourland",
+        "weight": 2,
+        "count": 1
+      },
+      {
+        "id": "core:p4-mourland-raid-4-enc-5",
+        "enemyId": "core:p4-boss-mourland",
+        "weight": 1,
+        "count": 1,
+        "variantId": "elite"
+      }
+    ],
+    "nodeUnlocks": ["core:effect-damage", "core:effect-heal"],
+    "requiredLevel": 18,
+    "source": "Adaptação jogável de geografia canônica; encontros e níveis são conteúdo novo."
+  },
+  {
+    "id": "core:p4-xochitlan-quest-1",
+    "kind": "expedition",
+    "name": "Xochitlan: reconhecimento",
+    "description": "Quest em Xochitlan com encontros, risco, ambiente e loot regional próprios.",
+    "activityKind": "quest",
+    "spawnIntervalMs": 45000,
+    "deathRewardRetention": 0.25,
+    "environment": {
+      "type": "enclosed-valley",
+      "condition": "varied",
+      "hazard": "mystic-barrier",
+      "timeOfDay": "day",
+      "elementOpposites": {
+        "fire": ["frost", "water"],
+        "frost": ["fire"],
+        "light": ["shadow"],
+        "shadow": ["light", "holy"],
+        "water": ["lightning"],
+        "earth": ["air"],
+        "lightning": ["earth"]
+      }
+    },
+    "encounters": [
+      {
+        "id": "core:p4-xochitlan-quest-1-enc-1",
+        "enemyId": "core:p4-xochitlan-1",
+        "weight": 5,
+        "count": 2
+      },
+      {
+        "id": "core:p4-xochitlan-quest-1-enc-2",
+        "enemyId": "core:p4-xochitlan-2",
+        "weight": 4,
+        "count": 1
+      },
+      {
+        "id": "core:p4-xochitlan-quest-1-enc-3",
+        "enemyId": "core:p4-xochitlan-3",
+        "weight": 3,
+        "count": 1
+      }
+    ],
+    "nodeUnlocks": ["core:effect-damage"],
+    "requiredLevel": 18,
+    "source": "Adaptação jogável de geografia canônica; encontros e níveis são conteúdo novo."
+  },
+  {
+    "id": "core:p4-xochitlan-quest-2",
+    "kind": "expedition",
+    "name": "Xochitlan: rota de risco",
+    "description": "Quest em Xochitlan com encontros, risco, ambiente e loot regional próprios.",
+    "activityKind": "quest",
+    "spawnIntervalMs": 45000,
+    "deathRewardRetention": 0.25,
+    "environment": {
+      "type": "enclosed-valley",
+      "condition": "varied",
+      "hazard": "mystic-barrier",
+      "timeOfDay": "day",
+      "elementOpposites": {
+        "fire": ["frost", "water"],
+        "frost": ["fire"],
+        "light": ["shadow"],
+        "shadow": ["light", "holy"],
+        "water": ["lightning"],
+        "earth": ["air"],
+        "lightning": ["earth"]
+      }
+    },
+    "encounters": [
+      {
+        "id": "core:p4-xochitlan-quest-2-enc-1",
+        "enemyId": "core:p4-xochitlan-2",
+        "weight": 5,
+        "count": 2
+      },
+      {
+        "id": "core:p4-xochitlan-quest-2-enc-2",
+        "enemyId": "core:p4-xochitlan-3",
+        "weight": 4,
+        "count": 1
+      },
+      {
+        "id": "core:p4-xochitlan-quest-2-enc-3",
+        "enemyId": "core:p4-xochitlan-4",
+        "weight": 3,
+        "count": 1
+      },
+      {
+        "id": "core:p4-xochitlan-quest-2-enc-4",
+        "enemyId": "core:p4-boss-xochitlan",
+        "weight": 2,
+        "count": 1
+      }
+    ],
+    "nodeUnlocks": ["core:effect-damage"],
+    "requiredLevel": 20,
+    "source": "Adaptação jogável de geografia canônica; encontros e níveis são conteúdo novo."
+  },
+  {
+    "id": "core:p4-xochitlan-dungeon-3",
+    "kind": "expedition",
+    "name": "Xochitlan: masmorra regional",
+    "description": "Dungeon em Xochitlan com encontros, risco, ambiente e loot regional próprios.",
+    "activityKind": "dungeon",
+    "spawnIntervalMs": 60000,
+    "deathRewardRetention": 0.25,
+    "environment": {
+      "type": "enclosed-valley",
+      "condition": "varied",
+      "hazard": "mystic-barrier",
+      "timeOfDay": "day",
+      "elementOpposites": {
+        "fire": ["frost", "water"],
+        "frost": ["fire"],
+        "light": ["shadow"],
+        "shadow": ["light", "holy"],
+        "water": ["lightning"],
+        "earth": ["air"],
+        "lightning": ["earth"]
+      }
+    },
+    "encounters": [
+      {
+        "id": "core:p4-xochitlan-dungeon-3-enc-1",
+        "enemyId": "core:p4-xochitlan-1",
+        "weight": 5,
+        "count": 1
+      },
+      {
+        "id": "core:p4-xochitlan-dungeon-3-enc-2",
+        "enemyId": "core:p4-xochitlan-2",
+        "weight": 4,
+        "count": 1
+      },
+      {
+        "id": "core:p4-xochitlan-dungeon-3-enc-3",
+        "enemyId": "core:p4-xochitlan-3",
+        "weight": 3,
+        "count": 1
+      },
+      {
+        "id": "core:p4-xochitlan-dungeon-3-enc-4",
+        "enemyId": "core:p4-xochitlan-4",
+        "weight": 2,
+        "count": 1
+      },
+      {
+        "id": "core:p4-xochitlan-dungeon-3-enc-5",
+        "enemyId": "core:p4-boss-xochitlan",
+        "weight": 1,
+        "count": 1,
+        "variantId": "elite"
+      }
+    ],
+    "nodeUnlocks": ["core:effect-damage", "core:effect-heal"],
+    "requiredLevel": 22,
+    "source": "Adaptação jogável de geografia canônica; encontros e níveis são conteúdo novo."
+  },
+  {
+    "id": "core:p4-xochitlan-raid-4",
+    "kind": "expedition",
+    "name": "Xochitlan: incursão de chefe",
+    "description": "Raid em Xochitlan com encontros, risco, ambiente e loot regional próprios.",
+    "activityKind": "raid",
+    "spawnIntervalMs": 90000,
+    "deathRewardRetention": 0.25,
+    "environment": {
+      "type": "enclosed-valley",
+      "condition": "varied",
+      "hazard": "mystic-barrier",
+      "timeOfDay": "day",
+      "elementOpposites": {
+        "fire": ["frost", "water"],
+        "frost": ["fire"],
+        "light": ["shadow"],
+        "shadow": ["light", "holy"],
+        "water": ["lightning"],
+        "earth": ["air"],
+        "lightning": ["earth"]
+      }
+    },
+    "encounters": [
+      {
+        "id": "core:p4-xochitlan-raid-4-enc-1",
+        "enemyId": "core:p4-xochitlan-2",
+        "weight": 5,
+        "count": 1
+      },
+      {
+        "id": "core:p4-xochitlan-raid-4-enc-2",
+        "enemyId": "core:p4-xochitlan-3",
+        "weight": 4,
+        "count": 1
+      },
+      {
+        "id": "core:p4-xochitlan-raid-4-enc-3",
+        "enemyId": "core:p4-xochitlan-4",
+        "weight": 3,
+        "count": 1
+      },
+      {
+        "id": "core:p4-xochitlan-raid-4-enc-4",
+        "enemyId": "core:p4-boss-xochitlan",
+        "weight": 2,
+        "count": 1
+      },
+      {
+        "id": "core:p4-xochitlan-raid-4-enc-5",
+        "enemyId": "core:p4-boss-xochitlan",
+        "weight": 1,
+        "count": 1,
+        "variantId": "elite"
+      }
+    ],
+    "nodeUnlocks": ["core:effect-damage", "core:effect-heal"],
+    "requiredLevel": 24,
+    "source": "Adaptação jogável de geografia canônica; encontros e níveis são conteúdo novo."
   }
 ]

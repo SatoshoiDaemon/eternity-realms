@@ -2,8 +2,20 @@ import { Capacitor } from '@capacitor/core';
 import { lazy, Suspense, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { loadOfficialContent, type ContentCatalog } from '../content/registry';
 import { claimMission, getMissionProgress } from '../domain/mission-engine';
+import { craftRecipe } from '../domain/crafting';
+import { consumeItem } from '../domain/item-use';
+import {
+  getAllImplantDefinitions,
+  getAlchemicalLoad,
+  getBrokenImplantIds,
+  getDedalusSyndrome,
+  getImplantCapacity,
+  getInstalledImplants,
+  installImplant,
+  removeBrokenImplant,
+} from '../domain/implants';
 import { createCharacter, createInitialGameState } from '../domain/model';
-import { awardExperience, grantItems } from '../domain/progression';
+import { awardExperience, grantItems, spendAttributePoint } from '../domain/progression';
 import {
   cancelActiveSession,
   editQueuedSession,
@@ -75,6 +87,7 @@ import './game-app.css';
 import { unequipItem, type EquipmentSlot } from '../domain/forge';
 import { unlockNodes } from '../nodes/library';
 import { exportTextFile } from '../native/file-actions';
+import { MarketPanel } from './MarketPanel';
 
 export interface GameRepositoryPort {
   transact(reducer: (current: GameState | null) => GameState): Promise<GameState>;
@@ -92,7 +105,8 @@ interface GameAppProps {
 type MainTab = 'activities' | 'combat' | 'home' | 'missions' | 'character';
 type CombatView =
   'expeditions' | 'quests' | 'dungeons' | 'raids' | 'bestiary' | 'arena' | 'records';
-type CharacterView = 'overview' | 'equipment' | 'inventory' | 'skills' | 'forge' | 'nodes';
+type CharacterView =
+  'overview' | 'equipment' | 'inventory' | 'skills' | 'forge' | 'nodes' | 'implants';
 
 const OFFICIAL_CONTENT = loadOfficialContent();
 const SettingsScreen = lazy(() =>
@@ -147,6 +161,7 @@ const activityCategories = [
   },
   { id: 'profession', label: t('activity.category.profession'), values: ['profession', 'skill'] },
   { id: 'skills', label: t('activity.category.skills'), values: ['development'] },
+  { id: 'market', label: t('activity.category.market'), values: [] },
   { id: 'all', label: t('activity.category.all'), values: ['all'] },
 ] as const;
 
@@ -165,6 +180,7 @@ const characterNavigation: Array<{ id: CharacterView; label: string }> = [
   { id: 'equipment', label: 'Equipamentos' },
   { id: 'inventory', label: 'Inventário' },
   { id: 'skills', label: 'Habilidades' },
+  { id: 'implants', label: 'Implantes' },
   { id: 'forge', label: 'Forja' },
   { id: 'nodes', label: 'Construções' },
 ];
@@ -338,7 +354,9 @@ export function GameApp({
   const [unseenNotes, setUnseenNotes] = useState(() =>
     getUnseenChangelogs(storage.getItem('eternity-realms:changelog-seen:v1')),
   );
-  const [missionCadence, setMissionCadence] = useState<'main' | 'daily' | 'weekly'>('main');
+  const [missionCadence, setMissionCadence] = useState<'main' | 'secondary' | 'daily' | 'weekly'>(
+    'main',
+  );
   const [inventorySearch, setInventorySearch] = useState('');
   const [inventorySort, setInventorySort] = useState('name');
   const logger = useRef(new DebugLog(2_000, clock));
@@ -474,6 +492,46 @@ export function GameApp({
         ),
       );
     },
+    [activeContent, clock, runSafely, transact],
+  );
+
+  const craftRecipeAction = useCallback(
+    (recipeId: string) =>
+      runSafely(async () => {
+        await transact((current) => {
+          const state = current ?? createInitialGameState();
+          if (!state.character) {
+            throw new Error('Crie um personagem antes de alterar equipamentos ou construções.');
+          }
+          const craftId = `${state.character.id}:craft:${state.revision + 1}:${recipeId}`;
+          return craftRecipe(state, activeContent, recipeId, craftId, clock());
+        }, 'app');
+      }),
+    [activeContent, clock, runSafely, transact],
+  );
+
+  const consumeItemAction = useCallback(
+    (itemId: string) =>
+      runSafely(async () => {
+        await transact((current) => {
+          const state = current ?? createInitialGameState();
+          const useId = `${state.character?.id ?? 'character'}:use:${state.revision + 1}:${itemId}`;
+          return consumeItem(state, activeContent, itemId, useId, clock());
+        }, 'app');
+      }),
+    [activeContent, clock, runSafely, transact],
+  );
+
+  const installImplantAction = useCallback(
+    (implantId: string) =>
+      runSafely(async () => {
+        await transact((current) => {
+          const game = current ?? createInitialGameState();
+          if (!game.character) throw new Error('Crie um personagem antes de instalar implantes.');
+          const operationId = `${game.character.id}:implant:${game.revision + 1}:${implantId}`;
+          return installImplant(game, activeContent, implantId, operationId, clock());
+        }, 'app');
+      }),
     [activeContent, clock, runSafely, transact],
   );
 
@@ -1449,6 +1507,19 @@ export function GameApp({
         )
       : [];
 
+    if (activityCategory === 'market') {
+      return character ? (
+        <MarketPanel
+          character={character}
+          content={activeContent}
+          clock={clock}
+          updateCharacter={updateCharacterAction}
+        />
+      ) : (
+        <section className="panel empty-state">{t('character.noCharacter')}</section>
+      );
+    }
+
     if (selectedActivity) {
       return (
         <section className="screen-stack" aria-labelledby="activity-detail-heading">
@@ -1644,6 +1715,7 @@ export function GameApp({
             content={activeContent}
             clock={clock}
             updateCharacter={updateCharacterAction}
+            onCraft={craftRecipeAction}
             view="expeditions"
             expeditionKind={
               combatView === 'quests'
@@ -1663,6 +1735,7 @@ export function GameApp({
           content={activeContent}
           clock={clock}
           updateCharacter={updateCharacterAction}
+          onCraft={craftRecipeAction}
           view="bestiary"
         />
       ) : combatView === 'arena' ? (
@@ -1671,6 +1744,7 @@ export function GameApp({
           content={activeContent}
           clock={clock}
           updateCharacter={updateCharacterAction}
+          onCraft={craftRecipeAction}
           view="arena"
         />
       ) : (
@@ -1679,6 +1753,7 @@ export function GameApp({
           content={activeContent}
           clock={clock}
           updateCharacter={updateCharacterAction}
+          onCraft={craftRecipeAction}
           view="records"
         />
       )}
@@ -1697,7 +1772,7 @@ export function GameApp({
           <p>{t('missions.description')}</p>
         </div>
         <div className="subnav-rail" role="tablist" aria-label={t('missions.periodLabel')}>
-          {(['main', 'daily', 'weekly'] as const).map((cadence) => (
+          {(['main', 'secondary', 'daily', 'weekly'] as const).map((cadence) => (
             <button
               key={cadence}
               role="tab"
@@ -1744,11 +1819,17 @@ export function GameApp({
                 <p className="muted">
                   {t('missions.progress')}: {progress.progress} / {progress.target}
                 </p>
+                {progress.lockedReason && <p className="muted">{progress.lockedReason}</p>}
                 <div className="benefit-tags">
                   {mission.reward.experience > 0 && <span>+{mission.reward.experience} XP</span>}
                   {Object.entries(mission.reward.items).map(([id, quantity]) => (
                     <span key={id}>
                       {activeContent.items.get(id)?.name ?? id} ×{quantity}
+                    </span>
+                  ))}
+                  {Object.entries(mission.reward.currencies ?? {}).map(([currency, amount]) => (
+                    <span key={currency}>
+                      +{amount} {currency}
                     </span>
                   ))}
                 </div>
@@ -1759,7 +1840,7 @@ export function GameApp({
                     ? 'primary-button reward-button'
                     : 'quiet-button'
                 }
-                disabled={!progress.complete || progress.claimed}
+                disabled={!progress.available || !progress.complete || progress.claimed}
                 onClick={() => claimMissionReward(mission.id)}
                 type="button"
               >
@@ -1798,6 +1879,17 @@ export function GameApp({
       { id: 'primary', label: t('equipment.primary') },
       { id: 'secondary', label: t('equipment.secondary') },
     ];
+    const implantCatalog = getAllImplantDefinitions(activeContent);
+    const installedImplants = getInstalledImplants(character, activeContent);
+    const installedImplantIds = new Set(installedImplants.map((implant) => implant.id));
+    const brokenImplantIds = new Set(getBrokenImplantIds(character));
+    const implantCapacity = getImplantCapacity(character);
+    const implantLoad = getAlchemicalLoad(character, activeContent);
+    const wallet = character.extensions.wallet;
+    const fragmentBalance =
+      typeof wallet === 'object' && wallet !== null && 'fragments' in wallet
+        ? Number((wallet as Record<string, unknown>).fragments ?? 0)
+        : 0;
     return (
       <section className="screen-stack" aria-labelledby="character-heading">
         <div className="screen-intro">
@@ -1840,15 +1932,44 @@ export function GameApp({
                   <div className="attribute-cell" key={key}>
                     <span>{localizedStatLabel(key)}</span>
                     <strong>{value}</strong>
+                    <button
+                      className="quiet-button"
+                      type="button"
+                      aria-label={`Aumentar ${localizedStatLabel(key)}`}
+                      disabled={Number(character.extensions.attributePoints ?? 0) < 1}
+                      onClick={() =>
+                        void updateCharacterAction((current) =>
+                          spendAttributePoint(current, `physical:${key}`),
+                        )
+                      }
+                    >
+                      +1
+                    </button>
                   </div>
                 ))}
                 {Object.entries(character.attributes.energetic).map(([key, value]) => (
                   <div className="attribute-cell" key={key}>
                     <span>{localizedStatLabel(key)}</span>
                     <strong>{value}</strong>
+                    <button
+                      className="quiet-button"
+                      type="button"
+                      aria-label={`Aumentar ${localizedStatLabel(key)}`}
+                      disabled={Number(character.extensions.attributePoints ?? 0) < 1}
+                      onClick={() =>
+                        void updateCharacterAction((current) =>
+                          spendAttributePoint(current, `energy:${key}`),
+                        )
+                      }
+                    >
+                      +1
+                    </button>
                   </div>
                 ))}
               </div>
+              <p className="muted">
+                Pontos de atributo disponíveis: {Number(character.extensions.attributePoints ?? 0)}
+              </p>
             </section>
             <div className="character-detail-grid">
               <section className="panel">
@@ -1924,6 +2045,7 @@ export function GameApp({
               content={activeContent}
               clock={clock}
               updateCharacter={updateCharacterAction}
+              onCraft={craftRecipeAction}
               view="forge"
             />
           </>
@@ -1967,6 +2089,17 @@ export function GameApp({
                       <small>{activeContent.items.get(itemId)?.description ?? itemId}</small>
                     </span>
                     <strong>×{quantity}</strong>
+                    {activeContent.items.get(itemId)?.consumable && (
+                      <button
+                        className="quiet-button"
+                        type="button"
+                        aria-label={`Usar ${activeContent.items.get(itemId)?.name ?? itemId}`}
+                        disabled={quantity < 1}
+                        onClick={() => consumeItemAction(itemId)}
+                      >
+                        Usar
+                      </button>
+                    )}
                   </li>
                 ))}
               </ul>
@@ -2014,12 +2147,93 @@ export function GameApp({
               <p className="empty-state">{t('character.noSkills')}</p>
             )}
           </section>
+        ) : characterView === 'implants' ? (
+          <section className="panel implant-panel">
+            <div className="section-heading">
+              <div>
+                <p className="eyebrow">Alquimia e cirurgia</p>
+                <h2>Implantes alquímicos</h2>
+              </div>
+              <span className="level-badge">
+                Carga {implantLoad} / {implantCapacity}
+              </span>
+            </div>
+            <p>
+              Síndrome de Dédalo:{' '}
+              <strong>{getDedalusSyndrome(implantLoad, implantCapacity)}</strong>. Cada instalação
+              custa 10.000 Fragmentos; exceder a capacidade é permitido e registra a consequência
+              correspondente.
+            </p>
+            <div className="skill-grid">
+              {implantCatalog.map((implant) => {
+                const owned = character.inventory[implant.deviceItemId] ?? 0;
+                const alreadyInstalled = installedImplantIds.has(implant.id);
+                const broken = brokenImplantIds.has(implant.id);
+                return (
+                  <article className="skill-card" key={implant.id}>
+                    <span className="skill-glyph">✦</span>
+                    <h3>{implant.name}</h3>
+                    <p>{String(implant.description ?? '')}</p>
+                    <p className="muted">
+                      {String(implant.rank)} · Carga {implant.charge} · Dispositivo: {owned} ·
+                      Compra:{' '}
+                      {Number(implant.acquisitionPriceFragments ?? 0).toLocaleString('pt-BR')}{' '}
+                      Fragmentos · Cirurgia: 10.000 Fragmentos
+                    </p>
+                    {implant.implementedEffects.length > 0 && (
+                      <p className="muted">
+                        Em funcionamento: {implant.implementedEffects.join(', ')}.
+                      </p>
+                    )}
+                    {implant.pendingEffects.length > 0 && (
+                      <p className="muted">Pendente: {implant.pendingEffects.join(' ')}</p>
+                    )}
+                    {broken && (
+                      <p className="muted">
+                        Quebrado. Remoção disponível sem custo como adaptação; a documentação não
+                        define taxa cirúrgica para remoção.
+                      </p>
+                    )}
+                    <button
+                      className={owned > 0 && !alreadyInstalled ? 'primary-button' : 'quiet-button'}
+                      type="button"
+                      disabled={
+                        (alreadyInstalled && !broken) ||
+                        (!broken && owned > 0 && fragmentBalance < 10_000)
+                      }
+                      onClick={() => {
+                        if (broken) {
+                          void updateCharacterAction((current) =>
+                            removeBrokenImplant(current, activeContent, implant.id),
+                          ).catch(() => undefined);
+                        } else if (owned < 1) {
+                          setTab('activities');
+                          setActivityCategory('market');
+                        } else {
+                          installImplantAction(implant.id);
+                        }
+                      }}
+                    >
+                      {broken
+                        ? 'Remover implante quebrado'
+                        : alreadyInstalled
+                          ? 'Instalado'
+                          : owned > 0
+                            ? 'Instalar'
+                            : 'Adquirir na Loja de Fragmentos'}
+                    </button>
+                  </article>
+                );
+              })}
+            </div>
+          </section>
         ) : characterView === 'forge' ? (
           <PhaseTwoPanels
             state={activeState}
             content={activeContent}
             clock={clock}
             updateCharacter={updateCharacterAction}
+            onCraft={craftRecipeAction}
             view="forge"
           />
         ) : (
@@ -2028,6 +2242,7 @@ export function GameApp({
             content={activeContent}
             clock={clock}
             updateCharacter={updateCharacterAction}
+            onCraft={craftRecipeAction}
             view="nodes"
           />
         )}

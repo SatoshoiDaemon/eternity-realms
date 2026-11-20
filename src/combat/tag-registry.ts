@@ -43,6 +43,7 @@ const effectType = z.enum([
   'preferred_range',
   'counterattack',
   'vampirism',
+  'flat_vampirism',
   'death_burst',
   'adaptive_resistance',
 ]);

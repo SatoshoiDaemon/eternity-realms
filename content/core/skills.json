@@ -3,14 +3,586 @@
     "id": "mining-skill",
     "kind": "skill",
     "name": "Mineração",
-    "description": "Trilha de progressão associada à extração de minérios.",
-    "activityIds": ["mining"]
+    "description": "Progressão individual por atividades de mineração, com marcos mecânicos e receitas próprias quando aplicável.",
+    "activityIds": [
+      "mining",
+      "mine-silver",
+      "mine-gold",
+      "mine-orichalcum",
+      "mine-adamantite",
+      "mine-mithril",
+      "mine-unobtanio",
+      "mine-vibranium",
+      "mine-dilthio",
+      "mine-chlorophyte",
+      "mine-sacrite"
+    ],
+    "category": "gathering",
+    "experiencePerLevel": 100,
+    "milestones": [
+      {
+        "level": 5,
+        "name": "Praticante",
+        "effects": [
+          {
+            "type": "yield_multiplier",
+            "value": 1.25
+          }
+        ]
+      },
+      {
+        "level": 10,
+        "name": "Especialista",
+        "effects": [
+          {
+            "type": "yield_multiplier",
+            "value": 1.5
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "forging-skill",
+    "kind": "skill",
+    "name": "Forja",
+    "description": "Progressão individual por atividades de forja, com marcos mecânicos e receitas próprias quando aplicável.",
+    "activityIds": ["smith-practice", "smelt-iron", "smithing-workshop"],
+    "category": "profession",
+    "experiencePerLevel": 100,
+    "milestones": [
+      {
+        "level": 5,
+        "name": "Praticante",
+        "effects": [
+          {
+            "type": "yield_multiplier",
+            "value": 1.25
+          }
+        ]
+      },
+      {
+        "level": 10,
+        "name": "Especialista",
+        "effects": [
+          {
+            "type": "yield_multiplier",
+            "value": 1.5
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "alchemy-skill",
+    "kind": "skill",
+    "name": "Alquimia",
+    "description": "Progressão individual por atividades de alquimia, com marcos mecânicos e receitas próprias quando aplicável.",
+    "activityIds": ["alchemy-study", "brew-healing", "brew-energy"],
+    "category": "profession",
+    "experiencePerLevel": 100,
+    "milestones": [
+      {
+        "level": 5,
+        "name": "Praticante",
+        "effects": [
+          {
+            "type": "yield_multiplier",
+            "value": 1.25
+          }
+        ]
+      },
+      {
+        "level": 10,
+        "name": "Especialista",
+        "effects": [
+          {
+            "type": "yield_multiplier",
+            "value": 1.5
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "magic-skill",
+    "kind": "skill",
+    "name": "Magia",
+    "description": "Progressão individual por atividades de magia, com marcos mecânicos e receitas próprias quando aplicável.",
+    "activityIds": ["mana-meditation", "elemental-practice", "spell-research"],
+    "category": "training",
+    "experiencePerLevel": 100,
+    "milestones": [
+      {
+        "level": 5,
+        "name": "Praticante",
+        "effects": [
+          {
+            "type": "yield_multiplier",
+            "value": 1.25
+          }
+        ]
+      },
+      {
+        "level": 10,
+        "name": "Especialista",
+        "effects": [
+          {
+            "type": "yield_multiplier",
+            "value": 1.5
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "archery-skill",
+    "kind": "skill",
+    "name": "Arquearia",
+    "description": "Progressão individual por atividades de arquearia, com marcos mecânicos e receitas próprias quando aplicável.",
+    "activityIds": ["bow-drill", "field-archery", "arcane-archery"],
+    "category": "training",
+    "experiencePerLevel": 100,
+    "milestones": [
+      {
+        "level": 5,
+        "name": "Praticante",
+        "effects": [
+          {
+            "type": "yield_multiplier",
+            "value": 1.25
+          }
+        ]
+      },
+      {
+        "level": 10,
+        "name": "Especialista",
+        "effects": [
+          {
+            "type": "yield_multiplier",
+            "value": 1.5
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "targeting-skill",
+    "kind": "skill",
+    "name": "Tiro ao alvo",
+    "description": "Progressão individual por atividades de tiro ao alvo, com marcos mecânicos e receitas próprias quando aplicável.",
+    "activityIds": ["target-range", "moving-target", "long-range"],
+    "category": "training",
+    "experiencePerLevel": 100,
+    "milestones": [
+      {
+        "level": 5,
+        "name": "Praticante",
+        "effects": [
+          {
+            "type": "yield_multiplier",
+            "value": 1.25
+          }
+        ]
+      },
+      {
+        "level": 10,
+        "name": "Especialista",
+        "effects": [
+          {
+            "type": "yield_multiplier",
+            "value": 1.5
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "culinary-skill",
+    "kind": "skill",
+    "name": "Culinária",
+    "description": "Progressão individual por atividades de culinária, com marcos mecânicos e receitas próprias quando aplicável.",
+    "activityIds": ["cook-stew", "smoke-fish", "field-rations"],
+    "category": "profession",
+    "experiencePerLevel": 100,
+    "milestones": [
+      {
+        "level": 5,
+        "name": "Praticante",
+        "effects": [
+          {
+            "type": "yield_multiplier",
+            "value": 1.25
+          }
+        ]
+      },
+      {
+        "level": 10,
+        "name": "Especialista",
+        "effects": [
+          {
+            "type": "yield_multiplier",
+            "value": 1.5
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "agriculture-skill",
+    "kind": "skill",
+    "name": "Agricultura",
+    "description": "Progressão individual por atividades de agricultura, com marcos mecânicos e receitas próprias quando aplicável.",
+    "activityIds": ["grow-wheat", "grow-moonberry", "grow-saltroot"],
+    "category": "gathering",
+    "experiencePerLevel": 100,
+    "milestones": [
+      {
+        "level": 5,
+        "name": "Praticante",
+        "effects": [
+          {
+            "type": "yield_multiplier",
+            "value": 1.25
+          }
+        ]
+      },
+      {
+        "level": 10,
+        "name": "Especialista",
+        "effects": [
+          {
+            "type": "yield_multiplier",
+            "value": 1.5
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "fishing-skill",
+    "kind": "skill",
+    "name": "Pesca",
+    "description": "Progressão individual por atividades de pesca, com marcos mecânicos e receitas próprias quando aplicável.",
+    "activityIds": ["fish-river", "fish-cage", "fish-storm", "fish-deep", "fish-azure"],
+    "category": "gathering",
+    "experiencePerLevel": 100,
+    "milestones": [
+      {
+        "level": 5,
+        "name": "Praticante",
+        "effects": [
+          {
+            "type": "yield_multiplier",
+            "value": 1.25
+          }
+        ]
+      },
+      {
+        "level": 10,
+        "name": "Especialista",
+        "effects": [
+          {
+            "type": "yield_multiplier",
+            "value": 1.5
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "theft-skill",
+    "kind": "skill",
+    "name": "Furto",
+    "description": "Progressão individual por atividades de furto, com marcos mecânicos e receitas próprias quando aplicável.",
+    "activityIds": ["lift-purse", "smuggle-goods", "recover-cache"],
+    "category": "social",
+    "experiencePerLevel": 100,
+    "milestones": [
+      {
+        "level": 5,
+        "name": "Praticante",
+        "effects": [
+          {
+            "type": "yield_multiplier",
+            "value": 1.25
+          }
+        ]
+      },
+      {
+        "level": 10,
+        "name": "Especialista",
+        "effects": [
+          {
+            "type": "yield_multiplier",
+            "value": 1.5
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "charisma-skill",
+    "kind": "skill",
+    "name": "Carisma",
+    "description": "Progressão individual por atividades de carisma, com marcos mecânicos e receitas próprias quando aplicável.",
+    "activityIds": ["negotiate-market", "rally-allies", "broker-contract"],
+    "category": "social",
+    "experiencePerLevel": 100,
+    "adaptationNotes": "Barganha com multiplicadores de compra e venda como adaptação jogável; o documento canônico não fixa valores para estes marcos.",
+    "milestones": [
+      {
+        "level": 5,
+        "name": "Negociador",
+        "effects": [
+          {
+            "type": "market_sell_multiplier",
+            "value": 1.1
+          }
+        ]
+      },
+      {
+        "level": 10,
+        "name": "Orador mercantil",
+        "effects": [
+          {
+            "type": "market_buy_multiplier",
+            "value": 0.95
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "stealth-skill",
+    "kind": "skill",
+    "name": "Furtividade",
+    "description": "Progressão individual por atividades de furtividade, com marcos mecânicos e receitas próprias quando aplicável.",
+    "activityIds": ["shadow-route", "night-scout", "silent-infiltration"],
+    "category": "social",
+    "experiencePerLevel": 100,
+    "milestones": [
+      {
+        "level": 5,
+        "name": "Praticante",
+        "effects": [
+          {
+            "type": "yield_multiplier",
+            "value": 1.25
+          }
+        ]
+      },
+      {
+        "level": 10,
+        "name": "Especialista",
+        "effects": [
+          {
+            "type": "yield_multiplier",
+            "value": 1.5
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "logging-skill",
+    "kind": "skill",
+    "name": "Lenhagem",
+    "description": "Progressão individual por atividades de lenhagem, com marcos mecânicos e receitas próprias quando aplicável.",
+    "activityIds": ["fell-oak", "fell-frostwood", "collect-driftwood", "fell-crystalwood"],
+    "category": "gathering",
+    "experiencePerLevel": 100,
+    "milestones": [
+      {
+        "level": 5,
+        "name": "Praticante",
+        "effects": [
+          {
+            "type": "yield_multiplier",
+            "value": 1.25
+          }
+        ]
+      },
+      {
+        "level": 10,
+        "name": "Especialista",
+        "effects": [
+          {
+            "type": "yield_multiplier",
+            "value": 1.5
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "trade-skill",
+    "kind": "skill",
+    "name": "Comércio",
+    "description": "Progressão individual por atividades de comércio, com marcos mecânicos e receitas próprias quando aplicável.",
+    "activityIds": ["trade-materials", "supply-caravan", "broker-relics"],
+    "category": "social",
+    "experiencePerLevel": 100,
+    "milestones": [
+      {
+        "level": 5,
+        "name": "Comerciante",
+        "effects": [
+          {
+            "type": "market_buy_multiplier",
+            "value": 0.9
+          }
+        ]
+      },
+      {
+        "level": 10,
+        "name": "Mestre mercador",
+        "effects": [
+          {
+            "type": "market_sell_multiplier",
+            "value": 1.25
+          }
+        ]
+      }
+    ],
+    "adaptationNotes": "Benefícios de preço e revenda são uma adaptação jogável; o documento canônico estabelece a skill e seus bônus por nível, sem fixar estes multiplicadores."
   },
   {
     "id": "herbalism-skill",
     "kind": "skill",
     "name": "Herbalismo",
-    "description": "Trilha de progressão associada à coleta de ervas.",
-    "activityIds": ["foraging"]
+    "description": "Progressão individual por atividades de herbalismo, com marcos mecânicos e receitas próprias quando aplicável.",
+    "activityIds": [
+      "foraging",
+      "herb-medicinal",
+      "herb-frostflower",
+      "herb-emberleaf",
+      "herb-dross-mushroom"
+    ],
+    "category": "gathering",
+    "experiencePerLevel": 100,
+    "milestones": [
+      {
+        "level": 5,
+        "name": "Praticante",
+        "effects": [
+          {
+            "type": "yield_multiplier",
+            "value": 1.25
+          }
+        ]
+      },
+      {
+        "level": 10,
+        "name": "Especialista",
+        "effects": [
+          {
+            "type": "yield_multiplier",
+            "value": 1.5
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "jewelry-skill",
+    "kind": "skill",
+    "name": "Joalheria",
+    "description": "Progressão individual por atividades de joalheria, com marcos mecânicos e receitas próprias quando aplicável.",
+    "activityIds": ["jeweler-practice", "make-silver-ring", "rune-setting"],
+    "category": "profession",
+    "experiencePerLevel": 100,
+    "milestones": [
+      {
+        "level": 5,
+        "name": "Praticante",
+        "effects": [
+          {
+            "type": "yield_multiplier",
+            "value": 1.25
+          }
+        ]
+      },
+      {
+        "level": 10,
+        "name": "Especialista",
+        "effects": [
+          {
+            "type": "yield_multiplier",
+            "value": 1.5
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "physical-training",
+    "kind": "skill",
+    "name": "Treinamento físico",
+    "description": "Treino de Força, Vigor, Resistência, Velocidade, Destreza ou Precisão.",
+    "activityIds": [
+      "train-physical",
+      "train-vigor",
+      "train-resistance",
+      "train-speed",
+      "train-dexterity",
+      "train-precision"
+    ],
+    "category": "training",
+    "experiencePerLevel": 100,
+    "milestones": [
+      {
+        "level": 5,
+        "name": "Disciplina",
+        "effects": [
+          {
+            "type": "training_gain",
+            "value": 2
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "aura-training",
+    "kind": "skill",
+    "name": "Meditação e cultivo de Aura",
+    "description": "Cultivo de Chi e Aura, sem transformar Chi em atributo distribuível.",
+    "activityIds": ["meditate-aura", "cultivate-spirit"],
+    "category": "training",
+    "experiencePerLevel": 100,
+    "milestones": [
+      {
+        "level": 5,
+        "name": "Disciplina",
+        "effects": [
+          {
+            "type": "training_gain",
+            "value": 2
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "study-training",
+    "kind": "skill",
+    "name": "Estudo e cultivo de Mana",
+    "description": "Estudo de elementos, núcleo de Mana e técnicas.",
+    "activityIds": ["study-mana"],
+    "category": "training",
+    "experiencePerLevel": 100,
+    "milestones": [
+      {
+        "level": 5,
+        "name": "Disciplina",
+        "effects": [
+          {
+            "type": "training_gain",
+            "value": 2
+          }
+        ]
+      }
+    ]
   }
 ]

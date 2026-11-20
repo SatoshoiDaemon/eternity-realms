@@ -15,8 +15,14 @@
       "precision": 12,
       "strength": 8
     },
-    "hp": { "current": 42, "maximum": 42 },
-    "tenacity": { "current": 0, "maximum": 0 },
+    "hp": {
+      "current": 42,
+      "maximum": 42
+    },
+    "tenacity": {
+      "current": 0,
+      "maximum": 0
+    },
     "energy": {},
     "equipment": [],
     "actions": [
@@ -32,15 +38,27 @@
           "channel": "physical",
           "subtype": "piercing",
           "properties": ["leaping"],
-          "origin": { "kind": "ability", "id": "core:stalker-pounce" }
+          "origin": {
+            "kind": "ability",
+            "id": "core:stalker-pounce"
+          }
         }
       }
     ],
     "effects": [],
-    "policy": { "id": "core:ambusher", "rules": [] },
+    "policy": {
+      "id": "core:ambusher",
+      "rules": []
+    },
     "actionPriority": ["core:stalker-pounce"],
-    "mitigation": { "physical": 0.05, "magical": 0 },
-    "position": { "x": 2, "y": 0 }
+    "mitigation": {
+      "physical": 0.05,
+      "magical": 0
+    },
+    "position": {
+      "x": 2,
+      "y": 0
+    }
   },
   {
     "id": "core:venom-crawler",
@@ -58,8 +76,14 @@
       "precision": 8,
       "strength": 10
     },
-    "hp": { "current": 55, "maximum": 55 },
-    "tenacity": { "current": 0, "maximum": 0 },
+    "hp": {
+      "current": 55,
+      "maximum": 55
+    },
+    "tenacity": {
+      "current": 0,
+      "maximum": 0
+    },
     "energy": {},
     "equipment": [],
     "actions": [
@@ -76,7 +100,10 @@
           "subtype": "piercing",
           "element": "poison",
           "properties": ["toxic"],
-          "origin": { "kind": "ability", "id": "core:venom-bite" }
+          "origin": {
+            "kind": "ability",
+            "id": "core:venom-bite"
+          }
         },
         "effects": [
           {
@@ -84,18 +111,34 @@
             "category": "dot",
             "potency": 1,
             "counter": 4,
-            "source": { "kind": "ability", "id": "core:venom-bite" },
-            "tickDamage": { "amount": 3, "channel": "magical", "element": "poison" },
+            "source": {
+              "kind": "ability",
+              "id": "core:venom-bite"
+            },
+            "tickDamage": {
+              "amount": 3,
+              "channel": "magical",
+              "element": "poison"
+            },
             "tickIntervalMs": 1000
           }
         ]
       }
     ],
     "effects": [],
-    "policy": { "id": "core:venom-hunter", "rules": [] },
+    "policy": {
+      "id": "core:venom-hunter",
+      "rules": []
+    },
     "actionPriority": ["core:venom-bite"],
-    "mitigation": { "physical": 0.05, "magical": 0.05 },
-    "position": { "x": 1, "y": 1 }
+    "mitigation": {
+      "physical": 0.05,
+      "magical": 0.05
+    },
+    "position": {
+      "x": 1,
+      "y": 1
+    }
   },
   {
     "id": "core:iron-sentinel",
@@ -113,8 +156,14 @@
       "precision": 7,
       "strength": 18
     },
-    "hp": { "current": 180, "maximum": 180 },
-    "tenacity": { "current": 80, "maximum": 80 },
+    "hp": {
+      "current": 180,
+      "maximum": 180
+    },
+    "tenacity": {
+      "current": 80,
+      "maximum": 80
+    },
     "energy": {},
     "equipment": [],
     "actions": [
@@ -130,18 +179,32 @@
           "channel": "physical",
           "subtype": "crushing",
           "properties": ["heavy"],
-          "origin": { "kind": "ability", "id": "core:sentinel-slam" }
+          "origin": {
+            "kind": "ability",
+            "id": "core:sentinel-slam"
+          }
         }
       }
     ],
     "effects": [],
     "policy": {
       "id": "core:heavy-strike",
-      "rules": [{ "actionId": "core:sentinel-slam", "priority": 10 }]
+      "rules": [
+        {
+          "actionId": "core:sentinel-slam",
+          "priority": 10
+        }
+      ]
     },
     "actionPriority": ["core:sentinel-slam"],
-    "mitigation": { "physical": 0.25, "magical": 0.1 },
-    "position": { "x": 1, "y": 0 }
+    "mitigation": {
+      "physical": 0.25,
+      "magical": 0.1
+    },
+    "position": {
+      "x": 1,
+      "y": 0
+    }
   },
   {
     "id": "core:echo-wraith",
@@ -159,8 +222,14 @@
       "precision": 14,
       "strength": 9
     },
-    "hp": { "current": 90, "maximum": 90 },
-    "tenacity": { "current": 0, "maximum": 0 },
+    "hp": {
+      "current": 90,
+      "maximum": 90
+    },
+    "tenacity": {
+      "current": 0,
+      "maximum": 0
+    },
     "energy": {},
     "equipment": [],
     "actions": [
@@ -176,15 +245,27 @@
           "channel": "magical",
           "element": "shadow",
           "properties": ["spiritual"],
-          "origin": { "kind": "ability", "id": "core:wraith-touch" }
+          "origin": {
+            "kind": "ability",
+            "id": "core:wraith-touch"
+          }
         }
       }
     ],
     "effects": [],
-    "policy": { "id": "core:wraith-hunt", "rules": [] },
+    "policy": {
+      "id": "core:wraith-hunt",
+      "rules": []
+    },
     "actionPriority": ["core:wraith-touch"],
-    "mitigation": { "physical": 0.2, "magical": 0.1 },
-    "position": { "x": 3, "y": 0 },
+    "mitigation": {
+      "physical": 0.2,
+      "magical": 0.1
+    },
+    "position": {
+      "x": 3,
+      "y": 0
+    },
     "movementState": "phased"
   },
   {
@@ -204,9 +285,17 @@
       "strength": 4,
       "mana": 30
     },
-    "hp": { "current": 110, "maximum": 110 },
-    "tenacity": { "current": 0, "maximum": 0 },
-    "energy": { "mana": 30 },
+    "hp": {
+      "current": 110,
+      "maximum": 110
+    },
+    "tenacity": {
+      "current": 0,
+      "maximum": 0
+    },
+    "energy": {
+      "mana": 30
+    },
     "equipment": [],
     "actions": [
       {
@@ -216,13 +305,19 @@
         "target": "enemy",
         "intervalMs": 1200,
         "accuracy": 0.9,
-        "cost": { "resource": "mana", "amount": 3 },
+        "cost": {
+          "resource": "mana",
+          "amount": 3
+        },
         "damage": {
           "amount": 24,
           "channel": "magical",
           "element": "arcane",
           "properties": ["ranged"],
-          "origin": { "kind": "ability", "id": "core:rift-bolt" }
+          "origin": {
+            "kind": "ability",
+            "id": "core:rift-bolt"
+          }
         }
       },
       {
@@ -232,7 +327,10 @@
         "target": "self",
         "intervalMs": 1800,
         "accuracy": 1,
-        "cost": { "resource": "mana", "amount": 8 },
+        "cost": {
+          "resource": "mana",
+          "amount": 8
+        },
         "summon": {
           "id": "core:rift-wisp",
           "name": "Espírito da fenda",
@@ -246,31 +344,57 @@
             "precision": 11,
             "strength": 4
           },
-          "hp": { "current": 30, "maximum": 30 },
-          "tenacity": { "current": 0, "maximum": 0 },
+          "hp": {
+            "current": 30,
+            "maximum": 30
+          },
+          "tenacity": {
+            "current": 0,
+            "maximum": 0
+          },
           "energy": {},
           "damage": {
             "amount": 12,
             "channel": "magical",
             "element": "arcane",
             "properties": ["spiritual", "ranged"],
-            "origin": { "kind": "ability", "id": "core:rift-wisp-bolt" }
+            "origin": {
+              "kind": "ability",
+              "id": "core:rift-wisp-bolt"
+            }
           },
           "intervalMs": 900,
           "accuracy": 0.86,
-          "mitigation": { "physical": 0.05, "magical": 0.05 },
-          "positionOffset": { "x": -1, "y": 0 }
+          "mitigation": {
+            "physical": 0.05,
+            "magical": 0.05
+          },
+          "positionOffset": {
+            "x": -1,
+            "y": 0
+          }
         }
       }
     ],
     "effects": [],
     "policy": {
       "id": "core:keep-distance",
-      "rules": [{ "actionId": "core:rift-bolt", "priority": 20 }]
+      "rules": [
+        {
+          "actionId": "core:rift-bolt",
+          "priority": 20
+        }
+      ]
     },
     "actionPriority": ["core:rift-bolt", "core:call-rift-wisp"],
-    "mitigation": { "physical": 0, "magical": 0.2 },
-    "position": { "x": 4, "y": 0 },
+    "mitigation": {
+      "physical": 0,
+      "magical": 0.2
+    },
+    "position": {
+      "x": 4,
+      "y": 0
+    },
     "affinityElement": "arcane"
   },
   {
@@ -298,8 +422,14 @@
       "precision": 15,
       "strength": 32
     },
-    "hp": { "current": 650, "maximum": 650 },
-    "tenacity": { "current": 300, "maximum": 300 },
+    "hp": {
+      "current": 650,
+      "maximum": 650
+    },
+    "tenacity": {
+      "current": 300,
+      "maximum": 300
+    },
     "energy": {},
     "equipment": [],
     "actions": [
@@ -315,7 +445,10 @@
           "channel": "physical",
           "subtype": "cutting",
           "properties": ["antidraconic"],
-          "origin": { "kind": "ability", "id": "core:sovereign-claw" }
+          "origin": {
+            "kind": "ability",
+            "id": "core:sovereign-claw"
+          }
         }
       },
       {
@@ -330,18 +463,3551 @@
           "channel": "magical",
           "element": "fire",
           "properties": ["area", "draconic"],
-          "origin": { "kind": "ability", "id": "core:sovereign-flame" }
+          "origin": {
+            "kind": "ability",
+            "id": "core:sovereign-flame"
+          }
         }
       }
     ],
     "effects": [],
     "policy": {
       "id": "core:sovereign-fury",
-      "rules": [{ "actionId": "core:sovereign-flame", "priority": 20 }]
+      "rules": [
+        {
+          "actionId": "core:sovereign-flame",
+          "priority": 20
+        }
+      ]
     },
     "actionPriority": ["core:sovereign-flame", "core:sovereign-claw"],
-    "mitigation": { "physical": 0.4, "magical": 0.3 },
-    "position": { "x": 5, "y": 0 },
+    "mitigation": {
+      "physical": 0.4,
+      "magical": 0.3
+    },
+    "position": {
+      "x": 5,
+      "y": 0
+    },
     "affinityElement": "fire"
+  },
+  {
+    "id": "core:p4-apexia-1",
+    "kind": "enemy",
+    "name": "Clockwork Saboteur",
+    "description": "Clockwork Saboteur ocupa Apexia; sua atuação de control exige abordagem própria e suas quedas fornecem recursos regionais.",
+    "tags": ["base:construct"],
+    "lootTableId": "core:p4-loot-apexia-1",
+    "experience": 20,
+    "attributes": {
+      "vigor": 6,
+      "resistance": 3,
+      "speed": 18,
+      "dexterity": 8,
+      "precision": 8,
+      "strength": 10
+    },
+    "hp": {
+      "current": 130,
+      "maximum": 130
+    },
+    "tenacity": {
+      "current": 16,
+      "maximum": 16
+    },
+    "energy": {},
+    "equipment": [],
+    "actions": [
+      {
+        "id": "core:p4-apexia-1-action",
+        "name": "Ataque característico",
+        "kind": "attack",
+        "target": "enemy",
+        "intervalMs": 830,
+        "accuracy": 0.78,
+        "damage": {
+          "amount": 13,
+          "channel": "physical",
+          "subtype": "crushing",
+          "properties": ["construct"],
+          "origin": {
+            "kind": "ability",
+            "id": "core:p4-apexia-1-action"
+          }
+        }
+      }
+    ],
+    "effects": [],
+    "policy": {
+      "id": "core:p4-apexia-1-policy",
+      "rules": [
+        {
+          "actionId": "core:p4-apexia-1-action",
+          "priority": 10
+        }
+      ]
+    },
+    "actionPriority": ["core:p4-apexia-1-action"],
+    "mitigation": {
+      "physical": 0.05,
+      "magical": 0.03
+    },
+    "position": {
+      "x": 1,
+      "y": 0
+    }
+  },
+  {
+    "id": "core:p4-apexia-2",
+    "kind": "enemy",
+    "name": "Cão Hextech",
+    "description": "Cão Hextech ocupa Apexia; sua atuação de ambush exige abordagem própria e suas quedas fornecem recursos regionais.",
+    "tags": ["base:beast"],
+    "lootTableId": "core:p4-loot-apexia-2",
+    "experience": 27,
+    "attributes": {
+      "vigor": 7,
+      "resistance": 4,
+      "speed": 8,
+      "dexterity": 9,
+      "precision": 10,
+      "strength": 11
+    },
+    "hp": {
+      "current": 152,
+      "maximum": 152
+    },
+    "tenacity": {
+      "current": 19,
+      "maximum": 19
+    },
+    "energy": {},
+    "equipment": [],
+    "actions": [
+      {
+        "id": "core:p4-apexia-2-action",
+        "name": "Emboscada",
+        "kind": "attack",
+        "target": "enemy",
+        "intervalMs": 930,
+        "accuracy": 0.81,
+        "damage": {
+          "amount": 15,
+          "channel": "physical",
+          "subtype": "piercing",
+          "properties": ["beast"],
+          "origin": {
+            "kind": "ability",
+            "id": "core:p4-apexia-2-action"
+          }
+        }
+      }
+    ],
+    "effects": [],
+    "policy": {
+      "id": "core:p4-apexia-2-policy",
+      "rules": [
+        {
+          "actionId": "core:p4-apexia-2-action",
+          "priority": 10
+        }
+      ]
+    },
+    "actionPriority": ["core:p4-apexia-2-action"],
+    "mitigation": {
+      "physical": 0.05,
+      "magical": 0.03
+    },
+    "position": {
+      "x": 2,
+      "y": 1
+    }
+  },
+  {
+    "id": "core:p4-apexia-3",
+    "kind": "enemy",
+    "name": "Sentinela Cristalina",
+    "description": "Sentinela Cristalina ocupa Apexia; sua atuação de guardian exige abordagem própria e suas quedas fornecem recursos regionais.",
+    "tags": ["base:mineral"],
+    "lootTableId": "core:p4-loot-apexia-3",
+    "experience": 34,
+    "attributes": {
+      "vigor": 8,
+      "resistance": 4,
+      "speed": 12,
+      "dexterity": 10,
+      "precision": 12,
+      "strength": 12
+    },
+    "hp": {
+      "current": 174,
+      "maximum": 174
+    },
+    "tenacity": {
+      "current": 58,
+      "maximum": 58
+    },
+    "energy": {},
+    "equipment": [],
+    "actions": [
+      {
+        "id": "core:p4-apexia-3-action",
+        "name": "Impacto de guarda",
+        "kind": "attack",
+        "target": "enemy",
+        "intervalMs": 1030,
+        "accuracy": 0.8400000000000001,
+        "damage": {
+          "amount": 17,
+          "channel": "physical",
+          "subtype": "crushing",
+          "properties": ["mineral"],
+          "origin": {
+            "kind": "ability",
+            "id": "core:p4-apexia-3-action"
+          }
+        }
+      }
+    ],
+    "effects": [],
+    "policy": {
+      "id": "core:p4-apexia-3-policy",
+      "rules": [
+        {
+          "actionId": "core:p4-apexia-3-action",
+          "priority": 10
+        }
+      ]
+    },
+    "actionPriority": ["core:p4-apexia-3-action"],
+    "mitigation": {
+      "physical": 0.18,
+      "magical": 0.03
+    },
+    "position": {
+      "x": 3,
+      "y": 0
+    }
+  },
+  {
+    "id": "core:p4-apexia-4",
+    "kind": "enemy",
+    "name": "Mímico de Portal",
+    "description": "Mímico de Portal ocupa Apexia; sua atuação de caster exige abordagem própria e suas quedas fornecem recursos regionais.",
+    "tags": ["base:arcane"],
+    "lootTableId": "core:p4-loot-apexia-4",
+    "experience": 41,
+    "attributes": {
+      "vigor": 9,
+      "resistance": 5,
+      "speed": 14,
+      "dexterity": 11,
+      "precision": 14,
+      "strength": 13
+    },
+    "hp": {
+      "current": 196,
+      "maximum": 196
+    },
+    "tenacity": {
+      "current": 24,
+      "maximum": 24
+    },
+    "energy": {
+      "mana": 23
+    },
+    "equipment": [],
+    "actions": [
+      {
+        "id": "core:p4-apexia-4-action",
+        "name": "Descarga arcana",
+        "kind": "magic",
+        "target": "enemy",
+        "intervalMs": 1130,
+        "accuracy": 0.87,
+        "damage": {
+          "amount": 19,
+          "channel": "magical",
+          "subtype": "crushing",
+          "element": "arcane",
+          "properties": ["arcane"],
+          "origin": {
+            "kind": "ability",
+            "id": "core:p4-apexia-4-action"
+          }
+        },
+        "effects": [
+          {
+            "id": "core:p4-apexia-4-arcane-mark",
+            "category": "debuff",
+            "potency": 1,
+            "counter": 3,
+            "damageMultiplier": 1.15
+          }
+        ]
+      }
+    ],
+    "effects": [],
+    "policy": {
+      "id": "core:p4-apexia-4-policy",
+      "rules": [
+        {
+          "actionId": "core:p4-apexia-4-action",
+          "priority": 10
+        }
+      ]
+    },
+    "actionPriority": ["core:p4-apexia-4-action"],
+    "mitigation": {
+      "physical": 0.05,
+      "magical": 0.12
+    },
+    "position": {
+      "x": 4,
+      "y": 1
+    },
+    "affinityElement": "arcane",
+    "elite": true
+  },
+  {
+    "id": "core:p4-boss-apexia",
+    "kind": "enemy",
+    "name": "Núcleo Ferros",
+    "description": "Chefe regional de Apexia; possui interação de area que muda a prioridade de combate.",
+    "tags": ["base:construct", "base:arcane", "base:guardian"],
+    "lootTableId": "core:p4-loot-boss-apexia",
+    "experience": 100,
+    "elite": true,
+    "boss": true,
+    "attributes": {
+      "vigor": 70,
+      "resistance": 48,
+      "speed": 12,
+      "dexterity": 16,
+      "precision": 15,
+      "strength": 24,
+      "spirit": 20
+    },
+    "hp": {
+      "current": 1060,
+      "maximum": 1060
+    },
+    "tenacity": {
+      "current": 530,
+      "maximum": 530
+    },
+    "energy": {
+      "mana": 120
+    },
+    "equipment": [],
+    "actions": [
+      {
+        "id": "core:p4-boss-apexia-signature",
+        "name": "Investida característica",
+        "kind": "area",
+        "target": "enemy",
+        "intervalMs": 2200,
+        "accuracy": 0.88,
+        "damage": {
+          "amount": 83,
+          "channel": "magical",
+          "element": "lightning",
+          "properties": [
+            "area",
+            "boss-signature",
+            "base:construct",
+            "base:arcane",
+            "base:guardian"
+          ],
+          "origin": {
+            "kind": "ability",
+            "id": "core:p4-boss-apexia-signature"
+          }
+        },
+        "effects": [
+          {
+            "id": "core:p4-boss-apexia-pressure",
+            "category": "debuff",
+            "potency": 4,
+            "counter": 3,
+            "damageMultiplier": 1.2
+          }
+        ]
+      },
+      {
+        "id": "core:p4-boss-apexia-basic",
+        "name": "Ataque de domínio",
+        "kind": "attack",
+        "target": "enemy",
+        "intervalMs": 1400,
+        "accuracy": 0.92,
+        "damage": {
+          "amount": 45,
+          "channel": "physical",
+          "subtype": "crushing",
+          "properties": ["boss", "heavy"],
+          "origin": {
+            "kind": "ability",
+            "id": "core:p4-boss-apexia-basic"
+          }
+        }
+      }
+    ],
+    "effects": [],
+    "policy": {
+      "id": "core:p4-boss-apexia-policy",
+      "rules": [
+        {
+          "actionId": "core:p4-boss-apexia-signature",
+          "priority": 20
+        },
+        {
+          "actionId": "core:p4-boss-apexia-basic",
+          "priority": 10
+        }
+      ]
+    },
+    "actionPriority": ["core:p4-boss-apexia-signature", "core:p4-boss-apexia-basic"],
+    "mitigation": {
+      "physical": 0.35,
+      "magical": 0.25
+    },
+    "position": {
+      "x": 5,
+      "y": 0
+    },
+    "affinityElement": "lightning"
+  },
+  {
+    "id": "core:p4-dross-1",
+    "kind": "enemy",
+    "name": "Sanguessuga Quimtec",
+    "description": "Sanguessuga Quimtec ocupa Dross; sua atuação de poison exige abordagem própria e suas quedas fornecem recursos regionais.",
+    "tags": ["base:toxic"],
+    "lootTableId": "core:p4-loot-dross-1",
+    "experience": 30,
+    "attributes": {
+      "vigor": 8,
+      "resistance": 5,
+      "speed": 19,
+      "dexterity": 10,
+      "precision": 9,
+      "strength": 12
+    },
+    "hp": {
+      "current": 175,
+      "maximum": 175
+    },
+    "tenacity": {
+      "current": 21,
+      "maximum": 21
+    },
+    "energy": {},
+    "equipment": [],
+    "actions": [
+      {
+        "id": "core:p4-dross-1-action",
+        "name": "Mordida contaminante",
+        "kind": "attack",
+        "target": "enemy",
+        "intervalMs": 860,
+        "accuracy": 0.78,
+        "damage": {
+          "amount": 16,
+          "channel": "physical",
+          "subtype": "piercing",
+          "element": "poison",
+          "properties": ["toxic"],
+          "origin": {
+            "kind": "ability",
+            "id": "core:p4-dross-1-action"
+          }
+        },
+        "effects": [
+          {
+            "id": "core:p4-dross-1-poison",
+            "category": "dot",
+            "potency": 2,
+            "counter": 4,
+            "tickDamage": {
+              "amount": 4,
+              "channel": "magical",
+              "element": "poison"
+            }
+          }
+        ]
+      }
+    ],
+    "effects": [],
+    "policy": {
+      "id": "core:p4-dross-1-policy",
+      "rules": [
+        {
+          "actionId": "core:p4-dross-1-action",
+          "priority": 10
+        }
+      ]
+    },
+    "actionPriority": ["core:p4-dross-1-action"],
+    "mitigation": {
+      "physical": 0.065,
+      "magical": 0.045
+    },
+    "position": {
+      "x": 1,
+      "y": 0
+    },
+    "affinityElement": "poison"
+  },
+  {
+    "id": "core:p4-dross-2",
+    "kind": "enemy",
+    "name": "Sombra do Esgoto",
+    "description": "Sombra do Esgoto ocupa Dross; sua atuação de caster exige abordagem própria e suas quedas fornecem recursos regionais.",
+    "tags": ["base:undead"],
+    "lootTableId": "core:p4-loot-dross-2",
+    "experience": 37,
+    "attributes": {
+      "vigor": 9,
+      "resistance": 5,
+      "speed": 9,
+      "dexterity": 11,
+      "precision": 11,
+      "strength": 13
+    },
+    "hp": {
+      "current": 197,
+      "maximum": 197
+    },
+    "tenacity": {
+      "current": 24,
+      "maximum": 24
+    },
+    "energy": {
+      "mana": 26
+    },
+    "equipment": [],
+    "actions": [
+      {
+        "id": "core:p4-dross-2-action",
+        "name": "Descarga arcana",
+        "kind": "magic",
+        "target": "enemy",
+        "intervalMs": 960,
+        "accuracy": 0.81,
+        "damage": {
+          "amount": 18,
+          "channel": "magical",
+          "subtype": "crushing",
+          "element": "arcane",
+          "properties": ["undead"],
+          "origin": {
+            "kind": "ability",
+            "id": "core:p4-dross-2-action"
+          }
+        },
+        "effects": [
+          {
+            "id": "core:p4-dross-2-arcane-mark",
+            "category": "debuff",
+            "potency": 1,
+            "counter": 3,
+            "damageMultiplier": 1.15
+          }
+        ]
+      }
+    ],
+    "effects": [],
+    "policy": {
+      "id": "core:p4-dross-2-policy",
+      "rules": [
+        {
+          "actionId": "core:p4-dross-2-action",
+          "priority": 10
+        }
+      ]
+    },
+    "actionPriority": ["core:p4-dross-2-action"],
+    "mitigation": {
+      "physical": 0.065,
+      "magical": 0.12
+    },
+    "position": {
+      "x": 2,
+      "y": 1
+    },
+    "affinityElement": "arcane"
+  },
+  {
+    "id": "core:p4-dross-3",
+    "kind": "enemy",
+    "name": "Executor de Fábrica",
+    "description": "Executor de Fábrica ocupa Dross; sua atuação de guardian exige abordagem própria e suas quedas fornecem recursos regionais.",
+    "tags": ["base:construct"],
+    "lootTableId": "core:p4-loot-dross-3",
+    "experience": 44,
+    "attributes": {
+      "vigor": 10,
+      "resistance": 6,
+      "speed": 13,
+      "dexterity": 12,
+      "precision": 13,
+      "strength": 14
+    },
+    "hp": {
+      "current": 219,
+      "maximum": 219
+    },
+    "tenacity": {
+      "current": 73,
+      "maximum": 73
+    },
+    "energy": {},
+    "equipment": [],
+    "actions": [
+      {
+        "id": "core:p4-dross-3-action",
+        "name": "Impacto de guarda",
+        "kind": "attack",
+        "target": "enemy",
+        "intervalMs": 1060,
+        "accuracy": 0.8400000000000001,
+        "damage": {
+          "amount": 20,
+          "channel": "physical",
+          "subtype": "crushing",
+          "properties": ["construct"],
+          "origin": {
+            "kind": "ability",
+            "id": "core:p4-dross-3-action"
+          }
+        }
+      }
+    ],
+    "effects": [],
+    "policy": {
+      "id": "core:p4-dross-3-policy",
+      "rules": [
+        {
+          "actionId": "core:p4-dross-3-action",
+          "priority": 10
+        }
+      ]
+    },
+    "actionPriority": ["core:p4-dross-3-action"],
+    "mitigation": {
+      "physical": 0.18,
+      "magical": 0.045
+    },
+    "position": {
+      "x": 3,
+      "y": 0
+    }
+  },
+  {
+    "id": "core:p4-dross-4",
+    "kind": "enemy",
+    "name": "Contrabandista Taumaturgo",
+    "description": "Contrabandista Taumaturgo ocupa Dross; sua atuação de ranged exige abordagem própria e suas quedas fornecem recursos regionais.",
+    "tags": ["base:caster"],
+    "lootTableId": "core:p4-loot-dross-4",
+    "experience": 51,
+    "attributes": {
+      "vigor": 12,
+      "resistance": 6,
+      "speed": 15,
+      "dexterity": 13,
+      "precision": 15,
+      "strength": 15
+    },
+    "hp": {
+      "current": 241,
+      "maximum": 241
+    },
+    "tenacity": {
+      "current": 30,
+      "maximum": 30
+    },
+    "energy": {},
+    "equipment": [],
+    "actions": [
+      {
+        "id": "core:p4-dross-4-action",
+        "name": "Disparo de precisão",
+        "kind": "ranged",
+        "target": "enemy",
+        "intervalMs": 1160,
+        "accuracy": 0.87,
+        "damage": {
+          "amount": 22,
+          "channel": "physical",
+          "subtype": "piercing",
+          "element": "physical",
+          "properties": ["caster"],
+          "origin": {
+            "kind": "ability",
+            "id": "core:p4-dross-4-action"
+          }
+        }
+      }
+    ],
+    "effects": [],
+    "policy": {
+      "id": "core:p4-dross-4-policy",
+      "rules": [
+        {
+          "actionId": "core:p4-dross-4-action",
+          "priority": 10
+        }
+      ]
+    },
+    "actionPriority": ["core:p4-dross-4-action"],
+    "mitigation": {
+      "physical": 0.065,
+      "magical": 0.045
+    },
+    "position": {
+      "x": 4,
+      "y": 1
+    },
+    "affinityElement": "physical",
+    "elite": true
+  },
+  {
+    "id": "core:p4-boss-dross",
+    "kind": "enemy",
+    "name": "Abominação Quimtec",
+    "description": "Chefe regional de Dross; possui interação de poison que muda a prioridade de combate.",
+    "tags": ["base:toxic", "base:volatile", "base:adaptive"],
+    "lootTableId": "core:p4-loot-boss-dross",
+    "experience": 150,
+    "elite": true,
+    "boss": true,
+    "attributes": {
+      "vigor": 81,
+      "resistance": 55,
+      "speed": 13,
+      "dexterity": 18,
+      "precision": 17,
+      "strength": 27,
+      "spirit": 22
+    },
+    "hp": {
+      "current": 1220,
+      "maximum": 1220
+    },
+    "tenacity": {
+      "current": 610,
+      "maximum": 610
+    },
+    "energy": {
+      "mana": 140
+    },
+    "equipment": [],
+    "actions": [
+      {
+        "id": "core:p4-boss-dross-signature",
+        "name": "Investida característica",
+        "kind": "area",
+        "target": "enemy",
+        "intervalMs": 2300,
+        "accuracy": 0.88,
+        "damage": {
+          "amount": 91,
+          "channel": "magical",
+          "element": "poison",
+          "properties": ["area", "boss-signature", "base:toxic", "base:volatile", "base:adaptive"],
+          "origin": {
+            "kind": "ability",
+            "id": "core:p4-boss-dross-signature"
+          }
+        },
+        "effects": [
+          {
+            "id": "core:p4-boss-dross-pressure",
+            "category": "debuff",
+            "potency": 5,
+            "counter": 3,
+            "damageMultiplier": 1.2
+          }
+        ]
+      },
+      {
+        "id": "core:p4-boss-dross-basic",
+        "name": "Ataque de domínio",
+        "kind": "attack",
+        "target": "enemy",
+        "intervalMs": 1400,
+        "accuracy": 0.92,
+        "damage": {
+          "amount": 50,
+          "channel": "physical",
+          "subtype": "crushing",
+          "properties": ["boss", "heavy"],
+          "origin": {
+            "kind": "ability",
+            "id": "core:p4-boss-dross-basic"
+          }
+        }
+      }
+    ],
+    "effects": [],
+    "policy": {
+      "id": "core:p4-boss-dross-policy",
+      "rules": [
+        {
+          "actionId": "core:p4-boss-dross-signature",
+          "priority": 20
+        },
+        {
+          "actionId": "core:p4-boss-dross-basic",
+          "priority": 10
+        }
+      ]
+    },
+    "actionPriority": ["core:p4-boss-dross-signature", "core:p4-boss-dross-basic"],
+    "mitigation": {
+      "physical": 0.35,
+      "magical": 0.25
+    },
+    "position": {
+      "x": 5,
+      "y": 0
+    },
+    "affinityElement": "poison"
+  },
+  {
+    "id": "core:p4-vaeloria-1",
+    "kind": "enemy",
+    "name": "Javali de Guerra",
+    "description": "Javali de Guerra ocupa Vaeloria; sua atuação de ambush exige abordagem própria e suas quedas fornecem recursos regionais.",
+    "tags": ["base:beast"],
+    "lootTableId": "core:p4-loot-vaeloria-1",
+    "experience": 40,
+    "attributes": {
+      "vigor": 11,
+      "resistance": 6,
+      "speed": 20,
+      "dexterity": 12,
+      "precision": 10,
+      "strength": 14
+    },
+    "hp": {
+      "current": 220,
+      "maximum": 220
+    },
+    "tenacity": {
+      "current": 27,
+      "maximum": 27
+    },
+    "energy": {},
+    "equipment": [],
+    "actions": [
+      {
+        "id": "core:p4-vaeloria-1-action",
+        "name": "Emboscada",
+        "kind": "attack",
+        "target": "enemy",
+        "intervalMs": 890,
+        "accuracy": 0.78,
+        "damage": {
+          "amount": 19,
+          "channel": "physical",
+          "subtype": "piercing",
+          "properties": ["beast"],
+          "origin": {
+            "kind": "ability",
+            "id": "core:p4-vaeloria-1-action"
+          }
+        }
+      }
+    ],
+    "effects": [],
+    "policy": {
+      "id": "core:p4-vaeloria-1-policy",
+      "rules": [
+        {
+          "actionId": "core:p4-vaeloria-1-action",
+          "priority": 10
+        }
+      ]
+    },
+    "actionPriority": ["core:p4-vaeloria-1-action"],
+    "mitigation": {
+      "physical": 0.08,
+      "magical": 0.06
+    },
+    "position": {
+      "x": 1,
+      "y": 0
+    }
+  },
+  {
+    "id": "core:p4-vaeloria-2",
+    "kind": "enemy",
+    "name": "Soldado da Vanguarda",
+    "description": "Soldado da Vanguarda ocupa Vaeloria; sua atuação de guardian exige abordagem própria e suas quedas fornecem recursos regionais.",
+    "tags": ["base:armored"],
+    "lootTableId": "core:p4-loot-vaeloria-2",
+    "experience": 47,
+    "attributes": {
+      "vigor": 12,
+      "resistance": 6,
+      "speed": 10,
+      "dexterity": 13,
+      "precision": 12,
+      "strength": 15
+    },
+    "hp": {
+      "current": 242,
+      "maximum": 242
+    },
+    "tenacity": {
+      "current": 80,
+      "maximum": 80
+    },
+    "energy": {},
+    "equipment": [],
+    "actions": [
+      {
+        "id": "core:p4-vaeloria-2-action",
+        "name": "Impacto de guarda",
+        "kind": "attack",
+        "target": "enemy",
+        "intervalMs": 990,
+        "accuracy": 0.81,
+        "damage": {
+          "amount": 21,
+          "channel": "physical",
+          "subtype": "crushing",
+          "properties": ["armored"],
+          "origin": {
+            "kind": "ability",
+            "id": "core:p4-vaeloria-2-action"
+          }
+        }
+      }
+    ],
+    "effects": [],
+    "policy": {
+      "id": "core:p4-vaeloria-2-policy",
+      "rules": [
+        {
+          "actionId": "core:p4-vaeloria-2-action",
+          "priority": 10
+        }
+      ]
+    },
+    "actionPriority": ["core:p4-vaeloria-2-action"],
+    "mitigation": {
+      "physical": 0.18,
+      "magical": 0.06
+    },
+    "position": {
+      "x": 2,
+      "y": 1
+    }
+  },
+  {
+    "id": "core:p4-vaeloria-3",
+    "kind": "enemy",
+    "name": "Caçador de Dragões",
+    "description": "Caçador de Dragões ocupa Vaeloria; sua atuação de ranged exige abordagem própria e suas quedas fornecem recursos regionais.",
+    "tags": ["base:antimagic"],
+    "lootTableId": "core:p4-loot-vaeloria-3",
+    "experience": 54,
+    "attributes": {
+      "vigor": 13,
+      "resistance": 7,
+      "speed": 14,
+      "dexterity": 14,
+      "precision": 14,
+      "strength": 16
+    },
+    "hp": {
+      "current": 264,
+      "maximum": 264
+    },
+    "tenacity": {
+      "current": 33,
+      "maximum": 33
+    },
+    "energy": {},
+    "equipment": [],
+    "actions": [
+      {
+        "id": "core:p4-vaeloria-3-action",
+        "name": "Disparo de precisão",
+        "kind": "ranged",
+        "target": "enemy",
+        "intervalMs": 1090,
+        "accuracy": 0.8400000000000001,
+        "damage": {
+          "amount": 23,
+          "channel": "physical",
+          "subtype": "piercing",
+          "element": "physical",
+          "properties": ["antimagic"],
+          "origin": {
+            "kind": "ability",
+            "id": "core:p4-vaeloria-3-action"
+          }
+        }
+      }
+    ],
+    "effects": [],
+    "policy": {
+      "id": "core:p4-vaeloria-3-policy",
+      "rules": [
+        {
+          "actionId": "core:p4-vaeloria-3-action",
+          "priority": 10
+        }
+      ]
+    },
+    "actionPriority": ["core:p4-vaeloria-3-action"],
+    "mitigation": {
+      "physical": 0.08,
+      "magical": 0.06
+    },
+    "position": {
+      "x": 3,
+      "y": 0
+    },
+    "affinityElement": "physical"
+  },
+  {
+    "id": "core:p4-vaeloria-4",
+    "kind": "enemy",
+    "name": "Sentinela Rúnica",
+    "description": "Sentinela Rúnica ocupa Vaeloria; sua atuação de area exige abordagem própria e suas quedas fornecem recursos regionais.",
+    "tags": ["base:arcane"],
+    "lootTableId": "core:p4-loot-vaeloria-4",
+    "experience": 61,
+    "attributes": {
+      "vigor": 14,
+      "resistance": 8,
+      "speed": 16,
+      "dexterity": 15,
+      "precision": 16,
+      "strength": 17
+    },
+    "hp": {
+      "current": 286,
+      "maximum": 286
+    },
+    "tenacity": {
+      "current": 35,
+      "maximum": 35
+    },
+    "energy": {
+      "mana": 29
+    },
+    "equipment": [],
+    "actions": [
+      {
+        "id": "core:p4-vaeloria-4-action",
+        "name": "Ruptura ambiental",
+        "kind": "area",
+        "target": "enemy",
+        "intervalMs": 1190,
+        "accuracy": 0.87,
+        "damage": {
+          "amount": 25,
+          "channel": "magical",
+          "subtype": "crushing",
+          "element": "fire",
+          "properties": ["arcane"],
+          "origin": {
+            "kind": "ability",
+            "id": "core:p4-vaeloria-4-action"
+          }
+        },
+        "effects": [
+          {
+            "id": "core:p4-vaeloria-4-slow",
+            "category": "control",
+            "potency": 4,
+            "counter": 2,
+            "damageMultiplier": 1.1
+          }
+        ]
+      }
+    ],
+    "effects": [],
+    "policy": {
+      "id": "core:p4-vaeloria-4-policy",
+      "rules": [
+        {
+          "actionId": "core:p4-vaeloria-4-action",
+          "priority": 10
+        }
+      ]
+    },
+    "actionPriority": ["core:p4-vaeloria-4-action"],
+    "mitigation": {
+      "physical": 0.08,
+      "magical": 0.12
+    },
+    "position": {
+      "x": 4,
+      "y": 1
+    },
+    "affinityElement": "fire",
+    "elite": true
+  },
+  {
+    "id": "core:p4-boss-vaeloria",
+    "kind": "enemy",
+    "name": "Draco da Caça Real",
+    "description": "Chefe regional de Vaeloria; possui interação de ranged que muda a prioridade de combate.",
+    "tags": ["base:draconic", "base:antimagic", "base:armored"],
+    "lootTableId": "core:p4-loot-boss-vaeloria",
+    "experience": 200,
+    "elite": true,
+    "boss": true,
+    "attributes": {
+      "vigor": 92,
+      "resistance": 62,
+      "speed": 14,
+      "dexterity": 20,
+      "precision": 19,
+      "strength": 30,
+      "spirit": 24
+    },
+    "hp": {
+      "current": 1380,
+      "maximum": 1380
+    },
+    "tenacity": {
+      "current": 690,
+      "maximum": 690
+    },
+    "energy": {
+      "mana": 160
+    },
+    "equipment": [],
+    "actions": [
+      {
+        "id": "core:p4-boss-vaeloria-signature",
+        "name": "Investida característica",
+        "kind": "area",
+        "target": "enemy",
+        "intervalMs": 2400,
+        "accuracy": 0.88,
+        "damage": {
+          "amount": 99,
+          "channel": "magical",
+          "element": "fire",
+          "properties": [
+            "area",
+            "boss-signature",
+            "base:draconic",
+            "base:antimagic",
+            "base:armored"
+          ],
+          "origin": {
+            "kind": "ability",
+            "id": "core:p4-boss-vaeloria-signature"
+          }
+        },
+        "effects": [
+          {
+            "id": "core:p4-boss-vaeloria-pressure",
+            "category": "debuff",
+            "potency": 6,
+            "counter": 3,
+            "damageMultiplier": 1.2
+          }
+        ]
+      },
+      {
+        "id": "core:p4-boss-vaeloria-basic",
+        "name": "Ataque de domínio",
+        "kind": "attack",
+        "target": "enemy",
+        "intervalMs": 1400,
+        "accuracy": 0.92,
+        "damage": {
+          "amount": 55,
+          "channel": "physical",
+          "subtype": "crushing",
+          "properties": ["boss", "heavy"],
+          "origin": {
+            "kind": "ability",
+            "id": "core:p4-boss-vaeloria-basic"
+          }
+        }
+      }
+    ],
+    "effects": [],
+    "policy": {
+      "id": "core:p4-boss-vaeloria-policy",
+      "rules": [
+        {
+          "actionId": "core:p4-boss-vaeloria-signature",
+          "priority": 20
+        },
+        {
+          "actionId": "core:p4-boss-vaeloria-basic",
+          "priority": 10
+        }
+      ]
+    },
+    "actionPriority": ["core:p4-boss-vaeloria-signature", "core:p4-boss-vaeloria-basic"],
+    "mitigation": {
+      "physical": 0.35,
+      "magical": 0.25
+    },
+    "position": {
+      "x": 5,
+      "y": 0
+    },
+    "affinityElement": "fire"
+  },
+  {
+    "id": "core:p4-vrakkas-1",
+    "kind": "enemy",
+    "name": "Gladiador de Arena",
+    "description": "Gladiador de Arena ocupa Vrakkas; sua atuação de ambush exige abordagem própria e suas quedas fornecem recursos regionais.",
+    "tags": ["base:berserker"],
+    "lootTableId": "core:p4-loot-vrakkas-1",
+    "experience": 55,
+    "attributes": {
+      "vigor": 13,
+      "resistance": 7,
+      "speed": 21,
+      "dexterity": 14,
+      "precision": 11,
+      "strength": 16
+    },
+    "hp": {
+      "current": 265,
+      "maximum": 265
+    },
+    "tenacity": {
+      "current": 33,
+      "maximum": 33
+    },
+    "energy": {},
+    "equipment": [],
+    "actions": [
+      {
+        "id": "core:p4-vrakkas-1-action",
+        "name": "Emboscada",
+        "kind": "attack",
+        "target": "enemy",
+        "intervalMs": 920,
+        "accuracy": 0.78,
+        "damage": {
+          "amount": 22,
+          "channel": "physical",
+          "subtype": "piercing",
+          "properties": ["berserker"],
+          "origin": {
+            "kind": "ability",
+            "id": "core:p4-vrakkas-1-action"
+          }
+        }
+      }
+    ],
+    "effects": [],
+    "policy": {
+      "id": "core:p4-vrakkas-1-policy",
+      "rules": [
+        {
+          "actionId": "core:p4-vrakkas-1-action",
+          "priority": 10
+        }
+      ]
+    },
+    "actionPriority": ["core:p4-vrakkas-1-action"],
+    "mitigation": {
+      "physical": 0.095,
+      "magical": 0.075
+    },
+    "position": {
+      "x": 1,
+      "y": 0
+    }
+  },
+  {
+    "id": "core:p4-vrakkas-2",
+    "kind": "enemy",
+    "name": "Grifo Imperial",
+    "description": "Grifo Imperial ocupa Vrakkas; sua atuação de ranged exige abordagem própria e suas quedas fornecem recursos regionais.",
+    "tags": ["base:flying"],
+    "lootTableId": "core:p4-loot-vrakkas-2",
+    "experience": 62,
+    "attributes": {
+      "vigor": 14,
+      "resistance": 8,
+      "speed": 11,
+      "dexterity": 15,
+      "precision": 13,
+      "strength": 17
+    },
+    "hp": {
+      "current": 287,
+      "maximum": 287
+    },
+    "tenacity": {
+      "current": 35,
+      "maximum": 35
+    },
+    "energy": {},
+    "equipment": [],
+    "actions": [
+      {
+        "id": "core:p4-vrakkas-2-action",
+        "name": "Disparo de precisão",
+        "kind": "ranged",
+        "target": "enemy",
+        "intervalMs": 1020,
+        "accuracy": 0.81,
+        "damage": {
+          "amount": 24,
+          "channel": "physical",
+          "subtype": "piercing",
+          "element": "physical",
+          "properties": ["flying"],
+          "origin": {
+            "kind": "ability",
+            "id": "core:p4-vrakkas-2-action"
+          }
+        }
+      }
+    ],
+    "effects": [],
+    "policy": {
+      "id": "core:p4-vrakkas-2-policy",
+      "rules": [
+        {
+          "actionId": "core:p4-vrakkas-2-action",
+          "priority": 10
+        }
+      ]
+    },
+    "actionPriority": ["core:p4-vrakkas-2-action"],
+    "mitigation": {
+      "physical": 0.095,
+      "magical": 0.075
+    },
+    "position": {
+      "x": 2,
+      "y": 1
+    },
+    "affinityElement": "physical"
+  },
+  {
+    "id": "core:p4-vrakkas-3",
+    "kind": "enemy",
+    "name": "Larápio do Bazar",
+    "description": "Larápio do Bazar ocupa Vrakkas; sua atuação de ambush exige abordagem própria e suas quedas fornecem recursos regionais.",
+    "tags": ["base:fast"],
+    "lootTableId": "core:p4-loot-vrakkas-3",
+    "experience": 69,
+    "attributes": {
+      "vigor": 15,
+      "resistance": 8,
+      "speed": 15,
+      "dexterity": 16,
+      "precision": 15,
+      "strength": 18
+    },
+    "hp": {
+      "current": 309,
+      "maximum": 309
+    },
+    "tenacity": {
+      "current": 38,
+      "maximum": 38
+    },
+    "energy": {},
+    "equipment": [],
+    "actions": [
+      {
+        "id": "core:p4-vrakkas-3-action",
+        "name": "Emboscada",
+        "kind": "attack",
+        "target": "enemy",
+        "intervalMs": 1120,
+        "accuracy": 0.8400000000000001,
+        "damage": {
+          "amount": 26,
+          "channel": "physical",
+          "subtype": "piercing",
+          "properties": ["fast"],
+          "origin": {
+            "kind": "ability",
+            "id": "core:p4-vrakkas-3-action"
+          }
+        }
+      }
+    ],
+    "effects": [],
+    "policy": {
+      "id": "core:p4-vrakkas-3-policy",
+      "rules": [
+        {
+          "actionId": "core:p4-vrakkas-3-action",
+          "priority": 10
+        }
+      ]
+    },
+    "actionPriority": ["core:p4-vrakkas-3-action"],
+    "mitigation": {
+      "physical": 0.095,
+      "magical": 0.075
+    },
+    "position": {
+      "x": 3,
+      "y": 0
+    }
+  },
+  {
+    "id": "core:p4-vrakkas-4",
+    "kind": "enemy",
+    "name": "Campeão do Trifarix",
+    "description": "Campeão do Trifarix ocupa Vrakkas; sua atuação de guardian exige abordagem própria e suas quedas fornecem recursos regionais.",
+    "tags": ["base:guardian"],
+    "lootTableId": "core:p4-loot-vrakkas-4",
+    "experience": 76,
+    "attributes": {
+      "vigor": 16,
+      "resistance": 9,
+      "speed": 17,
+      "dexterity": 17,
+      "precision": 17,
+      "strength": 19
+    },
+    "hp": {
+      "current": 331,
+      "maximum": 331
+    },
+    "tenacity": {
+      "current": 110,
+      "maximum": 110
+    },
+    "energy": {},
+    "equipment": [],
+    "actions": [
+      {
+        "id": "core:p4-vrakkas-4-action",
+        "name": "Impacto de guarda",
+        "kind": "attack",
+        "target": "enemy",
+        "intervalMs": 1220,
+        "accuracy": 0.87,
+        "damage": {
+          "amount": 28,
+          "channel": "physical",
+          "subtype": "crushing",
+          "properties": ["guardian"],
+          "origin": {
+            "kind": "ability",
+            "id": "core:p4-vrakkas-4-action"
+          }
+        }
+      }
+    ],
+    "effects": [],
+    "policy": {
+      "id": "core:p4-vrakkas-4-policy",
+      "rules": [
+        {
+          "actionId": "core:p4-vrakkas-4-action",
+          "priority": 10
+        }
+      ]
+    },
+    "actionPriority": ["core:p4-vrakkas-4-action"],
+    "mitigation": {
+      "physical": 0.18,
+      "magical": 0.075
+    },
+    "position": {
+      "x": 4,
+      "y": 1
+    },
+    "elite": true
+  },
+  {
+    "id": "core:p4-boss-vrakkas",
+    "kind": "enemy",
+    "name": "Executor do Trifarix",
+    "description": "Chefe regional de Vrakkas; possui interação de counter que muda a prioridade de combate.",
+    "tags": ["base:berserker", "base:guardian", "base:counterattacker"],
+    "lootTableId": "core:p4-loot-boss-vrakkas",
+    "experience": 275,
+    "elite": true,
+    "boss": true,
+    "attributes": {
+      "vigor": 102,
+      "resistance": 70,
+      "speed": 15,
+      "dexterity": 22,
+      "precision": 21,
+      "strength": 33,
+      "spirit": 26
+    },
+    "hp": {
+      "current": 1540,
+      "maximum": 1540
+    },
+    "tenacity": {
+      "current": 770,
+      "maximum": 770
+    },
+    "energy": {
+      "mana": 180
+    },
+    "equipment": [],
+    "actions": [
+      {
+        "id": "core:p4-boss-vrakkas-signature",
+        "name": "Investida característica",
+        "kind": "area",
+        "target": "enemy",
+        "intervalMs": 2500,
+        "accuracy": 0.88,
+        "damage": {
+          "amount": 107,
+          "channel": "magical",
+          "element": "light",
+          "properties": [
+            "area",
+            "boss-signature",
+            "base:berserker",
+            "base:guardian",
+            "base:counterattacker"
+          ],
+          "origin": {
+            "kind": "ability",
+            "id": "core:p4-boss-vrakkas-signature"
+          }
+        },
+        "effects": [
+          {
+            "id": "core:p4-boss-vrakkas-pressure",
+            "category": "debuff",
+            "potency": 7,
+            "counter": 3,
+            "damageMultiplier": 1.2
+          }
+        ]
+      },
+      {
+        "id": "core:p4-boss-vrakkas-basic",
+        "name": "Ataque de domínio",
+        "kind": "attack",
+        "target": "enemy",
+        "intervalMs": 1400,
+        "accuracy": 0.92,
+        "damage": {
+          "amount": 60,
+          "channel": "physical",
+          "subtype": "crushing",
+          "properties": ["boss", "heavy"],
+          "origin": {
+            "kind": "ability",
+            "id": "core:p4-boss-vrakkas-basic"
+          }
+        }
+      }
+    ],
+    "effects": [],
+    "policy": {
+      "id": "core:p4-boss-vrakkas-policy",
+      "rules": [
+        {
+          "actionId": "core:p4-boss-vrakkas-signature",
+          "priority": 20
+        },
+        {
+          "actionId": "core:p4-boss-vrakkas-basic",
+          "priority": 10
+        }
+      ]
+    },
+    "actionPriority": ["core:p4-boss-vrakkas-signature", "core:p4-boss-vrakkas-basic"],
+    "mitigation": {
+      "physical": 0.35,
+      "magical": 0.25
+    },
+    "position": {
+      "x": 5,
+      "y": 0
+    },
+    "affinityElement": "light"
+  },
+  {
+    "id": "core:p4-kryos-1",
+    "kind": "enemy",
+    "name": "Wendigo de Geada",
+    "description": "Wendigo de Geada ocupa Kryos; sua atuação de ambush exige abordagem própria e suas quedas fornecem recursos regionais.",
+    "tags": ["base:beast"],
+    "lootTableId": "core:p4-loot-kryos-1",
+    "experience": 70,
+    "attributes": {
+      "vigor": 15,
+      "resistance": 8,
+      "speed": 22,
+      "dexterity": 16,
+      "precision": 12,
+      "strength": 18
+    },
+    "hp": {
+      "current": 310,
+      "maximum": 310
+    },
+    "tenacity": {
+      "current": 38,
+      "maximum": 38
+    },
+    "energy": {},
+    "equipment": [],
+    "actions": [
+      {
+        "id": "core:p4-kryos-1-action",
+        "name": "Emboscada",
+        "kind": "attack",
+        "target": "enemy",
+        "intervalMs": 950,
+        "accuracy": 0.78,
+        "damage": {
+          "amount": 25,
+          "channel": "physical",
+          "subtype": "piercing",
+          "properties": ["beast"],
+          "origin": {
+            "kind": "ability",
+            "id": "core:p4-kryos-1-action"
+          }
+        }
+      }
+    ],
+    "effects": [],
+    "policy": {
+      "id": "core:p4-kryos-1-policy",
+      "rules": [
+        {
+          "actionId": "core:p4-kryos-1-action",
+          "priority": 10
+        }
+      ]
+    },
+    "actionPriority": ["core:p4-kryos-1-action"],
+    "mitigation": {
+      "physical": 0.11,
+      "magical": 0.09
+    },
+    "position": {
+      "x": 1,
+      "y": 0
+    }
+  },
+  {
+    "id": "core:p4-kryos-2",
+    "kind": "enemy",
+    "name": "Colosso de Gelo",
+    "description": "Colosso de Gelo ocupa Kryos; sua atuação de guardian exige abordagem própria e suas quedas fornecem recursos regionais.",
+    "tags": ["base:colossal"],
+    "lootTableId": "core:p4-loot-kryos-2",
+    "experience": 77,
+    "attributes": {
+      "vigor": 16,
+      "resistance": 9,
+      "speed": 12,
+      "dexterity": 17,
+      "precision": 14,
+      "strength": 19
+    },
+    "hp": {
+      "current": 332,
+      "maximum": 332
+    },
+    "tenacity": {
+      "current": 110,
+      "maximum": 110
+    },
+    "energy": {},
+    "equipment": [],
+    "actions": [
+      {
+        "id": "core:p4-kryos-2-action",
+        "name": "Impacto de guarda",
+        "kind": "attack",
+        "target": "enemy",
+        "intervalMs": 1050,
+        "accuracy": 0.81,
+        "damage": {
+          "amount": 27,
+          "channel": "physical",
+          "subtype": "crushing",
+          "properties": ["colossal"],
+          "origin": {
+            "kind": "ability",
+            "id": "core:p4-kryos-2-action"
+          }
+        }
+      }
+    ],
+    "effects": [],
+    "policy": {
+      "id": "core:p4-kryos-2-policy",
+      "rules": [
+        {
+          "actionId": "core:p4-kryos-2-action",
+          "priority": 10
+        }
+      ]
+    },
+    "actionPriority": ["core:p4-kryos-2-action"],
+    "mitigation": {
+      "physical": 0.18,
+      "magical": 0.09
+    },
+    "position": {
+      "x": 2,
+      "y": 1
+    }
+  },
+  {
+    "id": "core:p4-kryos-3",
+    "kind": "enemy",
+    "name": "Coruja da Nevasca",
+    "description": "Coruja da Nevasca ocupa Kryos; sua atuação de ranged exige abordagem própria e suas quedas fornecem recursos regionais.",
+    "tags": ["base:flying"],
+    "lootTableId": "core:p4-loot-kryos-3",
+    "experience": 84,
+    "attributes": {
+      "vigor": 17,
+      "resistance": 10,
+      "speed": 16,
+      "dexterity": 18,
+      "precision": 16,
+      "strength": 20
+    },
+    "hp": {
+      "current": 354,
+      "maximum": 354
+    },
+    "tenacity": {
+      "current": 44,
+      "maximum": 44
+    },
+    "energy": {},
+    "equipment": [],
+    "actions": [
+      {
+        "id": "core:p4-kryos-3-action",
+        "name": "Disparo de precisão",
+        "kind": "ranged",
+        "target": "enemy",
+        "intervalMs": 1150,
+        "accuracy": 0.8400000000000001,
+        "damage": {
+          "amount": 29,
+          "channel": "physical",
+          "subtype": "piercing",
+          "element": "physical",
+          "properties": ["flying"],
+          "origin": {
+            "kind": "ability",
+            "id": "core:p4-kryos-3-action"
+          }
+        }
+      }
+    ],
+    "effects": [],
+    "policy": {
+      "id": "core:p4-kryos-3-policy",
+      "rules": [
+        {
+          "actionId": "core:p4-kryos-3-action",
+          "priority": 10
+        }
+      ]
+    },
+    "actionPriority": ["core:p4-kryos-3-action"],
+    "mitigation": {
+      "physical": 0.11,
+      "magical": 0.09
+    },
+    "position": {
+      "x": 3,
+      "y": 0
+    },
+    "affinityElement": "physical"
+  },
+  {
+    "id": "core:p4-kryos-4",
+    "kind": "enemy",
+    "name": "Revenante Congelado",
+    "description": "Revenante Congelado ocupa Kryos; sua atuação de area exige abordagem própria e suas quedas fornecem recursos regionais.",
+    "tags": ["base:undead"],
+    "lootTableId": "core:p4-loot-kryos-4",
+    "experience": 91,
+    "attributes": {
+      "vigor": 18,
+      "resistance": 10,
+      "speed": 18,
+      "dexterity": 19,
+      "precision": 18,
+      "strength": 21
+    },
+    "hp": {
+      "current": 376,
+      "maximum": 376
+    },
+    "tenacity": {
+      "current": 47,
+      "maximum": 47
+    },
+    "energy": {
+      "mana": 35
+    },
+    "equipment": [],
+    "actions": [
+      {
+        "id": "core:p4-kryos-4-action",
+        "name": "Ruptura ambiental",
+        "kind": "area",
+        "target": "enemy",
+        "intervalMs": 1250,
+        "accuracy": 0.87,
+        "damage": {
+          "amount": 31,
+          "channel": "magical",
+          "subtype": "crushing",
+          "element": "frost",
+          "properties": ["undead"],
+          "origin": {
+            "kind": "ability",
+            "id": "core:p4-kryos-4-action"
+          }
+        },
+        "effects": [
+          {
+            "id": "core:p4-kryos-4-slow",
+            "category": "control",
+            "potency": 6,
+            "counter": 2,
+            "damageMultiplier": 1.1
+          }
+        ]
+      }
+    ],
+    "effects": [],
+    "policy": {
+      "id": "core:p4-kryos-4-policy",
+      "rules": [
+        {
+          "actionId": "core:p4-kryos-4-action",
+          "priority": 10
+        }
+      ]
+    },
+    "actionPriority": ["core:p4-kryos-4-action"],
+    "mitigation": {
+      "physical": 0.11,
+      "magical": 0.12
+    },
+    "position": {
+      "x": 4,
+      "y": 1
+    },
+    "affinityElement": "frost",
+    "elite": true
+  },
+  {
+    "id": "core:p4-boss-kryos",
+    "kind": "enemy",
+    "name": "Pássaro de Gelo",
+    "description": "Chefe regional de Kryos; possui interação de area que muda a prioridade de combate.",
+    "tags": ["base:frostborn", "base:flying", "base:colossal"],
+    "lootTableId": "core:p4-loot-boss-kryos",
+    "experience": 350,
+    "elite": true,
+    "boss": true,
+    "attributes": {
+      "vigor": 113,
+      "resistance": 77,
+      "speed": 16,
+      "dexterity": 24,
+      "precision": 23,
+      "strength": 36,
+      "spirit": 28
+    },
+    "hp": {
+      "current": 1700,
+      "maximum": 1700
+    },
+    "tenacity": {
+      "current": 850,
+      "maximum": 850
+    },
+    "energy": {
+      "mana": 200
+    },
+    "equipment": [],
+    "actions": [
+      {
+        "id": "core:p4-boss-kryos-signature",
+        "name": "Investida característica",
+        "kind": "area",
+        "target": "enemy",
+        "intervalMs": 2600,
+        "accuracy": 0.88,
+        "damage": {
+          "amount": 115,
+          "channel": "magical",
+          "element": "frost",
+          "properties": [
+            "area",
+            "boss-signature",
+            "base:frostborn",
+            "base:flying",
+            "base:colossal"
+          ],
+          "origin": {
+            "kind": "ability",
+            "id": "core:p4-boss-kryos-signature"
+          }
+        },
+        "effects": [
+          {
+            "id": "core:p4-boss-kryos-pressure",
+            "category": "debuff",
+            "potency": 8,
+            "counter": 3,
+            "damageMultiplier": 1.2
+          }
+        ]
+      },
+      {
+        "id": "core:p4-boss-kryos-basic",
+        "name": "Ataque de domínio",
+        "kind": "attack",
+        "target": "enemy",
+        "intervalMs": 1400,
+        "accuracy": 0.92,
+        "damage": {
+          "amount": 65,
+          "channel": "physical",
+          "subtype": "crushing",
+          "properties": ["boss", "heavy"],
+          "origin": {
+            "kind": "ability",
+            "id": "core:p4-boss-kryos-basic"
+          }
+        }
+      }
+    ],
+    "effects": [],
+    "policy": {
+      "id": "core:p4-boss-kryos-policy",
+      "rules": [
+        {
+          "actionId": "core:p4-boss-kryos-signature",
+          "priority": 20
+        },
+        {
+          "actionId": "core:p4-boss-kryos-basic",
+          "priority": 10
+        }
+      ]
+    },
+    "actionPriority": ["core:p4-boss-kryos-signature", "core:p4-boss-kryos-basic"],
+    "mitigation": {
+      "physical": 0.35,
+      "magical": 0.25
+    },
+    "position": {
+      "x": 5,
+      "y": 0
+    },
+    "affinityElement": "frost"
+  },
+  {
+    "id": "core:p4-riptide-1",
+    "kind": "enemy",
+    "name": "Tubarão de Recife",
+    "description": "Tubarão de Recife ocupa Riptide; sua atuação de ambush exige abordagem própria e suas quedas fornecem recursos regionais.",
+    "tags": ["base:aquatic"],
+    "lootTableId": "core:p4-loot-riptide-1",
+    "experience": 85,
+    "attributes": {
+      "vigor": 17,
+      "resistance": 10,
+      "speed": 23,
+      "dexterity": 18,
+      "precision": 13,
+      "strength": 20
+    },
+    "hp": {
+      "current": 355,
+      "maximum": 355
+    },
+    "tenacity": {
+      "current": 44,
+      "maximum": 44
+    },
+    "energy": {},
+    "equipment": [],
+    "actions": [
+      {
+        "id": "core:p4-riptide-1-action",
+        "name": "Emboscada",
+        "kind": "attack",
+        "target": "enemy",
+        "intervalMs": 980,
+        "accuracy": 0.78,
+        "damage": {
+          "amount": 28,
+          "channel": "physical",
+          "subtype": "piercing",
+          "properties": ["aquatic"],
+          "origin": {
+            "kind": "ability",
+            "id": "core:p4-riptide-1-action"
+          }
+        }
+      }
+    ],
+    "effects": [],
+    "policy": {
+      "id": "core:p4-riptide-1-policy",
+      "rules": [
+        {
+          "actionId": "core:p4-riptide-1-action",
+          "priority": 10
+        }
+      ]
+    },
+    "actionPriority": ["core:p4-riptide-1-action"],
+    "mitigation": {
+      "physical": 0.125,
+      "magical": 0.105
+    },
+    "position": {
+      "x": 1,
+      "y": 0
+    }
+  },
+  {
+    "id": "core:p4-riptide-2",
+    "kind": "enemy",
+    "name": "Peixe Jaula Predador",
+    "description": "Peixe Jaula Predador ocupa Riptide; sua atuação de guardian exige abordagem própria e suas quedas fornecem recursos regionais.",
+    "tags": ["base:armored"],
+    "lootTableId": "core:p4-loot-riptide-2",
+    "experience": 92,
+    "attributes": {
+      "vigor": 18,
+      "resistance": 10,
+      "speed": 13,
+      "dexterity": 19,
+      "precision": 15,
+      "strength": 21
+    },
+    "hp": {
+      "current": 377,
+      "maximum": 377
+    },
+    "tenacity": {
+      "current": 125,
+      "maximum": 125
+    },
+    "energy": {},
+    "equipment": [],
+    "actions": [
+      {
+        "id": "core:p4-riptide-2-action",
+        "name": "Impacto de guarda",
+        "kind": "attack",
+        "target": "enemy",
+        "intervalMs": 1080,
+        "accuracy": 0.81,
+        "damage": {
+          "amount": 30,
+          "channel": "physical",
+          "subtype": "crushing",
+          "properties": ["armored"],
+          "origin": {
+            "kind": "ability",
+            "id": "core:p4-riptide-2-action"
+          }
+        }
+      }
+    ],
+    "effects": [],
+    "policy": {
+      "id": "core:p4-riptide-2-policy",
+      "rules": [
+        {
+          "actionId": "core:p4-riptide-2-action",
+          "priority": 10
+        }
+      ]
+    },
+    "actionPriority": ["core:p4-riptide-2-action"],
+    "mitigation": {
+      "physical": 0.18,
+      "magical": 0.105
+    },
+    "position": {
+      "x": 2,
+      "y": 1
+    }
+  },
+  {
+    "id": "core:p4-riptide-3",
+    "kind": "enemy",
+    "name": "Corsário Espectral",
+    "description": "Corsário Espectral ocupa Riptide; sua atuação de ranged exige abordagem própria e suas quedas fornecem recursos regionais.",
+    "tags": ["base:ethereal"],
+    "lootTableId": "core:p4-loot-riptide-3",
+    "experience": 99,
+    "attributes": {
+      "vigor": 19,
+      "resistance": 11,
+      "speed": 17,
+      "dexterity": 20,
+      "precision": 17,
+      "strength": 22
+    },
+    "hp": {
+      "current": 399,
+      "maximum": 399
+    },
+    "tenacity": {
+      "current": 49,
+      "maximum": 49
+    },
+    "energy": {},
+    "equipment": [],
+    "actions": [
+      {
+        "id": "core:p4-riptide-3-action",
+        "name": "Disparo de precisão",
+        "kind": "ranged",
+        "target": "enemy",
+        "intervalMs": 1180,
+        "accuracy": 0.8400000000000001,
+        "damage": {
+          "amount": 32,
+          "channel": "physical",
+          "subtype": "piercing",
+          "element": "physical",
+          "properties": ["ethereal"],
+          "origin": {
+            "kind": "ability",
+            "id": "core:p4-riptide-3-action"
+          }
+        }
+      }
+    ],
+    "effects": [],
+    "policy": {
+      "id": "core:p4-riptide-3-policy",
+      "rules": [
+        {
+          "actionId": "core:p4-riptide-3-action",
+          "priority": 10
+        }
+      ]
+    },
+    "actionPriority": ["core:p4-riptide-3-action"],
+    "mitigation": {
+      "physical": 0.125,
+      "magical": 0.105
+    },
+    "position": {
+      "x": 3,
+      "y": 0
+    },
+    "affinityElement": "physical"
+  },
+  {
+    "id": "core:p4-riptide-4",
+    "kind": "enemy",
+    "name": "Enguia de Tempestade",
+    "description": "Enguia de Tempestade ocupa Riptide; sua atuação de area exige abordagem própria e suas quedas fornecem recursos regionais.",
+    "tags": ["base:stormbound"],
+    "lootTableId": "core:p4-loot-riptide-4",
+    "experience": 106,
+    "attributes": {
+      "vigor": 21,
+      "resistance": 12,
+      "speed": 19,
+      "dexterity": 21,
+      "precision": 19,
+      "strength": 23
+    },
+    "hp": {
+      "current": 421,
+      "maximum": 421
+    },
+    "tenacity": {
+      "current": 52,
+      "maximum": 52
+    },
+    "energy": {
+      "mana": 38
+    },
+    "equipment": [],
+    "actions": [
+      {
+        "id": "core:p4-riptide-4-action",
+        "name": "Ruptura ambiental",
+        "kind": "area",
+        "target": "enemy",
+        "intervalMs": 1280,
+        "accuracy": 0.87,
+        "damage": {
+          "amount": 34,
+          "channel": "magical",
+          "subtype": "crushing",
+          "element": "water",
+          "properties": ["stormbound"],
+          "origin": {
+            "kind": "ability",
+            "id": "core:p4-riptide-4-action"
+          }
+        },
+        "effects": [
+          {
+            "id": "core:p4-riptide-4-slow",
+            "category": "control",
+            "potency": 7,
+            "counter": 2,
+            "damageMultiplier": 1.1
+          }
+        ]
+      }
+    ],
+    "effects": [],
+    "policy": {
+      "id": "core:p4-riptide-4-policy",
+      "rules": [
+        {
+          "actionId": "core:p4-riptide-4-action",
+          "priority": 10
+        }
+      ]
+    },
+    "actionPriority": ["core:p4-riptide-4-action"],
+    "mitigation": {
+      "physical": 0.125,
+      "magical": 0.12
+    },
+    "position": {
+      "x": 4,
+      "y": 1
+    },
+    "affinityElement": "water",
+    "elite": true
+  },
+  {
+    "id": "core:p4-boss-riptide",
+    "kind": "enemy",
+    "name": "Capitã dos Doze Mares",
+    "description": "Chefe regional de Riptide; possui interação de summon que muda a prioridade de combate.",
+    "tags": ["base:aquatic", "base:volatile", "base:summoner"],
+    "lootTableId": "core:p4-loot-boss-riptide",
+    "experience": 425,
+    "elite": true,
+    "boss": true,
+    "attributes": {
+      "vigor": 124,
+      "resistance": 84,
+      "speed": 17,
+      "dexterity": 26,
+      "precision": 25,
+      "strength": 39,
+      "spirit": 30
+    },
+    "hp": {
+      "current": 1860,
+      "maximum": 1860
+    },
+    "tenacity": {
+      "current": 930,
+      "maximum": 930
+    },
+    "energy": {
+      "mana": 220
+    },
+    "equipment": [],
+    "actions": [
+      {
+        "id": "core:p4-boss-riptide-signature",
+        "name": "Reforços da região",
+        "kind": "summon",
+        "target": "self",
+        "intervalMs": 2700,
+        "accuracy": 0.88,
+        "summon": {
+          "id": "core:p4-boss-riptide-add",
+          "name": "Emissário aliado",
+          "speciesId": "core:p4-boss-riptide",
+          "tags": ["base:fast", "base:aquatic"],
+          "attributes": {
+            "vigor": 10,
+            "resistance": 2,
+            "speed": 26,
+            "dexterity": 12,
+            "precision": 10,
+            "strength": 8
+          },
+          "hp": {
+            "current": 130,
+            "maximum": 130
+          },
+          "tenacity": {
+            "current": 0,
+            "maximum": 0
+          },
+          "energy": {},
+          "damage": {
+            "amount": 38,
+            "channel": "magical",
+            "element": "water",
+            "properties": ["summon"],
+            "origin": {
+              "kind": "ability",
+              "id": "core:p4-boss-riptide-signature"
+            }
+          },
+          "intervalMs": 1000,
+          "accuracy": 0.84,
+          "mitigation": {
+            "physical": 0.05,
+            "magical": 0.05
+          },
+          "positionOffset": {
+            "x": -1,
+            "y": 1
+          }
+        }
+      },
+      {
+        "id": "core:p4-boss-riptide-basic",
+        "name": "Ataque de domínio",
+        "kind": "attack",
+        "target": "enemy",
+        "intervalMs": 1400,
+        "accuracy": 0.92,
+        "damage": {
+          "amount": 70,
+          "channel": "physical",
+          "subtype": "crushing",
+          "properties": ["boss", "heavy"],
+          "origin": {
+            "kind": "ability",
+            "id": "core:p4-boss-riptide-basic"
+          }
+        }
+      }
+    ],
+    "effects": [],
+    "policy": {
+      "id": "core:p4-boss-riptide-policy",
+      "rules": [
+        {
+          "actionId": "core:p4-boss-riptide-signature",
+          "priority": 20
+        },
+        {
+          "actionId": "core:p4-boss-riptide-basic",
+          "priority": 10
+        }
+      ]
+    },
+    "actionPriority": ["core:p4-boss-riptide-signature", "core:p4-boss-riptide-basic"],
+    "mitigation": {
+      "physical": 0.35,
+      "magical": 0.25
+    },
+    "position": {
+      "x": 5,
+      "y": 0
+    },
+    "affinityElement": "water"
+  },
+  {
+    "id": "core:p4-caelum-1",
+    "kind": "enemy",
+    "name": "Eco Temporal",
+    "description": "Eco Temporal ocupa Caelum; sua atuação de fast exige abordagem própria e suas quedas fornecem recursos regionais.",
+    "tags": ["base:ethereal"],
+    "lootTableId": "core:p4-loot-caelum-1",
+    "experience": 100,
+    "attributes": {
+      "vigor": 20,
+      "resistance": 11,
+      "speed": 24,
+      "dexterity": 20,
+      "precision": 14,
+      "strength": 22
+    },
+    "hp": {
+      "current": 400,
+      "maximum": 400
+    },
+    "tenacity": {
+      "current": 50,
+      "maximum": 50
+    },
+    "energy": {},
+    "equipment": [],
+    "actions": [
+      {
+        "id": "core:p4-caelum-1-action",
+        "name": "Corte veloz",
+        "kind": "attack",
+        "target": "enemy",
+        "intervalMs": 1010,
+        "accuracy": 0.78,
+        "damage": {
+          "amount": 31,
+          "channel": "physical",
+          "subtype": "crushing",
+          "properties": ["ethereal"],
+          "origin": {
+            "kind": "ability",
+            "id": "core:p4-caelum-1-action"
+          }
+        }
+      }
+    ],
+    "effects": [],
+    "policy": {
+      "id": "core:p4-caelum-1-policy",
+      "rules": [
+        {
+          "actionId": "core:p4-caelum-1-action",
+          "priority": 10
+        }
+      ]
+    },
+    "actionPriority": ["core:p4-caelum-1-action"],
+    "mitigation": {
+      "physical": 0.14,
+      "magical": 0.12
+    },
+    "position": {
+      "x": 1,
+      "y": 0
+    }
+  },
+  {
+    "id": "core:p4-caelum-2",
+    "kind": "enemy",
+    "name": "Draco do Penhasco",
+    "description": "Draco do Penhasco ocupa Caelum; sua atuação de ambush exige abordagem própria e suas quedas fornecem recursos regionais.",
+    "tags": ["base:draconic"],
+    "lootTableId": "core:p4-loot-caelum-2",
+    "experience": 107,
+    "attributes": {
+      "vigor": 21,
+      "resistance": 12,
+      "speed": 14,
+      "dexterity": 21,
+      "precision": 16,
+      "strength": 23
+    },
+    "hp": {
+      "current": 422,
+      "maximum": 422
+    },
+    "tenacity": {
+      "current": 52,
+      "maximum": 52
+    },
+    "energy": {},
+    "equipment": [],
+    "actions": [
+      {
+        "id": "core:p4-caelum-2-action",
+        "name": "Emboscada",
+        "kind": "attack",
+        "target": "enemy",
+        "intervalMs": 1110,
+        "accuracy": 0.81,
+        "damage": {
+          "amount": 33,
+          "channel": "physical",
+          "subtype": "piercing",
+          "properties": ["draconic"],
+          "origin": {
+            "kind": "ability",
+            "id": "core:p4-caelum-2-action"
+          }
+        }
+      }
+    ],
+    "effects": [],
+    "policy": {
+      "id": "core:p4-caelum-2-policy",
+      "rules": [
+        {
+          "actionId": "core:p4-caelum-2-action",
+          "priority": 10
+        }
+      ]
+    },
+    "actionPriority": ["core:p4-caelum-2-action"],
+    "mitigation": {
+      "physical": 0.14,
+      "magical": 0.12
+    },
+    "position": {
+      "x": 2,
+      "y": 1
+    }
+  },
+  {
+    "id": "core:p4-caelum-3",
+    "kind": "enemy",
+    "name": "Sentinela das Nuvens",
+    "description": "Sentinela das Nuvens ocupa Caelum; sua atuação de guardian exige abordagem própria e suas quedas fornecem recursos regionais.",
+    "tags": ["base:flying"],
+    "lootTableId": "core:p4-loot-caelum-3",
+    "experience": 114,
+    "attributes": {
+      "vigor": 22,
+      "resistance": 12,
+      "speed": 18,
+      "dexterity": 22,
+      "precision": 18,
+      "strength": 24
+    },
+    "hp": {
+      "current": 444,
+      "maximum": 444
+    },
+    "tenacity": {
+      "current": 148,
+      "maximum": 148
+    },
+    "energy": {},
+    "equipment": [],
+    "actions": [
+      {
+        "id": "core:p4-caelum-3-action",
+        "name": "Impacto de guarda",
+        "kind": "attack",
+        "target": "enemy",
+        "intervalMs": 1210,
+        "accuracy": 0.8400000000000001,
+        "damage": {
+          "amount": 35,
+          "channel": "physical",
+          "subtype": "crushing",
+          "properties": ["flying"],
+          "origin": {
+            "kind": "ability",
+            "id": "core:p4-caelum-3-action"
+          }
+        }
+      }
+    ],
+    "effects": [],
+    "policy": {
+      "id": "core:p4-caelum-3-policy",
+      "rules": [
+        {
+          "actionId": "core:p4-caelum-3-action",
+          "priority": 10
+        }
+      ]
+    },
+    "actionPriority": ["core:p4-caelum-3-action"],
+    "mitigation": {
+      "physical": 0.18,
+      "magical": 0.12
+    },
+    "position": {
+      "x": 3,
+      "y": 0
+    }
+  },
+  {
+    "id": "core:p4-caelum-4",
+    "kind": "enemy",
+    "name": "Peregrino Deslocado",
+    "description": "Peregrino Deslocado ocupa Caelum; sua atuação de area exige abordagem própria e suas quedas fornecem recursos regionais.",
+    "tags": ["base:arcane"],
+    "lootTableId": "core:p4-loot-caelum-4",
+    "experience": 121,
+    "attributes": {
+      "vigor": 23,
+      "resistance": 13,
+      "speed": 20,
+      "dexterity": 23,
+      "precision": 20,
+      "strength": 25
+    },
+    "hp": {
+      "current": 466,
+      "maximum": 466
+    },
+    "tenacity": {
+      "current": 58,
+      "maximum": 58
+    },
+    "energy": {
+      "mana": 41
+    },
+    "equipment": [],
+    "actions": [
+      {
+        "id": "core:p4-caelum-4-action",
+        "name": "Ruptura ambiental",
+        "kind": "area",
+        "target": "enemy",
+        "intervalMs": 1310,
+        "accuracy": 0.87,
+        "damage": {
+          "amount": 37,
+          "channel": "magical",
+          "subtype": "crushing",
+          "element": "arcane",
+          "properties": ["arcane"],
+          "origin": {
+            "kind": "ability",
+            "id": "core:p4-caelum-4-action"
+          }
+        },
+        "effects": [
+          {
+            "id": "core:p4-caelum-4-slow",
+            "category": "control",
+            "potency": 8,
+            "counter": 2,
+            "damageMultiplier": 1.1
+          }
+        ]
+      }
+    ],
+    "effects": [],
+    "policy": {
+      "id": "core:p4-caelum-4-policy",
+      "rules": [
+        {
+          "actionId": "core:p4-caelum-4-action",
+          "priority": 10
+        }
+      ]
+    },
+    "actionPriority": ["core:p4-caelum-4-action"],
+    "mitigation": {
+      "physical": 0.14,
+      "magical": 0.12
+    },
+    "position": {
+      "x": 4,
+      "y": 1
+    },
+    "affinityElement": "arcane",
+    "elite": true
+  },
+  {
+    "id": "core:p4-boss-caelum",
+    "kind": "enemy",
+    "name": "Aspecto da Trilha Impossível",
+    "description": "Chefe regional de Caelum; possui interação de fast que muda a prioridade de combate.",
+    "tags": ["base:arcane", "base:ethereal", "base:adaptive"],
+    "lootTableId": "core:p4-loot-boss-caelum",
+    "experience": 500,
+    "elite": true,
+    "boss": true,
+    "attributes": {
+      "vigor": 134,
+      "resistance": 91,
+      "speed": 18,
+      "dexterity": 28,
+      "precision": 27,
+      "strength": 42,
+      "spirit": 32
+    },
+    "hp": {
+      "current": 2020,
+      "maximum": 2020
+    },
+    "tenacity": {
+      "current": 1010,
+      "maximum": 1010
+    },
+    "energy": {
+      "mana": 240
+    },
+    "equipment": [],
+    "actions": [
+      {
+        "id": "core:p4-boss-caelum-signature",
+        "name": "Investida característica",
+        "kind": "area",
+        "target": "enemy",
+        "intervalMs": 2800,
+        "accuracy": 0.88,
+        "damage": {
+          "amount": 131,
+          "channel": "magical",
+          "element": "arcane",
+          "properties": ["area", "boss-signature", "base:arcane", "base:ethereal", "base:adaptive"],
+          "origin": {
+            "kind": "ability",
+            "id": "core:p4-boss-caelum-signature"
+          }
+        },
+        "effects": [
+          {
+            "id": "core:p4-boss-caelum-pressure",
+            "category": "debuff",
+            "potency": 10,
+            "counter": 3,
+            "damageMultiplier": 1.2
+          }
+        ]
+      },
+      {
+        "id": "core:p4-boss-caelum-basic",
+        "name": "Ataque de domínio",
+        "kind": "attack",
+        "target": "enemy",
+        "intervalMs": 1400,
+        "accuracy": 0.92,
+        "damage": {
+          "amount": 75,
+          "channel": "physical",
+          "subtype": "crushing",
+          "properties": ["boss", "heavy"],
+          "origin": {
+            "kind": "ability",
+            "id": "core:p4-boss-caelum-basic"
+          }
+        }
+      }
+    ],
+    "effects": [],
+    "policy": {
+      "id": "core:p4-boss-caelum-policy",
+      "rules": [
+        {
+          "actionId": "core:p4-boss-caelum-signature",
+          "priority": 20
+        },
+        {
+          "actionId": "core:p4-boss-caelum-basic",
+          "priority": 10
+        }
+      ]
+    },
+    "actionPriority": ["core:p4-boss-caelum-signature", "core:p4-boss-caelum-basic"],
+    "mitigation": {
+      "physical": 0.35,
+      "magical": 0.25
+    },
+    "position": {
+      "x": 5,
+      "y": 0
+    },
+    "affinityElement": "arcane"
+  },
+  {
+    "id": "core:p4-mourland-1",
+    "kind": "enemy",
+    "name": "Espectro da Névoa Negra",
+    "description": "Espectro da Névoa Negra ocupa Mourland; sua atuação de area exige abordagem própria e suas quedas fornecem recursos regionais.",
+    "tags": ["base:undead"],
+    "lootTableId": "core:p4-loot-mourland-1",
+    "experience": 120,
+    "attributes": {
+      "vigor": 22,
+      "resistance": 12,
+      "speed": 25,
+      "dexterity": 22,
+      "precision": 15,
+      "strength": 24
+    },
+    "hp": {
+      "current": 445,
+      "maximum": 445
+    },
+    "tenacity": {
+      "current": 55,
+      "maximum": 55
+    },
+    "energy": {
+      "mana": 44
+    },
+    "equipment": [],
+    "actions": [
+      {
+        "id": "core:p4-mourland-1-action",
+        "name": "Ruptura ambiental",
+        "kind": "area",
+        "target": "enemy",
+        "intervalMs": 1040,
+        "accuracy": 0.78,
+        "damage": {
+          "amount": 34,
+          "channel": "magical",
+          "subtype": "crushing",
+          "element": "shadow",
+          "properties": ["undead"],
+          "origin": {
+            "kind": "ability",
+            "id": "core:p4-mourland-1-action"
+          }
+        },
+        "effects": [
+          {
+            "id": "core:p4-mourland-1-slow",
+            "category": "control",
+            "potency": 9,
+            "counter": 2,
+            "damageMultiplier": 1.1
+          }
+        ]
+      }
+    ],
+    "effects": [],
+    "policy": {
+      "id": "core:p4-mourland-1-policy",
+      "rules": [
+        {
+          "actionId": "core:p4-mourland-1-action",
+          "priority": 10
+        }
+      ]
+    },
+    "actionPriority": ["core:p4-mourland-1-action"],
+    "mitigation": {
+      "physical": 0.155,
+      "magical": 0.12
+    },
+    "position": {
+      "x": 1,
+      "y": 0
+    },
+    "affinityElement": "shadow"
+  },
+  {
+    "id": "core:p4-mourland-2",
+    "kind": "enemy",
+    "name": "Monge Arruinado",
+    "description": "Monge Arruinado ocupa Mourland; sua atuação de healer exige abordagem própria e suas quedas fornecem recursos regionais.",
+    "tags": ["base:celestial"],
+    "lootTableId": "core:p4-loot-mourland-2",
+    "experience": 127,
+    "attributes": {
+      "vigor": 23,
+      "resistance": 13,
+      "speed": 15,
+      "dexterity": 23,
+      "precision": 17,
+      "strength": 25
+    },
+    "hp": {
+      "current": 467,
+      "maximum": 467
+    },
+    "tenacity": {
+      "current": 58,
+      "maximum": 58
+    },
+    "energy": {
+      "mana": 44
+    },
+    "equipment": [],
+    "actions": [
+      {
+        "id": "core:p4-mourland-2-action",
+        "name": "Restauração",
+        "kind": "heal",
+        "target": "self",
+        "intervalMs": 1140,
+        "accuracy": 0.81,
+        "healing": 42
+      }
+    ],
+    "effects": [],
+    "policy": {
+      "id": "core:p4-mourland-2-policy",
+      "rules": [
+        {
+          "actionId": "core:p4-mourland-2-action",
+          "priority": 10
+        }
+      ]
+    },
+    "actionPriority": ["core:p4-mourland-2-action"],
+    "mitigation": {
+      "physical": 0.155,
+      "magical": 0.135
+    },
+    "position": {
+      "x": 2,
+      "y": 1
+    },
+    "affinityElement": "arcane"
+  },
+  {
+    "id": "core:p4-mourland-3",
+    "kind": "enemy",
+    "name": "Afogado Revenante",
+    "description": "Afogado Revenante ocupa Mourland; sua atuação de poison exige abordagem própria e suas quedas fornecem recursos regionais.",
+    "tags": ["base:aquatic"],
+    "lootTableId": "core:p4-loot-mourland-3",
+    "experience": 134,
+    "attributes": {
+      "vigor": 24,
+      "resistance": 13,
+      "speed": 19,
+      "dexterity": 24,
+      "precision": 19,
+      "strength": 26
+    },
+    "hp": {
+      "current": 489,
+      "maximum": 489
+    },
+    "tenacity": {
+      "current": 61,
+      "maximum": 61
+    },
+    "energy": {},
+    "equipment": [],
+    "actions": [
+      {
+        "id": "core:p4-mourland-3-action",
+        "name": "Mordida contaminante",
+        "kind": "attack",
+        "target": "enemy",
+        "intervalMs": 1240,
+        "accuracy": 0.8400000000000001,
+        "damage": {
+          "amount": 38,
+          "channel": "physical",
+          "subtype": "piercing",
+          "element": "poison",
+          "properties": ["aquatic"],
+          "origin": {
+            "kind": "ability",
+            "id": "core:p4-mourland-3-action"
+          }
+        },
+        "effects": [
+          {
+            "id": "core:p4-mourland-3-poison",
+            "category": "dot",
+            "potency": 2,
+            "counter": 4,
+            "tickDamage": {
+              "amount": 10,
+              "channel": "magical",
+              "element": "poison"
+            }
+          }
+        ]
+      }
+    ],
+    "effects": [],
+    "policy": {
+      "id": "core:p4-mourland-3-policy",
+      "rules": [
+        {
+          "actionId": "core:p4-mourland-3-action",
+          "priority": 10
+        }
+      ]
+    },
+    "actionPriority": ["core:p4-mourland-3-action"],
+    "mitigation": {
+      "physical": 0.155,
+      "magical": 0.135
+    },
+    "position": {
+      "x": 3,
+      "y": 0
+    },
+    "affinityElement": "poison"
+  },
+  {
+    "id": "core:p4-mourland-4",
+    "kind": "enemy",
+    "name": "Campeão do Rei Destruído",
+    "description": "Campeão do Rei Destruído ocupa Mourland; sua atuação de guardian exige abordagem própria e suas quedas fornecem recursos regionais.",
+    "tags": ["base:armored"],
+    "lootTableId": "core:p4-loot-mourland-4",
+    "experience": 141,
+    "attributes": {
+      "vigor": 25,
+      "resistance": 14,
+      "speed": 21,
+      "dexterity": 25,
+      "precision": 21,
+      "strength": 27
+    },
+    "hp": {
+      "current": 511,
+      "maximum": 511
+    },
+    "tenacity": {
+      "current": 170,
+      "maximum": 170
+    },
+    "energy": {},
+    "equipment": [],
+    "actions": [
+      {
+        "id": "core:p4-mourland-4-action",
+        "name": "Impacto de guarda",
+        "kind": "attack",
+        "target": "enemy",
+        "intervalMs": 1340,
+        "accuracy": 0.87,
+        "damage": {
+          "amount": 40,
+          "channel": "physical",
+          "subtype": "crushing",
+          "properties": ["armored"],
+          "origin": {
+            "kind": "ability",
+            "id": "core:p4-mourland-4-action"
+          }
+        }
+      }
+    ],
+    "effects": [],
+    "policy": {
+      "id": "core:p4-mourland-4-policy",
+      "rules": [
+        {
+          "actionId": "core:p4-mourland-4-action",
+          "priority": 10
+        }
+      ]
+    },
+    "actionPriority": ["core:p4-mourland-4-action"],
+    "mitigation": {
+      "physical": 0.18,
+      "magical": 0.135
+    },
+    "position": {
+      "x": 4,
+      "y": 1
+    },
+    "elite": true
+  },
+  {
+    "id": "core:p4-boss-mourland",
+    "kind": "enemy",
+    "name": "Rainha da Névoa Negra",
+    "description": "Chefe regional de Mourland; possui interação de summon que muda a prioridade de combate.",
+    "tags": ["base:undead", "base:celestial", "base:summoner"],
+    "lootTableId": "core:p4-loot-boss-mourland",
+    "experience": 600,
+    "elite": true,
+    "boss": true,
+    "attributes": {
+      "vigor": 145,
+      "resistance": 99,
+      "speed": 19,
+      "dexterity": 30,
+      "precision": 29,
+      "strength": 45,
+      "spirit": 34
+    },
+    "hp": {
+      "current": 2180,
+      "maximum": 2180
+    },
+    "tenacity": {
+      "current": 1090,
+      "maximum": 1090
+    },
+    "energy": {
+      "mana": 260
+    },
+    "equipment": [],
+    "actions": [
+      {
+        "id": "core:p4-boss-mourland-signature",
+        "name": "Reforços da região",
+        "kind": "summon",
+        "target": "self",
+        "intervalMs": 2900,
+        "accuracy": 0.88,
+        "summon": {
+          "id": "core:p4-boss-mourland-add",
+          "name": "Emissário aliado",
+          "speciesId": "core:p4-boss-mourland",
+          "tags": ["base:fast", "base:undead"],
+          "attributes": {
+            "vigor": 10,
+            "resistance": 2,
+            "speed": 28,
+            "dexterity": 12,
+            "precision": 10,
+            "strength": 8
+          },
+          "hp": {
+            "current": 150,
+            "maximum": 150
+          },
+          "tenacity": {
+            "current": 0,
+            "maximum": 0
+          },
+          "energy": {},
+          "damage": {
+            "amount": 44,
+            "channel": "magical",
+            "element": "shadow",
+            "properties": ["summon"],
+            "origin": {
+              "kind": "ability",
+              "id": "core:p4-boss-mourland-signature"
+            }
+          },
+          "intervalMs": 1000,
+          "accuracy": 0.84,
+          "mitigation": {
+            "physical": 0.05,
+            "magical": 0.05
+          },
+          "positionOffset": {
+            "x": -1,
+            "y": 1
+          }
+        }
+      },
+      {
+        "id": "core:p4-boss-mourland-basic",
+        "name": "Ataque de domínio",
+        "kind": "attack",
+        "target": "enemy",
+        "intervalMs": 1400,
+        "accuracy": 0.92,
+        "damage": {
+          "amount": 80,
+          "channel": "physical",
+          "subtype": "crushing",
+          "properties": ["boss", "heavy"],
+          "origin": {
+            "kind": "ability",
+            "id": "core:p4-boss-mourland-basic"
+          }
+        }
+      }
+    ],
+    "effects": [],
+    "policy": {
+      "id": "core:p4-boss-mourland-policy",
+      "rules": [
+        {
+          "actionId": "core:p4-boss-mourland-signature",
+          "priority": 20
+        },
+        {
+          "actionId": "core:p4-boss-mourland-basic",
+          "priority": 10
+        }
+      ]
+    },
+    "actionPriority": ["core:p4-boss-mourland-signature", "core:p4-boss-mourland-basic"],
+    "mitigation": {
+      "physical": 0.35,
+      "magical": 0.25
+    },
+    "position": {
+      "x": 5,
+      "y": 0
+    },
+    "affinityElement": "shadow"
+  },
+  {
+    "id": "core:p4-xochitlan-1",
+    "kind": "enemy",
+    "name": "Guardião do Templo",
+    "description": "Guardião do Templo ocupa Xochitlan; sua atuação de guardian exige abordagem própria e suas quedas fornecem recursos regionais.",
+    "tags": ["base:construct"],
+    "lootTableId": "core:p4-loot-xochitlan-1",
+    "experience": 140,
+    "attributes": {
+      "vigor": 24,
+      "resistance": 14,
+      "speed": 26,
+      "dexterity": 24,
+      "precision": 16,
+      "strength": 26
+    },
+    "hp": {
+      "current": 490,
+      "maximum": 490
+    },
+    "tenacity": {
+      "current": 163,
+      "maximum": 163
+    },
+    "energy": {},
+    "equipment": [],
+    "actions": [
+      {
+        "id": "core:p4-xochitlan-1-action",
+        "name": "Impacto de guarda",
+        "kind": "attack",
+        "target": "enemy",
+        "intervalMs": 1070,
+        "accuracy": 0.78,
+        "damage": {
+          "amount": 37,
+          "channel": "physical",
+          "subtype": "crushing",
+          "properties": ["construct"],
+          "origin": {
+            "kind": "ability",
+            "id": "core:p4-xochitlan-1-action"
+          }
+        }
+      }
+    ],
+    "effects": [],
+    "policy": {
+      "id": "core:p4-xochitlan-1-policy",
+      "rules": [
+        {
+          "actionId": "core:p4-xochitlan-1-action",
+          "priority": 10
+        }
+      ]
+    },
+    "actionPriority": ["core:p4-xochitlan-1-action"],
+    "mitigation": {
+      "physical": 0.18,
+      "magical": 0.15
+    },
+    "position": {
+      "x": 1,
+      "y": 0
+    }
+  },
+  {
+    "id": "core:p4-xochitlan-2",
+    "kind": "enemy",
+    "name": "Víbora Elemental",
+    "description": "Víbora Elemental ocupa Xochitlan; sua atuação de area exige abordagem própria e suas quedas fornecem recursos regionais.",
+    "tags": ["base:elemental"],
+    "lootTableId": "core:p4-loot-xochitlan-2",
+    "experience": 147,
+    "attributes": {
+      "vigor": 25,
+      "resistance": 14,
+      "speed": 16,
+      "dexterity": 25,
+      "precision": 18,
+      "strength": 27
+    },
+    "hp": {
+      "current": 512,
+      "maximum": 512
+    },
+    "tenacity": {
+      "current": 64,
+      "maximum": 64
+    },
+    "energy": {
+      "mana": 47
+    },
+    "equipment": [],
+    "actions": [
+      {
+        "id": "core:p4-xochitlan-2-action",
+        "name": "Ruptura ambiental",
+        "kind": "area",
+        "target": "enemy",
+        "intervalMs": 1170,
+        "accuracy": 0.81,
+        "damage": {
+          "amount": 39,
+          "channel": "magical",
+          "subtype": "crushing",
+          "element": "earth",
+          "properties": ["elemental"],
+          "origin": {
+            "kind": "ability",
+            "id": "core:p4-xochitlan-2-action"
+          }
+        },
+        "effects": [
+          {
+            "id": "core:p4-xochitlan-2-slow",
+            "category": "control",
+            "potency": 10,
+            "counter": 2,
+            "damageMultiplier": 1.1
+          }
+        ]
+      }
+    ],
+    "effects": [],
+    "policy": {
+      "id": "core:p4-xochitlan-2-policy",
+      "rules": [
+        {
+          "actionId": "core:p4-xochitlan-2-action",
+          "priority": 10
+        }
+      ]
+    },
+    "actionPriority": ["core:p4-xochitlan-2-action"],
+    "mitigation": {
+      "physical": 0.16999999999999998,
+      "magical": 0.12
+    },
+    "position": {
+      "x": 2,
+      "y": 1
+    },
+    "affinityElement": "earth"
+  },
+  {
+    "id": "core:p4-xochitlan-3",
+    "kind": "enemy",
+    "name": "Desafiante Yun Tal",
+    "description": "Desafiante Yun Tal ocupa Xochitlan; sua atuação de ambush exige abordagem própria e suas quedas fornecem recursos regionais.",
+    "tags": ["base:fast"],
+    "lootTableId": "core:p4-loot-xochitlan-3",
+    "experience": 154,
+    "attributes": {
+      "vigor": 26,
+      "resistance": 15,
+      "speed": 20,
+      "dexterity": 26,
+      "precision": 20,
+      "strength": 28
+    },
+    "hp": {
+      "current": 534,
+      "maximum": 534
+    },
+    "tenacity": {
+      "current": 66,
+      "maximum": 66
+    },
+    "energy": {},
+    "equipment": [],
+    "actions": [
+      {
+        "id": "core:p4-xochitlan-3-action",
+        "name": "Emboscada",
+        "kind": "attack",
+        "target": "enemy",
+        "intervalMs": 1270,
+        "accuracy": 0.8400000000000001,
+        "damage": {
+          "amount": 41,
+          "channel": "physical",
+          "subtype": "piercing",
+          "properties": ["fast"],
+          "origin": {
+            "kind": "ability",
+            "id": "core:p4-xochitlan-3-action"
+          }
+        }
+      }
+    ],
+    "effects": [],
+    "policy": {
+      "id": "core:p4-xochitlan-3-policy",
+      "rules": [
+        {
+          "actionId": "core:p4-xochitlan-3-action",
+          "priority": 10
+        }
+      ]
+    },
+    "actionPriority": ["core:p4-xochitlan-3-action"],
+    "mitigation": {
+      "physical": 0.16999999999999998,
+      "magical": 0.15
+    },
+    "position": {
+      "x": 3,
+      "y": 0
+    }
+  },
+  {
+    "id": "core:p4-xochitlan-4",
+    "kind": "enemy",
+    "name": "Mantícora do Vale",
+    "description": "Mantícora do Vale ocupa Xochitlan; sua atuação de poison exige abordagem própria e suas quedas fornecem recursos regionais.",
+    "tags": ["base:beast"],
+    "lootTableId": "core:p4-loot-xochitlan-4",
+    "experience": 161,
+    "attributes": {
+      "vigor": 27,
+      "resistance": 15,
+      "speed": 22,
+      "dexterity": 27,
+      "precision": 22,
+      "strength": 29
+    },
+    "hp": {
+      "current": 556,
+      "maximum": 556
+    },
+    "tenacity": {
+      "current": 69,
+      "maximum": 69
+    },
+    "energy": {},
+    "equipment": [],
+    "actions": [
+      {
+        "id": "core:p4-xochitlan-4-action",
+        "name": "Mordida contaminante",
+        "kind": "attack",
+        "target": "enemy",
+        "intervalMs": 1370,
+        "accuracy": 0.87,
+        "damage": {
+          "amount": 43,
+          "channel": "physical",
+          "subtype": "piercing",
+          "element": "poison",
+          "properties": ["beast"],
+          "origin": {
+            "kind": "ability",
+            "id": "core:p4-xochitlan-4-action"
+          }
+        },
+        "effects": [
+          {
+            "id": "core:p4-xochitlan-4-poison",
+            "category": "dot",
+            "potency": 2,
+            "counter": 4,
+            "tickDamage": {
+              "amount": 11,
+              "channel": "magical",
+              "element": "poison"
+            }
+          }
+        ]
+      }
+    ],
+    "effects": [],
+    "policy": {
+      "id": "core:p4-xochitlan-4-policy",
+      "rules": [
+        {
+          "actionId": "core:p4-xochitlan-4-action",
+          "priority": 10
+        }
+      ]
+    },
+    "actionPriority": ["core:p4-xochitlan-4-action"],
+    "mitigation": {
+      "physical": 0.16999999999999998,
+      "magical": 0.15
+    },
+    "position": {
+      "x": 4,
+      "y": 1
+    },
+    "affinityElement": "poison",
+    "elite": true
+  },
+  {
+    "id": "core:p4-boss-xochitlan",
+    "kind": "enemy",
+    "name": "Protetor da Barreira",
+    "description": "Chefe regional de Xochitlan; possui interação de heal que muda a prioridade de combate.",
+    "tags": ["base:elemental", "base:armored", "base:guardian"],
+    "lootTableId": "core:p4-loot-boss-xochitlan",
+    "experience": 700,
+    "elite": true,
+    "boss": true,
+    "attributes": {
+      "vigor": 156,
+      "resistance": 106,
+      "speed": 20,
+      "dexterity": 32,
+      "precision": 31,
+      "strength": 48,
+      "spirit": 36
+    },
+    "hp": {
+      "current": 2340,
+      "maximum": 2340
+    },
+    "tenacity": {
+      "current": 1170,
+      "maximum": 1170
+    },
+    "energy": {
+      "mana": 280
+    },
+    "equipment": [],
+    "actions": [
+      {
+        "id": "core:p4-boss-xochitlan-signature",
+        "name": "Véu de proteção",
+        "kind": "heal",
+        "target": "self",
+        "intervalMs": 3000,
+        "accuracy": 0.88,
+        "healing": 132
+      },
+      {
+        "id": "core:p4-boss-xochitlan-basic",
+        "name": "Ataque de domínio",
+        "kind": "attack",
+        "target": "enemy",
+        "intervalMs": 1400,
+        "accuracy": 0.92,
+        "damage": {
+          "amount": 85,
+          "channel": "physical",
+          "subtype": "crushing",
+          "properties": ["boss", "heavy"],
+          "origin": {
+            "kind": "ability",
+            "id": "core:p4-boss-xochitlan-basic"
+          }
+        }
+      }
+    ],
+    "effects": [],
+    "policy": {
+      "id": "core:p4-boss-xochitlan-policy",
+      "rules": [
+        {
+          "actionId": "core:p4-boss-xochitlan-signature",
+          "priority": 20
+        },
+        {
+          "actionId": "core:p4-boss-xochitlan-basic",
+          "priority": 10
+        }
+      ]
+    },
+    "actionPriority": ["core:p4-boss-xochitlan-signature", "core:p4-boss-xochitlan-basic"],
+    "mitigation": {
+      "physical": 0.35,
+      "magical": 0.25
+    },
+    "position": {
+      "x": 5,
+      "y": 0
+    },
+    "affinityElement": "earth"
   }
 ]

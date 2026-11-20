@@ -9,7 +9,7 @@ import {
   reorderQueuedSession,
 } from './session-engine';
 import { createTestState, newTestSession, testCatalog } from '../test/fixtures';
-import { loadContentPacks } from '../content/registry';
+import { loadContentPacks, loadOfficialContent } from '../content/registry';
 import { testPack } from '../test/fixtures';
 import { equipConstruction, saveConstruction, unlockNodes } from '../nodes/library';
 import type { NodeGraph } from '../nodes/graph';
@@ -37,7 +37,131 @@ describe('universal timed session engine', () => {
       'item.acquired',
       'experience.gained',
       'level.increased',
+      'attribute.points_awarded',
+      'activity.completed',
     ]);
+  });
+
+  it('applies racial yields, skill progression, and Fragment earnings once per completed activity', () => {
+    const content = loadContentPacks([
+      testPack,
+      {
+        manifest: { id: 'test.progression', name: 'Progression Test', version: '1.0.0' },
+        records: [
+          {
+            ...testPack.records[0],
+            activityBonuses: [{ skillId: 'mining-skill', yieldMultiplier: 3 }],
+          },
+          {
+            ...testPack.records[3],
+            skillId: 'mining-skill',
+            skillExperience: 250,
+            fragmentReward: 7,
+            outputItemId: 'iron-ore',
+          },
+        ],
+      },
+    ]);
+    const initial = createTestState();
+    initial.character!.extensions.unlockedRegions = [1, 'apexia'];
+    const started = enqueueSession(initial, newTestSession('progression'), content, 0);
+    const completed = reconcileSessions(started, 1_800_000, content);
+    const reopened = reconcileSessions(completed, 3_600_000, content);
+
+    expect(completed.character?.inventory['iron-ore']).toBe(6);
+    expect(completed.character?.skills['mining-skill']).toMatchObject({ level: 3, experience: 50 });
+    expect((completed.character?.extensions.wallet as Record<string, number>).fragments).toBe(7);
+    expect(completed.events.map((event) => event.type)).toContain('activity.completed');
+    expect(completed.events.map((event) => event.type)).toContain('currency.earned');
+    expect(reopened.character).toEqual(completed.character);
+    expect(reopened.events).toEqual(completed.events);
+  });
+
+  it('applies valid yield milestones while ignoring malformed or unrelated effects', () => {
+    const content = loadContentPacks([
+      {
+        manifest: { id: 'test.yield-effects', name: 'Yield effects', version: '1.0.0' },
+        records: testPack.records.map((record) => {
+          if (record.id === 'mining')
+            return { ...record, skillId: 'mining-skill', outputItemId: 'iron-ore' };
+          if (record.id === 'mining-skill') {
+            return {
+              ...record,
+              milestones: [
+                {
+                  level: 1,
+                  name: 'Yield rules',
+                  effects: [
+                    { type: 'yield_multiplier', value: 2 },
+                    { type: 'yield_multiplier', value: 'bad' },
+                    { type: 'yield_multiplier', value: Number.POSITIVE_INFINITY },
+                    { type: 'yield_multiplier', value: 0 },
+                    { type: 'unrelated', value: 10 },
+                  ],
+                },
+              ],
+            };
+          }
+          return record;
+        }),
+      },
+    ]);
+    const started = enqueueSession(
+      createTestState(),
+      newTestSession('yield-rules', 10),
+      content,
+      0,
+    );
+    const completed = reconcileSessions(started, 10, content);
+    expect(completed.character?.inventory['iron-ore']).toBe(4);
+  });
+
+  it('applies declared physical and energy training when offline sessions complete', () => {
+    const content = loadContentPacks([
+      testPack,
+      {
+        manifest: { id: 'test.training', name: 'Training', version: '1.0.0' },
+        records: [
+          {
+            ...testPack.records[3],
+            skillId: 'mining-skill',
+            trainingEffect: { attributeId: 'energy:chi', amount: 2 },
+          },
+          {
+            ...testPack.records[6],
+            milestones: [
+              { level: 1, name: 'Test discipline', effects: [{ type: 'training_gain', value: 3 }] },
+            ],
+          },
+        ],
+      },
+    ]);
+    const started = enqueueSession(createTestState(), newTestSession('training'), content, 0);
+    const completed = reconcileSessions(started, 1_800_000, content);
+    const reopened = reconcileSessions(completed, 3_600_000, content);
+    expect(completed.character?.attributes.energetic.chi).toBe(6);
+    expect(completed.events.map((event) => event.type)).toContain('attribute.increased');
+    expect(reopened.character).toEqual(completed.character);
+    expect(reopened.events).toEqual(completed.events);
+  });
+
+  it('uses the default training multiplier when an activity references an absent skill definition', () => {
+    const activities = new Map(testCatalog.activities).set('mining', {
+      ...testCatalog.activities.get('mining')!,
+      skillId: 'missing-skill',
+      skillExperience: 1,
+      trainingEffect: { attributeId: 'energy:chi', amount: 3 },
+    });
+    const content = { ...testCatalog, activities };
+    const started = enqueueSession(
+      createTestState(),
+      newTestSession('missing-skill-training', 10),
+      content,
+      0,
+    );
+    const completed = reconcileSessions(started, 10, content);
+    expect(completed.character?.attributes.energetic.chi).toBe(3);
+    expect(completed.character?.skills['missing-skill']?.experience).toBe(1);
   });
 
   it('simulates a Dungeon inside the existing session reconciliation and persists unique kill rewards', () => {
@@ -212,6 +336,111 @@ describe('universal timed session engine', () => {
       0,
     );
     expect(() => reconcileSessions(legacyStarted, 1_000, content)).not.toThrow();
+  });
+
+  it('persists the soul anchor as broken after its one resurrection during an expedition', () => {
+    const content = loadOfficialContent([
+      {
+        manifest: { id: 'test.soul-anchor', name: 'Soul Anchor', version: '1.0.0' },
+        records: [
+          {
+            id: 'mining',
+            kind: 'activity',
+            name: 'Lethal expedition',
+            description: '',
+            rewardId: 'mining-iron',
+            category: 'expedition',
+            expeditionId: 'test:anchor-expedition',
+          },
+          {
+            id: 'test:anchor-enemy',
+            kind: 'enemy',
+            name: 'Anchor Test Enemy',
+            description: '',
+            tags: [],
+            experience: 1,
+            attributes: {
+              vigor: 10,
+              resistance: 0,
+              speed: 20,
+              dexterity: 1,
+              precision: 1,
+              strength: 1,
+            },
+            hp: { current: 100, maximum: 100 },
+            tenacity: { current: 0, maximum: 0 },
+            energy: {},
+            equipment: [],
+            actions: [
+              {
+                id: 'test:lethal-hit',
+                name: 'Lethal hit',
+                kind: 'attack',
+                target: 'enemy',
+                intervalMs: 1_000,
+                accuracy: 1,
+                damage: {
+                  amount: 10,
+                  channel: 'physical',
+                  subtype: 'crushing',
+                  properties: [],
+                  origin: { kind: 'ability', id: 'test:lethal-hit' },
+                },
+              },
+            ],
+            effects: [],
+            policy: { id: 'test:lethal-policy', rules: [] },
+            actionPriority: ['test:lethal-hit'],
+            mitigation: { physical: 0, magical: 0 },
+            position: { x: 1, y: 0 },
+          },
+          {
+            id: 'test:anchor-expedition',
+            kind: 'expedition',
+            name: 'Anchor Test Expedition',
+            description: '',
+            activityKind: 'quest',
+            spawnIntervalMs: 60_000,
+            deathRewardRetention: 0.25,
+            environment: {},
+            encounters: [{ id: 'anchor', enemyId: 'test:anchor-enemy', weight: 1 }],
+          },
+        ],
+      },
+    ]);
+    const character = {
+      ...createTestState().character!,
+      extensions: { installedImplants: ['implant-20'], alchemicalCapacity: 5 },
+      attributes: {
+        physical: { vigor: 1, resistance: 0, speed: 10, dexterity: 1, precision: 1, strength: 10 },
+        energetic: {},
+      },
+    };
+    const state = { ...createTestState(), character };
+    const started = enqueueSession(state, newTestSession('anchor-session', 1_000), content, 0);
+    const completed = reconcileSessions(started, 1_000, content);
+
+    expect(completed.character?.extensions.brokenImplants).toEqual(['implant-20']);
+    expect(completed.character?.extensions.combatHp).toBe(5);
+    expect(
+      completed.combatRecords?.[0]?.combats[0]?.log.some((entry) =>
+        entry.effectsApplied.includes('soul-anchor:resurrected-and-broken'),
+      ),
+    ).toBe(true);
+
+    const malformedCharacter = {
+      ...character,
+      extensions: { ...character.extensions, brokenImplants: [1] },
+    };
+    const malformedStarted = enqueueSession(
+      { ...createTestState(), character: malformedCharacter },
+      newTestSession('malformed-anchor', 1_000),
+      content,
+      0,
+    );
+    expect(() => reconcileSessions(malformedStarted, 1_000, content)).toThrow(
+      'Character broken implant list is invalid.',
+    );
   });
 
   it('initializes combat history for legacy saves without a record field', () => {
@@ -628,6 +857,83 @@ describe('universal timed session engine', () => {
     ).toThrow('Unknown reward: mining-reward');
     expect(() => getSessionProgress(started.sessions[0]!, Number.NaN)).toThrow(
       'Current time must be a finite safe integer.',
+    );
+    const withQueued = enqueueSession(started, newTestSession('queued'), testCatalog, 1);
+    expect(() =>
+      editQueuedSession({ ...withQueued, character: null }, 'queued', {}, testCatalog),
+    ).toThrow('A character is required before editing a session.');
+    expect(() =>
+      enqueueSession(
+        started,
+        { ...newTestSession('locked', 100), activityId: 'locked-activity' },
+        {
+          ...testCatalog,
+          activities: new Map([
+            ...testCatalog.activities,
+            [
+              'locked-activity',
+              { ...testCatalog.activities.get('mining')!, id: 'locked-activity', requiredLevel: 2 },
+            ],
+          ]),
+        },
+        10,
+      ),
+    ).toThrow('Activity requires character level 2.');
+    const lockedContent = {
+      ...testCatalog,
+      activities: new Map([
+        ...testCatalog.activities,
+        [
+          'locked-activity',
+          { ...testCatalog.activities.get('mining')!, id: 'locked-activity', requiredLevel: 2 },
+        ],
+      ]),
+    };
+    expect(() =>
+      editQueuedSession(withQueued, 'queued', { activityId: 'locked-activity' }, lockedContent),
+    ).toThrow('Activity requires character level 2.');
+  });
+
+  it('rejects invalid generated reward quantities and repeated item overflow', () => {
+    const activity = { ...testCatalog.activities.get('mining')!, outputItemId: 'iron-ore' };
+    const activities = new Map(testCatalog.activities).set('mining', activity);
+    const original = testCatalog.rewards.get('mining-reward')!;
+    const invalidReward = { ...original, items: [{ itemId: 'iron-ore', quantity: 0 }] };
+    const invalidContent = {
+      ...testCatalog,
+      activities,
+      rewards: new Map(testCatalog.rewards).set('mining-reward', invalidReward),
+    };
+    const invalidStarted = enqueueSession(
+      createTestState(),
+      newTestSession('invalid-output', 10),
+      invalidContent,
+      0,
+    );
+    expect(() => reconcileSessions(invalidStarted, 10, invalidContent)).toThrow(
+      'Activity output is invalid for iron-ore.',
+    );
+
+    const overflowingReward = {
+      ...original,
+      items: [
+        { itemId: 'iron-ore', quantity: Number.MAX_SAFE_INTEGER },
+        { itemId: 'iron-ore', quantity: 1 },
+      ],
+    };
+    const overflowContent = {
+      ...testCatalog,
+      activities,
+      rewards: new Map(testCatalog.rewards).set('mining-reward', overflowingReward),
+    };
+    const overflowStarted = enqueueSession(
+      createTestState(),
+      newTestSession('overflow-output', 10),
+      overflowContent,
+      0,
+    );
+    expect(() => reconcileSessions(overflowStarted, 10, overflowContent)).toThrow(
+      'Activity output exceeds the safe integer range for iron-ore.',
     );
   });
 });

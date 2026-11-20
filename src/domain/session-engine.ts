@@ -1,4 +1,11 @@
-import { awardExperience, grantItems, grantLootDrops } from './progression';
+import {
+  awardExperience,
+  awardSkillExperience,
+  applyTrainingEffect,
+  grantCurrency,
+  grantItems,
+  grantLootDrops,
+} from './progression';
 import type { ContentCatalog } from '../content/registry';
 import type { Character, DomainEvent, ExpeditionCombatRecord, GameState, Session } from './types';
 import { createCharacterCombatActor } from '../combat/player-actor';
@@ -6,6 +13,7 @@ import { simulateExpedition } from '../combat/expedition';
 import type { CombatAction } from '../combat/types';
 import { compileConstruction } from '../nodes/graph';
 import { constructionPriority, unlockNodes } from '../nodes/library';
+import { getActivityAccessError, getUnlockedRegionIds } from './activity-access';
 
 const MAX_PENDING_SESSIONS = 5;
 
@@ -100,6 +108,80 @@ function seedFromSessionId(sessionId: string): number {
   return hash >>> 0;
 }
 
+function activityRewardItems(
+  character: Character,
+  activity: ReturnType<ContentCatalog['activities']['get']> & {},
+  rewardItems: Array<{ itemId: string; quantity: number }>,
+  content: ContentCatalog,
+): Record<string, number> {
+  const race = content.races.get(character.raceId);
+  let multiplier =
+    race?.activityBonuses?.find((bonus) => bonus.skillId === activity.skillId)?.yieldMultiplier ??
+    1;
+  if (activity.skillId) {
+    const skill = content.skills.get(activity.skillId);
+    const level = character.skills[activity.skillId]?.level ?? 1;
+    const unlocked = (skill?.milestones ?? []).filter((milestone) => milestone.level <= level);
+    for (const milestone of unlocked) {
+      for (const effect of milestone.effects) {
+        if (
+          effect.type === 'yield_multiplier' &&
+          typeof effect.value === 'number' &&
+          Number.isFinite(effect.value) &&
+          effect.value > 0
+        ) {
+          multiplier *= effect.value;
+        }
+      }
+    }
+  }
+  const result: Record<string, number> = {};
+  for (const item of rewardItems) {
+    const quantity =
+      activity.outputItemId === item.itemId
+        ? Math.floor(item.quantity * multiplier)
+        : item.quantity;
+    if (!Number.isSafeInteger(quantity) || quantity <= 0) {
+      throw new Error(`Activity output is invalid for ${item.itemId}.`);
+    }
+    result[item.itemId] = (result[item.itemId] ?? 0) + quantity;
+    if (!Number.isSafeInteger(result[item.itemId])) {
+      throw new Error(`Activity output exceeds the safe integer range for ${item.itemId}.`);
+    }
+  }
+  return result;
+}
+
+function activityTrainingEffect(
+  character: Character,
+  activity: ReturnType<ContentCatalog['activities']['get']> & {},
+  content: ContentCatalog,
+) {
+  const trainingEffect = activity.trainingEffect;
+  if (!trainingEffect || !activity.skillId) return trainingEffect;
+  const skill = content.skills.get(activity.skillId);
+  const skillLevel = character.skills[activity.skillId]?.level ?? 1;
+  const multiplier = (skill?.milestones ?? [])
+    .filter((milestone) => milestone.level <= skillLevel)
+    .flatMap((milestone) => milestone.effects)
+    .filter(
+      (effect) =>
+        effect.type === 'training_gain' &&
+        typeof effect.value === 'number' &&
+        Number.isFinite(effect.value) &&
+        effect.value > 0,
+    )
+    .reduce((total, effect) => total * Number(effect.value), 1);
+  return { ...trainingEffect, amount: Math.max(1, Math.floor(trainingEffect.amount * multiplier)) };
+}
+
+function recordBrokenImplant(character: Character, implantId: string): Character {
+  const value = character.extensions.brokenImplants;
+  const broken = new Set((value as string[] | undefined) ?? []);
+  broken.add(implantId);
+  return { ...character, extensions: { ...character.extensions, brokenImplants: [...broken] } };
+}
+
 function createExpeditionPlayerActor(character: Character, content: ContentCatalog) {
   const equippedActions: CombatAction[] = (character.nodeLibrary?.constructions ?? [])
     .filter((construction) => construction.equipped)
@@ -113,6 +195,8 @@ function createExpeditionPlayerActor(character: Character, content: ContentCatal
     content.items,
     content.rules.combat,
     equippedActions,
+    content.races.get(character.raceId),
+    content.systems,
   );
   const configuredPriority = constructionPriority(character);
   actor.actionPriority = [
@@ -141,6 +225,9 @@ export function enqueueSession(
   if (!content.activities.has(input.activityId)) {
     throw new Error(`Unknown activity: ${input.activityId}`);
   }
+  const selectedActivity = content.activities.get(input.activityId)!;
+  const accessError = getActivityAccessError(state.character, selectedActivity, content);
+  if (accessError) throw new Error(accessError);
   if (state.sessions.some((session) => session.id === input.id)) {
     throw new Error(`Session id already exists: ${input.id}`);
   }
@@ -181,6 +268,13 @@ export function editQueuedSession(
   if (!content.activities.has(activityId)) {
     throw new Error(`Unknown activity: ${activityId}`);
   }
+  if (!state.character) throw new Error('A character is required before editing a session.');
+  const accessError = getActivityAccessError(
+    state.character,
+    content.activities.get(activityId)!,
+    content,
+  );
+  if (accessError) throw new Error(accessError);
   if (!Number.isSafeInteger(durationMs) || durationMs <= 0) {
     throw new Error('Session duration must be a positive safe integer.');
   }
@@ -311,7 +405,7 @@ export function reconcileSessions(
     const character = next.character!;
     const withItems = grantItems(
       character,
-      Object.fromEntries(reward.items.map((item) => [item.itemId, item.quantity])),
+      activityRewardItems(character, activity, reward.items, content),
       session.id,
     );
     const expedition = activity.expeditionId
@@ -335,15 +429,62 @@ export function reconcileSessions(
     const withLoot = simulation
       ? grantLootDrops(withItems.character, simulation.drops, new Set(next.processedEventIds))
       : { character: withItems.character, events: [] as DomainEvent[] };
-    const characterWithUnlocks = simulation
-      ? unlockNodes(withLoot.character, simulation.unlockedNodeIds)
+    const afterImplants = simulation?.nextPlayer.soulAnchorUsed
+      ? recordBrokenImplant(withLoot.character, 'implant-20')
       : withLoot.character;
-    const withExperience = awardExperience(
+    const withCombatVitals = simulation
+      ? {
+          ...afterImplants,
+          energy: { ...withLoot.character.energy, reserves: { ...simulation.nextPlayer.energy } },
+          extensions: {
+            ...afterImplants.extensions,
+            combatHp: simulation.nextPlayer.hp.current,
+          },
+        }
+      : withLoot.character;
+    const characterWithUnlocks = simulation
+      ? unlockNodes(withCombatVitals, simulation.unlockedNodeIds)
+      : withCombatVitals;
+    const trainingUpdate = applyTrainingEffect(
       characterWithUnlocks,
+      activityTrainingEffect(characterWithUnlocks, activity, content),
+      session.id,
+    );
+    const skillUpdate = activity.skillId
+      ? awardSkillExperience(
+          trainingUpdate.character,
+          activity.skillId,
+          activity.skillExperience ?? 0,
+          content.skills.get(activity.skillId)?.experiencePerLevel ?? 100,
+          session.id,
+        )
+      : { character: trainingUpdate.character, events: [] as DomainEvent[] };
+    const withExperience = awardExperience(
+      skillUpdate.character,
       reward.experience + (simulation?.experience ?? 0),
       content.rules,
       session.id,
     );
+    const currencyUpdate = grantCurrency(
+      withExperience.character,
+      'fragments',
+      activity.fragmentReward ?? 0,
+      session.id,
+    );
+    const previouslyUnlocked = new Set(
+      Array.isArray(character.extensions.unlockedRegions)
+        ? character.extensions.unlockedRegions.filter((id): id is string => typeof id === 'string')
+        : [],
+    );
+    const nowUnlocked = getUnlockedRegionIds(currencyUpdate.character, content.regions);
+    const newRegions = nowUnlocked.filter((id) => !previouslyUnlocked.has(id));
+    const characterWithRegions = {
+      ...currencyUpdate.character,
+      extensions: {
+        ...currencyUpdate.character.extensions,
+        unlockedRegions: [...new Set([...previouslyUnlocked, ...nowUnlocked])],
+      },
+    };
     const completedSession: Session = {
       ...session,
       status: 'completed',
@@ -378,7 +519,7 @@ export function reconcileSessions(
     next = updateSession(
       {
         ...next,
-        character: withExperience.character,
+        character: characterWithRegions,
         queue: next.queue.slice(1),
         combatRecords,
       },
@@ -401,7 +542,47 @@ export function reconcileSessions(
       },
       ...eventTime(withItems.events, completedAt),
       ...eventTime(withLoot.events, completedAt),
+      ...eventTime(skillUpdate.events, completedAt),
+      ...eventTime(trainingUpdate.events, completedAt),
       ...eventTime(withExperience.events, completedAt),
+      ...eventTime(currencyUpdate.events, completedAt),
+      {
+        id: `${session.id}:activity.completed`,
+        type: 'activity.completed',
+        occurredAt: completedAt,
+        sessionId: session.id,
+        activityId: activity.id,
+      },
+      ...(simulation?.combats
+        .flatMap((combat) =>
+          combat.actors
+            .filter((actor) => actor.side === 'enemy' && actor.state === 'dead')
+            .map((actor) => actor.speciesId),
+        )
+        .map((enemyId, index) => ({
+          id: `${session.id}:enemy.defeated:${index + 1}`,
+          type: 'enemy.defeated' as const,
+          occurredAt: completedAt,
+          enemyId,
+          sessionId: session.id,
+        })) ?? []),
+      ...(expedition?.activityKind === 'quest'
+        ? [
+            {
+              id: `${session.id}:quest.completed`,
+              type: 'quest.completed' as const,
+              occurredAt: completedAt,
+              expeditionId: expedition.id,
+              sessionId: session.id,
+            },
+          ]
+        : []),
+      ...newRegions.map((regionId) => ({
+        id: `${session.id}:region.unlocked:${regionId}`,
+        type: 'region.unlocked' as const,
+        occurredAt: completedAt,
+        regionId,
+      })),
       ...(combatRecord
         ? [
             {

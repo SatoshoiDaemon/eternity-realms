@@ -154,6 +154,11 @@ export interface CombatActor {
   revealed?: boolean;
   summonCount?: number;
   summonedBy?: string;
+  /** Flat HP restored on each resolved actor turn by a persistent regeneration source. */
+  regenerationPerAction?: number;
+  /** The soul anchor can prevent one lethal event; its use permanently breaks it. */
+  soulAnchorAvailable?: boolean;
+  soulAnchorUsed?: boolean;
   state: 'ready' | 'alive' | 'dead';
   nextEventAt: number;
   lootTableId?: string;
