@@ -10,6 +10,7 @@ import { getInstalledImplantStatModifiers } from '../domain/implants';
 import { selectedCombatAffinities } from '../domain/mana-affinities';
 import { getManaSpiritDamageBonus } from '../domain/mana-progression';
 import { getCombatSkillAction } from '../domain/combat-skill-effects';
+import { isEnergyResourceAvailable } from '../domain/energy-rules';
 import { getUnaffiliatedEffects } from '../domain/unaffiliated';
 import type { CombatAction, CombatActor, CombatDamage } from './types';
 
@@ -246,6 +247,13 @@ export function createCharacterCombatActor(
   if (character.energy.affinity === 'unaffiliated') {
     energy.mana = 0;
     energy.aura = 0;
+  } else if (character.energy.affinity === 'mana') {
+    if (!Object.hasOwn(energy, 'mana'))
+      energy.mana = (character.attributes.energetic.mana ?? 0) * 10;
+    energy.aura = 0;
+  } else if (character.energy.affinity === 'aura') {
+    energy.mana = 0;
+    if (!Object.hasOwn(energy, 'aura')) energy.aura = character.attributes.energetic.chi ?? 0;
   } else {
     if (!Object.hasOwn(energy, 'mana'))
       energy.mana = (character.attributes.energetic.mana ?? 0) * 10;
@@ -253,6 +261,7 @@ export function createCharacterCombatActor(
   }
   for (const { definition } of equipped) {
     for (const [resource, amount] of Object.entries(definition.combat?.energyBonus ?? {})) {
+      if (!isEnergyResourceAvailable(character.energy.affinity, resource)) continue;
       energy[resource] = (energy[resource] ?? 0) + amount;
     }
   }

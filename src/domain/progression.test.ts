@@ -83,6 +83,45 @@ describe('character progression', () => {
     ).toThrow('Sem Afinidade characters cannot train energy attributes.');
   });
 
+  it('cultivates Chi through training instead of direct attribute allocation', () => {
+    const character = {
+      ...createTestState().character!,
+      energy: { affinity: 'aura', reserves: {} },
+      extensions: { attributePoints: 1 },
+    };
+
+    expect(() => spendAttributePoint(character, 'energy:chi')).toThrow(
+      'Chi is cultivated through Aura training and cannot be allocated directly.',
+    );
+    expect(
+      applyTrainingEffect(character, { attributeId: 'energy:chi', amount: 2 }, 'cultivate'),
+    ).toMatchObject({ character: { attributes: { energetic: { chi: 2 } } } });
+  });
+
+  it('keeps Mana and Aura training attributes on their selected energy path', () => {
+    const auraCharacter = {
+      ...createTestState().character!,
+      energy: { affinity: 'aura', reserves: {} },
+      extensions: { attributePoints: 1 },
+    };
+    const manaCharacter = {
+      ...createTestState().character!,
+      energy: { affinity: 'mana', reserves: {} },
+      extensions: { attributePoints: 1 },
+    };
+
+    expect(() => spendAttributePoint(auraCharacter, 'energy:mana')).toThrow(
+      'Aura characters cannot allocate Mana or Spirit attributes.',
+    );
+    expect(() =>
+      applyTrainingEffect(auraCharacter, { attributeId: 'energy:spirit', amount: 1 }, 'aura'),
+    ).toThrow('Aura characters cannot train Mana or Spirit attributes.');
+    expect(() =>
+      applyTrainingEffect(manaCharacter, { attributeId: 'energy:chi', amount: 1 }, 'mana'),
+    ).toThrow('Mana characters cannot train Chi through Aura cultivation.');
+    expect(spendAttributePoint(manaCharacter, 'energy:mana').attributes.energetic.mana).toBe(1);
+  });
+
   it('applies a training cycle to its declared attribute and emits one activity event', () => {
     const character = createTestState().character!;
     const trained = applyTrainingEffect(

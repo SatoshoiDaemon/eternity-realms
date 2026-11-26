@@ -482,6 +482,8 @@ export const translations = {
   'character.skill.milestones': 'Marcos de progressão',
   'character.skill.unlocked': 'Desbloqueado',
   'character.skill.locked': 'Bloqueado',
+  'character.chiTrainingOnly': 'O Chi cresce pelo cultivo de Aura e não recebe pontos diretamente.',
+  'character.manaRequiresManaPath': 'Mana e Espírito pertencem ao caminho de Mana.',
   'character.noSkills': 'Nenhuma habilidade carregada.',
   'character.loadedRace': 'Raça carregada no save.',
   'character.loadedClass': 'Classe carregada no save.',

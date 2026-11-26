@@ -15,7 +15,8 @@
     ],
     "improved": [
       "Interface adaptada para telas Android e áreas seguras do sistema.",
-      "Progresso de sessões preservado após alterações no relógio do dispositivo."
+      "Progresso de sessões preservado após alterações no relógio do dispositivo.",
+      "A escolha de Mana, Aura ou Sem Afinidade agora limita atributos, reservas e consumíveis ao caminho ativo; Chi só cresce por cultivo de Aura. Sessões incompatíveis são canceladas sem recompensa durante a reconciliação offline."
     ],
     "changed": [],
     "fixed": [

@@ -1877,6 +1877,41 @@ describe('Eternity Realms navigation and play flow', () => {
     expect(repository.state?.character?.extensions.attributePoints).toBe(0);
   });
 
+  it('keeps Chi training-only and disables energy allocation for Sem Afinidade', async () => {
+    const state = gameWithCharacter('Chi cultivator');
+    state.character!.attributes.energetic = { chi: 2, mana: 3, spirit: 1 };
+    state.character!.extensions.attributePoints = 1;
+    const { repository } = await mountApp({ state });
+    tab('Personagem');
+
+    expect(
+      screen.getByText('O Chi cresce pelo cultivo de Aura e não recebe pontos diretamente.'),
+    ).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Aumentar Chi' })).toBeDisabled();
+    expect(screen.getByRole('button', { name: 'Aumentar Mana' })).toBeEnabled();
+    fireEvent.click(screen.getByRole('button', { name: 'Sem afinidade' }));
+    await waitFor(() => expect(repository.state?.character?.energy.affinity).toBe('unaffiliated'));
+    expect(screen.getByRole('button', { name: 'Aumentar Mana' })).toBeDisabled();
+    expect(screen.getByRole('button', { name: 'Aumentar Espírito' })).toBeDisabled();
+  });
+
+  it('limits direct Mana and Spirit allocation to Mana characters', async () => {
+    const state = gameWithCharacter('Aura cultivator');
+    state.character!.attributes.energetic = { chi: 0, mana: 0, spirit: 0 };
+    state.character!.extensions.attributePoints = 1;
+    const { repository } = await mountApp({ state });
+    tab('Personagem');
+    fireEvent.click(screen.getByRole('button', { name: 'Aura' }));
+    await waitFor(() => expect(repository.state?.character?.energy.affinity).toBe('aura'));
+
+    expect(screen.getByRole('button', { name: 'Aumentar Chi' })).toBeDisabled();
+    expect(screen.getByRole('button', { name: 'Aumentar Mana' })).toBeDisabled();
+    expect(screen.getByRole('button', { name: 'Aumentar Espírito' })).toBeDisabled();
+    expect(
+      screen.getAllByText('Mana e Espírito pertencem ao caminho de Mana.').length,
+    ).toBeGreaterThan(0);
+  });
+
   it('lets the player choose an energy path and Mana affinities with usable type nodes', async () => {
     const { repository } = await mountApp({ state: gameWithCharacter('Elementalist') });
     tab('Personagem');

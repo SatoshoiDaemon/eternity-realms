@@ -13,6 +13,7 @@ import { loadContentPacks, loadOfficialContent } from '../content/registry';
 import { testPack } from '../test/fixtures';
 import { equipConstruction, saveConstruction, unlockNodes } from '../nodes/library';
 import type { NodeGraph } from '../nodes/graph';
+import { selectEnergyPath } from './mana-affinities';
 
 describe('universal timed session engine', () => {
   it('starts a declarative activity and awards its saved result once after offline time', () => {
@@ -143,6 +144,34 @@ describe('universal timed session engine', () => {
     expect(completed.events.map((event) => event.type)).toContain('attribute.increased');
     expect(reopened.character).toEqual(completed.character);
     expect(reopened.events).toEqual(completed.events);
+  });
+
+  it('cancels an offline Aura session when the character awakens Mana before settlement', () => {
+    const content = loadOfficialContent();
+    const initial = createTestState();
+    const started = enqueueSession(
+      initial,
+      { id: 'path-change', activityId: 'meditate-aura', durationMs: 1_000 },
+      content,
+      0,
+    );
+    const awakened = {
+      ...started,
+      character: selectEnergyPath(started.character!, 'mana'),
+    };
+
+    const reconciled = reconcileSessions(awakened, 1_000, content);
+
+    expect(reconciled.sessions[0]).toMatchObject({
+      status: 'cancelled',
+      finishedAt: 1_000,
+    });
+    expect(reconciled.queue).toEqual([]);
+    expect(reconciled.character?.attributes.energetic.chi ?? 0).toBe(0);
+    expect(reconciled.events.map((event) => event.type)).not.toContain('reward.granted');
+    expect(reconciled.events).toContainEqual(
+      expect.objectContaining({ type: 'session.cancelled', sessionId: 'path-change' }),
+    );
   });
 
   it('doubles physical training gains for the Incomplete Sem Afinidade stage', () => {
@@ -812,6 +841,21 @@ describe('universal timed session engine', () => {
       character: null,
     };
     expect(cancelActiveSession(withoutCharacter, 200).character).toBeNull();
+  });
+
+  it('uses the cancellation time for an active session with legacy or missing clock fields', () => {
+    const started = enqueueSession(
+      createTestState(),
+      newTestSession('legacy-clock'),
+      testCatalog,
+      100,
+    );
+    const legacyClock = {
+      ...started,
+      sessions: [{ ...started.sessions[0]!, startedAt: undefined, lastObservedAt: undefined }],
+    };
+
+    expect(cancelActiveSession(legacyClock, 200).sessions[0]?.finishedAt).toBe(200);
   });
 
   it('rejects a corrupt successor that is already active', () => {

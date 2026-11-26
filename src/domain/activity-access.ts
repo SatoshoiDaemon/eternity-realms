@@ -1,6 +1,7 @@
 import type { ContentCatalog } from '../content/registry';
 import type { ActivityDefinition, RegionDefinition } from '../content/schema';
 import type { Character } from './types';
+import { getEnergyAttributeAccessError } from './energy-rules';
 
 export function getUnlockedRegionIds(
   character: Character,
@@ -27,12 +28,10 @@ export function getActivityAccessError(
   activity: ActivityDefinition,
   content: Pick<ContentCatalog, 'regions'>,
 ): string | undefined {
-  if (
-    character.energy.affinity === 'unaffiliated' &&
-    activity.trainingEffect?.attributeId.startsWith('energy:')
-  ) {
-    return 'Sem Afinidade characters cannot train energy attributes.';
-  }
+  const trainingAttributeError = activity.trainingEffect
+    ? getEnergyAttributeAccessError(character, activity.trainingEffect.attributeId, 'train')
+    : undefined;
+  if (trainingAttributeError) return trainingAttributeError;
   if (activity.requiredLevel && character.level < activity.requiredLevel) {
     return `Activity requires character level ${activity.requiredLevel}.`;
   }

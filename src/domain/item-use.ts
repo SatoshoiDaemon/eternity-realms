@@ -2,6 +2,7 @@ import type { ContentCatalog } from '../content/registry';
 import type { DomainEvent, GameState } from './types';
 import { getInstalledImplantStatModifiers } from './implants';
 import { getSkillEffectBonus } from './skill-effects';
+import { isEnergyResourceAvailable } from './energy-rules';
 
 function validateNow(now: number): void {
   if (!Number.isSafeInteger(now) || now < 0 || !Number.isFinite(new Date(now).getTime())) {
@@ -10,6 +11,7 @@ function validateNow(now: number): void {
 }
 
 function resourceMaximum(character: NonNullable<GameState['character']>, resource: string): number {
+  if (!isEnergyResourceAvailable(character.energy.affinity, resource)) return 0;
   if (resource === 'mana') return (character.attributes.energetic.mana ?? 0) * 10;
   if (resource === 'aura') return character.attributes.energetic.chi ?? 0;
   const value = character.extensions.resourceMaxima;

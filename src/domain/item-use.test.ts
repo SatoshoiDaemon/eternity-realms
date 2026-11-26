@@ -266,4 +266,24 @@ describe('consumable items', () => {
       'Character has no aura capacity.',
     );
   });
+
+  it('does not use Mana or Aura restoratives outside the selected energy path', () => {
+    const mana = createTestState();
+    mana.character!.energy.affinity = 'mana';
+    mana.character!.attributes.energetic.mana = 5;
+    mana.character!.attributes.energetic.chi = 50;
+    mana.character!.inventory['aura-tonic'] = 1;
+    expect(() => consumeItem(mana, content, 'aura-tonic', 'wrong-path:aura', 123)).toThrow(
+      'Character has no aura capacity.',
+    );
+
+    const aura = createTestState();
+    aura.character!.energy.affinity = 'aura';
+    aura.character!.attributes.energetic.mana = 5;
+    aura.character!.attributes.energetic.chi = 50;
+    aura.character!.inventory['mana-potion'] = 1;
+    expect(() => consumeItem(aura, content, 'mana-potion', 'wrong-path:mana', 123)).toThrow(
+      'Character has no mana capacity.',
+    );
+  });
 });

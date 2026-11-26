@@ -97,6 +97,26 @@ function startQueuedSession(state: GameState, sessionId: string, startedAt: numb
   ]);
 }
 
+function cancelHeadSession(state: GameState, session: Session, now: number): GameState {
+  const cancelledAt = Math.max(now, session.startedAt ?? now, session.lastObservedAt ?? now);
+  const cancelled = updateSession(
+    { ...state, queue: state.queue.slice(1) },
+    { ...session, status: 'cancelled', finishedAt: cancelledAt },
+  );
+  let next = appendEvents(cancelled, [
+    {
+      id: `${session.id}:session.cancelled`,
+      type: 'session.cancelled',
+      occurredAt: cancelledAt,
+      sessionId: session.id,
+      activityId: session.activityId,
+    },
+  ]);
+  const nextId = next.queue[0];
+  if (nextId) next = startQueuedSession(next, nextId, cancelledAt);
+  return setActivityState(next);
+}
+
 function eventTime(events: DomainEvent[], occurredAt: number): DomainEvent[] {
   return events.map((event) => ({ ...event, occurredAt }));
 }
@@ -323,21 +343,7 @@ export function cancelActiveSession(state: GameState, now: number): GameState {
     throw new Error('There is no active session to cancel.');
   }
   const session = getSession(state, activeId);
-  const cancelled = updateSession(state, { ...session, status: 'cancelled', finishedAt: now });
-  let next = appendEvents({ ...cancelled, queue: state.queue.slice(1) }, [
-    {
-      id: `${session.id}:session.cancelled`,
-      type: 'session.cancelled',
-      occurredAt: now,
-      sessionId: session.id,
-      activityId: session.activityId,
-    },
-  ]);
-  const nextId = next.queue[0];
-  if (nextId) {
-    next = startQueuedSession(next, nextId, now);
-  }
-  return setActivityState(next);
+  return cancelHeadSession(state, session, now);
 }
 
 export function reconcileSessions(
@@ -374,6 +380,10 @@ export function reconcileSessions(
     const activity = content.activities.get(session.activityId);
     if (!activity) {
       throw new Error(`Unknown activity: ${session.activityId}`);
+    }
+    if (getActivityAccessError(next.character!, activity, content)) {
+      next = cancelHeadSession(next, session, now);
+      continue;
     }
     const reward = content.rewards.get(activity.rewardId);
     if (!reward) {

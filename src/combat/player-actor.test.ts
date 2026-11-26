@@ -383,7 +383,7 @@ describe('shared character combat contract', () => {
       extensions: { combatHp: 17 },
     };
     const actor = createCharacterCombatActor(prepared, content.items, defaults);
-    expect(actor.energy).toMatchObject({ mana: 50, aura: 3 });
+    expect(actor.energy).toMatchObject({ mana: 50, aura: 0 });
     expect(actor.hp).toEqual({ current: 17, maximum: 30 });
     expect(() =>
       createCharacterCombatActor(
@@ -392,6 +392,48 @@ describe('shared character combat contract', () => {
         defaults,
       ),
     ).toThrow('Character has invalid saved HP.');
+  });
+
+  it('activates only the reserve belonging to an awakened energy path', () => {
+    const aura = createCharacterCombatActor(
+      {
+        ...character(),
+        attributes: {
+          ...character().attributes,
+          energetic: { mana: 5, chi: 3 },
+        },
+        energy: { affinity: 'aura', reserves: { mana: 40, aura: 2 } },
+      },
+      content.items,
+      defaults,
+    );
+    const mana = createCharacterCombatActor(
+      {
+        ...character(),
+        energy: { affinity: 'mana', reserves: { mana: 2, aura: 40 } },
+      },
+      content.items,
+      defaults,
+    );
+    const derivedAura = createCharacterCombatActor(
+      {
+        ...character(),
+        attributes: { ...character().attributes, energetic: { chi: 3 } },
+        energy: { affinity: 'aura', reserves: {} },
+      },
+      content.items,
+      defaults,
+    );
+    const derivedMana = createCharacterCombatActor(
+      { ...character(), energy: { affinity: 'mana', reserves: {} } },
+      content.items,
+      defaults,
+    );
+
+    expect(aura.energy).toMatchObject({ mana: 0, aura: 2 });
+    expect(mana.energy).toMatchObject({ mana: 2, aura: 0 });
+    expect(derivedAura.energy).toMatchObject({ mana: 0, aura: 3 });
+    expect(derivedMana.energy).toMatchObject({ mana: 0 });
   });
 
   it('uses secondary weapons, ranged precision, and unequipped items without combat profiles', () => {
@@ -575,6 +617,23 @@ describe('shared character combat contract', () => {
         defaults,
       ).energy.focus,
     ).toBe(5);
+    const manaBonusItem = {
+      ...energyItem,
+      id: 'gear:mana-bonus',
+      combat: { energyBonus: { mana: 5 } },
+    };
+    energyItems.set(manaBonusItem.id, manaBonusItem);
+    expect(
+      createCharacterCombatActor(
+        {
+          ...character(),
+          energy: { affinity: 'aura', reserves: { mana: 10 } },
+          equipment: { ...character().equipment, chest: manaBonusItem.id },
+        },
+        energyItems,
+        defaults,
+      ).energy.mana,
+    ).toBe(0);
   });
 
   it('copies racial actions and effects, preserves legacy stat gaps, and rejects overflowing regeneration', () => {

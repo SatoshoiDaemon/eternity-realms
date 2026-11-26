@@ -98,4 +98,33 @@ describe('activity and region progression access', () => {
       ),
     ).toBeUndefined();
   });
+
+  it('keeps queued energy training on the selected Mana or Aura path', () => {
+    const aura = {
+      ...createTestState().character!,
+      energy: { affinity: 'aura', reserves: {} },
+    };
+    const mana = {
+      ...createTestState().character!,
+      energy: { affinity: 'mana', reserves: {} },
+    };
+    const chiTraining = {
+      id: 'chi-cultivation',
+      name: 'Chi cultivation',
+      description: '',
+      trainingEffect: { attributeId: 'energy:chi', amount: 1 },
+    } as unknown as ActivityDefinition;
+    const manaTraining = {
+      ...chiTraining,
+      trainingEffect: { attributeId: 'energy:mana', amount: 1 },
+    } as unknown as ActivityDefinition;
+
+    expect(getActivityAccessError(aura, manaTraining, content)).toBe(
+      'Aura characters cannot train Mana or Spirit attributes.',
+    );
+    expect(getActivityAccessError(mana, chiTraining, content)).toBe(
+      'Mana characters cannot train Chi through Aura cultivation.',
+    );
+    expect(getActivityAccessError(aura, chiTraining, content)).toBeUndefined();
+  });
 });

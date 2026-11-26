@@ -1968,11 +1968,24 @@ export function GameApp({
                   <div className="attribute-cell" key={key}>
                     <span>{localizedStatLabel(key)}</span>
                     <strong>{value}</strong>
+                    {key === 'chi' && (
+                      <small className="muted">{t('character.chiTrainingOnly')}</small>
+                    )}
+                    {character.energy.affinity === 'aura' &&
+                      (key === 'mana' || key === 'spirit') && (
+                        <small className="muted">{t('character.manaRequiresManaPath')}</small>
+                      )}
                     <button
                       className="quiet-button"
                       type="button"
                       aria-label={`Aumentar ${localizedStatLabel(key)}`}
-                      disabled={Number(character.extensions.attributePoints ?? 0) < 1}
+                      disabled={
+                        Number(character.extensions.attributePoints ?? 0) < 1 ||
+                        key === 'chi' ||
+                        character.energy.affinity === 'unaffiliated' ||
+                        (character.energy.affinity === 'aura' &&
+                          (key === 'mana' || key === 'spirit'))
+                      }
                       onClick={() =>
                         void updateCharacterAction((current) =>
                           spendAttributePoint(current, `energy:${key}`),
