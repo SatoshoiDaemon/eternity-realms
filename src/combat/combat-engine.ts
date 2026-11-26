@@ -306,6 +306,15 @@ function actorView(actor: CombatActor, actors: CombatActor[]): Record<string, un
   return {
     ...actor,
     hpRatio: actor.hp.current / actor.hp.maximum,
+    nearbyBleedingOpponent: actors.some(
+      (candidate) =>
+        candidate.side !== actor.side &&
+        candidate.state === 'alive' &&
+        Math.abs(candidate.position.x - actor.position.x) +
+          Math.abs(candidate.position.y - actor.position.y) <=
+          1 &&
+        candidate.effects.some((effect) => effect.id === 'core:bleeding'),
+    ),
     aliveAllies: actors.filter(
       (candidate) => candidate.side === actor.side && candidate.state === 'alive',
     ).length,
@@ -933,13 +942,23 @@ function applyEnvironmentalEffects(state: CombatState, actor: CombatActor): stri
       applied.push(`environment:${effect.tagId}:${JSON.stringify(effect.value)}`);
       continue;
     }
-    if (effect.type !== 'regeneration' || typeof effect.value !== 'number') {
+    if (effect.type === 'regeneration' && typeof effect.value === 'number') {
+      const before = actor.hp.current;
+      actor.hp.current = Math.min(actor.hp.maximum, actor.hp.current + Math.floor(effect.value));
+      if (actor.hp.current > before) {
+        applied.push(`regeneration:${actor.hp.current - before}`);
+      }
       continue;
     }
-    const before = actor.hp.current;
-    actor.hp.current = Math.min(actor.hp.maximum, actor.hp.current + Math.floor(effect.value));
-    if (actor.hp.current > before) {
-      applied.push(`regeneration:${actor.hp.current - before}`);
+    if (effect.type === 'max_hp_regeneration' && typeof effect.value === 'number') {
+      const before = actor.hp.current;
+      actor.hp.current = Math.min(
+        actor.hp.maximum,
+        actor.hp.current + Math.floor(actor.hp.maximum * effect.value),
+      );
+      if (actor.hp.current > before) {
+        applied.push(`max_hp_regeneration:${actor.hp.current - before}`);
+      }
     }
   }
   return applied;

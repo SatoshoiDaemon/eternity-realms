@@ -171,6 +171,31 @@ describe('data driven enemy tags', () => {
     }
   });
 
+  it('requires maximum HP regeneration effects to use a finite positive fraction', () => {
+    const template = registry[0]!;
+    const tagWithRegeneration = (value: unknown) => ({
+      ...template,
+      id: 'race:test-max-hp-regeneration',
+      modifiers: [
+        {
+          ...template.modifiers[0]!,
+          id: 'race:test-max-hp-regeneration:rule',
+          event: 'environment.tick',
+          interactionId: 'race:test-max-hp-regeneration',
+          conditions: [],
+          effect: { type: 'max_hp_regeneration', value },
+        },
+      ],
+    });
+
+    expect(loadTagRegistry([tagWithRegeneration(0.01)])).toHaveLength(1);
+    for (const invalidValue of [undefined, '0.01', Infinity, 0]) {
+      expect(() => loadTagRegistry([tagWithRegeneration(invalidValue)])).toThrow(
+        'Invalid enemy tag rule',
+      );
+    }
+  });
+
   it('requires persistent-status rules to name a status id', () => {
     const template = registry[0]!;
     const tagWithPersistence = (value: unknown) => ({

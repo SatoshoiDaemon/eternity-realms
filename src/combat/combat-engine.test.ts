@@ -1,6 +1,3 @@
-Warning: truncated output (original token count: 29588)
-Total output lines: 3667
-
 import { describe, expect, it } from 'vitest';
 import type { CombatActor, CombatAction } from './types';
 import { advanceCombat, createCombatState } from './combat-engine';
@@ -202,6 +199,114 @@ describe('deterministic event combat', () => {
     );
 
     expect(result.actors.find((entry) => entry.id === 'oni')?.hp.current).toBe(expectedHp);
+  });
+
+  it('restores a Vampire two regeneration levels and one percent of maximum HP near bleeding foes', () => {
+    const content = loadOfficialContent();
+    const race = content.races.get('vampire')!;
+    const vampire = actor('a-vampire', 'party', {
+      tags: [...(race.combatTags ?? []), race.combatTag!.id],
+      hp: { current: 50, maximum: 250 },
+      actions: [],
+    });
+    const bleedingFoe = actor('z-foe', 'enemy', {
+      actions: [],
+      effects: [{ id: 'core:bleeding', category: 'dot', potency: 1, counter: 3 }],
+    });
+    const result = advanceCombat(
+      createCombatState('vampire-blood-regeneration', [vampire, bleedingFoe], 101, {}, [
+        ...content.enemyTags.values(),
+      ]),
+      0,
+    );
+
+    expect(result.actors.find((entry) => entry.id === 'a-vampire')?.hp.current).toBe(54);
+    expect(result.log.find((entry) => entry.actorId === 'a-vampire')?.effectsApplied).toEqual(
+      expect.arrayContaining(['regeneration:2', 'max_hp_regeneration:2']),
+    );
+
+    const fullHealthResult = advanceCombat(
+      createCombatState(
+        'vampire-blood-regeneration-at-cap',
+        [
+          actor('a-full-vampire', 'party', {
+            tags: [...(race.combatTags ?? []), race.combatTag!.id],
+            hp: { current: 250, maximum: 250 },
+            actions: [],
+          }),
+          bleedingFoe,
+        ],
+        107,
+        {},
+        [...content.enemyTags.values()],
+      ),
+      0,
+    );
+    expect(fullHealthResult.actors.find((entry) => entry.id === 'a-full-vampire')?.hp.current).toBe(
+      250,
+    );
+    expect(
+      fullHealthResult.log.find((entry) => entry.actorId === 'a-full-vampire')?.effectsApplied,
+    ).not.toContain('max_hp_regeneration:0');
+  });
+
+  it.each([
+    {
+      label: 'a nearby foe without bleeding',
+      foe: { effects: [] },
+      ally: undefined,
+      expectedHp: 52,
+    },
+    {
+      label: 'a bleeding foe outside the encounter distance',
+      foe: {
+        position: { x: 2, y: 0 },
+        effects: [{ id: 'core:bleeding', category: 'dot', potency: 1, counter: 3 }],
+      },
+      ally: undefined,
+      expectedHp: 52,
+    },
+    {
+      label: 'a nearby bleeding ally',
+      foe: { effects: [] },
+      ally: {
+        effects: [{ id: 'core:bleeding', category: 'dot', potency: 1, counter: 3 }],
+      },
+      expectedHp: 52,
+    },
+    {
+      label: 'a nearby bleeding foe that is already dead',
+      foe: {
+        hp: { current: 0, maximum: 100 },
+        effects: [{ id: 'core:bleeding', category: 'dot', potency: 1, counter: 3 }],
+      },
+      ally: undefined,
+      extraFoe: true,
+      expectedHp: 52,
+    },
+  ])('does not draw blood regeneration from $label', ({ foe, ally, extraFoe, expectedHp }) => {
+    const content = loadOfficialContent();
+    const race = content.races.get('vampire')!;
+    const vampire = actor('a-vampire', 'party', {
+      tags: [...(race.combatTags ?? []), race.combatTag!.id],
+      hp: { current: 50, maximum: 250 },
+      actions: [],
+    });
+    const bleedingFoe = actor('z-foe', 'enemy', { actions: [], ...foe });
+    const actors = [
+      vampire,
+      ...(ally ? [actor('b-ally', 'party', { actions: [], ...ally })] : []),
+      bleedingFoe,
+      ...(extraFoe ? [actor('y-living-foe', 'enemy', { actions: [] })] : []),
+    ];
+    const result = advanceCombat(
+      createCombatState('vampire-blood-regeneration-gates', actors, 103, {}, [
+        ...content.enemyTags.values(),
+      ]),
+      0,
+    );
+
+    expect(result.actors.find((entry) => entry.id === 'a-vampire')?.hp.current).toBe(expectedHp);
   });
 
   it('doubles received debuff duration for Nephalem without extending buffs', () => {
@@ -1466,7 +1571,552 @@ describe('deterministic event combat', () => {
       createCombatState('same-side', [actor('a', 'party'), actor('b', 'party')], 1),
     ).toThrow('Combat requires at least two opposing sides.');
     expect(() =>
-      advanceCombat(createCombatState('time', [ac…4588 tokens truncated…, counter], 2), 0);
+      advanceCombat(createCombatState('time', [actor('a', 'party'), actor('b', 'enemy')], 1), -1),
+    ).toThrow('Combat time cannot move backwards.');
+  });
+
+  it('rejects invalid identities, seeds, actor stats, mitigation, evasion, and actions', () => {
+    const hero = actor('hero', 'party');
+    const foe = actor('foe', 'enemy');
+    expect(() => createCombatState('', [hero, foe], 1)).toThrow('Combat id cannot be empty.');
+    expect(() => createCombatState('seed', [hero, foe], -1)).toThrow(
+      'Combat seed must be a non-negative safe integer.',
+    );
+    expect(() => createCombatState('seed', [hero, foe], Number.NaN)).toThrow(
+      'Combat seed must be a non-negative safe integer.',
+    );
+
+    const invalidActors: Array<[Partial<CombatActor>, string]> = [
+      [{ id: ' ' }, 'identity fields'],
+      [{ name: ' ' }, 'identity fields'],
+      [{ speciesId: ' ' }, 'identity fields'],
+      [{ hp: { current: Number.NaN, maximum: 10 } }, 'invalid HP'],
+      [{ hp: { current: 1, maximum: 0 } }, 'invalid HP'],
+      [{ tenacity: { current: 1.5, maximum: 2 } }, 'invalid Tenacity'],
+      [{ regenerationPerAction: -1 }, 'invalid regeneration'],
+      [{ soulAnchorAvailable: 'yes' as never }, 'invalid soul anchor state'],
+      [{ soulAnchorAvailable: false, soulAnchorUsed: 1 as never }, 'invalid soul anchor state'],
+      [{ attributes: { ...hero.attributes, speed: 0 } }, 'positive Speed'],
+      [{ mitigation: { physical: 1, magical: 0 } }, 'mitigation'],
+      [{ evasion: { chance: 2, guaranteed: 0 } }, 'invalid evasion'],
+      [{ actions: [{ ...strike, id: ' ', accuracy: 1 }] }, 'invalid action'],
+      [{ actions: [{ ...strike, intervalMs: 0 }] }, 'invalid action'],
+      [{ actions: [{ ...strike, accuracy: 2 }] }, 'invalid action'],
+      [
+        { actions: [{ ...strike, damage: { ...strike.damage!, amount: -1 } }] },
+        'invalid attack damage',
+      ],
+      [
+        { actions: [{ ...strike, movement: { kind: 'push', distance: -1 } }] },
+        'invalid movement action',
+      ],
+    ];
+    for (const [override, message] of invalidActors) {
+      expect(() =>
+        createCombatState('invalid', [actor('invalid', 'party', override), foe], 1),
+      ).toThrow(message);
+    }
+  });
+
+  it('deep-copies action, equipment, policy, status, evasion, and guarantee state', () => {
+    const equippedAction: CombatAction = {
+      ...strike,
+      properties: ['ranged'],
+      damage: {
+        ...strike.damage!,
+        modifiers: [
+          {
+            id: 'item:edge',
+            interactionId: 'edge',
+            operation: 'add',
+            value: 2,
+            potency: 1,
+            origin: { kind: 'item', id: 'item:edge' },
+          },
+        ],
+      },
+      cost: { resource: 'mana', amount: 1 },
+      effects: [
+        {
+          id: 'base:ward',
+          category: 'buff',
+          potency: 1,
+          counter: 1,
+          source: { kind: 'effect', id: 'base:ward' },
+        },
+      ],
+    };
+    const state = createCombatState(
+      'copy',
+      [
+        actor('hero', 'party', {
+          equipment: [{ id: 'sword', properties: ['cutting'] }],
+          actions: [equippedAction],
+          effects: [
+            {
+              id: 'base:guard',
+              category: 'buff',
+              potency: 1,
+              counter: 2,
+              source: { kind: 'item', id: 'shield' },
+            },
+          ],
+          policy: {
+            id: 'base:conditional',
+            rules: [
+              {
+                actionId: 'base:strike',
+                priority: 2,
+                conditions: [{ path: 'actor.hpRatio', operator: 'lt', value: 0.5 }],
+              },
+            ],
+          },
+          evasion: { chance: 0.25, guaranteed: 1 },
+          guarantees: { hits: 1, semiHits: 2, evasions: 3 },
+        }),
+        actor('foe', 'enemy'),
+      ],
+      0,
+    );
+
+    expect(state.rngState).not.toBe(0);
+    expect(state.actors[0]?.equipment[0]?.properties).toEqual(['cutting']);
+    expect(state.actors[0]?.actions[0]?.damage?.modifiers?.[0]?.origin.kind).toBe('item');
+    expect(state.actors[0]?.actions[0]?.effects?.[0]?.source?.id).toBe('base:ward');
+    expect(state.actors[0]?.policy.rules[0]?.conditions?.[0]?.operator).toBe('lt');
+    expect(state.actors[0]?.guarantees).toEqual({ hits: 1, semiHits: 2, evasions: 3 });
+  });
+
+  it('resolves inevitable and guaranteed hits, accuracy misses, guaranteed evasion, semi hits, and random evasion', () => {
+    const run = (
+      id: string,
+      action: CombatAction,
+      attackerOverrides: Partial<CombatActor> = {},
+      defenderOverrides: Partial<CombatActor> = {},
+    ) =>
+      advanceCombat(
+        createCombatState(
+          id,
+          [
+            actor('a-hero', 'party', {
+              actions: [action],
+              actionPriority: [action.id],
+              ...attackerOverrides,
+            }),
+            actor('z-target', 'enemy', { actions: [], ...defenderOverrides }),
+          ],
+          123,
+        ),
+        0,
+      ).log[0];
+    const unavoidable = {
+      ...strike,
+      id: 'base:unavoidable',
+      accuracy: 0,
+      damage: { ...strike.damage!, properties: ['inevitable'] },
+    };
+    const guaranteed = { ...strike, id: 'base:guaranteed', accuracy: 0 };
+    const evadable = { ...strike, id: 'base:evadable', accuracy: 1 };
+
+    expect(run('inevitable', unavoidable)?.hit).toBe(true);
+    expect(
+      run('guaranteed', guaranteed, { guarantees: { hits: 1, semiHits: 0, evasions: 0 } })?.hit,
+    ).toBe(true);
+    expect(run('miss', guaranteed)?.hit).toBe(false);
+    expect(
+      run('guaranteed-dodge', evadable, {}, { guarantees: { hits: 0, semiHits: 0, evasions: 1 } })
+        ?.evaded,
+    ).toBe(true);
+    expect(
+      run(
+        'semi-hit',
+        evadable,
+        { guarantees: { hits: 0, semiHits: 1, evasions: 0 } },
+        { evasion: { chance: 1, guaranteed: 0 } },
+      )?.evaded,
+    ).toBe(false);
+    expect(
+      run('random-dodge', evadable, {}, { evasion: { chance: 1, guaranteed: 0 } })?.evaded,
+    ).toBe(true);
+  });
+
+  it('selects policy actions by conditions, player priority, tag behavior, target mode, and available resources', () => {
+    const attack = { ...strike, id: 'base:policy-attack' };
+    const guard: CombatAction = {
+      id: 'base:guard',
+      name: 'Guard',
+      kind: 'guard',
+      target: 'self',
+      intervalMs: 1_000,
+      accuracy: 1,
+    };
+    const expensive = { ...strike, id: 'base:expensive', cost: { resource: 'mana', amount: 10 } };
+    const policy = actor('a-hero', 'party', {
+      tags: ['base:berserker'],
+      actions: [guard, attack, expensive],
+      actionPriority: [attack.id, guard.id, expensive.id],
+      energy: { mana: 1 },
+      policy: {
+        id: 'base:threshold',
+        rules: [
+          {
+            actionId: guard.id,
+            priority: 100,
+            conditions: [
+              { path: 'actor.side', operator: 'eq', value: 'party' },
+              { path: 'target.side', operator: 'neq', value: 'party' },
+              { path: 'target.hpRatio', operator: 'gte', value: 0.5 },
+              { path: 'target.hpRatio', operator: 'lte', value: 0.5 },
+              { path: 'actor.attributes.speed', operator: 'gt', value: 5 },
+              { path: 'actor.attributes.speed', operator: 'lt', value: 11 },
+            ],
+          },
+        ],
+      },
+    });
+    const result = advanceCombat(
+      createCombatState('policy', [policy, actor('z-enemy', 'enemy')], 3),
+      0,
+    );
+
+    expect(result.log.find((entry) => entry.actorId === 'a-hero')?.actionId).toBe(attack.id);
+    expect(result.actors.find((entry) => entry.id === 'a-hero')?.energy.mana).toBe(1);
+  });
+
+  it('applies weapon modifier precedence, elemental relations, adaptive resistance, and status damage modifiers', () => {
+    const modifiedStrike: CombatAction = {
+      ...strike,
+      damage: {
+        ...strike.damage!,
+        amount: 40,
+        element: 'water',
+        modifiers: [
+          {
+            id: 'item-edge',
+            interactionId: 'edge',
+            operation: 'add',
+            value: 5,
+            potency: 10,
+            origin: { kind: 'item', id: 'edge' },
+          },
+          {
+            id: 'race-edge',
+            interactionId: 'edge',
+            operation: 'add',
+            value: 20,
+            potency: 5,
+            origin: { kind: 'race', id: 'race' },
+          },
+          {
+            id: 'ability-force',
+            operation: 'multiply',
+            value: 2,
+            potency: 1,
+            origin: { kind: 'ability', id: 'force' },
+          },
+          {
+            id: 'ability-overflow',
+            operation: 'add',
+            value: 0,
+            potency: 1,
+            origin: { kind: 'ability', id: 'force' },
+          },
+        ],
+      },
+    };
+    const elementalTarget = actor('z-target', 'enemy', {
+      tags: ['base:elemental'],
+      affinityElement: 'fire',
+      lastDamageChannel: 'physical',
+      effects: [
+        { id: 'base:exposed', category: 'debuff', potency: 2, counter: 2, damageMultiplier: 2 },
+        {
+          id: 'base:channel-match',
+          category: 'buff',
+          potency: 1,
+          counter: 1,
+          damageMultiplier: 1,
+          damageChannel: 'physical',
+          source: { kind: 'item', id: 'amulet' },
+        },
+        {
+          id: 'base:channel-mismatch',
+          category: 'buff',
+          potency: 1,
+          counter: 1,
+          damageMultiplier: 99,
+          damageChannel: 'magical',
+        },
+        {
+          id: 'base:duplicate-channel',
+          category: 'buff',
+          potency: 1,
+          counter: 1,
+          damageMultiplier: 1,
+          damageChannel: 'physical',
+        },
+        {
+          id: 'base:duplicate-channel',
+          category: 'buff',
+          potency: 2,
+          counter: 1,
+          damageMultiplier: 1,
+          damageChannel: 'physical',
+          source: { kind: 'item', id: 'ring' },
+        },
+        {
+          id: 'base:duplicate-channel',
+          category: 'buff',
+          potency: 2,
+          counter: 1,
+          damageMultiplier: 1,
+          damageChannel: 'physical',
+        },
+      ],
+    });
+    const first = advanceCombat(
+      createCombatState(
+        'mods',
+        [
+          actor('a-hero', 'party', {
+            actions: [modifiedStrike],
+            actionPriority: [modifiedStrike.id],
+          }),
+          elementalTarget,
+        ],
+        2,
+        { elementOpposites: { fire: ['water'] } },
+      ),
+      0,
+    );
+
+    expect(first.log.find((entry) => entry.actorId === 'a-hero')?.damageFinal).toBe(270);
+    expect(
+      first.log
+        .find((entry) => entry.actorId === 'a-hero')
+        ?.modifiers.map((modifier) => modifier.source),
+    ).toContain('item:edge');
+
+    const sameElementStrike = {
+      ...modifiedStrike,
+      damage: { ...modifiedStrike.damage!, element: 'fire', modifiers: [] },
+    };
+    const sameElement = advanceCombat(
+      createCombatState(
+        'same-element',
+        [
+          actor('a-hero', 'party', {
+            actions: [sameElementStrike],
+            actionPriority: [sameElementStrike.id],
+          }),
+          actor('z-target', 'enemy', { tags: ['base:elemental'], affinityElement: 'fire' }),
+        ],
+        2,
+      ),
+      0,
+    );
+    expect(sameElement.log.find((entry) => entry.actorId === 'a-hero')?.damageFinal).toBe(20);
+
+    const adaptive = advanceCombat(
+      createCombatState(
+        'adaptive',
+        [
+          actor('a-hero', 'party'),
+          actor('z-target', 'enemy', { tags: ['base:adaptive'], lastDamageChannel: 'physical' }),
+        ],
+        2,
+      ),
+      0,
+    );
+    expect(adaptive.log.find((entry) => entry.actorId === 'a-hero')?.damageFinal).toBe(30);
+  });
+
+  it('applies and replaces statuses by potency and counter, rejects immune effects, and logs expiry', () => {
+    const incoming: CombatAction = {
+      ...strike,
+      effects: [
+        { id: 'base:poison', category: 'dot', potency: 2, counter: 3 },
+        { id: 'base:weakening', category: 'debuff', potency: 4, counter: 2 },
+      ],
+    };
+    const target = actor('z-target', 'enemy', {
+      tags: ['base:toxic'],
+      effects: [
+        { id: 'base:weakening', category: 'debuff', potency: 1, counter: 1 },
+        { id: 'base:expired', category: 'buff', potency: 1, counter: 1, expiresAt: 0 },
+        { id: 'base:lasting', category: 'buff', potency: 1, counter: 3, expiresAt: 500 },
+      ],
+    });
+    const result = advanceCombat(
+      createCombatState(
+        'effects',
+        [actor('a-hero', 'party', { actions: [incoming], actionPriority: [incoming.id] }), target],
+        4,
+      ),
+      1_000,
+    );
+    const savedTarget = result.actors.find((entry) => entry.id === 'z-target');
+    const heroEntry = result.log.find((entry) => entry.actorId === 'a-hero');
+
+    expect(savedTarget?.effects.some((effect) => effect.id === 'base:poison')).toBe(false);
+    expect(savedTarget?.effects.find((effect) => effect.id === 'base:weakening')?.potency).toBe(4);
+    expect(heroEntry?.effectsApplied).toContain('a-hero:base:poison');
+    expect(
+      result.log.some((entry) => entry.message.includes('Efeito expirado: base:expired')),
+    ).toBe(true);
+    expect(
+      result.log.some((entry) => entry.message.includes('Efeito expirado: base:lasting')),
+    ).toBe(true);
+  });
+
+  it('handles optional policy conditions, duplicate statuses, missing cleanses, and initialized status ticks', () => {
+    const repeatedStatus = { id: 'base:repeated', category: 'debuff', potency: 1, counter: 1 };
+    const action: CombatAction = {
+      ...strike,
+      id: 'base:optional-policy',
+      effects: [repeatedStatus, repeatedStatus],
+      removeEffects: ['base:absent'],
+    };
+    const attacker = actor('a-hero', 'party', {
+      actions: [action],
+      actionPriority: [action.id],
+      policy: { id: 'base:no-conditions', rules: [{ actionId: action.id, priority: 5 }] },
+    });
+    const target = actor('z-target', 'enemy', {
+      actions: [],
+      effects: [
+        {
+          id: 'base:implicit-tick',
+          category: 'dot',
+          potency: 1,
+          counter: 2,
+          tickDamage: { amount: 1, channel: 'true' },
+          tickIntervalMs: 10,
+        },
+      ],
+    });
+    const state = createCombatState('optional-policy', [attacker, target], 6);
+    expect(state.actors.find((entry) => entry.id === target.id)?.effects[0]?.nextTickAt).toBe(10);
+    const result = advanceCombat(state, 10);
+    const heroLog = result.log.find((entry) => entry.actorId === attacker.id);
+    expect(heroLog?.actionId).toBe(action.id);
+    expect(heroLog?.effectsApplied).toEqual(['base:repeated']);
+    expect(result.log.some((entry) => entry.actionId === 'status:base:implicit-tick')).toBe(true);
+  });
+
+  it('uses pathless elemental relations and declines adaptive resistance after a different channel', () => {
+    const customTags = loadTagRegistry([
+      {
+        id: 'mod:pathless-elemental',
+        category: 'affinity',
+        name: 'Pathless',
+        description: '',
+        origin: 'mod:test',
+        activationConditions: [],
+        eventsObserved: ['damage.incoming'],
+        interactions: [],
+        requirements: [],
+        properties: [],
+        modifiers: [
+          {
+            id: 'relation',
+            event: 'damage.incoming',
+            conditions: [],
+            interactionId: 'mod:pathless-relation',
+            potency: 1,
+            priority: 1,
+            effect: { type: 'elemental_relation', sameElement: 0.5, oppositeElement: 2 },
+          },
+        ],
+      },
+      {
+        id: 'mod:nonmatching-adaptive',
+        category: 'behavior',
+        name: 'Nonmatching Adaptive',
+        description: '',
+        origin: 'mod:test',
+        activationConditions: [],
+        eventsObserved: ['damage.incoming'],
+        interactions: [],
+        requirements: [],
+        properties: [],
+        modifiers: [
+          {
+            id: 'adaptive',
+            event: 'damage.incoming',
+            conditions: [],
+            interactionId: 'mod:nonmatching-adaptive',
+            potency: 1,
+            priority: 1,
+            effect: { type: 'adaptive_resistance', value: 0.25 },
+          },
+        ],
+      },
+    ]);
+    const run = (id: string, element: string) => {
+      const elemental = { ...strike, id: `base:${id}`, damage: { ...strike.damage!, element } };
+      return advanceCombat(
+        createCombatState(
+          id,
+          [
+            actor('a-hero', 'party', { actions: [elemental], actionPriority: [elemental.id] }),
+            actor('z-target', 'enemy', {
+              tags: ['mod:pathless-elemental'],
+              affinityElement: 'fire',
+            }),
+          ],
+          2,
+          { elementOpposites: { fire: ['water'] } },
+          customTags,
+        ),
+        0,
+      ).log[0]?.damageFinal;
+    };
+    expect(run('same-pathless', 'fire')).toBe(20);
+    expect(run('opposite-pathless', 'water')).toBe(80);
+    expect(run('unrelated-pathless', 'earth')).toBe(40);
+
+    const differentChannel = {
+      ...strike,
+      damage: { ...strike.damage!, channel: 'physical' as const },
+    };
+    const noAdapt = advanceCombat(
+      createCombatState(
+        'adaptive-no-match',
+        [
+          actor('a-hero', 'party', {
+            actions: [differentChannel],
+            actionPriority: [differentChannel.id],
+          }),
+          actor('z-target', 'enemy', {
+            tags: ['mod:nonmatching-adaptive'],
+            lastDamageChannel: 'magical',
+          }),
+        ],
+        2,
+        {},
+        customTags,
+      ),
+      0,
+    );
+    expect(noAdapt.log[0]?.damageFinal).toBe(40);
+  });
+
+  it('allows a counterattack with a zero-cost resource absent from the actor', () => {
+    const counterAction: CombatAction = {
+      ...strike,
+      id: 'base:free-counter',
+      cost: { resource: 'focus', amount: 0 },
+    };
+    const hero = actor('a-hero', 'party', { actions: [strike], actionPriority: [strike.id] });
+    const counter = actor('z-counter', 'enemy', {
+      tags: ['base:counterattacker'],
+      evasion: { chance: 1, guaranteed: 0 },
+      energy: {},
+      actions: [counterAction],
+      actionPriority: [counterAction.id],
+    });
+    const result = advanceCombat(createCombatState('free-counter', [hero, counter], 2), 0);
     expect(
       result.log.some(
         (entry) => entry.actorId === counter.id && entry.actionId === counterAction.id,

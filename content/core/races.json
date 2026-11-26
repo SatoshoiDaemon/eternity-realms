@@ -916,8 +916,52 @@
       "necessidade de sangue condiciona a sobrevivência."
     ],
     "source": "Notion: Eternity Realms — Sistemas originais do RP (2026-11-08; atualização de Kitsune/2026-11-08)",
-    "adaptationNotes": "Texto canônico resumido; os efeitos marcados como incompletos ou ambíguos permanecem sem valores inventados. A adaptação mecânica aparece em combatTags e activityBonuses.",
-    "combatTags": ["base:vampiric", "base:nocturnal", "base:cursed"]
+    "adaptationNotes": "Texto canônico resumido; os efeitos marcados como incompletos ou ambíguos permanecem sem valores inventados. A adaptação mecânica aparece em combatTags e activityBonuses. A regeneração documentada foi implementada: dois níveis como 2 HP por turno do ator, conforme a adaptação de níveis de regeneração já usada pelo motor, e 1% do HP máximo por turno enquanto houver oponente vivo com Sangramento adjacente. 'Próximo' é interpretado como distância Manhattan até 1 na simulação automática.",
+    "combatTags": ["base:vampiric", "base:nocturnal", "base:cursed"],
+    "combatTag": {
+      "id": "race:vampire-blood-regeneration",
+      "category": "behavior",
+      "name": "Magia de Sangue — Regeneração Vampírica",
+      "description": "Recupera dois níveis de regeneração por turno e mais 1% do HP máximo quando um adversário próximo está sangrando.",
+      "origin": "Notion: Eternity Realms — Sistemas originais do RP, 16. Vampiros (2026-11-08)",
+      "activationConditions": [
+        "cada turno do Vampiro",
+        "oponente vivo com Sangramento a distância Manhattan 1 para a regeneração sanguínea"
+      ],
+      "eventsObserved": ["environment.tick"],
+      "modifiers": [
+        {
+          "id": "vampire-base-regeneration-levels",
+          "event": "environment.tick",
+          "conditions": [],
+          "interactionId": "race:vampire:base-regeneration",
+          "potency": 2,
+          "priority": 100,
+          "effect": { "type": "regeneration", "value": 2 }
+        },
+        {
+          "id": "vampire-bleeding-opponent-regeneration",
+          "event": "environment.tick",
+          "conditions": [{ "path": "actor.nearbyBleedingOpponent", "op": "eq", "value": true }],
+          "interactionId": "race:vampire:blood-regeneration",
+          "potency": 1,
+          "priority": 100,
+          "effect": { "type": "max_hp_regeneration", "value": 0.01 }
+        }
+      ],
+      "interactions": [
+        {
+          "id": "race:vampire:base-regeneration",
+          "counterplay": "Aplique efeitos que suprimem regeneração."
+        },
+        {
+          "id": "race:vampire:blood-regeneration",
+          "counterplay": "Evite Sangramento ou mantenha distância do Vampiro."
+        }
+      ],
+      "requirements": [],
+      "properties": ["racial", "blood-magic", "regenerative"]
+    }
   },
   {
     "id": "intelligent-weapon",

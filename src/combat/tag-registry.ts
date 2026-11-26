@@ -32,6 +32,7 @@ const effectType = z.enum([
   'status_immunity',
   'action_interval_multiplier',
   'regeneration',
+  'max_hp_regeneration',
   'hazard_awareness',
   'reveal_target',
   'policy_bias',
@@ -76,6 +77,15 @@ const tagEffectSchema = z
       context.addIssue({
         code: 'custom',
         message: 'Status multipliers must be finite and positive',
+      });
+    }
+    if (
+      effect.type === 'max_hp_regeneration' &&
+      (typeof effect.value !== 'number' || !Number.isFinite(effect.value) || effect.value <= 0)
+    ) {
+      context.addIssue({
+        code: 'custom',
+        message: 'Maximum HP regeneration must be a finite positive fraction',
       });
     }
     if (
