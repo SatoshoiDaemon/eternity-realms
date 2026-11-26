@@ -85,9 +85,13 @@ describe('data driven enemy tags', () => {
     const anchored = evaluateTagEffects(['base:ghost', 'base:ethereal'], 'targeting.check', {
       attack: { channel: 'physical', properties: ['spiritual', 'anchoring'] },
     });
+    const telekinetic = evaluateTagEffects(['base:ghost', 'base:ethereal'], 'targeting.check', {
+      attack: { channel: 'physical', properties: ['telekinetic'] },
+    });
 
     expect(ordinary.some((effect) => effect.type === 'target_gate')).toBe(true);
     expect(anchored.some((effect) => effect.type === 'target_gate')).toBe(false);
+    expect(telekinetic.some((effect) => effect.type === 'target_gate')).toBe(false);
   });
 
   it('applies material weaknesses and environmental affinity from rules, not creature names', () => {
@@ -212,6 +216,32 @@ describe('data driven enemy tags', () => {
     expect(loadTagRegistry([tagWithPersistence('core:burn')])).toHaveLength(1);
     for (const invalidValue of [undefined, '', 2]) {
       expect(() => loadTagRegistry([tagWithPersistence(invalidValue)])).toThrow(
+        'Invalid enemy tag rule',
+      );
+    }
+  });
+
+  it('validates action-forbidden rules for one or many action kinds', () => {
+    const template = registry[0]!;
+    const tagWithForbiddenActions = (value: unknown) => ({
+      ...template,
+      id: 'race:test-action-ban',
+      modifiers: [
+        {
+          ...template.modifiers[0]!,
+          id: 'race:test-action-ban:rule',
+          event: 'action.select',
+          interactionId: 'race:test-action-ban',
+          conditions: [],
+          effect: { type: 'action_forbidden', value },
+        },
+      ],
+    });
+
+    expect(loadTagRegistry([tagWithForbiddenActions('attack')])).toHaveLength(1);
+    expect(loadTagRegistry([tagWithForbiddenActions(['attack', 'ranged'])])).toHaveLength(1);
+    for (const invalidValue of [undefined, '', [], ['attack', '']]) {
+      expect(() => loadTagRegistry([tagWithForbiddenActions(invalidValue)])).toThrow(
         'Invalid enemy tag rule',
       );
     }

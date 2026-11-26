@@ -85,6 +85,17 @@ const tagEffectSchema = z
       context.addIssue({ code: 'custom', message: 'Persistent status effect must name a status' });
     }
     if (
+      effect.type === 'action_forbidden' &&
+      !(
+        (typeof effect.value === 'string' && effect.value.trim().length > 0) ||
+        (Array.isArray(effect.value) &&
+          effect.value.length > 0 &&
+          effect.value.every((value) => typeof value === 'string' && value.trim().length > 0))
+      )
+    ) {
+      context.addIssue({ code: 'custom', message: 'Forbidden actions must name action kinds' });
+    }
+    if (
       effect.type === 'on_support_effect' &&
       !supportStatusSchema.safeParse(effect.value).success
     ) {

@@ -540,7 +540,13 @@ function chooseAction(
       tagRegistry,
     );
     if (
-      effects.some((effect) => effect.type === 'action_forbidden' && effect.value === action.kind)
+      effects.some(
+        (effect) =>
+          effect.type === 'action_forbidden' &&
+          (Array.isArray(effect.value)
+            ? effect.value.includes(action.kind)
+            : effect.value === action.kind),
+      )
     ) {
       return [];
     }

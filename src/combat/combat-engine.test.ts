@@ -1,5 +1,5 @@
-Warning: truncated output (original token count: 29220)
-Total output lines: 3625
+Warning: truncated output (original token count: 29588)
+Total output lines: 3667
 
 import { describe, expect, it } from 'vitest';
 import type { CombatActor, CombatAction } from './types';
@@ -767,6 +767,48 @@ describe('deterministic event combat', () => {
     expect(result.actors.find((entry) => entry.id === 'a-slime')?.hp.current).toBe(84);
   });
 
+  it('prevents Ghosts from choosing ordinary physical attacks but permits spiritual attacks', () => {
+    const content = loadOfficialContent();
+    const race = content.races.get('ghost')!;
+    const tags = [...(race.combatTags ?? []), race.combatTag!.id];
+    const ordinary = actor('a-ghost', 'party', { tags, actions: [strike] });
+    const ordinaryResult = advanceCombat(
+      createCombatState(
+        'ghost-physical-anchor',
+        [ordinary, actor('z-target', 'enemy', { actions: [] })],
+        101,
+        {},
+        [...content.enemyTags.values()],
+      ),
+      0,
+    );
+    expect(ordinaryResult.actors.find((entry) => entry.id === 'z-target')?.hp.current).toBe(100);
+
+    for (const property of ['spiritual', 'telekinetic']) {
+      const empowered: CombatAction = {
+        ...strike,
+        id: `test:${property}-attack`,
+        properties: [property],
+      };
+      const empoweredGhost = actor('a-ghost', 'party', {
+        tags,
+        actions: [empowered],
+        actionPriority: [empowered.id],
+      });
+      const empoweredResult = advanceCombat(
+        createCombatState(
+          `ghost-${property}-attack`,
+          [empoweredGhost, actor('z-target', 'enemy', { actions: [] })],
+          property === 'spiritual' ? 103 : 105,
+          {},
+          [...content.enemyTags.values()],
+        ),
+        0,
+      );
+      expect(empoweredResult.actors.find((entry) => entry.id === 'z-target')?.hp.current).toBe(60);
+    }
+  });
+
   it.each(['core:confusion', 'core:exhaustion', 'core:haste'])(
     'applies the Dwarf racial immunity to %s without granting immunity to other statuses',
     (statusId) => {
@@ -1424,34 +1466,7 @@ describe('deterministic event combat', () => {
       createCombatState('same-side', [actor('a', 'party'), actor('b', 'party')], 1),
     ).toThrow('Combat requires at least two opposing sides.');
     expect(() =>
-      advanceCombat(createCombatState('time', [actor('a', 'party'), actor('b', 'enemy')], 1), -1),
-    ).toThrow('Combat time cannot move backwards.');
-  });
-
-  it('rejects invalid identities, seeds, actor stats, mitigation, evasion, and actions', () => {
-    const hero = actor('hero', 'party');
-    const foe = actor('foe', 'enemy');
-    expect(() => createCombatState('', [hero, foe], 1)).toThrow('Combat id cannot be empty.');
-    expect(() => createCombatState('seed', [hero, foe], -1)).toThrow(
-      'Combat seed must be a non-negative safe integer.',
-    );
-    expect(() => createCombatState('seed', [hero, foe], Number.NaN)).toThrow(
-      'Combat seed must be a non-negative safe integer.',
-    );
-
-    const invalidActors: Array<[Partial<CombatActor>, string]> = [
-      [{ id: ' ' }, 'identity fields'],
-      [{ name: ' ' }, 'identity fields'],
-      [{ speciesId: ' ' }, 'identity fields'],
-      [{ hp: { current: Number.NaN, maximum: 10 } }, 'invalid HP'],
-      [{ hp: { current: 1, maximum: 0 } }, 'invalid HP'],
-      [{ tenacity: { current: 1.5, maximum: 2 } }, 'invalid Tenacity'],
-      [{ regenerationPerAction: -1 }, 'invalid regeneration'],
-      [{ soulAnchorAvailable: 'yes' as never }, 'invalid soul anchor state'],
-      [{ soulAnchorAvailable: false, soulAnchorUsed: 1 as never }, 'invalid soul anchor state'],
-      [{ attributes: { ...hero.attributes, speed: 0 } }, 'positive Speed'],
-      [{ mitigation: { physical: 1, magical: 0 } }, 'mitigation'],
-      [{ evasion: { chance: 2, guar…4220 tokens truncated…, counter], 2), 0);
+      advanceCombat(createCombatState('time', [ac…4588 tokens truncated…, counter], 2), 0);
     expect(
       result.log.some(
         (entry) => entry.actorId === counter.id && entry.actionId === counterAction.id,

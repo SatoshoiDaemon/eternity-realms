@@ -34,7 +34,7 @@ describe('shared character combat contract', () => {
     const ghost = content.races.get('ghost')!;
     const actor = createCharacterCombatActor(character(), content.items, defaults, [], ghost);
 
-    expect(actor.tags).toEqual(['base:ghost', 'base:ethereal']);
+    expect(actor.tags).toEqual(['base:ghost', 'base:ethereal', 'race:ghost-physical-anchor']);
     expect(actor.affinityElement).toBeUndefined();
     expect(actor.effects).toEqual([]);
   });

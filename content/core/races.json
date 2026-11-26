@@ -99,8 +99,53 @@
       "vulnerável ao sagrado e ataques espirituais."
     ],
     "source": "Notion: Eternity Realms — Sistemas originais do RP (2026-11-08; atualização de Kitsune/2026-11-08)",
-    "adaptationNotes": "Texto canônico resumido; os efeitos marcados como incompletos ou ambíguos permanecem sem valores inventados. A adaptação mecânica aparece em combatTags e activityBonuses.",
-    "combatTags": ["base:ghost", "base:ethereal"]
+    "adaptationNotes": "Etéreo e vulnerabilidade sagrada usam tags base; o Fantasma também não escolhe ataques físicos comuns, salvo ações marcadas espiritual/telecinética. Possessão, telecinese por energia, equipamento e gatilhos contextuais seguem pendentes sem regras/runtime próprios.",
+    "combatTags": ["base:ghost", "base:ethereal"],
+    "combatTag": {
+      "id": "race:ghost-physical-anchor",
+      "name": "Âncora Espiritual",
+      "description": "O Fantasma não seleciona ataques físicos comuns; ações com propriedade espiritual ou telecinética podem atravessar sua âncora.",
+      "category": "behavior",
+      "origin": "Notion: Eternity Realms — Sistemas originais do RP",
+      "activationConditions": [
+        "Selecionar uma ação física sem propriedade espiritual ou telecinética"
+      ],
+      "eventsObserved": ["action.select"],
+      "modifiers": [
+        {
+          "id": "race:ghost-physical-anchor:ordinary-attacks",
+          "event": "action.select",
+          "conditions": [
+            { "path": "action.damage.channel", "op": "eq", "value": "physical" },
+            {
+              "path": "action.properties",
+              "op": "not_includes_any",
+              "value": ["spiritual", "telekinetic"]
+            },
+            {
+              "path": "action.damage.properties",
+              "op": "not_includes_any",
+              "value": ["spiritual", "telekinetic"]
+            }
+          ],
+          "interactionId": "race:ghost:ordinary-physical-attack",
+          "potency": 1,
+          "priority": 0,
+          "effect": {
+            "type": "action_forbidden",
+            "value": ["attack", "ranged", "area", "combo"]
+          }
+        }
+      ],
+      "interactions": [
+        {
+          "id": "race:ghost:ordinary-physical-attack",
+          "counterplay": "Ações físicas comuns não são selecionadas; ações físicas com propriedade espiritual ou telecinética permanecem utilizáveis."
+        }
+      ],
+      "requirements": [],
+      "properties": ["racial", "ethereal", "physical-anchor"]
+    }
   },
   {
     "id": "dragonborn",
