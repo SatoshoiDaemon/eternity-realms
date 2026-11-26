@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest';
+import { RaceSchema } from './schema';
 import { loadContentPacks, loadOfficialContent } from './registry';
 import { testPack } from '../test/fixtures';
 
@@ -38,6 +39,24 @@ describe('declarative content registry', () => {
     expect(official.glyphs).toHaveLength(4);
     expect(official.sigils).toHaveLength(3);
     expect(official.rules.experiencePerLevel).toBe(80);
+  });
+
+  it('accepts fractional status counters and expirations produced by exact racial multipliers', () => {
+    const angel = loadOfficialContent().races.get('angel')!;
+    const result = RaceSchema.safeParse({
+      ...angel,
+      combatStartEffects: [
+        {
+          id: 'core:painful-wounds',
+          category: 'debuff',
+          potency: 0.5,
+          counter: 0.5,
+          expiresAt: 500,
+        },
+      ],
+    });
+
+    expect(result.success).toBe(true);
   });
 
   it('loads regions, shops, and energy systems from mod packs and validates their references', () => {

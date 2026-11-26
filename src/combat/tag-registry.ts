@@ -50,17 +50,38 @@ const effectType = z.enum([
   'death_burst',
   'adaptive_resistance',
   'status_duration_multiplier',
+  'status_potency_multiplier',
+  'on_support_effect',
 ]);
+
+const supportStatusSchema = z
+  .object({
+    id: z.string().trim().min(1),
+    category: z.string().trim().min(1),
+    potency: z.number().finite().nonnegative(),
+    counter: z.number().finite().nonnegative(),
+  })
+  .passthrough();
 
 const tagEffectSchema = z
   .object({ type: effectType })
   .passthrough()
   .superRefine((effect, context) => {
     if (
-      effect.type === 'status_duration_multiplier' &&
+      (effect.type === 'status_duration_multiplier' ||
+        effect.type === 'status_potency_multiplier') &&
       (typeof effect.value !== 'number' || !Number.isFinite(effect.value) || effect.value <= 0)
     ) {
-      context.addIssue({ code: 'custom', message: 'Status duration multiplier must be positive' });
+      context.addIssue({
+        code: 'custom',
+        message: 'Status multipliers must be finite and positive',
+      });
+    }
+    if (
+      effect.type === 'on_support_effect' &&
+      !supportStatusSchema.safeParse(effect.value).success
+    ) {
+      context.addIssue({ code: 'custom', message: 'Support effect must contain a valid status' });
     }
   });
 

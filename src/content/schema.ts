@@ -34,11 +34,11 @@ const appliedEffectSchema = z
     id,
     category: z.string(),
     potency: z.number().finite().nonnegative(),
-    counter: z.number().int().nonnegative().safe(),
+    counter: z.number().finite().nonnegative(),
     source: originSchema.optional(),
     damageMultiplier: z.number().finite().optional(),
     damageChannel: z.enum(['physical', 'magical', 'true']).optional(),
-    expiresAt: z.number().int().safe().optional(),
+    expiresAt: z.number().finite().optional(),
     tickDamage: z
       .object({
         amount: z.number().finite().nonnegative(),
@@ -49,7 +49,7 @@ const appliedEffectSchema = z
       })
       .optional(),
     tickIntervalMs: z.number().int().positive().safe().optional(),
-    nextTickAt: z.number().int().nonnegative().safe().optional(),
+    nextTickAt: z.number().finite().nonnegative().optional(),
     sourceActorId: id.optional(),
   })
   .passthrough();

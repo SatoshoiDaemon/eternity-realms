@@ -503,7 +503,140 @@
     ],
     "source": "Notion: Eternity Realms — Sistemas originais do RP (2026-11-08; atualização de Kitsune/2026-11-08)",
     "adaptationNotes": "Texto canônico resumido; os efeitos marcados como incompletos ou ambíguos permanecem sem valores inventados. A adaptação mecânica aparece em combatTags e activityBonuses.",
-    "combatTags": ["base:celestial", "base:light_attuned"]
+    "combatTags": ["base:celestial", "base:light_attuned"],
+    "combatTag": {
+      "id": "race:angel-halo-genesi",
+      "name": "Halo e Genesi",
+      "description": "A Queimadura aplicada pelo Anjo dura mais; Genesi reduz Feridas Dolorosas, regenera e protege após curas e buffs.",
+      "category": "behavior",
+      "origin": "Notion: Eternity Realms — Sistemas originais do RP",
+      "activationConditions": [
+        "Aplicar Queimadura",
+        "Receber Feridas Dolorosas",
+        "Resolver um turno de combate",
+        "Curar ou aplicar um buff"
+      ],
+      "eventsObserved": [
+        "status.applied",
+        "status.incoming",
+        "environment.tick",
+        "support.completed"
+      ],
+      "modifiers": [
+        {
+          "id": "race:angel-halo-genesi:burn-duration",
+          "event": "status.applied",
+          "conditions": [{ "path": "status.id", "op": "eq", "value": "core:burn" }],
+          "interactionId": "race:angel:burn-duration",
+          "potency": 1,
+          "priority": 0,
+          "effect": { "type": "status_duration_multiplier", "value": 2 }
+        },
+        {
+          "id": "race:angel-halo-genesi:painful-wounds-potency",
+          "event": "status.incoming",
+          "conditions": [{ "path": "status.id", "op": "eq", "value": "core:painful-wounds" }],
+          "interactionId": "race:angel:genesi:painful-wounds-potency",
+          "potency": 1,
+          "priority": 0,
+          "effect": { "type": "status_potency_multiplier", "value": 0.5 }
+        },
+        {
+          "id": "race:angel-halo-genesi:painful-wounds-duration",
+          "event": "status.incoming",
+          "conditions": [{ "path": "status.id", "op": "eq", "value": "core:painful-wounds" }],
+          "interactionId": "race:angel:genesi:painful-wounds-duration",
+          "potency": 1,
+          "priority": 0,
+          "effect": { "type": "status_duration_multiplier", "value": 0.5 }
+        },
+        {
+          "id": "race:angel-halo-genesi:regeneration",
+          "event": "environment.tick",
+          "conditions": [],
+          "interactionId": "race:angel:genesi:regeneration",
+          "potency": 3,
+          "priority": 0,
+          "effect": { "type": "regeneration", "value": 3 }
+        },
+        {
+          "id": "race:angel-halo-genesi:healing-blessing",
+          "event": "support.completed",
+          "conditions": [{ "path": "action.hasHealing", "op": "eq", "value": true }],
+          "interactionId": "race:angel:genesi:blessing",
+          "potency": 4,
+          "priority": 0,
+          "effect": {
+            "type": "on_support_effect",
+            "value": { "id": "core:blessing", "category": "buff", "potency": 4, "counter": 1 }
+          }
+        },
+        {
+          "id": "race:angel-halo-genesi:buff-blessing",
+          "event": "support.completed",
+          "conditions": [{ "path": "action.hasAppliedBuff", "op": "eq", "value": true }],
+          "interactionId": "race:angel:genesi:blessing",
+          "potency": 4,
+          "priority": 0,
+          "effect": {
+            "type": "on_support_effect",
+            "value": { "id": "core:blessing", "category": "buff", "potency": 4, "counter": 1 }
+          }
+        },
+        {
+          "id": "race:angel-halo-genesi:healing-protection",
+          "event": "support.completed",
+          "conditions": [{ "path": "action.hasHealing", "op": "eq", "value": true }],
+          "interactionId": "race:angel:genesi:protection",
+          "potency": 4,
+          "priority": 0,
+          "effect": {
+            "type": "on_support_effect",
+            "value": { "id": "core:protection", "category": "buff", "potency": 4, "counter": 1 }
+          }
+        },
+        {
+          "id": "race:angel-halo-genesi:buff-protection",
+          "event": "support.completed",
+          "conditions": [{ "path": "action.hasAppliedBuff", "op": "eq", "value": true }],
+          "interactionId": "race:angel:genesi:protection",
+          "potency": 4,
+          "priority": 0,
+          "effect": {
+            "type": "on_support_effect",
+            "value": { "id": "core:protection", "category": "buff", "potency": 4, "counter": 1 }
+          }
+        }
+      ],
+      "interactions": [
+        {
+          "id": "race:angel:burn-duration",
+          "counterplay": "Queimadura aplicada pelo Anjo tem duração dobrada."
+        },
+        {
+          "id": "race:angel:genesi:painful-wounds-potency",
+          "counterplay": "Feridas Dolorosas recebidas têm metade da Potência."
+        },
+        {
+          "id": "race:angel:genesi:painful-wounds-duration",
+          "counterplay": "Feridas Dolorosas recebidas têm metade da Duração."
+        },
+        {
+          "id": "race:angel:genesi:regeneration",
+          "counterplay": "Os três níveis canônicos são adaptados como 3 HP por turno resolvido do ator."
+        },
+        {
+          "id": "race:angel:genesi:blessing",
+          "counterplay": "Após curar ou aplicar um buff, o Anjo e o alvo recebem Benção 4/1."
+        },
+        {
+          "id": "race:angel:genesi:protection",
+          "counterplay": "Após curar ou aplicar um buff, o Anjo e o alvo recebem Proteção 4/1."
+        }
+      ],
+      "requirements": [],
+      "properties": ["racial", "healing", "fire-affinity", "light-affinity"]
+    }
   },
   {
     "id": "feral",

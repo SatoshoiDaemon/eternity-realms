@@ -1,6 +1,3 @@
-Warning: truncated output (original token count: 15230)
-Total output lines: 1850
-
 import { evaluateTagEffects, type EnemyTagDefinition, type TagEffect } from './tag-registry';
 import { CombatSummonSpecSchema } from './schema';
 import type {
@@ -612,7 +609,710 @@ function combineTagMultipliers(
         affinities.some(
           (entry) =>
             Array.isArray((opposites as Record<string, unknown>)[entry]) &&
-            ((opposites as Record<string, unknown>)[entry] as unknown[]).includes(damage…5230 tokens truncated…ender.side &&
+            ((opposites as Record<string, unknown>)[entry] as unknown[]).includes(damage.element),
+        ) &&
+        typeof value.oppositeElement === 'number'
+      ) {
+        results.push({ effect, multiplier: value.oppositeElement });
+      }
+    }
+  }
+  return results;
+}
+
+function resolvedModifiers(modifiers: DamageModifier[]): DamageModifier[] {
+  const byIdentity = new Map<string, DamageModifier>();
+  for (const modifier of [...modifiers].sort(
+    (left, right) =>
+      ORIGIN_ORDER[left.origin.kind] - ORIGIN_ORDER[right.origin.kind] ||
+      left.id.localeCompare(right.id),
+  )) {
+    const key =
+      modifier.interactionId ?? `${modifier.origin.kind}:${modifier.origin.id}:${modifier.id}`;
+    const existing = byIdentity.get(key);
+    if (!existing || modifier.potency > existing.potency) {
+      byIdentity.set(key, modifier);
+    }
+  }
+  return [...byIdentity.values()].sort(
+    (left, right) =>
+      ORIGIN_ORDER[left.origin.kind] - ORIGIN_ORDER[right.origin.kind] ||
+      left.id.localeCompare(right.id),
+  );
+}
+
+function rollAttack(
+  state: CombatState,
+  attacker: CombatActor,
+  defender: CombatActor,
+  action: DamagingCombatAction,
+): { hit: boolean; evaded: boolean } {
+  const properties = [...new Set([...(action.properties ?? []), ...action.damage.properties])];
+  const inevitable = properties.includes('inevitable');
+  const guarantees = attacker.guarantees ?? { hits: 0, semiHits: 0, evasions: 0 };
+  if (inevitable) {
+    return { hit: true, evaded: false };
+  }
+  if (guarantees.hits > 0) {
+    attacker.guarantees = { ...guarantees, hits: guarantees.hits - 1 };
+    return { hit: true, evaded: false };
+  }
+  if (nextRandom(state) >= action.accuracy) {
+    return { hit: false, evaded: false };
+  }
+  const defenderGuarantees = defender.guarantees ?? { hits: 0, semiHits: 0, evasions: 0 };
+  if (defenderGuarantees.evasions > 0) {
+    defender.guarantees = { ...defenderGuarantees, evasions: defenderGuarantees.evasions - 1 };
+    return { hit: true, evaded: true };
+  }
+  if (guarantees.semiHits > 0) {
+    attacker.guarantees = { ...guarantees, semiHits: guarantees.semiHits - 1 };
+    return { hit: true, evaded: false };
+  }
+  const evasionChance = defender.evasion?.chance ?? 0;
+  return { hit: true, evaded: evasionChance > 0 && nextRandom(state) < evasionChance };
+}
+
+function applyStatus(
+  target: CombatActor,
+  effect: AppliedCombatEffect,
+  nowMs: number,
+  sourceActor: CombatActor,
+  tagRegistry?: EnemyTagDefinition[],
+): boolean {
+  const statusContext = { status: effect, defender: target, target, attacker: sourceActor };
+  const incomingEffects = evaluateTagEffects(
+    target.tags,
+    'status.incoming',
+    statusContext,
+    tagRegistry,
+  );
+  const appliedEffects = evaluateTagEffects(
+    sourceActor.tags,
+    'status.applied',
+    statusContext,
+    tagRegistry,
+  );
+  const statusRules = [...incomingEffects, ...appliedEffects];
+  const durationMultiplier = statusRules.reduce(
+    (multiplier, rule) =>
+      rule.type === 'status_duration_multiplier' && typeof rule.value === 'number'
+        ? multiplier * rule.value
+        : multiplier,
+    1,
+  );
+  const potencyMultiplier = statusRules.reduce(
+    (multiplier, rule) =>
+      rule.type === 'status_potency_multiplier' && typeof rule.value === 'number'
+        ? multiplier * rule.value
+        : multiplier,
+    1,
+  );
+  const originalDurationMs =
+    effect.expiresAt === undefined ? effect.counter * 1_000 : effect.expiresAt - nowMs;
+  const adjustedDurationMs = originalDurationMs * durationMultiplier;
+  const incoming = {
+    ...effect,
+    potency: effect.potency * potencyMultiplier,
+    counter: adjustedDurationMs / 1_000,
+    sourceActorId: effect.sourceActorId ?? sourceActor.id,
+    nextTickAt:
+      effect.tickDamage && effect.tickIntervalMs
+        ? (effect.nextTickAt ?? nowMs + effect.tickIntervalMs)
+        : undefined,
+    expiresAt: nowMs + adjustedDurationMs,
+  };
+  const currentIndex = target.effects.findIndex((candidate) => candidate.id === incoming.id);
+  if (currentIndex < 0) {
+    target.effects.push(incoming);
+    return true;
+  }
+  const current = target.effects[currentIndex]!;
+  if (
+    incoming.potency > current.potency ||
+    (incoming.potency === current.potency && incoming.counter > current.counter)
+  ) {
+    target.effects[currentIndex] = incoming;
+    return true;
+  }
+  return false;
+}
+
+function statusIsImmune(
+  target: CombatActor,
+  effect: AppliedCombatEffect,
+  tagRegistry?: EnemyTagDefinition[],
+): boolean {
+  const rules = evaluateTagEffects(
+    target.tags,
+    'status.incoming',
+    { status: effect, defender: target },
+    tagRegistry,
+  );
+  return rules.some(
+    (rule) =>
+      rule.type === 'status_immunity' &&
+      (rule.value === effect.id ||
+        rule.value === effect.category ||
+        (rule.value === 'energy' && effect.source?.kind === 'effect')),
+  );
+}
+
+function damageToBars(
+  target: CombatActor,
+  damage: number,
+): { hpLoss: number; tenacityLoss: number; killed: boolean; resurrected: boolean } {
+  let hpLoss = damage;
+  let tenacityLoss = 0;
+  if (target.tenacity.current > 0) {
+    hpLoss = Math.floor(damage / 2);
+    tenacityLoss = Math.floor(damage / 2);
+  }
+  const hpBefore = target.hp.current;
+  const tenacityBefore = target.tenacity.current;
+  target.hp.current = Math.max(0, target.hp.current - hpLoss);
+  target.tenacity.current = Math.max(0, target.tenacity.current - tenacityLoss);
+  let killed = target.hp.current <= 0 && target.tenacity.current <= 0;
+  let resurrected = false;
+  if (killed) {
+    if (target.soulAnchorAvailable) {
+      target.hp.current = 1;
+      target.tenacity.current = 0;
+      target.soulAnchorAvailable = false;
+      target.soulAnchorUsed = true;
+      resurrected = true;
+      killed = false;
+    } else {
+      target.state = 'dead';
+    }
+  }
+  return {
+    hpLoss: hpBefore - target.hp.current,
+    tenacityLoss: tenacityBefore - target.tenacity.current,
+    killed,
+    resurrected,
+  };
+}
+
+function createLog(state: CombatState, entry: Omit<CombatLogEntry, 'id'>): CombatLogEntry {
+  const event: CombatLogEntry = { ...entry, id: `${state.id}:event:${state.nextEventNumber}` };
+  state.nextEventNumber += 1;
+  state.log.push(event);
+  return event;
+}
+
+function expireEffects(state: CombatState, atMs: number): void {
+  for (const actor of state.actors) {
+    const expired = actor.effects.filter(
+      (effect) => effect.expiresAt !== undefined && effect.expiresAt <= atMs,
+    );
+    actor.effects = actor.effects.filter(
+      (effect) => effect.expiresAt === undefined || effect.expiresAt > atMs,
+    );
+    for (const effect of expired) {
+      createLog(state, {
+        timeMs: atMs,
+        kind: 'action_skipped',
+        actorId: actor.id,
+        hit: false,
+        evaded: false,
+        blocked: false,
+        damageInitial: 0,
+        damageFinal: 0,
+        modifiers: [],
+        tagInteractions: [],
+        resourceChanges: [],
+        effectsApplied: [],
+        killed: false,
+        message: `Efeito expirado: ${effect.id}.`,
+      });
+    }
+  }
+}
+
+function scheduleNext(
+  state: CombatState,
+  actor: CombatActor,
+  action: CombatAction | undefined,
+): void {
+  const interval = action?.intervalMs ?? DEFAULT_INTERVAL_MS;
+  const scheduleEffects = evaluateTagEffects(
+    actor.tags,
+    'action.schedule',
+    { actor: actorView(actor, state.actors), environment: state.environment },
+    state.tagRegistry,
+  );
+  const speedMultiplier = scheduleEffects
+    .filter(
+      (effect) => effect.type === 'action_interval_multiplier' && typeof effect.value === 'number',
+    )
+    .reduce((product, effect) => product * Number(effect.value), 1);
+  const dayEffects = evaluateTagEffects(
+    actor.tags,
+    'environment.tick',
+    { actor: actorView(actor, state.actors), environment: state.environment },
+    state.tagRegistry,
+  );
+  const environmentMultiplier = dayEffects
+    .filter(
+      (effect) =>
+        effect.type === 'environment_modifier' &&
+        typeof effect.value === 'object' &&
+        effect.value !== null &&
+        typeof (effect.value as { actionIntervalMultiplier?: unknown }).actionIntervalMultiplier ===
+          'number',
+    )
+    .reduce(
+      (product, effect) =>
+        product *
+        Number((effect.value as { actionIntervalMultiplier: number }).actionIntervalMultiplier),
+      1,
+    );
+  actor.nextEventAt =
+    state.nowMs +
+    Math.max(
+      1,
+      Math.floor(
+        interval *
+          (REFERENCE_SPEED / actor.attributes.speed) *
+          speedMultiplier *
+          environmentMultiplier,
+      ),
+    );
+}
+
+function applyEnvironmentalEffects(state: CombatState, actor: CombatActor): string[] {
+  const effects = evaluateTagEffects(
+    actor.tags,
+    'environment.tick',
+    { actor: actorView(actor, state.actors), environment: state.environment },
+    state.tagRegistry,
+  );
+  const applied: string[] = [];
+  if (
+    actor.regenerationPerAction &&
+    !actor.effects.some((effect) => effect.id === 'base:regeneration-suppressed')
+  ) {
+    const before = actor.hp.current;
+    actor.hp.current = Math.min(actor.hp.maximum, actor.hp.current + actor.regenerationPerAction);
+    if (actor.hp.current > before) {
+      applied.push(`regeneration:${actor.hp.current - before}`);
+    }
+  }
+  for (const effect of effects) {
+    if (effect.type === 'hazard_awareness' && state.environment.hazard) {
+      applied.push(`hazard-awareness:${state.environment.hazard}`);
+      continue;
+    }
+    if (
+      effect.type === 'environment_modifier' &&
+      typeof effect.value === 'object' &&
+      effect.value !== null
+    ) {
+      applied.push(`environment:${effect.tagId}:${JSON.stringify(effect.value)}`);
+      continue;
+    }
+    if (effect.type !== 'regeneration' || typeof effect.value !== 'number') {
+      continue;
+    }
+    const before = actor.hp.current;
+    actor.hp.current = Math.min(actor.hp.maximum, actor.hp.current + Math.floor(effect.value));
+    if (actor.hp.current > before) {
+      applied.push(`regeneration:${actor.hp.current - before}`);
+    }
+  }
+  return applied;
+}
+
+function actionProperties(action: CombatAction): string[] {
+  return [
+    ...new Set([
+      ...(action.kind === 'area' ? ['area'] : []),
+      ...(action.properties ?? []),
+      ...(action.damage?.properties ?? []),
+    ]),
+  ];
+}
+
+function isTargetBlocked(
+  target: CombatActor,
+  action: DamagingCombatAction,
+  attacker: CombatActor,
+  tagRegistry?: EnemyTagDefinition[],
+): TagEffect[] {
+  const context = () => ({
+    attack: { channel: action.damage.channel, properties: actionProperties(action) },
+    attacker: actorView(attacker, [attacker, target]),
+    defender: { ...actorView(target, [attacker, target]), side: target.side },
+    target: { ...actorView(target, [attacker, target]), side: target.side },
+    action,
+    environment: {},
+  });
+  const tracking = evaluateTagEffects(attacker.tags, 'targeting.check', context(), tagRegistry);
+  if (tracking.some((effect) => effect.type === 'reveal_target' && effect.value === true)) {
+    target.revealed = true;
+  }
+  let effects = evaluateTagEffects(target.tags, 'targeting.check', context(), tagRegistry);
+  if (effects.some((effect) => effect.type === 'reveal_target' && effect.value === true)) {
+    target.revealed = true;
+    effects = evaluateTagEffects(target.tags, 'targeting.check', context(), tagRegistry);
+  }
+  return effects.filter((effect) => {
+    if (effect.type === 'reveal_target' && effect.value === true) {
+      target.revealed = true;
+      return false;
+    }
+    if (effect.type !== 'target_gate') {
+      return false;
+    }
+    const required =
+      (effect as TagEffect & { requiredProperties?: unknown }).requiredProperties ??
+      (typeof effect.value === 'object' && effect.value !== null
+        ? (effect.value as { requiredProperties?: unknown }).requiredProperties
+        : undefined);
+    return (
+      Array.isArray(required) &&
+      !required.some((property) => actionProperties(action).includes(String(property)))
+    );
+  });
+}
+
+function applyModifiers(
+  initial: number,
+  modifiers: DamageModifier[],
+): { amount: number; records: CombatLogEntry['modifiers'] } {
+  let amount = initial;
+  const records: CombatLogEntry['modifiers'] = [];
+  for (const modifier of resolvedModifiers(modifiers)) {
+    amount = modifier.operation === 'add' ? amount + modifier.value : amount * modifier.value;
+    records.push({
+      id: modifier.id,
+      source: `${modifier.origin.kind}:${modifier.origin.id}`,
+      stage: 'damage',
+      value: modifier.value,
+    });
+  }
+  return { amount: Math.max(0, amount), records };
+}
+
+function applyDamage(
+  state: CombatState,
+  attacker: CombatActor,
+  defender: CombatActor,
+  action: CombatAction,
+): Omit<CombatLogEntry, 'id' | 'timeMs' | 'actorId' | 'targetId' | 'actionId' | 'kind'> {
+  const damage = { ...action.damage!, properties: actionProperties(action) };
+  const interactions: TagEffect[] = [];
+  const initial = damage.amount;
+  const attackResult = applyModifiers(initial, damage.modifiers ?? []);
+  let modified = attackResult.amount;
+  const modifierLogs = [...attackResult.records];
+  const attackerEffects = evaluateTagEffects(
+    attacker.tags,
+    'attack.outgoing',
+    { damage, attacker, defender, action },
+    state.tagRegistry,
+  );
+  const outgoing = combineTagMultipliers(attackerEffects, damage, defender, state.environment);
+  for (const { effect, multiplier } of outgoing) {
+    modified *= multiplier;
+    interactions.push(effect);
+    modifierLogs.push({
+      id: effect.ruleId,
+      source: effect.tagId,
+      stage: 'damage-modifier',
+      value: multiplier,
+    });
+  }
+  const incomingEffects = evaluateTagEffects(
+    defender.tags,
+    'damage.incoming',
+    {
+      damage,
+      attacker,
+      defender: {
+        ...defender,
+        affinityElement: defender.affinityElement,
+        lastDamageChannel: defender.lastDamageChannel,
+      },
+      target: defender,
+      action,
+      environment: state.environment,
+    },
+    state.tagRegistry,
+  );
+  const tagMultipliers = combineTagMultipliers(
+    incomingEffects,
+    damage,
+    defender,
+    state.environment,
+  );
+  for (const { effect, multiplier } of tagMultipliers) {
+    modified *= multiplier;
+    interactions.push(effect);
+    modifierLogs.push({
+      id: effect.ruleId,
+      source: effect.tagId,
+      stage: 'state-modifier',
+      value: multiplier,
+    });
+  }
+  const matchingStateEffects = new Map<string, AppliedCombatEffect>();
+  for (const effect of defender.effects) {
+    if (
+      !effect.damageMultiplier ||
+      (effect.damageChannel && effect.damageChannel !== damage.channel)
+    ) {
+      continue;
+    }
+    const existing = matchingStateEffects.get(effect.id);
+    if (!existing || effect.potency > existing.potency) {
+      matchingStateEffects.set(effect.id, effect);
+    }
+  }
+  for (const effect of matchingStateEffects.values()) {
+    modified *= effect.damageMultiplier!;
+    modifierLogs.push({
+      id: effect.id,
+      source: effect.source ? `${effect.source.kind}:${effect.source.id}` : 'status',
+      stage: 'state-modifier',
+      value: effect.damageMultiplier!,
+    });
+  }
+  let final = Math.max(0, modified);
+  if (damage.channel === 'physical') {
+    final *= 1 - defender.mitigation.physical;
+    modifierLogs.push({
+      id: 'physical-mitigation',
+      source: 'defense',
+      stage: 'defense',
+      value: defender.mitigation.physical,
+    });
+  } else if (damage.channel === 'magical') {
+    final *= 1 - defender.mitigation.magical;
+    modifierLogs.push({
+      id: 'magical-mitigation',
+      source: 'defense',
+      stage: 'defense',
+      value: defender.mitigation.magical,
+    });
+  }
+  if (defender.damageReduction !== undefined && defender.damageReduction > 0) {
+    final *= 1 - defender.damageReduction;
+    modifierLogs.push({
+      id: 'universal-damage-reduction',
+      source: 'energy:unaffiliated',
+      stage: 'defense',
+      value: defender.damageReduction,
+    });
+  }
+  final = Math.floor(Math.max(0, final));
+  const hpBefore = defender.hp.current;
+  const tenacityBefore = defender.tenacity.current;
+  const barDamage = damageToBars(defender, final);
+  defender.lastDamageChannel = damage.channel;
+  return {
+    hit: true,
+    evaded: false,
+    blocked: false,
+    damageInitial: initial,
+    damageFinal: final,
+    modifiers: modifierLogs,
+    tagInteractions: interactionLogs(
+      interactions.concat(
+        incomingEffects.filter(
+          (effect) => !tagMultipliers.some((entry) => entry.effect === effect),
+        ),
+      ),
+    ),
+    hpChange: { before: hpBefore, after: defender.hp.current },
+    tenacityChange: { before: tenacityBefore, after: defender.tenacity.current },
+    resourceChanges: [],
+    effectsApplied: barDamage.resurrected ? ['soul-anchor:resurrected-and-broken'] : [],
+    killed: barDamage.killed,
+    message: barDamage.resurrected
+      ? `${attacker.name} atinge ${defender.name} por ${final} de dano; a Âncora da Alma o traz de volta com 1 HP e se quebra.`
+      : `${attacker.name} atinge ${defender.name} por ${final} de dano.`,
+  };
+}
+
+function runEffects(
+  state: CombatState,
+  attacker: CombatActor,
+  defender: CombatActor,
+  action: CombatAction,
+  entry: Omit<CombatLogEntry, 'id' | 'timeMs' | 'actorId' | 'targetId' | 'actionId' | 'kind'>,
+): void {
+  const applied: string[] = [];
+  for (const effectId of action.removeEffects ?? []) {
+    const before = defender.effects.length;
+    defender.effects = defender.effects.filter((effect) => effect.id !== effectId);
+    if (defender.effects.length !== before) {
+      applied.push(`removed:${effectId}`);
+    }
+  }
+  for (const effect of action.effects ?? []) {
+    if (statusIsImmune(defender, effect, state.tagRegistry)) {
+      continue;
+    }
+    if (applyStatus(defender, effect, state.nowMs, attacker, state.tagRegistry)) {
+      applied.push(effect.id);
+    }
+  }
+  const reactiveEffects = action.damage
+    ? evaluateTagEffects(
+        defender.tags,
+        'damage.received',
+        {
+          damage: action.damage,
+          attacker,
+          defender,
+          action,
+        },
+        state.tagRegistry,
+      )
+    : [];
+  for (const effect of reactiveEffects) {
+    if (
+      effect.type === 'on_hit_effect' &&
+      typeof effect.value === 'object' &&
+      effect.value !== null
+    ) {
+      const payload = effect.value as AppliedCombatEffect;
+      if (applyStatus(attacker, payload, state.nowMs, defender, state.tagRegistry)) {
+        applied.push(`${attacker.id}:${payload.id}`);
+      }
+    } else if (
+      effect.type === 'corrode_armor' &&
+      typeof effect.value === 'number' &&
+      effect.value >= 0
+    ) {
+      attacker.mitigation = {
+        physical: attacker.mitigation.physical * Math.max(0, 1 - effect.value),
+        magical: attacker.mitigation.magical * Math.max(0, 1 - effect.value),
+      };
+      applied.push(`${attacker.id}:armor-corroded`);
+    }
+  }
+  const healed = entry.hpChange !== undefined && entry.hpChange.after > entry.hpChange.before;
+  const appliedBuff = (action.effects ?? []).some(
+    (effect) => effect.category === 'buff' && applied.includes(effect.id),
+  );
+  const supportEffects =
+    healed || appliedBuff
+      ? evaluateTagEffects(
+          attacker.tags,
+          'support.completed',
+          {
+            actor: attacker,
+            attacker,
+            target: defender,
+            defender,
+            action: {
+              ...action,
+              hasHealing: healed,
+              hasAppliedBuff: appliedBuff,
+            },
+          },
+          state.tagRegistry,
+        )
+      : [];
+  for (const effect of supportEffects) {
+    if (effect.type !== 'on_support_effect') continue;
+    const payload = effect.value as AppliedCombatEffect;
+    const recipients = [
+      ...new Map(
+        [attacker, defender].map((recipient) => [recipient.id, recipient] as const),
+      ).values(),
+    ];
+    for (const recipient of recipients) {
+      if (statusIsImmune(recipient, payload, state.tagRegistry)) continue;
+      if (applyStatus(recipient, payload, state.nowMs, attacker, state.tagRegistry)) {
+        applied.push(`${recipient.id}:${payload.id}`);
+        entry.tagInteractions.push(...interactionLogs([effect]));
+      }
+    }
+  }
+  entry.effectsApplied.push(...applied);
+  entry.tagInteractions.push(...interactionLogs(reactiveEffects));
+}
+
+function processDamageReactions(
+  state: CombatState,
+  attacker: CombatActor,
+  defender: CombatActor,
+  action: CombatAction & { damage: CombatDamage },
+  entry: Omit<CombatLogEntry, 'id' | 'timeMs' | 'actorId' | 'targetId' | 'actionId' | 'kind'>,
+  currentLog: CombatLogEntry,
+): void {
+  const attackerContext = {
+    ...attacker,
+    hpRatio: attacker.hp.current / attacker.hp.maximum,
+  };
+  const effects = evaluateTagEffects(
+    attacker.tags,
+    'damage.dealt',
+    {
+      damage: action.damage,
+      attacker: attackerContext,
+      defender,
+      action,
+      damageFinal: entry.damageFinal,
+    },
+    state.tagRegistry,
+  );
+  for (const effect of effects) {
+    if (
+      (effect.type === 'vampirism' || effect.type === 'flat_vampirism') &&
+      typeof effect.value === 'number' &&
+      effect.value > 0
+    ) {
+      const before = attacker.hp.current;
+      const healing =
+        effect.type === 'flat_vampirism'
+          ? Math.floor(effect.value)
+          : Math.floor(entry.damageFinal * effect.value);
+      attacker.hp.current = Math.min(attacker.hp.maximum, attacker.hp.current + healing);
+      entry.actorHpChange = { before, after: attacker.hp.current };
+      currentLog.actorHpChange = entry.actorHpChange;
+      entry.effectsApplied.push(`${effect.type}:${attacker.hp.current - before}`);
+      entry.tagInteractions.push(...interactionLogs([effect]));
+    } else if (
+      effect.type === 'on_hit_effect' &&
+      typeof effect.value === 'object' &&
+      effect.value !== null
+    ) {
+      const payload = effect.value as AppliedCombatEffect;
+      if (!statusIsImmune(attacker, payload, state.tagRegistry)) {
+        if (applyStatus(attacker, payload, state.nowMs, attacker, state.tagRegistry)) {
+          entry.effectsApplied.push(`${attacker.id}:${payload.id}`);
+          entry.tagInteractions.push(...interactionLogs([effect]));
+        }
+      }
+    }
+  }
+  const incoming = evaluateTagEffects(
+    defender.tags,
+    'damage.incoming',
+    {
+      damage: action.damage,
+      attacker,
+      defender,
+      target: defender,
+      action,
+      environment: state.environment,
+    },
+    state.tagRegistry,
+  );
+  for (const effect of incoming) {
+    if (effect.type !== 'chain_damage' || typeof effect.value !== 'number' || effect.value <= 0)
+      continue;
+    const radius = Number((effect as TagEffect & { radius?: unknown }).radius ?? 1);
+    const linked = state.actors
+      .filter(
+        (candidate) =>
+          candidate.state === 'alive' &&
+          candidate.side === defender.side &&
           candidate.id !== defender.id,
       )
       .filter(

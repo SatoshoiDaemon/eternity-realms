@@ -84,4 +84,6 @@ O Oni aplica Fome Eterna ao acertar: cura 10 HP por padrão; o patamar sobe para
 
 O Nephalem aplica a Tragédia de Dante: inimigos o priorizam como alvo, inclusive quando a ação escolhe o oponente com menor HP, e debuffs recebidos têm contador e expiração dobrados; buffs mantêm a duração normal. A prioridade de alvo e o multiplicador são canônicos; a ligação aos eventos declarativos `targeting.check` e `status.incoming` é a adaptação do motor idle. Ataques em área continuam resolvendo os alvos pela área declarada, pois não selecionam um alvo único.
 
-Essas cinco fichas seguem parciais: as outras vantagens, desvantagens e progressões raciais ainda exigem implementação específica. O catálogo de 29 raças continua sendo o escopo integral, sem mudança de contagem ou declaração de conclusão.
+O Anjo tem três efeitos de combate de Halo/Genesi executáveis: Queimadura que aplica dura 2×; Feridas Dolorosas recebidas têm Potência e Duração ÷2, com frações preservadas no contador e no instante de expiração; e curar ou aplicar um buff concede Benção 4/1 e Proteção 4/1 ao Anjo e ao alvo. Genesi também concede +3 níveis de regeneração; nesta adaptação, cada nível rende 1 HP por turno resolvido do ator. Expurgo, Executor Divino, proibições mágicas e efeitos que dependem de hierarquia ou duração não especificada permanecem parciais.
+
+Essas seis fichas seguem parciais: as outras vantagens, desvantagens e progressões raciais ainda exigem implementação específica. O catálogo de 29 raças continua sendo o escopo integral, sem mudança de contagem ou declaração de conclusão.

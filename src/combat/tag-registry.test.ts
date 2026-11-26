@@ -140,9 +140,9 @@ describe('data driven enemy tags', () => {
     );
   });
 
-  it('requires a finite positive value for status duration multipliers', () => {
+  it('requires finite positive values for duration and potency multipliers', () => {
     const template = registry[0]!;
-    const tagWithMultiplier = (value: unknown) => ({
+    const tagWithMultiplier = (type: string, value: unknown) => ({
       ...template,
       id: 'race:test-duration',
       modifiers: [
@@ -152,14 +152,45 @@ describe('data driven enemy tags', () => {
           event: 'status.incoming',
           interactionId: 'race:test-duration',
           conditions: [],
-          effect: { type: 'status_duration_multiplier', value },
+          effect: { type, value },
         },
       ],
     });
 
-    expect(loadTagRegistry([tagWithMultiplier(2)])).toHaveLength(1);
-    for (const invalidValue of [undefined, 0, Infinity]) {
-      expect(() => loadTagRegistry([tagWithMultiplier(invalidValue)])).toThrow(
+    for (const type of ['status_duration_multiplier', 'status_potency_multiplier']) {
+      expect(loadTagRegistry([tagWithMultiplier(type, 0.5)])).toHaveLength(1);
+      for (const invalidValue of [undefined, 0, Infinity]) {
+        expect(() => loadTagRegistry([tagWithMultiplier(type, invalidValue)])).toThrow(
+          'Invalid enemy tag rule',
+        );
+      }
+    }
+  });
+
+  it('validates support reaction status payloads', () => {
+    const template = registry[0]!;
+    const tagWithSupportEffect = (value: unknown) => ({
+      ...template,
+      id: 'race:test-support',
+      modifiers: [
+        {
+          ...template.modifiers[0]!,
+          id: 'race:test-support:rule',
+          event: 'support.completed',
+          interactionId: 'race:test-support',
+          conditions: [],
+          effect: { type: 'on_support_effect', value },
+        },
+      ],
+    });
+
+    expect(
+      loadTagRegistry([
+        tagWithSupportEffect({ id: 'core:blessing', category: 'buff', potency: 4, counter: 1 }),
+      ]),
+    ).toHaveLength(1);
+    for (const invalidValue of [undefined, 'core:blessing']) {
+      expect(() => loadTagRegistry([tagWithSupportEffect(invalidValue)])).toThrow(
         'Invalid enemy tag rule',
       );
     }
