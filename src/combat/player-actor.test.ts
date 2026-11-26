@@ -58,6 +58,68 @@ describe('shared character combat contract', () => {
     expect(actor.affinityElements).toEqual(['fire', 'water']);
   });
 
+  it('adds Mana Spirit damage to magical weapons and node actions', () => {
+    const weaponId = 'gear:spirit-focus';
+    const magicWeapon: ItemDefinition = {
+      ...content.items.get('gear:mithril-spear')!,
+      id: weaponId,
+      name: 'Spirit focus',
+      combat: {
+        damage: {
+          amount: 10,
+          channel: 'magical',
+          properties: ['elemental'],
+          origin: { kind: 'weapon', id: weaponId },
+        },
+      },
+    };
+    const nodeAction: CombatAction = {
+      id: 'node:spirit-bolt',
+      name: 'Spirit Bolt',
+      kind: 'magic',
+      target: 'enemy',
+      intervalMs: 1_000,
+      accuracy: 1,
+      damage: {
+        amount: 11,
+        channel: 'magical',
+        element: 'fire',
+        properties: ['elemental'],
+        origin: { kind: 'node', id: 'node:spirit-bolt' },
+      },
+    };
+    const prepared = {
+      ...character(),
+      attributes: { ...character().attributes, energetic: { spirit: 4 } },
+      equipment: { ...character().equipment, primary: weaponId },
+    };
+    const items = new Map(content.items).set(weaponId, magicWeapon);
+    const actor = createCharacterCombatActor(
+      prepared,
+      items,
+      defaults,
+      [nodeAction],
+      undefined,
+      undefined,
+      [...content.energies.values()],
+    );
+
+    expect(actor.actions.find((action) => action.id === weaponId)?.damage?.amount).toBe(24);
+    expect(actor.actions.find((action) => action.id === nodeAction.id)?.damage?.amount).toBe(25);
+    const unarmed = createCharacterCombatActor(
+      { ...prepared, equipment: { ...prepared.equipment, primary: null } },
+      content.items,
+      defaults,
+      [],
+      undefined,
+      undefined,
+      [...content.energies.values()],
+    );
+    expect(
+      unarmed.actions.find((action) => action.id === 'base:unarmed-strike')?.damage?.amount,
+    ).toBe(35);
+  });
+
   it('applies Incomplete Sem Afinidade attributes, mitigation, and absent energy reserves', () => {
     const prepared = {
       ...character(),

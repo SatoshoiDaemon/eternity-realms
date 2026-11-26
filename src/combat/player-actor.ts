@@ -7,6 +7,7 @@ import type {
 import type { Character } from '../domain/types';
 import { getInstalledImplantStatModifiers } from '../domain/implants';
 import { selectedCombatAffinities } from '../domain/mana-affinities';
+import { getManaSpiritDamageBonus } from '../domain/mana-progression';
 import { getUnaffiliatedEffects } from '../domain/unaffiliated';
 import type { CombatAction, CombatActor, CombatDamage } from './types';
 
@@ -174,15 +175,21 @@ export function createCharacterCombatActor(
   const primary =
     equipped.find(({ id }) => character.equipment.primary === id) ??
     equipped.find(({ id }) => character.equipment.secondary === id);
+  const manaDefinition = energyDefinitions.find((definition) => definition.id === 'energy:mana');
   const actions = [
     weaponAction(
       primary,
       { ...character, attributes: { ...character.attributes, physical } },
       defaults,
     ),
-    ...additionalActions.map((action) => ({ ...action })),
-    ...(race?.combatActions ?? []).map((action) => ({ ...action })),
-  ];
+    ...additionalActions,
+    ...(race?.combatActions ?? []),
+  ].map((action) => {
+    const damageBonus = getManaSpiritDamageBonus(character, action.damage?.channel, manaDefinition);
+    return damageBonus > 0 && action.damage
+      ? { ...action, damage: { ...action.damage, amount: action.damage.amount + damageBonus } }
+      : { ...action };
+  });
   const remainingMitigation = { physical: 1, magical: 1 };
   for (const { definition } of equipped) {
     for (const channel of ['physical', 'magical'] as const) {

@@ -9,7 +9,8 @@
       "Gerenciamento local de personagens, saves, backups e mods.",
       "Seleção permanente entre Mana, Aura e Sem Afinidade; Mana permite selar até quatro afinidades iniciais.",
       "Os sete elementos básicos de Mana agora liberam nós elementais e participam das interações de afinidade do combate.",
-      "A forma Incompleta de Sem Afinidade aplica +40 aos atributos físicos de combate, redução universal de 20% e ganhos dobrados em treino físico."
+      "A forma Incompleta de Sem Afinidade aplica +40 aos atributos físicos de combate, redução universal de 20% e ganhos dobrados em treino físico.",
+      "Espírito concede +7 de dano às ações mágicas a cada 2 pontos em personagens Mana, incluindo armas mágicas e ações de nós."
     ],
     "improved": [
       "Interface adaptada para telas Android e áreas seguras do sistema.",
