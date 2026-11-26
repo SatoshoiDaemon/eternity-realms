@@ -303,8 +303,42 @@ export const ShopSchema = z
     cadence: z.enum(['permanent', 'daily', 'weekly']),
     entries: z.array(shopEntrySchema),
     regionId: id.optional(),
+    rotation: z
+      .object({
+        offersPerPeriod: z.number().int().positive().safe(),
+      })
+      .optional(),
   })
-  .passthrough();
+  .passthrough()
+  .superRefine((shop, context) => {
+    const seenItems = new Set<string>();
+    shop.entries.forEach((entry, index) => {
+      if (seenItems.has(entry.itemId)) {
+        context.addIssue({
+          code: 'custom',
+          path: ['entries', index, 'itemId'],
+          message: 'A shop can only contain one offer for each item.',
+        });
+      }
+      seenItems.add(entry.itemId);
+    });
+    if (shop.rotation) {
+      if (shop.cadence === 'permanent') {
+        context.addIssue({
+          code: 'custom',
+          path: ['rotation'],
+          message: 'Rotating offers require a daily or weekly cadence.',
+        });
+      }
+      if (shop.rotation.offersPerPeriod > shop.entries.length) {
+        context.addIssue({
+          code: 'custom',
+          path: ['rotation', 'offersPerPeriod'],
+          message: 'Rotating offer count cannot exceed the configured offer pool.',
+        });
+      }
+    }
+  });
 
 export const EnergySchema = z
   .object({

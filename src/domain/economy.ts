@@ -5,6 +5,8 @@ import { getUnlockedRegionIds } from './activity-access';
 import { grantItems } from './progression';
 
 const ORB_TIERS = ['green-orb', 'blue-orb', 'orange-orb', 'red-orb', 'black-orb', 'gold-orb'];
+const DAY_MS = 86_400_000;
+const WEEK_MS = DAY_MS * 7;
 
 function validateQuantity(quantity: number): void {
   if (!Number.isSafeInteger(quantity) || quantity <= 0) {
@@ -34,6 +36,65 @@ function shopPeriod(cadence: 'permanent' | 'daily' | 'weekly', now: number): str
   if (cadence === 'daily') return new Date(dayStart).toISOString().slice(0, 10);
   const daysSinceMonday = (date.getUTCDay() + 6) % 7;
   return new Date(dayStart - daysSinceMonday * 86_400_000).toISOString().slice(0, 10);
+}
+
+function shopPeriodOrdinal(cadence: 'daily' | 'weekly', now: number): number {
+  const date = new Date(now);
+  const dayStart = Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate());
+  if (cadence === 'daily') return Math.floor(dayStart / DAY_MS);
+  const daysSinceMonday = (date.getUTCDay() + 6) % 7;
+  return Math.floor((dayStart - daysSinceMonday * DAY_MS) / WEEK_MS);
+}
+
+export function getShopOffers(shop: ShopDefinition, now: number): ShopDefinition['entries'] {
+  shopPeriod(shop.cadence, now);
+  if (!shop.rotation) return shop.entries;
+  if (shop.cadence === 'permanent') {
+    throw new Error(`Rotating shop has permanent cadence: ${shop.id}.`);
+  }
+  const offerCount = shop.rotation.offersPerPeriod;
+  if (!Number.isSafeInteger(offerCount) || offerCount <= 0 || offerCount > shop.entries.length) {
+    throw new Error(`Shop rotation is invalid for ${shop.id}.`);
+  }
+  const ordinal = shopPeriodOrdinal(shop.cadence, now);
+  const start =
+    (((ordinal * offerCount) % shop.entries.length) + shop.entries.length) % shop.entries.length;
+  return Array.from(
+    { length: offerCount },
+    (_, index) => shop.entries[(start + index) % shop.entries.length]!,
+  );
+}
+
+function purchasedQuantity(
+  character: Character,
+  shop: ShopDefinition,
+  entry: ShopDefinition['entries'][number],
+  period: string,
+): number {
+  const marketValue = character.extensions.marketPurchases;
+  const purchases =
+    typeof marketValue === 'object' && marketValue !== null && !Array.isArray(marketValue)
+      ? (marketValue as Record<string, number>)
+      : {};
+  const itemKey = `${shop.id}:${period}:${entry.itemId}`;
+  const legacyIndex = shop.entries.indexOf(entry);
+  const legacyKey = `${shop.id}:${period}:${legacyIndex}`;
+  const alreadyBought = purchases[itemKey] ?? purchases[legacyKey] ?? 0;
+  if (!Number.isSafeInteger(alreadyBought) || alreadyBought < 0) {
+    throw new Error(`Shop purchase counter is invalid for ${entry.itemId}.`);
+  }
+  return alreadyBought;
+}
+
+export function getShopStockRemaining(
+  character: Character,
+  shop: ShopDefinition,
+  entry: ShopDefinition['entries'][number],
+  now: number,
+): number | undefined {
+  if (entry.stock === undefined || entry.stock < 0) return undefined;
+  const period = shopPeriod(shop.cadence, now);
+  return Math.max(0, entry.stock - purchasedQuantity(character, shop, entry, period));
 }
 
 function assertShopAccess(character: Character, shopId: string, content: ContentCatalog) {
@@ -116,9 +177,11 @@ export function buyFromShop(
 ): Character {
   validateQuantity(quantity);
   const shop = assertShopAccess(character, shopId, content);
-  const entryIndex = shop.entries.findIndex((entry) => entry.itemId === itemId);
-  const entry = shop.entries[entryIndex];
-  if (!entry) throw new Error(`Item is not sold by ${shopId}: ${itemId}.`);
+  const period = shopPeriod(shop.cadence, now);
+  const catalogEntryIndex = shop.entries.findIndex((entry) => entry.itemId === itemId);
+  if (catalogEntryIndex < 0) throw new Error(`Item is not sold by ${shopId}: ${itemId}.`);
+  const entry = getShopOffers(shop, now).find((candidate) => candidate.itemId === itemId);
+  if (!entry) throw new Error(`Item is not in the current shop rotation: ${shopId}: ${itemId}.`);
   if (entry.requiredLevel && character.level < entry.requiredLevel) {
     throw new Error(`Shop item requires character level ${entry.requiredLevel}.`);
   }
@@ -137,17 +200,13 @@ export function buyFromShop(
   const balance = wallet[entry.currency] ?? 0;
   if (balance < totalPrice) throw new Error(`Insufficient ${entry.currency}.`);
 
-  const period = shopPeriod(shop.cadence, now);
-  const purchaseKey = `${shop.id}:${period}:${entryIndex}`;
+  const purchaseKey = `${shop.id}:${period}:${entry.itemId}`;
   const marketValue = character.extensions.marketPurchases;
   const purchases =
     typeof marketValue === 'object' && marketValue !== null && !Array.isArray(marketValue)
       ? { ...(marketValue as Record<string, number>) }
       : {};
-  const alreadyBought = purchases[purchaseKey] ?? 0;
-  if (!Number.isSafeInteger(alreadyBought) || alreadyBought < 0) {
-    throw new Error(`Shop purchase counter is invalid for ${itemId}.`);
-  }
+  const alreadyBought = purchasedQuantity(character, shop, entry, period);
   if (entry.stock !== undefined && entry.stock >= 0 && alreadyBought + quantity > entry.stock) {
     throw new Error(`Shop stock is insufficient for ${itemId}.`);
   }

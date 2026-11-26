@@ -218,9 +218,12 @@
     "id": "shop:daily",
     "kind": "shop",
     "name": "Banca diária",
-    "description": "Estoque renovado por período local da partida.",
+    "description": "Quatro ofertas de um catálogo regional, renovadas a cada dia UTC da partida.",
     "cadence": "daily",
     "regionId": "apexia",
+    "rotation": {
+      "offersPerPeriod": 4
+    },
     "entries": [
       {
         "itemId": "healing-potion",
@@ -242,6 +245,78 @@
         "price": 8,
         "stock": 6,
         "sellPrice": 4
+      },
+      {
+        "itemId": "mana-potion",
+        "currency": "fragments",
+        "price": 22,
+        "stock": 3,
+        "sellPrice": 11
+      },
+      {
+        "itemId": "aura-tonic",
+        "currency": "fragments",
+        "price": 22,
+        "stock": 3,
+        "sellPrice": 11
+      },
+      {
+        "itemId": "ore-silver",
+        "currency": "fragments",
+        "price": 18,
+        "stock": 6,
+        "sellPrice": 9,
+        "requiredLevel": 3,
+        "requiredSkill": "mining-skill",
+        "requiredSkillLevel": 3
+      },
+      {
+        "itemId": "oak-log",
+        "currency": "fragments",
+        "price": 6,
+        "stock": 12,
+        "sellPrice": 3
+      },
+      {
+        "itemId": "wheat",
+        "currency": "fragments",
+        "price": 6,
+        "stock": 12,
+        "sellPrice": 3
+      },
+      {
+        "itemId": "river-carp",
+        "currency": "fragments",
+        "price": 12,
+        "stock": 8,
+        "sellPrice": 6
+      },
+      {
+        "itemId": "beast-hide",
+        "currency": "fragments",
+        "price": 16,
+        "stock": 5,
+        "sellPrice": 8
+      },
+      {
+        "itemId": "arcane-crystal",
+        "currency": "fragments",
+        "price": 30,
+        "stock": 3,
+        "sellPrice": 15,
+        "requiredLevel": 5,
+        "requiredSkill": "magic-skill",
+        "requiredSkillLevel": 5
+      },
+      {
+        "itemId": "rune-token",
+        "currency": "fragments",
+        "price": 45,
+        "stock": 2,
+        "sellPrice": 22,
+        "requiredLevel": 8,
+        "requiredSkill": "forging-skill",
+        "requiredSkillLevel": 5
       }
     ]
   }

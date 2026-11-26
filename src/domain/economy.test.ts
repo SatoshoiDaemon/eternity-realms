@@ -1,12 +1,60 @@
 import { describe, expect, it } from 'vitest';
 import { loadOfficialContent } from '../content/registry';
 import { createTestState } from '../test/fixtures';
-import { buyFromShop, exchangeOrbs, getShopPrices, sellToShop } from './economy';
+import {
+  buyFromShop,
+  exchangeOrbs,
+  getShopOffers,
+  getShopPrices,
+  getShopStockRemaining,
+  sellToShop,
+} from './economy';
 import type { ShopDefinition, SkillDefinition } from '../content/schema';
 
 const content = loadOfficialContent();
 
 describe('offline economy', () => {
+  it('rotates a deterministic daily selection across the complete local offer pool', () => {
+    const daily = content.shops.get('shop:daily')!;
+    const permanent = content.shops.get('shop:fragments')!;
+    const first = getShopOffers(daily, 0);
+    const second = getShopOffers(daily, 86_400_000);
+    const third = getShopOffers(daily, 2 * 86_400_000);
+
+    expect(first.map((entry) => entry.itemId)).toEqual([
+      'healing-potion',
+      'wild-herb',
+      'iron-ore',
+      'mana-potion',
+    ]);
+    expect(getShopOffers(daily, 1)).toEqual(first);
+    expect(second.map((entry) => entry.itemId)).toEqual([
+      'aura-tonic',
+      'ore-silver',
+      'oak-log',
+      'wheat',
+    ]);
+    expect(third.map((entry) => entry.itemId)).toEqual([
+      'river-carp',
+      'beast-hide',
+      'arcane-crystal',
+      'rune-token',
+    ]);
+    expect(new Set([...first, ...second, ...third].map((entry) => entry.itemId)).size).toBe(
+      daily.entries.length,
+    );
+    expect(getShopOffers(permanent, 0)).toEqual(permanent.entries);
+    expect(() =>
+      getShopOffers({ ...permanent, rotation: { offersPerPeriod: 1 } } as ShopDefinition, 0),
+    ).toThrow('Rotating shop has permanent cadence: shop:fragments.');
+    expect(() =>
+      getShopOffers({ ...daily, rotation: { offersPerPeriod: 13 } } as ShopDefinition, 0),
+    ).toThrow('Shop rotation is invalid for shop:daily.');
+    expect(() => getShopOffers(daily, -1)).toThrow(
+      'Shop time must be a valid non-negative epoch timestamp.',
+    );
+  });
+
   it('buys useful catalog items, spends currency, and tracks rotating stock by period', () => {
     const character = {
       ...createTestState().character!,
@@ -18,16 +66,16 @@ describe('offline economy', () => {
       'shop:daily',
       'healing-potion',
       2,
-      Date.UTC(2026, 10, 20),
+      Date.UTC(2026, 10, 21),
     );
 
     expect(purchase.inventory['healing-potion']).toBe(2);
     expect((purchase.extensions.wallet as Record<string, number>).fragments).toBe(70);
     expect(() =>
-      buyFromShop(purchase, content, 'shop:daily', 'healing-potion', 2, Date.UTC(2026, 10, 20)),
+      buyFromShop(purchase, content, 'shop:daily', 'healing-potion', 2, Date.UTC(2026, 10, 21)),
     ).toThrow('Shop stock is insufficient for healing-potion.');
     expect(() =>
-      buyFromShop(character, content, 'shop:daily', 'healing-potion', 4, Date.UTC(2026, 10, 20)),
+      buyFromShop(character, content, 'shop:daily', 'healing-potion', 4, Date.UTC(2026, 10, 21)),
     ).toThrow('Shop stock is insufficient for healing-potion.');
     expect(() =>
       buyFromShop(
@@ -36,7 +84,7 @@ describe('offline economy', () => {
         'shop:daily',
         'healing-potion',
         1,
-        Date.UTC(2026, 10, 20),
+        Date.UTC(2026, 10, 21),
       ),
     ).toThrow('Insufficient fragments.');
     const nextDay = buyFromShop(
@@ -45,9 +93,52 @@ describe('offline economy', () => {
       'shop:daily',
       'healing-potion',
       1,
-      Date.UTC(2026, 10, 21),
+      Date.UTC(2026, 10, 24),
     );
     expect(nextDay.inventory['healing-potion']).toBe(3);
+    expect(() =>
+      buyFromShop(character, content, 'shop:daily', 'healing-potion', 1, Date.UTC(2026, 10, 22)),
+    ).toThrow('Item is not in the current shop rotation: shop:daily: healing-potion.');
+  });
+
+  it('reports current stock, unlimited stock, and period boundaries', () => {
+    const character = {
+      ...createTestState().character!,
+      extensions: { wallet: { fragments: 100 } },
+    };
+    const daily = content.shops.get('shop:daily')!;
+    const potion = daily.entries.find((entry) => entry.itemId === 'healing-potion')!;
+    const unlimited = { ...potion, stock: -1 };
+
+    expect(getShopStockRemaining(character, daily, potion, 0)).toBe(3);
+    expect(getShopStockRemaining(character, daily, unlimited, 0)).toBeUndefined();
+    const bought = buyFromShop(character, content, 'shop:daily', 'healing-potion', 2, 0);
+    expect(getShopStockRemaining(bought, daily, potion, 0)).toBe(1);
+    expect(getShopStockRemaining(bought, daily, potion, 86_400_000)).toBe(3);
+    expect(() => getShopStockRemaining(character, daily, potion, -1)).toThrow(
+      'Shop time must be a valid non-negative epoch timestamp.',
+    );
+  });
+
+  it('migrates legacy index-based purchase counters into stable item-based stock keys', () => {
+    const base = createTestState().character!;
+    const daily = content.shops.get('shop:daily')!;
+    const index = daily.entries.findIndex((entry) => entry.itemId === 'healing-potion');
+    const character = {
+      ...base,
+      extensions: {
+        wallet: { fragments: 100 },
+        marketPurchases: { [`shop:daily:1970-01-01:${index}`]: 2 },
+      },
+    };
+
+    expect(() => buyFromShop(character, content, 'shop:daily', 'healing-potion', 2, 0)).toThrow(
+      'Shop stock is insufficient for healing-potion.',
+    );
+    const bought = buyFromShop(character, content, 'shop:daily', 'healing-potion', 1, 0);
+    expect(bought.extensions.marketPurchases).toMatchObject({
+      'shop:daily:1970-01-01:healing-potion': 3,
+    });
   });
 
   it('sells only inventory backed by explicit buyback entries', () => {
@@ -200,10 +291,13 @@ describe('offline economy', () => {
       'Quantity must be a positive safe integer.',
     );
     const daily = content.shops.get('shop:daily')!;
-    const withShop = (shop: ShopDefinition) => ({
-      ...content,
-      shops: new Map(content.shops).set(shop.id, shop),
-    });
+    const withShop = (shop: ShopDefinition) => {
+      const normalized =
+        shop.rotation && shop.rotation.offersPerPeriod > shop.entries.length
+          ? { ...shop, rotation: undefined }
+          : shop;
+      return { ...content, shops: new Map(content.shops).set(shop.id, normalized) };
+    };
     const locked = { ...daily, id: 'test:locked', regionId: 'vaeloria' };
     expect(() =>
       buyFromShop(character, withShop(locked), locked.id, 'healing-potion', 1, 0),
@@ -244,10 +338,13 @@ describe('offline economy', () => {
       ],
     ).toBe(1);
     const daily = content.shops.get('shop:daily')!;
-    const withShop = (shop: ShopDefinition) => ({
-      ...content,
-      shops: new Map(content.shops).set(shop.id, shop),
-    });
+    const withShop = (shop: ShopDefinition) => {
+      const normalized =
+        shop.rotation && shop.rotation.offersPerPeriod > shop.entries.length
+          ? { ...shop, rotation: undefined }
+          : shop;
+      return { ...content, shops: new Map(content.shops).set(shop.id, normalized) };
+    };
     const weekly = { ...daily, id: 'test:weekly', cadence: 'weekly' as const };
     expect(
       buyFromShop(

@@ -1,6 +1,14 @@
 import { useMemo, useState } from 'react';
 import type { ContentCatalog } from '../content/registry';
-import { buyFromShop, exchangeOrbs, getShopPrices, sellToShop } from '../domain/economy';
+import {
+  buyFromShop,
+  exchangeOrbs,
+  getShopOffers,
+  getShopPrices,
+  getShopStockRemaining,
+  sellToShop,
+} from '../domain/economy';
+import { getUnlockedRegionIds } from '../domain/activity-access';
 import type { Character } from '../domain/types';
 import { GameSelect } from './GameSelect';
 
@@ -25,6 +33,10 @@ export function MarketPanel({
   const [error, setError] = useState('');
   const [status, setStatus] = useState('');
   const shop = content.shops.get(shopId);
+  const now = clock();
+  const shopEntries = shop ? getShopOffers(shop, now) : [];
+  const regionAvailable =
+    !shop?.regionId || getUnlockedRegionIds(character, content.regions).includes(shop.regionId);
   const wallet =
     typeof character.extensions.wallet === 'object' && character.extensions.wallet !== null
       ? (character.extensions.wallet as Record<string, number>)
@@ -69,6 +81,16 @@ export function MarketPanel({
           options={shops.map((entry) => ({ value: entry.id, label: entry.name }))}
           onChange={(value) => setShopId(value)}
         />
+        {shop?.rotation && (
+          <p className="muted-copy">
+            Ofertas nesta rotação: {shopEntries.length} de {shop.entries.length}
+          </p>
+        )}
+        {shop?.regionId && !regionAvailable && (
+          <p className="error-banner">
+            Região necessária: {content.regions.get(shop.regionId)?.name ?? shop.regionId}
+          </p>
+        )}
         <label className="field-label" htmlFor="market-quantity">
           Quantidade
         </label>
@@ -82,17 +104,41 @@ export function MarketPanel({
           onChange={(event) => setQuantity(Number(event.target.value))}
         />
         <div className="activity-grid">
-          {(shop?.entries ?? []).map((entry) => {
+          {shopEntries.map((entry) => {
             const item = content.items.get(entry.itemId);
             const prices = getShopPrices(character, content, entry);
+            const stockRemaining = getShopStockRemaining(character, shop!, entry, now);
+            const skill = entry.requiredSkill ? content.skills.get(entry.requiredSkill) : undefined;
+            const skillLevel = entry.requiredSkill
+              ? (character.skills[entry.requiredSkill]?.level ?? 1)
+              : undefined;
+            const requirementMet =
+              regionAvailable &&
+              (!entry.requiredLevel || character.level >= entry.requiredLevel) &&
+              (!entry.requiredSkillLevel ||
+                (skillLevel !== undefined && skillLevel >= entry.requiredSkillLevel));
+            const canBuy =
+              requirementMet &&
+              (stockRemaining === undefined || stockRemaining > 0) &&
+              Number.isSafeInteger(quantity) &&
+              quantity > 0;
             return (
               <article className="panel" key={entry.itemId}>
                 <h3>{item?.name ?? entry.itemId}</h3>
                 <p>
                   Compra: {prices.purchase} {entry.currency}
                   {prices.purchase !== entry.price ? ` · preço-base ${entry.price}` : ''}
-                  {entry.stock !== undefined && entry.stock >= 0 ? ` · Estoque ${entry.stock}` : ''}
+                  {stockRemaining !== undefined
+                    ? ` · Estoque ${stockRemaining}/${entry.stock}`
+                    : ''}
                 </p>
+                {entry.requiredLevel && <p>Requer nível {entry.requiredLevel}</p>}
+                {entry.requiredSkill && entry.requiredSkillLevel && (
+                  <p>
+                    Requer {skill?.name ?? entry.requiredSkill} nível {entry.requiredSkillLevel}
+                    {` · atual ${skillLevel}`}
+                  </p>
+                )}
                 {prices.sale !== undefined && (
                   <p>
                     Revenda: {prices.sale} {entry.currency} por unidade
@@ -102,6 +148,7 @@ export function MarketPanel({
                   <button
                     className="primary-button"
                     type="button"
+                    disabled={!canBuy}
                     onClick={() =>
                       void run(
                         (current) =>
@@ -117,6 +164,7 @@ export function MarketPanel({
                       <button
                         className="quiet-button"
                         type="button"
+                        disabled={!regionAvailable}
                         onClick={() =>
                           void run(
                             (current) =>

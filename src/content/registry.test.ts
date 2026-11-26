@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { RaceSchema } from './schema';
+import { RaceSchema, ShopSchema } from './schema';
 import { loadContentPacks, loadOfficialContent } from './registry';
 import { testPack } from '../test/fixtures';
 
@@ -26,6 +26,8 @@ describe('declarative content registry', () => {
     expect(official.activities.get('ashen-raid')?.expeditionId).toBe('core:ashen-raid');
     expect(official.lootTables.has('core:construct-drops')).toBe(true);
     expect(official.activities.get('lost-foundry')?.expeditionId).toBe('core:lost-foundry');
+    expect(official.shops.get('shop:daily')?.rotation).toEqual({ offersPerPeriod: 4 });
+    expect(official.shops.get('shop:daily')?.entries).toHaveLength(12);
     expect(
       official.systems
         .get('system:alchemy')
@@ -123,6 +125,30 @@ describe('declarative content registry', () => {
         },
       ]),
     ).toThrow('Shop "mod:tidal-market" references missing item "missing-item".');
+  });
+
+  it('rejects daily shop rotations that cannot be presented deterministically', () => {
+    const permanentShop = loadOfficialContent().shops.get('shop:fragments')!;
+    const dailyShop = loadOfficialContent().shops.get('shop:daily')!;
+
+    expect(
+      ShopSchema.safeParse({ ...permanentShop, rotation: { offersPerPeriod: 1 } }).success,
+    ).toBe(false);
+    expect(
+      ShopSchema.safeParse({
+        ...dailyShop,
+        rotation: { offersPerPeriod: dailyShop.entries.length + 1 },
+      }).success,
+    ).toBe(false);
+    expect(ShopSchema.safeParse({ ...dailyShop, rotation: { offersPerPeriod: 0 } }).success).toBe(
+      false,
+    );
+    expect(
+      ShopSchema.safeParse({
+        ...dailyShop,
+        entries: [...dailyShop.entries, dailyShop.entries[0]!],
+      }).success,
+    ).toBe(false);
   });
 
   it('validates alchemical implant device references and surgery costs', () => {

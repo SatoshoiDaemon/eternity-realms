@@ -10,6 +10,141 @@ import { MarketPanel } from './MarketPanel';
 const content = loadOfficialContent();
 
 describe('offline market panel', () => {
+  it('shows only the current deterministic daily offers and their rotation size', () => {
+    render(
+      <MarketPanel
+        character={createTestState().character!}
+        content={content}
+        clock={() => 0}
+        updateCharacter={async () => undefined}
+      />,
+    );
+
+    fireEvent.click(screen.getByRole('combobox', { name: 'Loja regional: Loja de Fragmentos' }));
+    fireEvent.click(screen.getByRole('option', { name: 'Banca diária' }));
+
+    expect(screen.getByText('Ofertas nesta rotação: 4 de 12')).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'Poção de cura' })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'Poção de mana' })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'Erva silvestre' })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'Minério de ferro' })).toBeInTheDocument();
+    expect(screen.queryByRole('heading', { name: 'Tônico de Aura' })).not.toBeInTheDocument();
+  });
+
+  it('shows profession and character requirements before an offer can be purchased', () => {
+    render(
+      <MarketPanel
+        character={createTestState().character!}
+        content={content}
+        clock={() => 2 * 86_400_000}
+        updateCharacter={async () => undefined}
+      />,
+    );
+
+    fireEvent.click(screen.getByRole('combobox', { name: 'Loja regional: Loja de Fragmentos' }));
+    fireEvent.click(screen.getByRole('option', { name: 'Banca diária' }));
+
+    const crystal = screen.getByRole('heading', { name: 'Cristal arcano' }).closest('article')!;
+    expect(within(crystal).getByText('Requer nível 5')).toBeInTheDocument();
+    expect(within(crystal).getByText(/Requer Magia nível 5 · atual 1/)).toBeInTheDocument();
+    expect(within(crystal).getByRole('button', { name: 'Comprar' })).toBeDisabled();
+    expect(within(crystal).getByText(/Estoque 3\/3/)).toBeInTheDocument();
+  });
+
+  it('keeps regional shops visible while explaining locked and unmapped regions', () => {
+    const daily = content.shops.get('shop:daily')!;
+    const lockedShop = { ...daily, name: 'Banca de Vaeloria', regionId: 'vaeloria' };
+    const unmappedShop = {
+      ...daily,
+      id: 'shop:unmapped',
+      name: 'Banca sem mapa',
+      regionId: 'missing-region',
+    };
+    const shops = new Map(content.shops)
+      .set(lockedShop.id, lockedShop)
+      .set(unmappedShop.id, unmappedShop);
+    render(
+      <MarketPanel
+        character={createTestState().character!}
+        content={{ ...content, shops }}
+        clock={() => 0}
+        updateCharacter={async () => undefined}
+      />,
+    );
+
+    fireEvent.click(screen.getByRole('combobox', { name: 'Loja regional: Loja de Fragmentos' }));
+    fireEvent.click(screen.getByRole('option', { name: 'Banca de Vaeloria' }));
+    const lockedRegion = content.regions.get('vaeloria')?.name ?? 'vaeloria';
+    expect(screen.getByText(`Região necessária: ${lockedRegion}`)).toBeInTheDocument();
+    expect(screen.getAllByRole('button', { name: 'Comprar' })[0]).toBeDisabled();
+
+    fireEvent.click(screen.getByRole('combobox', { name: 'Loja regional: Banca de Vaeloria' }));
+    fireEvent.click(screen.getByRole('option', { name: 'Banca sem mapa' }));
+    expect(screen.getByText('Região necessária: missing-region')).toBeInTheDocument();
+  });
+
+  it('falls back to declared identifiers for incomplete skill references and disables invalid requirements', () => {
+    const daily = content.shops.get('shop:daily')!;
+    const testShop: ShopDefinition = {
+      ...daily,
+      id: 'test:missing-skill',
+      name: 'Loja de habilidade incompleta',
+      cadence: 'permanent',
+      rotation: undefined,
+      entries: [
+        {
+          ...daily.entries[0]!,
+          itemId: 'arcane-crystal',
+          requiredLevel: 5,
+          requiredSkill: 'missing:skill',
+          requiredSkillLevel: 5,
+        },
+        {
+          ...daily.entries[1]!,
+          itemId: 'rune-token',
+          requiredSkillLevel: 5,
+        },
+      ],
+    };
+    const testContent = { ...content, shops: new Map([[testShop.id, testShop]]) };
+    const view = render(
+      <MarketPanel
+        character={createTestState().character!}
+        content={testContent}
+        clock={() => 0}
+        updateCharacter={async () => undefined}
+      />,
+    );
+
+    const crystal = screen.getByRole('heading', { name: 'Cristal arcano' }).closest('article')!;
+    expect(within(crystal).getByText(/Requer missing:skill nível 5 · atual 1/)).toBeInTheDocument();
+    expect(within(crystal).getByRole('button', { name: 'Comprar' })).toBeDisabled();
+    const rune = screen.getByRole('heading', { name: 'Selo rúnico' }).closest('article')!;
+    expect(within(rune).getByRole('button', { name: 'Comprar' })).toBeDisabled();
+
+    const trainedShop: ShopDefinition = {
+      ...testShop,
+      entries: [{ ...testShop.entries[0]!, requiredSkill: 'magic-skill' }],
+    };
+    const trainedCharacter = {
+      ...createTestState().character!,
+      level: 5,
+      skills: {
+        ...createTestState().character!.skills,
+        'magic-skill': { level: 5, experience: 0, extensions: {} },
+      },
+    };
+    view.rerender(
+      <MarketPanel
+        character={trainedCharacter}
+        content={{ ...content, shops: new Map([[trainedShop.id, trainedShop]]) }}
+        clock={() => 0}
+        updateCharacter={async () => undefined}
+      />,
+    );
+    expect(screen.getByRole('button', { name: 'Comprar' })).toBeEnabled();
+  });
+
   it('renders stores and performs a persisted purchase through the economy service', async () => {
     let character: Character = {
       ...createTestState().character!,
