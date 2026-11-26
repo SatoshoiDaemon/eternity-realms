@@ -38,11 +38,18 @@ describe('energy attribute and resource rules', () => {
 
   it('makes Mana and Aura reserves available only to their selected path', () => {
     expect(isEnergyResourceAvailable('mana', 'mana')).toBe(true);
+    expect(isEnergyResourceAvailable('mana', 'spirit')).toBe(true);
     expect(isEnergyResourceAvailable('mana', 'aura')).toBe(false);
+    expect(isEnergyResourceAvailable('mana', 'chi')).toBe(false);
+    expect(isEnergyResourceAvailable('mana', 'ego')).toBe(false);
     expect(isEnergyResourceAvailable('aura', 'aura')).toBe(true);
+    expect(isEnergyResourceAvailable('aura', 'chi')).toBe(true);
+    expect(isEnergyResourceAvailable('aura', 'ego')).toBe(true);
     expect(isEnergyResourceAvailable('aura', 'mana')).toBe(false);
+    expect(isEnergyResourceAvailable('aura', 'spirit')).toBe(false);
     expect(isEnergyResourceAvailable('unaffiliated', 'mana')).toBe(false);
     expect(isEnergyResourceAvailable('unaffiliated', 'aura')).toBe(false);
+    expect(isEnergyResourceAvailable('unaffiliated', 'chi')).toBe(false);
     expect(isEnergyResourceAvailable('unaffiliated', 'focus')).toBe(true);
     expect(isEnergyResourceAvailable('unawakened', 'mana')).toBe(true);
     expect(isEnergyResourceAvailable('unawakened', 'custom')).toBe(true);

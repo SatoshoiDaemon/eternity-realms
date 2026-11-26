@@ -15,6 +15,7 @@ import {
   removeBrokenImplant,
 } from '../domain/implants';
 import { createCharacter, createInitialGameState } from '../domain/model';
+import { isEnergyResourceAvailable } from '../domain/energy-rules';
 import { awardExperience, grantItems, spendAttributePoint } from '../domain/progression';
 import {
   selectEnergyPath,
@@ -2111,13 +2112,15 @@ export function GameApp({
                     {t('character.unaffiliatedIncomplete')}
                   </p>
                 )}
-                <div className="energy-bars">
-                  {Object.entries(character.energy.reserves).map(([id, amount]) => (
-                    <div key={id}>
-                      <span>{localizedStatLabel(id)}</span>
-                      <strong>{amount}</strong>
-                    </div>
-                  ))}
+                <div className="energy-bars" aria-label={t('character.energyReserves')}>
+                  {Object.entries(character.energy.reserves)
+                    .filter(([id]) => isEnergyResourceAvailable(character.energy.affinity, id))
+                    .map(([id, amount]) => (
+                      <div key={id}>
+                        <span>{localizedStatLabel(id)}</span>
+                        <strong>{amount}</strong>
+                      </div>
+                    ))}
                 </div>
               </section>
             </div>

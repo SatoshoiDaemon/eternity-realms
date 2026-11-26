@@ -2,6 +2,9 @@ import type { Character } from './types';
 
 export type EnergyAttributeOperation = 'allocate' | 'train';
 
+const manaResources = new Set(['mana', 'spirit']);
+const auraResources = new Set(['aura', 'chi', 'ego', 'superego']);
+
 export function getEnergyAttributeAccessError(
   character: Character,
   attributeId: string,
@@ -30,8 +33,10 @@ export function getEnergyAttributeAccessError(
 }
 
 export function isEnergyResourceAvailable(affinity: string, resource: string): boolean {
-  if (affinity === 'unaffiliated') return resource !== 'mana' && resource !== 'aura';
-  if (affinity === 'mana') return resource !== 'aura';
-  if (affinity === 'aura') return resource !== 'mana';
+  if (affinity === 'unaffiliated') {
+    return !manaResources.has(resource) && !auraResources.has(resource);
+  }
+  if (affinity === 'mana') return !auraResources.has(resource);
+  if (affinity === 'aura') return !manaResources.has(resource);
   return true;
 }

@@ -1893,6 +1893,10 @@ describe('Eternity Realms navigation and play flow', () => {
     await waitFor(() => expect(repository.state?.character?.energy.affinity).toBe('unaffiliated'));
     expect(screen.getByRole('button', { name: 'Aumentar Mana' })).toBeDisabled();
     expect(screen.getByRole('button', { name: 'Aumentar Espírito' })).toBeDisabled();
+    const reserves = screen.getByLabelText('Reservas de energia');
+    expect(within(reserves).queryByText('Aura')).not.toBeInTheDocument();
+    expect(within(reserves).queryByText('Chi')).not.toBeInTheDocument();
+    expect(within(reserves).queryByText('Mana')).not.toBeInTheDocument();
   });
 
   it('limits direct Mana and Spirit allocation to Mana characters', async () => {
@@ -1910,6 +1914,10 @@ describe('Eternity Realms navigation and play flow', () => {
     expect(
       screen.getAllByText('Mana e Espírito pertencem ao caminho de Mana.').length,
     ).toBeGreaterThan(0);
+    const auraReserves = screen.getByLabelText('Reservas de energia');
+    expect(within(auraReserves).getByText('Aura')).toBeInTheDocument();
+    expect(within(auraReserves).getByText('Chi')).toBeInTheDocument();
+    expect(within(auraReserves).queryByText('Mana')).not.toBeInTheDocument();
   });
 
   it('lets the player choose an energy path and Mana affinities with usable type nodes', async () => {
@@ -1918,6 +1926,10 @@ describe('Eternity Realms navigation and play flow', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Mana' }));
     await waitFor(() => expect(repository.state?.character?.energy.affinity).toBe('mana'));
     expect(screen.getByRole('button', { name: 'Aura' })).toBeDisabled();
+    const manaReserves = screen.getByLabelText('Reservas de energia');
+    expect(within(manaReserves).getByText('Mana')).toBeInTheDocument();
+    expect(within(manaReserves).queryByText('Aura')).not.toBeInTheDocument();
+    expect(within(manaReserves).queryByText('Chi')).not.toBeInTheDocument();
     fireEvent.click(screen.getByRole('button', { name: 'Água' }));
     fireEvent.click(screen.getByRole('button', { name: 'Terra' }));
     await waitFor(() =>
@@ -1954,6 +1966,10 @@ describe('Eternity Realms navigation and play flow', () => {
     );
     expect(screen.getByRole('status')).toHaveTextContent('+40 em cada atributo físico');
     expect(screen.getByRole('status')).toHaveTextContent('20% menos dano recebido');
+    const reserves = screen.getByLabelText('Reservas de energia');
+    expect(within(reserves).queryByText('Aura')).not.toBeInTheDocument();
+    expect(within(reserves).queryByText('Mana')).not.toBeInTheDocument();
+    expect(within(reserves).queryByText('Chi')).not.toBeInTheDocument();
   });
 
   it('renders currency rewards in the mission catalog', async () => {
