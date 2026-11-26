@@ -81,24 +81,35 @@
     "activityIds": ["alchemy-study", "brew-healing", "brew-energy"],
     "category": "profession",
     "experiencePerLevel": 100,
+    "adaptationNotes": "Os bônus de potência dos consumíveis são uma adaptação jogável; não são apresentados como valores canônicos do RP.",
     "milestones": [
       {
         "level": 5,
         "name": "Praticante",
+        "description": "Aumenta em 10% a restauração de poções e tônicos.",
         "effects": [
           {
             "type": "yield_multiplier",
             "value": 1.25
+          },
+          {
+            "type": "consumable_effect_bonus_percent",
+            "value": 0.1
           }
         ]
       },
       {
         "level": 10,
         "name": "Especialista",
+        "description": "Concede mais 20% de restauração, acumulado com o marco anterior.",
         "effects": [
           {
             "type": "yield_multiplier",
             "value": 1.5
+          },
+          {
+            "type": "consumable_effect_bonus_percent",
+            "value": 0.2
           }
         ]
       }

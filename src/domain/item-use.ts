@@ -1,6 +1,7 @@
 import type { ContentCatalog } from '../content/registry';
 import type { DomainEvent, GameState } from './types';
 import { getInstalledImplantStatModifiers } from './implants';
+import { getSkillEffectBonus } from './skill-effects';
 
 function validateNow(now: number): void {
   if (!Number.isSafeInteger(now) || now < 0 || !Number.isFinite(new Date(now).getTime())) {
@@ -48,10 +49,16 @@ export function consumeItem(
 
   let character = state.character;
   const secondaryEvents: DomainEvent[] = [];
-  const positiveEffectMultiplier = getInstalledImplantStatModifiers(
+  const implantMultiplier = getInstalledImplantStatModifiers(
     character,
     content.systems,
   ).consumableMultiplier;
+  const alchemyBonus = getSkillEffectBonus(
+    character,
+    content.skills.get('alchemy-skill'),
+    'consumable_effect_bonus_percent',
+  );
+  const positiveEffectMultiplier = implantMultiplier * (1 + alchemyBonus);
   if (item.consumable.effect === 'heal') {
     const maximum = character.attributes.physical.vigor * 5;
     const currentValue = character.extensions.combatHp;

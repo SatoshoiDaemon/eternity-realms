@@ -54,6 +54,27 @@ describe('consumable items', () => {
     });
   });
 
+  it('applies the alchemy potency milestones to healing and resource consumables', () => {
+    const healing = createTestState();
+    healing.character!.attributes.physical.vigor = 20;
+    healing.character!.extensions.combatHp = 1;
+    healing.character!.inventory['healing-potion'] = 1;
+    healing.character!.skills['alchemy-skill'] = { level: 5, experience: 0, extensions: {} };
+    const healed = consumeItem(healing, content, 'healing-potion', 'use:alchemy:heal', 123);
+    expect(healed.character?.extensions.combatHp).toBe(56);
+    expect(healed.events.at(-1)).toMatchObject({ type: 'resource.restored', amount: 55 });
+
+    const mana = createTestState();
+    mana.character!.attributes.energetic.mana = 8;
+    mana.character!.energy.reserves.mana = 0;
+    mana.character!.inventory['mana-potion'] = 1;
+    mana.character!.skills['alchemy-skill'] = { level: 10, experience: 0, extensions: {} };
+    mana.character!.extensions.installedImplants = ['implant-09'];
+    const restored = consumeItem(mana, content, 'mana-potion', 'use:alchemy:mana', 123);
+    expect(restored.character?.energy.reserves.mana).toBe(58);
+    expect(restored.events.at(-1)).toMatchObject({ type: 'resource.restored', amount: 58 });
+  });
+
   it('rejects invalid, absent, unusable, or full resources without consuming the item', () => {
     const state = createTestState();
     state.character!.inventory['healing-potion'] = 1;
