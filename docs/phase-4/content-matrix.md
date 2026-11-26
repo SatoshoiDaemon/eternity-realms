@@ -82,4 +82,6 @@ O motor de tags agora avalia presença de status por identificador e comparaçõ
 
 O Oni aplica Fome Eterna ao acertar: cura 10 HP por padrão; o patamar sobe para 20 HP contra alvo sangrando, 40 HP após perder 25% de HP, 50 HP após perder 50%, ou 80 HP com 10% de HP restante. Se várias condições coincidirem, o jogo aplica apenas o maior patamar. Essa prioridade é uma adaptação explícita porque o documento original informa os multiplicadores, mas não define acúmulo ou prioridade. O Predador também concede Pressa 2/1 por acerto e Pressa 4/4 ao acertar alvo sangrando.
 
-Essas quatro fichas seguem parciais: as outras vantagens, desvantagens e progressões raciais ainda exigem implementação específica. O catálogo de 29 raças continua sendo o escopo integral, sem mudança de contagem ou declaração de conclusão.
+O Nephalem aplica a Tragédia de Dante: inimigos o priorizam como alvo, inclusive quando a ação escolhe o oponente com menor HP, e debuffs recebidos têm contador e expiração dobrados; buffs mantêm a duração normal. A prioridade de alvo e o multiplicador são canônicos; a ligação aos eventos declarativos `targeting.check` e `status.incoming` é a adaptação do motor idle. Ataques em área continuam resolvendo os alvos pela área declarada, pois não selecionam um alvo único.
+
+Essas cinco fichas seguem parciais: as outras vantagens, desvantagens e progressões raciais ainda exigem implementação específica. O catálogo de 29 raças continua sendo o escopo integral, sem mudança de contagem ou declaração de conclusão.

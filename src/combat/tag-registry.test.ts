@@ -139,6 +139,31 @@ describe('data driven enemy tags', () => {
       'Unknown enemy tag',
     );
   });
+
+  it('requires a finite positive value for status duration multipliers', () => {
+    const template = registry[0]!;
+    const tagWithMultiplier = (value: unknown) => ({
+      ...template,
+      id: 'race:test-duration',
+      modifiers: [
+        {
+          ...template.modifiers[0]!,
+          id: 'race:test-duration:rule',
+          event: 'status.incoming',
+          interactionId: 'race:test-duration',
+          conditions: [],
+          effect: { type: 'status_duration_multiplier', value },
+        },
+      ],
+    });
+
+    expect(loadTagRegistry([tagWithMultiplier(2)])).toHaveLength(1);
+    for (const invalidValue of [undefined, 0, Infinity]) {
+      expect(() => loadTagRegistry([tagWithMultiplier(invalidValue)])).toThrow(
+        'Invalid enemy tag rule',
+      );
+    }
+  });
 });
 
 describe('every base tag rule is executable', () => {

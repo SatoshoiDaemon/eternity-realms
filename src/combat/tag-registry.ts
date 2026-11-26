@@ -49,7 +49,20 @@ const effectType = z.enum([
   'flat_vampirism',
   'death_burst',
   'adaptive_resistance',
+  'status_duration_multiplier',
 ]);
+
+const tagEffectSchema = z
+  .object({ type: effectType })
+  .passthrough()
+  .superRefine((effect, context) => {
+    if (
+      effect.type === 'status_duration_multiplier' &&
+      (typeof effect.value !== 'number' || !Number.isFinite(effect.value) || effect.value <= 0)
+    ) {
+      context.addIssue({ code: 'custom', message: 'Status duration multiplier must be positive' });
+    }
+  });
 
 const tagRuleSchema = z.object({
   id: z.string().trim().min(1),
@@ -58,7 +71,7 @@ const tagRuleSchema = z.object({
   interactionId: z.string().trim().min(1),
   potency: z.number().finite().nonnegative(),
   priority: z.number().finite(),
-  effect: z.object({ type: effectType }).passthrough(),
+  effect: tagEffectSchema,
 });
 
 const enemyTagSchema = z.object({

@@ -201,6 +201,132 @@ describe('deterministic event combat', () => {
     expect(result.actors.find((entry) => entry.id === 'oni')?.hp.current).toBe(expectedHp);
   });
 
+  it('doubles received debuff duration for Nephalem without extending buffs', () => {
+    const content = loadOfficialContent();
+    const race = content.races.get('nephalem')!;
+    const nephalem = actor('z-nephalem', 'party', {
+      tags: [...(race.combatTags ?? []), race.combatTag!.id],
+      actions: [],
+    });
+    const incoming: CombatAction = {
+      id: 'test:debuff-and-buff',
+      name: 'Debuff and buff',
+      kind: 'support',
+      target: 'enemy',
+      intervalMs: 1_000,
+      accuracy: 1,
+      effects: [
+        { id: 'core:fragile', category: 'debuff', potency: 2, counter: 2, expiresAt: 2_000 },
+        { id: 'core:attack-increase', category: 'buff', potency: 2, counter: 2 },
+      ],
+    };
+    const attacker = actor('a-attacker', 'enemy', {
+      actions: [incoming],
+      actionPriority: [incoming.id],
+    });
+    const result = advanceCombat(
+      createCombatState('nephalem-debuff-duration', [attacker, nephalem], 37, {}, [
+        ...content.enemyTags.values(),
+      ]),
+      0,
+    );
+    const effects = result.actors.find((entry) => entry.id === 'z-nephalem')?.effects;
+
+    expect(effects).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({ id: 'core:fragile', counter: 4, expiresAt: 4_000 }),
+        expect.objectContaining({ id: 'core:attack-increase', counter: 2, expiresAt: 2_000 }),
+      ]),
+    );
+  });
+
+  it.each(['enemy', 'lowest_enemy_hp'] as const)(
+    'prioritizes Nephalem for enemy attacks targeting %s',
+    (target) => {
+      const content = loadOfficialContent();
+      const race = content.races.get('nephalem')!;
+      const attack: CombatAction = { ...strike, id: 'test:locked-strike', target };
+      const attacker = actor('a-attacker', 'enemy', {
+        actions: [attack],
+        actionPriority: [attack.id],
+      });
+      const decoy = actor('a-decoy', 'party', {
+        hp: { current: 10, maximum: 100 },
+        actions: [],
+      });
+      const nephalem = actor('z-nephalem', 'party', {
+        tags: [...(race.combatTags ?? []), race.combatTag!.id],
+        actions: [],
+      });
+      const result = advanceCombat(
+        createCombatState(
+          `nephalem-target-priority:${target}`,
+          [attacker, decoy, nephalem],
+          43,
+          {},
+          [...content.enemyTags.values()],
+        ),
+        0,
+      );
+
+      expect(result.actors.find((entry) => entry.id === 'z-nephalem')?.hp.current).toBe(60);
+      expect(result.actors.find((entry) => entry.id === 'a-decoy')?.hp.current).toBe(10);
+    },
+  );
+
+  it('keeps normal duration when an incoming-status tag grants another effect type', () => {
+    const content = loadOfficialContent();
+    const tagId = 'race:test-status-immunity';
+    const tagRegistry = loadTagRegistry([
+      ...content.enemyTags.values(),
+      {
+        id: tagId,
+        category: 'behavior',
+        name: 'Status observer',
+        description: 'Test-only status rule.',
+        origin: 'test',
+        activationConditions: [],
+        eventsObserved: ['status.incoming'],
+        modifiers: [
+          {
+            id: `${tagId}:rule`,
+            event: 'status.incoming',
+            conditions: [{ path: 'status.category', op: 'eq', value: 'debuff' }],
+            interactionId: `${tagId}:interaction`,
+            potency: 1,
+            priority: 0,
+            effect: { type: 'status_immunity', value: 'core:poison' },
+          },
+        ],
+        interactions: [{ id: `${tagId}:interaction`, counterplay: 'test' }],
+        requirements: [],
+        properties: [],
+      },
+    ]);
+    const incoming: CombatAction = {
+      id: 'test:debuff',
+      name: 'Debuff',
+      kind: 'support',
+      target: 'enemy',
+      intervalMs: 1_000,
+      accuracy: 1,
+      effects: [{ id: 'core:fragile', category: 'debuff', potency: 2, counter: 2 }],
+    };
+    const attacker = actor('a-attacker', 'party', {
+      actions: [incoming],
+      actionPriority: [incoming.id],
+    });
+    const observer = actor('z-observer', 'enemy', { tags: [tagId], actions: [] });
+    const result = advanceCombat(
+      createCombatState('non-duration-status-rule', [attacker, observer], 41, {}, tagRegistry),
+      0,
+    );
+
+    expect(result.actors.find((entry) => entry.id === 'z-observer')?.effects).toEqual(
+      expect.arrayContaining([expect.objectContaining({ id: 'core:fragile', counter: 2 })]),
+    );
+  });
+
   it.each(['core:confusion', 'core:exhaustion', 'core:haste'])(
     'applies the Dwarf racial immunity to %s without granting immunity to other statuses',
     (statusId) => {

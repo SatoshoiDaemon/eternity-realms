@@ -794,7 +794,51 @@
     ],
     "source": "Notion: Eternity Realms — Sistemas originais do RP (2026-11-08; atualização de Kitsune/2026-11-08)",
     "adaptationNotes": "Texto canônico resumido; os efeitos marcados como incompletos ou ambíguos permanecem sem valores inventados. A adaptação mecânica aparece em combatTags e activityBonuses.",
-    "combatTags": ["base:celestial", "base:demonic"]
+    "combatTags": ["base:celestial", "base:demonic"],
+    "combatTag": {
+      "id": "race:nephalem-tragedy",
+      "name": "Tragédia de Dante",
+      "description": "Debuffs recebidos pelo Nephalem têm duração dobrada.",
+      "category": "behavior",
+      "origin": "Notion: Eternity Realms — Sistemas originais do RP",
+      "activationConditions": [
+        "Ao receber um efeito de categoria debuff",
+        "Quando um inimigo escolhe um alvo"
+      ],
+      "eventsObserved": ["status.incoming", "targeting.check"],
+      "modifiers": [
+        {
+          "id": "race:nephalem-tragedy:double-debuff-duration",
+          "event": "status.incoming",
+          "conditions": [{ "path": "status.category", "op": "eq", "value": "debuff" }],
+          "interactionId": "race:nephalem:double-debuff-duration",
+          "potency": 1,
+          "priority": 0,
+          "effect": { "type": "status_duration_multiplier", "value": 2 }
+        },
+        {
+          "id": "race:nephalem-tragedy:enemy-priority",
+          "event": "targeting.check",
+          "conditions": [],
+          "interactionId": "race:nephalem:enemy-priority",
+          "potency": 1,
+          "priority": 0,
+          "effect": { "type": "targeting_modifier", "value": "forced_target" }
+        }
+      ],
+      "interactions": [
+        {
+          "id": "race:nephalem:double-debuff-duration",
+          "counterplay": "Efeitos que não sejam debuffs mantêm sua duração normal."
+        },
+        {
+          "id": "race:nephalem:enemy-priority",
+          "counterplay": "Inimigos priorizam o Nephalem como alvo; ataques em área continuam atingindo seus alvos conforme a área declarada."
+        }
+      ],
+      "requirements": [],
+      "properties": ["racial", "debuff-duration"]
+    }
   },
   {
     "id": "demigod",
