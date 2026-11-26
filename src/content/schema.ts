@@ -474,6 +474,7 @@ export const SkillSchema = z
         z.object({
           level: z.number().int().positive().safe(),
           name: z.string(),
+          description: z.string().optional(),
           effects: z.array(z.record(z.string(), z.unknown())),
         }),
       )

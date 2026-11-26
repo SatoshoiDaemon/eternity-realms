@@ -2,12 +2,14 @@ import type {
   EnergyDefinition,
   ItemDefinition,
   RaceDefinition,
+  SkillDefinition,
   SystemDefinition,
 } from '../content/schema';
 import type { Character } from '../domain/types';
 import { getInstalledImplantStatModifiers } from '../domain/implants';
 import { selectedCombatAffinities } from '../domain/mana-affinities';
 import { getManaSpiritDamageBonus } from '../domain/mana-progression';
+import { getCombatSkillAction } from '../domain/combat-skill-effects';
 import { getUnaffiliatedEffects } from '../domain/unaffiliated';
 import type { CombatAction, CombatActor, CombatDamage } from './types';
 
@@ -124,6 +126,7 @@ export function createCharacterCombatActor(
   race?: RaceDefinition,
   systems?: Map<string, SystemDefinition>,
   energyDefinitions: EnergyDefinition[] = [],
+  skillDefinitions: SkillDefinition[] = [],
 ): CombatActor {
   if (
     !Number.isFinite(defaults.accuracy) ||
@@ -186,9 +189,11 @@ export function createCharacterCombatActor(
     ...(race?.combatActions ?? []),
   ].map((action) => {
     const damageBonus = getManaSpiritDamageBonus(character, action.damage?.channel, manaDefinition);
-    return damageBonus > 0 && action.damage
-      ? { ...action, damage: { ...action.damage, amount: action.damage.amount + damageBonus } }
-      : { ...action };
+    const withEnergyBonus =
+      damageBonus > 0 && action.damage
+        ? { ...action, damage: { ...action.damage, amount: action.damage.amount + damageBonus } }
+        : { ...action };
+    return getCombatSkillAction(character, withEnergyBonus, skillDefinitions);
   });
   const remainingMitigation = { physical: 1, magical: 1 };
   for (const { definition } of equipped) {

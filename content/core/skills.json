@@ -112,24 +112,35 @@
     "activityIds": ["mana-meditation", "elemental-practice", "spell-research"],
     "category": "training",
     "experiencePerLevel": 100,
+    "adaptationNotes": "Os bônus de dano nos marcos são uma adaptação jogável para a skill de combate; os valores não são apresentados como parâmetros canônicos do RP.",
     "milestones": [
       {
         "level": 5,
         "name": "Praticante",
+        "description": "Aumenta em 10% o dano mágico de armas, técnicas e nós.",
         "effects": [
           {
             "type": "yield_multiplier",
             "value": 1.25
+          },
+          {
+            "type": "magic_damage_bonus_percent",
+            "value": 0.1
           }
         ]
       },
       {
         "level": 10,
         "name": "Especialista",
+        "description": "Concede mais 20% de dano mágico, acumulado com o marco anterior.",
         "effects": [
           {
             "type": "yield_multiplier",
             "value": 1.5
+          },
+          {
+            "type": "magic_damage_bonus_percent",
+            "value": 0.2
           }
         ]
       }
@@ -143,24 +154,35 @@
     "activityIds": ["bow-drill", "field-archery", "arcane-archery"],
     "category": "training",
     "experiencePerLevel": 100,
+    "adaptationNotes": "Os bônus de dano nos marcos são uma adaptação jogável para a skill de combate; os valores não são apresentados como parâmetros canônicos do RP.",
     "milestones": [
       {
         "level": 5,
         "name": "Praticante",
+        "description": "Aumenta em 10% o dano de ataques físicos à distância.",
         "effects": [
           {
             "type": "yield_multiplier",
             "value": 1.25
+          },
+          {
+            "type": "archery_damage_bonus_percent",
+            "value": 0.1
           }
         ]
       },
       {
         "level": 10,
         "name": "Especialista",
+        "description": "Concede mais 20% de dano à distância, acumulado com o marco anterior.",
         "effects": [
           {
             "type": "yield_multiplier",
             "value": 1.5
+          },
+          {
+            "type": "archery_damage_bonus_percent",
+            "value": 0.2
           }
         ]
       }
@@ -174,24 +196,35 @@
     "activityIds": ["target-range", "moving-target", "long-range"],
     "category": "training",
     "experiencePerLevel": 100,
+    "adaptationNotes": "Os bônus de precisão nos marcos são uma adaptação jogável para a skill de combate; os valores não são apresentados como parâmetros canônicos do RP.",
     "milestones": [
       {
         "level": 5,
         "name": "Praticante",
+        "description": "Adiciona 5 pontos percentuais de precisão a ataques à distância.",
         "effects": [
           {
             "type": "yield_multiplier",
             "value": 1.25
+          },
+          {
+            "type": "targeting_accuracy_bonus",
+            "value": 0.05
           }
         ]
       },
       {
         "level": 10,
         "name": "Especialista",
+        "description": "Adiciona mais 10 pontos percentuais de precisão a ataques à distância.",
         "effects": [
           {
             "type": "yield_multiplier",
             "value": 1.5
+          },
+          {
+            "type": "targeting_accuracy_bonus",
+            "value": 0.1
           }
         ]
       }

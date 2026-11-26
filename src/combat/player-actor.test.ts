@@ -120,6 +120,63 @@ describe('shared character combat contract', () => {
     ).toBe(35);
   });
 
+  it('applies trained combat skill milestones to the actor action set', () => {
+    const hero = {
+      ...character(),
+      skills: {
+        'magic-skill': { level: 5, experience: 0, extensions: {} },
+        'archery-skill': { level: 10, experience: 0, extensions: {} },
+        'targeting-skill': { level: 5, experience: 0, extensions: {} },
+      },
+    };
+    const magic: CombatAction = {
+      id: 'node:test-magic',
+      name: 'Test spell',
+      kind: 'magic',
+      target: 'enemy',
+      intervalMs: 1_000,
+      accuracy: 0.8,
+      damage: {
+        amount: 100,
+        channel: 'magical',
+        properties: [],
+        origin: { kind: 'node', id: 'node:test-magic' },
+      },
+    };
+    const ranged: CombatAction = {
+      id: 'gear:test-bow',
+      name: 'Test bow',
+      kind: 'ranged',
+      target: 'enemy',
+      intervalMs: 1_000,
+      accuracy: 0.8,
+      damage: {
+        amount: 100,
+        channel: 'physical',
+        properties: ['ranged'],
+        origin: { kind: 'weapon', id: 'gear:test-bow' },
+      },
+    };
+    const actor = createCharacterCombatActor(
+      hero,
+      content.items,
+      defaults,
+      [magic, ranged],
+      undefined,
+      undefined,
+      [],
+      [...content.skills.values()],
+    );
+
+    expect(actor.actions.find((entry) => entry.id === magic.id)).toMatchObject({
+      damage: { amount: 110 },
+    });
+    expect(actor.actions.find((entry) => entry.id === ranged.id)).toMatchObject({
+      damage: { amount: 130 },
+    });
+    expect(actor.actions.find((entry) => entry.id === ranged.id)?.accuracy).toBeCloseTo(0.85);
+  });
+
   it('applies Incomplete Sem Afinidade attributes, mitigation, and absent energy reserves', () => {
     const prepared = {
       ...character(),

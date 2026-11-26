@@ -2225,6 +2225,7 @@ export function GameApp({
             <div className="skill-grid">
               {[...activeContent.skills.values()].map((skill) => {
                 const progress = character.skills[skill.id];
+                const experiencePerLevel = skill.experiencePerLevel ?? 100;
                 return (
                   <article className="skill-card" key={skill.id}>
                     <span className="skill-glyph">✦</span>
@@ -2237,15 +2238,37 @@ export function GameApp({
                           className="progress-fill"
                           x="0"
                           y="1"
-                          width={`${Math.min(100, (progress?.experience ?? 0) % 100)}%`}
+                          width={`${Math.min(100, ((progress?.experience ?? 0) / experiencePerLevel) * 100)}%`}
                           height="6"
                           rx="3"
                         />
                       </svg>
                     </div>
                     <p className="muted">
-                      {t('common.level')} {progress?.level ?? 0} · {progress?.experience ?? 0} XP
+                      {t('common.level')} {progress?.level ?? 0} · {progress?.experience ?? 0} /{' '}
+                      {experiencePerLevel} XP
                     </p>
+                    {(skill.milestones?.length ?? 0) > 0 && (
+                      <details className="skill-milestones">
+                        <summary>{t('character.skill.milestones')}</summary>
+                        <ul>
+                          {skill.milestones?.map((milestone) => {
+                            const unlocked = (progress?.level ?? 0) >= milestone.level;
+                            return (
+                              <li key={`${skill.id}:${milestone.level}`}>
+                                <strong>
+                                  {milestone.name} · {t('common.level')} {milestone.level} ·{' '}
+                                  {unlocked
+                                    ? t('character.skill.unlocked')
+                                    : t('character.skill.locked')}
+                                </strong>
+                                {milestone.description && <span>{milestone.description}</span>}
+                              </li>
+                            );
+                          })}
+                        </ul>
+                      </details>
+                    )}
                   </article>
                 );
               })}

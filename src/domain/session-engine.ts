@@ -209,6 +209,7 @@ function createExpeditionPlayerActor(character: Character, content: ContentCatal
     content.races.get(character.raceId),
     content.systems,
     [...content.energies.values()],
+    [...content.skills.values()],
   );
   const configuredPriority = constructionPriority(character);
   actor.actionPriority = [

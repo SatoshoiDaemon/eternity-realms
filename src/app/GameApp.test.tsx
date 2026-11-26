@@ -570,7 +570,19 @@ describe('Eternity Realms navigation and play flow', () => {
   });
 
   it('organizes the five destinations and their dedicated subsections', async () => {
-    await mountApp({ state: gameWithCharacter() });
+    const state = gameWithCharacter();
+    state.character!.skills['magic-skill'] = { level: 5, experience: 25, extensions: {} };
+    const content = loadOfficialContent();
+    const legacySkill = content.skills.get('study-training')!;
+    content.skills.set('legacy-skill', {
+      ...legacySkill,
+      id: 'legacy-skill',
+      name: 'Legacy skill',
+      activityIds: [],
+      experiencePerLevel: undefined,
+      milestones: undefined,
+    });
+    await mountApp({ state, content });
     const navigation = screen.getByRole('navigation', { name: 'Navegação principal' });
     expect(
       within(navigation)
@@ -613,6 +625,17 @@ describe('Eternity Realms navigation and play flow', () => {
     expect(screen.getByRole('heading', { name: 'Inventário' })).toBeInTheDocument();
     fireEvent.click(screen.getByRole('tab', { name: 'Habilidades' }));
     expect(screen.getByRole('heading', { name: 'Habilidades' })).toBeInTheDocument();
+    const magicCard = screen.getByRole('heading', { name: 'Magia' }).closest('article');
+    expect(magicCard).not.toBeNull();
+    fireEvent.click(within(magicCard!).getByText('Marcos de progressão'));
+    expect(within(magicCard!).getByText('Praticante · Nível 5 · Desbloqueado')).toBeInTheDocument();
+    expect(within(magicCard!).getByText('Especialista · Nível 10 · Bloqueado')).toBeInTheDocument();
+    expect(
+      within(magicCard!).getByText('Aumenta em 10% o dano mágico de armas, técnicas e nós.'),
+    ).toBeInTheDocument();
+    const legacyCard = screen.getByRole('heading', { name: 'Legacy skill' }).closest('article');
+    expect(legacyCard).not.toBeNull();
+    expect(within(legacyCard!).getByText('Nível 0 · 0 / 100 XP')).toBeInTheDocument();
     fireEvent.click(screen.getByRole('tab', { name: 'Construções' }));
     expect(screen.getByRole('heading', { name: 'Editor universal de nós' })).toBeInTheDocument();
 
