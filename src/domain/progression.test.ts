@@ -69,6 +69,20 @@ describe('character progression', () => {
     );
   });
 
+  it('does not allow Sem Afinidade characters to allocate or train energy attributes', () => {
+    const character = {
+      ...createTestState().character!,
+      energy: { affinity: 'unaffiliated', reserves: {} },
+      extensions: { attributePoints: 1 },
+    };
+    expect(() => spendAttributePoint(character, 'energy:mana')).toThrow(
+      'Sem Afinidade characters cannot allocate energy attributes.',
+    );
+    expect(() =>
+      applyTrainingEffect(character, { attributeId: 'energy:chi', amount: 1 }, 'training'),
+    ).toThrow('Sem Afinidade characters cannot train energy attributes.');
+  });
+
   it('applies a training cycle to its declared attribute and emits one activity event', () => {
     const character = createTestState().character!;
     const trained = applyTrainingEffect(

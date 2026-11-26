@@ -27,6 +27,12 @@ export function getActivityAccessError(
   activity: ActivityDefinition,
   content: Pick<ContentCatalog, 'regions'>,
 ): string | undefined {
+  if (
+    character.energy.affinity === 'unaffiliated' &&
+    activity.trainingEffect?.attributeId.startsWith('energy:')
+  ) {
+    return 'Sem Afinidade characters cannot train energy attributes.';
+  }
   if (activity.requiredLevel && character.level < activity.requiredLevel) {
     return `Activity requires character level ${activity.requiredLevel}.`;
   }

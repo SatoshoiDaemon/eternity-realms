@@ -26,6 +26,22 @@ describe('versioned save files', () => {
     expect(parsed.migratedFrom).toBe(SAVE_FORMAT_VERSION);
   });
 
+  it('preserves the selected Sem Afinidade stage in the save payload', () => {
+    const state = createTestState();
+    state.character!.energy = {
+      affinity: 'unaffiliated',
+      unaffiliatedStage: 'incomplete',
+      reserves: {},
+    };
+    const parsed = parseSaveFile(createSaveFile(state, metadata));
+
+    expect(parsed.gameState.character?.energy).toEqual({
+      affinity: 'unaffiliated',
+      unaffiliatedStage: 'incomplete',
+      reserves: {},
+    });
+  });
+
   it('migrates legacy raw saves and fills new optional fields without changing the game state version', () => {
     const legacy = { ...createTestState() } as Record<string, unknown>;
     delete legacy.combatRecords;

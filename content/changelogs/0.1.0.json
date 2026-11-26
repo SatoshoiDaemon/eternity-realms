@@ -1,6 +1,6 @@
 {
   "version": "0.1.0",
-  "date": "2026-11-19",
+  "date": "2026-11-26",
   "changes": {
     "added": [
       "Combate simulado, bestiário, forja e editor universal de nós.",
@@ -8,7 +8,8 @@
       "Missões principais, diárias e semanais com recompensas resgatáveis.",
       "Gerenciamento local de personagens, saves, backups e mods.",
       "Seleção permanente entre Mana, Aura e Sem Afinidade; Mana permite selar até quatro afinidades iniciais.",
-      "Os sete elementos básicos de Mana agora liberam nós elementais e participam das interações de afinidade do combate."
+      "Os sete elementos básicos de Mana agora liberam nós elementais e participam das interações de afinidade do combate.",
+      "A forma Incompleta de Sem Afinidade aplica +40 aos atributos físicos de combate, redução universal de 20% e ganhos dobrados em treino físico."
     ],
     "improved": [
       "Interface adaptada para telas Android e áreas seguras do sistema.",
@@ -26,7 +27,8 @@
     "technical": [
       "Formato de save separado das versões do aplicativo e do banco de dados.",
       "O backup automático usa um snapshot local atômico e não abre o SQLite em segundo plano.",
-      "O registry inclui sete afinidades, dezoito combinações e sete evoluções despertas de Mana; ambiguidades documentais permanecem sinalizadas sem desbloqueio automático."
+      "O registry inclui sete afinidades, dezoito combinações e sete evoluções despertas de Mana; ambiguidades documentais permanecem sinalizadas sem desbloqueio automático.",
+      "A Restrição Celestial tem valores canônicos no registry e efeitos estruturados; ainda não possui desbloqueio no jogo nem execução completa de redução de efeitos de Mana/Aura."
     ]
   }
 }

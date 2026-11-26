@@ -75,4 +75,27 @@ describe('activity and region progression access', () => {
       ),
     ).toBe('Region Vaeloria is locked.');
   });
+
+  it('blocks Mana and Aura attribute training for Sem Afinidade characters', () => {
+    const character = {
+      ...createTestState().character!,
+      energy: { affinity: 'unaffiliated', reserves: {} },
+    };
+    const meditation = {
+      id: 'mana-cultivation',
+      name: 'Mana cultivation',
+      description: '',
+      trainingEffect: { attributeId: 'energy:mana', amount: 2 },
+    } as unknown as ActivityDefinition;
+    expect(getActivityAccessError(character, meditation, content)).toBe(
+      'Sem Afinidade characters cannot train energy attributes.',
+    );
+    expect(
+      getActivityAccessError(
+        character,
+        { ...meditation, trainingEffect: { attributeId: 'physical:strength', amount: 2 } },
+        content,
+      ),
+    ).toBeUndefined();
+  });
 });

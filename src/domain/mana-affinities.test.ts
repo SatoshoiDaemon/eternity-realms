@@ -59,6 +59,15 @@ describe('mana affinity progression', () => {
     });
   });
 
+  it('initializes the canonical Incomplete stage when Sem Afinidade is selected', () => {
+    const selected = selectEnergyPath(character(), 'unaffiliated');
+    expect(selected.energy).toEqual({
+      affinity: 'unaffiliated',
+      unaffiliatedStage: 'incomplete',
+      reserves: {},
+    });
+  });
+
   it('keeps an awakened energy path permanent', () => {
     const manaCharacter = selectEnergyPath(character(), 'mana');
     expect(selectEnergyPath(manaCharacter, 'mana')).toBe(manaCharacter);

@@ -242,15 +242,20 @@
     "resources": ["incomplete", "celestial-restriction"],
     "progression": [
       {
-        "stage": "incompleto",
+        "stage": "incomplete",
         "damageReduction": 0.2,
         "physicalAttributeBonus": 40,
+        "trainingGainMultiplier": 2,
+        "forbiddenAttributes": ["energy:chi", "energy:mana", "energy:spirit"],
         "canon": "RP values; idle adaptation applies to combat and training services."
       },
       {
-        "stage": "restrição-celestial",
+        "stage": "celestial-restriction",
         "damageReduction": 0.4,
         "physicalAttributeBonus": 150,
+        "trainingGainMultiplier": 2,
+        "directEnergyEffectMultiplier": 0.2,
+        "forbiddenAttributes": ["energy:chi", "energy:mana", "energy:spirit"],
         "canon": "RP values; physical body reduces direct Mana/Aura effects by 80%."
       },
       {
@@ -266,6 +271,6 @@
       }
     ],
     "source": "Notion: Sistemas originais do RP, Energias e Sem Afinidade (2026-11-08)",
-    "adaptationNotes": "A evolução a Restrição Celestial não recebe um gatilho aleatório no single-player; desbloqueio por eventos de jogo será explicitado em conteúdo."
+    "adaptationNotes": "Ao selecionar Sem Afinidade, o jogo inicia na forma Incompleta e aplica seus valores canônicos a combate e treino. A forma Restrição Celestial permanece registrada sem gatilho aleatório; seu desbloqueio por eventos de jogo ainda precisa ser declarado em conteúdo."
   }
 ]

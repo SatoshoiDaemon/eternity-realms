@@ -128,6 +128,14 @@ function validateActor(actor: CombatActor): void {
     );
   }
   if (
+    actor.damageReduction !== undefined &&
+    (!Number.isFinite(actor.damageReduction) ||
+      actor.damageReduction < 0 ||
+      actor.damageReduction >= 1)
+  ) {
+    throw new Error(`Combat actor ${actor.id} damage reduction must be between zero and one.`);
+  }
+  if (
     actor.evasion &&
     (actor.evasion.chance < 0 || actor.evasion.chance > 1 || actor.evasion.guaranteed < 0)
   ) {
@@ -1029,6 +1037,15 @@ function applyDamage(
       source: 'defense',
       stage: 'defense',
       value: defender.mitigation.magical,
+    });
+  }
+  if (defender.damageReduction !== undefined && defender.damageReduction > 0) {
+    final *= 1 - defender.damageReduction;
+    modifierLogs.push({
+      id: 'universal-damage-reduction',
+      source: 'energy:unaffiliated',
+      stage: 'defense',
+      value: defender.damageReduction,
     });
   }
   final = Math.floor(Math.max(0, final));

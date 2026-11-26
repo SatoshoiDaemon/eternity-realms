@@ -58,6 +58,36 @@ describe('shared character combat contract', () => {
     expect(actor.affinityElements).toEqual(['fire', 'water']);
   });
 
+  it('applies Incomplete Sem Afinidade attributes, mitigation, and absent energy reserves', () => {
+    const prepared = {
+      ...character(),
+      energy: { affinity: 'unaffiliated', reserves: { mana: 120, aura: 40 } },
+      attributes: { ...character().attributes, energetic: { mana: 8, chi: 6 } },
+    };
+    const actor = createCharacterCombatActor(
+      prepared,
+      content.items,
+      defaults,
+      [],
+      undefined,
+      content.systems,
+      [...content.energies.values()],
+    );
+
+    expect(actor.attributes).toMatchObject({
+      vigor: 46,
+      resistance: 48,
+      speed: 52,
+      dexterity: 46,
+      precision: 44,
+      strength: 50,
+    });
+    expect(actor.damageReduction).toBe(0.2);
+    expect(actor.energy).toMatchObject({ mana: 0, aura: 0 });
+    expect(actor.hp.maximum).toBe(230);
+    expect(actor.tenacity.maximum).toBe(480);
+  });
+
   it('applies installed alchemical attribute bonuses before deriving combat bars and weapon damage', () => {
     const actor = createCharacterCombatActor(
       {

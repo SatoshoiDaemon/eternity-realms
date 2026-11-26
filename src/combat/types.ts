@@ -144,6 +144,8 @@ export interface CombatActor {
   policy: CombatPolicy;
   actionPriority: string[];
   mitigation: { physical: number; magical: number };
+  /** Universal multiplicative mitigation, including true damage. */
+  damageReduction?: number;
   evasion?: { chance: number; guaranteed: number };
   guarantees?: { hits: number; semiHits: number; evasions: number };
   position: { x: number; y: number };

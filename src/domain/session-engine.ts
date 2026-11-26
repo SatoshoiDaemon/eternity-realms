@@ -14,6 +14,7 @@ import type { CombatAction } from '../combat/types';
 import { compileConstruction } from '../nodes/graph';
 import { constructionPriority, unlockNodes } from '../nodes/library';
 import { getActivityAccessError, getUnlockedRegionIds } from './activity-access';
+import { getUnaffiliatedEffects } from './unaffiliated';
 
 const MAX_PENDING_SESSIONS = 5;
 
@@ -158,10 +159,10 @@ function activityTrainingEffect(
   content: ContentCatalog,
 ) {
   const trainingEffect = activity.trainingEffect;
-  if (!trainingEffect || !activity.skillId) return trainingEffect;
-  const skill = content.skills.get(activity.skillId);
-  const skillLevel = character.skills[activity.skillId]?.level ?? 1;
-  const multiplier = (skill?.milestones ?? [])
+  if (!trainingEffect) return trainingEffect;
+  const skill = activity.skillId ? content.skills.get(activity.skillId) : undefined;
+  const skillLevel = activity.skillId ? (character.skills[activity.skillId]?.level ?? 1) : 1;
+  const skillMultiplier = (skill?.milestones ?? [])
     .filter((milestone) => milestone.level <= skillLevel)
     .flatMap((milestone) => milestone.effects)
     .filter(
@@ -172,7 +173,17 @@ function activityTrainingEffect(
         effect.value > 0,
     )
     .reduce((total, effect) => total * Number(effect.value), 1);
-  return { ...trainingEffect, amount: Math.max(1, Math.floor(trainingEffect.amount * multiplier)) };
+  const unaffiliated = getUnaffiliatedEffects(
+    character,
+    content.energies.get('energy:unaffiliated'),
+  );
+  const trainingMultiplier = trainingEffect.attributeId.startsWith('physical:')
+    ? unaffiliated.trainingGainMultiplier
+    : 1;
+  return {
+    ...trainingEffect,
+    amount: Math.max(1, Math.floor(trainingEffect.amount * skillMultiplier * trainingMultiplier)),
+  };
 }
 
 function recordBrokenImplant(character: Character, implantId: string): Character {

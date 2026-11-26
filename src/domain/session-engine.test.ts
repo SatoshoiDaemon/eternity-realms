@@ -145,6 +145,48 @@ describe('universal timed session engine', () => {
     expect(reopened.events).toEqual(completed.events);
   });
 
+  it('doubles physical training gains for the Incomplete Sem Afinidade stage', () => {
+    const official = loadOfficialContent();
+    const content = loadContentPacks([
+      {
+        manifest: {
+          id: 'test.unaffiliated-training',
+          name: 'Sem Afinidade training',
+          version: '1.0.0',
+        },
+        records: [
+          ...testPack.records.map((record) =>
+            record.id === 'mining'
+              ? {
+                  ...record,
+                  trainingEffect: { attributeId: 'physical:strength', amount: 3 },
+                }
+              : record,
+          ),
+          official.energies.get('energy:unaffiliated')!,
+        ],
+      },
+    ]);
+    const initial = createTestState();
+    initial.character!.energy = {
+      affinity: 'unaffiliated',
+      unaffiliatedStage: 'incomplete',
+      reserves: {},
+    };
+    const started = enqueueSession(initial, newTestSession('unaffiliated-training'), content, 0);
+    const completed = reconcileSessions(started, 1_800_000, content);
+
+    expect(completed.character?.attributes.physical.strength).toBe(7);
+    expect(completed.events).toContainEqual(
+      expect.objectContaining({
+        type: 'attribute.increased',
+        attributeId: 'physical:strength',
+        amount: 6,
+        total: 7,
+      }),
+    );
+  });
+
   it('uses the default training multiplier when an activity references an absent skill definition', () => {
     const activities = new Map(testCatalog.activities).set('mining', {
       ...testCatalog.activities.get('mining')!,

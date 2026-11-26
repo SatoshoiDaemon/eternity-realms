@@ -135,6 +135,9 @@ export function spendAttributePoint(character: Character, attributeId: string): 
     };
   }
   if (group === 'energy' && (key === 'chi' || key === 'mana' || key === 'spirit')) {
+    if (character.energy.affinity === 'unaffiliated') {
+      throw new Error('Sem Afinidade characters cannot allocate energy attributes.');
+    }
     const current = character.attributes.energetic[key] ?? 0;
     if (!Number.isFinite(current) || !Number.isSafeInteger(current + 1)) {
       throw new Error(`Attribute value is invalid for ${attributeId}.`);
@@ -191,6 +194,9 @@ export function applyTrainingEffect(
     };
   }
   if (group === 'energy' && (key === 'chi' || key === 'mana' || key === 'spirit')) {
+    if (character.energy.affinity === 'unaffiliated') {
+      throw new Error('Sem Afinidade characters cannot train energy attributes.');
+    }
     const current = character.attributes.energetic[key] ?? 0;
     const total = current + trainingEffect.amount;
     if (!Number.isFinite(current) || !Number.isSafeInteger(total)) {

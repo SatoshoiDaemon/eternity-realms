@@ -137,7 +137,7 @@ function localizedStatLabel(id: string): string {
     mana: 'energy.mana',
     spirit: 'energy.spirit',
     none: 'energy.none',
-    unaffiliated: 'energy.none',
+    unaffiliated: 'energy.unaffiliated.incomplete',
     unawakened: 'energy.unawakened',
     fire: 'energy.fire',
     earth: 'energy.earth',
@@ -2092,6 +2092,11 @@ export function GameApp({
                       </button>
                     )}
                   </fieldset>
+                )}
+                {character.energy.affinity === 'unaffiliated' && (
+                  <p className="muted" role="status">
+                    {t('character.unaffiliatedIncomplete')}
+                  </p>
                 )}
                 <div className="energy-bars">
                   {Object.entries(character.energy.reserves).map(([id, amount]) => (

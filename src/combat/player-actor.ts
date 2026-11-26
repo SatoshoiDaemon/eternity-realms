@@ -7,6 +7,7 @@ import type {
 import type { Character } from '../domain/types';
 import { getInstalledImplantStatModifiers } from '../domain/implants';
 import { selectedCombatAffinities } from '../domain/mana-affinities';
+import { getUnaffiliatedEffects } from '../domain/unaffiliated';
 import type { CombatAction, CombatActor, CombatDamage } from './types';
 
 export interface PlayerCombatDefaults {
@@ -133,6 +134,10 @@ export function createCharacterCombatActor(
     throw new Error('Combat defaults have invalid accuracy or interval.');
   }
   const basePhysical = character.attributes.physical;
+  const unaffiliated = getUnaffiliatedEffects(
+    character,
+    energyDefinitions.find((definition) => definition.id === 'energy:unaffiliated'),
+  );
   const implantModifiers = systems
     ? getInstalledImplantStatModifiers(character, systems)
     : {
@@ -146,7 +151,8 @@ export function createCharacterCombatActor(
   for (const key of Object.keys(physical)) {
     const baseValue = physical[key] ?? 0;
     physical[key] = Math.floor(
-      (baseValue + (implantModifiers.flat[key] ?? 0)) * (implantModifiers.multipliers[key] ?? 1),
+      (baseValue + unaffiliated.physicalAttributeBonus + (implantModifiers.flat[key] ?? 0)) *
+        (implantModifiers.multipliers[key] ?? 1),
     );
   }
   if (
@@ -225,8 +231,14 @@ export function createCharacterCombatActor(
     energyDefinitions.flatMap((definition) => definition.affinities ?? []),
   );
   const energy = { ...character.energy.reserves };
-  if (!Object.hasOwn(energy, 'mana')) energy.mana = (character.attributes.energetic.mana ?? 0) * 10;
-  if (!Object.hasOwn(energy, 'aura')) energy.aura = character.attributes.energetic.chi ?? 0;
+  if (character.energy.affinity === 'unaffiliated') {
+    energy.mana = 0;
+    energy.aura = 0;
+  } else {
+    if (!Object.hasOwn(energy, 'mana'))
+      energy.mana = (character.attributes.energetic.mana ?? 0) * 10;
+    if (!Object.hasOwn(energy, 'aura')) energy.aura = character.attributes.energetic.chi ?? 0;
+  }
   for (const { definition } of equipped) {
     for (const [resource, amount] of Object.entries(definition.combat?.energyBonus ?? {})) {
       energy[resource] = (energy[resource] ?? 0) + amount;
@@ -259,6 +271,7 @@ export function createCharacterCombatActor(
       physical: 1 - remainingMitigation.physical,
       magical: 1 - remainingMitigation.magical,
     },
+    damageReduction: unaffiliated.damageReduction,
     evasion: readEvasion(character),
     guarantees: { hits: 0, semiHits: 0, evasions: 0 },
     position: { x: 0, y: 0 },

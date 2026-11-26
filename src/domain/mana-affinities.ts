@@ -14,7 +14,11 @@ export function selectEnergyPath(character: Character, path: EnergyPath): Charac
   }
   return {
     ...character,
-    energy: { ...character.energy, affinity: path },
+    energy: {
+      ...character.energy,
+      affinity: path,
+      ...(path === 'unaffiliated' ? { unaffiliatedStage: 'incomplete' as const } : {}),
+    },
   };
 }
 

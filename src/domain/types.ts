@@ -19,7 +19,12 @@ export interface Character {
   level: number;
   experience: { current: number; total: number };
   attributes: { physical: PhysicalAttributes; energetic: Record<string, number> };
-  energy: { affinity: string; affinities?: string[]; reserves: Record<string, number> };
+  energy: {
+    affinity: string;
+    affinities?: string[];
+    unaffiliatedStage?: 'incomplete' | 'celestial-restriction';
+    reserves: Record<string, number>;
+  };
   equipment: {
     head: string | null;
     chest: string | null;

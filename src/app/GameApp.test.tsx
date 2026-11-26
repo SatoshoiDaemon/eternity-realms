@@ -1884,6 +1884,20 @@ describe('Eternity Realms navigation and play flow', () => {
     expect(screen.getByRole('button', { name: 'Água' })).toBeDisabled();
   });
 
+  it('shows the active Incomplete Sem Afinidade effects after path selection', async () => {
+    const { repository } = await mountApp({ state: gameWithCharacter('Sem afinidade') });
+    tab('Personagem');
+    fireEvent.click(screen.getByRole('button', { name: 'Sem afinidade' }));
+    await waitFor(() =>
+      expect(repository.state?.character?.energy).toMatchObject({
+        affinity: 'unaffiliated',
+        unaffiliatedStage: 'incomplete',
+      }),
+    );
+    expect(screen.getByRole('status')).toHaveTextContent('+40 em cada atributo físico');
+    expect(screen.getByRole('status')).toHaveTextContent('20% menos dano recebido');
+  });
+
   it('renders currency rewards in the mission catalog', async () => {
     const official = loadOfficialContent();
     const baseMission = [...official.missions.values()][0]!;

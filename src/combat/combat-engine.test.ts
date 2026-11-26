@@ -49,6 +49,45 @@ function actor(
 }
 
 describe('deterministic event combat', () => {
+  it.each(['physical', 'magical', 'true'] as const)(
+    'applies universal Sem Afinidade reduction to %s damage',
+    (channel) => {
+      const action: CombatAction = {
+        ...strike,
+        id: `test:${channel}-damage`,
+        damage: { ...strike.damage!, channel },
+      };
+      const state = createCombatState(
+        `universal-reduction:${channel}`,
+        [
+          actor('attacker', 'party', { actions: [action], actionPriority: [action.id] }),
+          actor('defender', 'enemy', { actions: [], damageReduction: 0.2 }),
+        ],
+        4,
+      );
+      const resolved = advanceCombat(state, 0);
+      expect(resolved.log.find((entry) => entry.actorId === 'attacker')).toMatchObject({
+        damageInitial: 40,
+        damageFinal: 32,
+        modifiers: expect.arrayContaining([
+          expect.objectContaining({ id: 'universal-damage-reduction', value: 0.2 }),
+        ]),
+      });
+    },
+  );
+
+  it('rejects invalid universal actor damage reduction', () => {
+    for (const damageReduction of [-0.1, 1, Number.NaN]) {
+      expect(() =>
+        createCombatState(
+          `invalid-reduction:${damageReduction}`,
+          [actor('invalid', 'party', { damageReduction }), actor('target', 'enemy')],
+          4,
+        ),
+      ).toThrow('damage reduction must be between zero and one.');
+    }
+  });
+
   it('applies an Oni racial trait as a fixed ten HP heal after each successful hit', () => {
     const content = loadOfficialContent();
     const oni = actor('oni', 'party', {

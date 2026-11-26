@@ -431,6 +431,7 @@ export const translations = {
   'energy.mana': 'Mana',
   'energy.spirit': 'Espírito',
   'energy.none': 'Sem afinidade',
+  'energy.unaffiliated.incomplete': 'Sem Afinidade · Incompleto',
   'energy.unawakened': 'Energia não escolhida',
   'energy.fire': 'Fogo',
   'energy.earth': 'Terra',
@@ -446,6 +447,8 @@ export const translations = {
     'Escolha até quatro afinidades. Cada seleção libera seu tipo no editor de nós.',
   'character.sealManaAffinities': 'Selar afinidades escolhidas',
   'character.manaAffinitiesSealed': 'Afinidades seladas. Esta escolha inicial é permanente.',
+  'character.unaffiliatedIncomplete':
+    'Incompleto: +40 em cada atributo físico, 20% menos dano recebido e o dobro de pontos em treinos físicos. Este caminho não permite distribuir ou treinar atributos de Mana/Aura.',
   'combat.kind.quest': 'Quest',
   'combat.kind.dungeon': 'Dungeon',
   'combat.kind.raid': 'Raid',
