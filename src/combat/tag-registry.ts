@@ -6,12 +6,15 @@ const conditionOperator = z.enum([
   'neq',
   'eq_field',
   'includes',
+  'includes_id',
   'not_includes',
   'includes_any',
   'not_includes_any',
   'not_includes_id',
   'truthy',
   'not_truthy',
+  'lte',
+  'gte',
   'gt',
   'lt',
 ]);
@@ -144,6 +147,17 @@ function matchesCondition(condition: TagCondition, context: unknown): boolean {
       return actual === readPath(context, String(condition.value ?? ''));
     case 'includes':
       return Array.isArray(actual) && actual.includes(condition.value);
+    case 'includes_id':
+      return (
+        Array.isArray(actual) &&
+        actual.some(
+          (entry) =>
+            typeof entry === 'object' &&
+            entry !== null &&
+            'id' in entry &&
+            (entry as { id: unknown }).id === condition.value,
+        )
+      );
     case 'not_includes':
       return !Array.isArray(actual) || !actual.includes(condition.value);
     case 'includes_any':
@@ -173,6 +187,18 @@ function matchesCondition(condition: TagCondition, context: unknown): boolean {
       return Boolean(actual);
     case 'not_truthy':
       return !actual;
+    case 'lte':
+      return (
+        typeof actual === 'number' &&
+        typeof condition.value === 'number' &&
+        actual <= condition.value
+      );
+    case 'gte':
+      return (
+        typeof actual === 'number' &&
+        typeof condition.value === 'number' &&
+        actual >= condition.value
+      );
     case 'gt':
       return (
         typeof actual === 'number' &&

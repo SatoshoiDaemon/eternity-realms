@@ -11,7 +11,8 @@
       "Os sete elementos básicos de Mana agora liberam nós elementais e participam das interações de afinidade do combate.",
       "A forma Incompleta de Sem Afinidade aplica +40 aos atributos físicos de combate, redução universal de 20% e ganhos dobrados em treino físico.",
       "Espírito concede +7 de dano às ações mágicas a cada 2 pontos em personagens Mana, incluindo armas mágicas e ações de nós.",
-      "Skills de Magia, Arquearia e Tiro ao Alvo aplicam seus marcos de dano e precisão às ações de combate; Alquimia melhora a restauração de poções e tônicos. A ficha exibe os benefícios ativos e futuros."
+      "Skills de Magia, Arquearia e Tiro ao Alvo aplicam seus marcos de dano e precisão às ações de combate; Alquimia melhora a restauração de poções e tônicos. A ficha exibe os benefícios ativos e futuros.",
+      "Traços raciais executáveis: imunidades de Anões, Bonecos e Gigantes; Fome Eterna e Pressa do Oni com patamares de cura documentados."
     ],
     "improved": [
       "Interface adaptada para telas Android e áreas seguras do sistema.",
@@ -31,7 +32,8 @@
       "Formato de save separado das versões do aplicativo e do banco de dados.",
       "O backup automático usa um snapshot local atômico e não abre o SQLite em segundo plano.",
       "O registry inclui sete afinidades, dezoito combinações e sete evoluções despertas de Mana; ambiguidades documentais permanecem sinalizadas sem desbloqueio automático.",
-      "A Restrição Celestial tem valores canônicos no registry e efeitos estruturados; ainda não possui desbloqueio no jogo nem execução completa de redução de efeitos de Mana/Aura."
+      "A Restrição Celestial tem valores canônicos no registry e efeitos estruturados; ainda não possui desbloqueio no jogo nem execução completa de redução de efeitos de Mana/Aura.",
+      "A engine de tags agora compara IDs dentro de listas e limites numéricos inclusivos para compor traços condicionais sem condicionais específicas por raça."
     ]
   }
 }

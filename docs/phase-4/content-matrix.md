@@ -75,3 +75,11 @@ Alquimia também aplica os marcos declarados a todo efeito positivo de poções 
 - Preservar o contrato de até cinco sessões, resolução automática e offline, cancelamento da sessão ativa e proteção de recompensas idempotentes.
 - Manter os valores de lore recebidos como fonte canônica; marcar parâmetros de balanceamento de conteúdo novo como adaptação declarativa.
 - A cobertura exigida é 100% para linhas, branches, funções e statements nos arquivos instrumentados.
+
+### Traços raciais executáveis — checkpoint de 26 de novembro de 2026
+
+O motor de tags agora avalia presença de status por identificador e comparações inclusivas, permitindo traços condicionais declarativos. O Anão rejeita Exaustão, Confusão e Pressa; o Boneco rejeita Confusão e Charme; o Gigante rejeita Pressa. Essas imunidades são específicas e não bloqueiam Veneno ou outros status fora da lista de cada raça.
+
+O Oni aplica Fome Eterna ao acertar: cura 10 HP por padrão; o patamar sobe para 20 HP contra alvo sangrando, 40 HP após perder 25% de HP, 50 HP após perder 50%, ou 80 HP com 10% de HP restante. Se várias condições coincidirem, o jogo aplica apenas o maior patamar. Essa prioridade é uma adaptação explícita porque o documento original informa os multiplicadores, mas não define acúmulo ou prioridade. O Predador também concede Pressa 2/1 por acerto e Pressa 4/4 ao acertar alvo sangrando.
+
+Essas quatro fichas seguem parciais: as outras vantagens, desvantagens e progressões raciais ainda exigem implementação específica. O catálogo de 29 raças continua sendo o escopo integral, sem mudança de contagem ou declaração de conclusão.

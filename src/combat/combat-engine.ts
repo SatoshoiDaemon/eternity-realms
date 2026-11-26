@@ -1148,10 +1148,20 @@ function processDamageReactions(
   entry: Omit<CombatLogEntry, 'id' | 'timeMs' | 'actorId' | 'targetId' | 'actionId' | 'kind'>,
   currentLog: CombatLogEntry,
 ): void {
+  const attackerContext = {
+    ...attacker,
+    hpRatio: attacker.hp.current / attacker.hp.maximum,
+  };
   const effects = evaluateTagEffects(
     attacker.tags,
     'damage.dealt',
-    { damage: action.damage, attacker, defender, action, damageFinal: entry.damageFinal },
+    {
+      damage: action.damage,
+      attacker: attackerContext,
+      defender,
+      action,
+      damageFinal: entry.damageFinal,
+    },
     state.tagRegistry,
   );
   for (const effect of effects) {
@@ -1170,6 +1180,18 @@ function processDamageReactions(
       currentLog.actorHpChange = entry.actorHpChange;
       entry.effectsApplied.push(`${effect.type}:${attacker.hp.current - before}`);
       entry.tagInteractions.push(...interactionLogs([effect]));
+    } else if (
+      effect.type === 'on_hit_effect' &&
+      typeof effect.value === 'object' &&
+      effect.value !== null
+    ) {
+      const payload = effect.value as AppliedCombatEffect;
+      if (!statusIsImmune(attacker, payload, state.tagRegistry)) {
+        if (applyStatus(attacker, payload, state.nowMs, attacker.id)) {
+          entry.effectsApplied.push(`${attacker.id}:${payload.id}`);
+          entry.tagInteractions.push(...interactionLogs([effect]));
+        }
+      }
     }
   }
   const incoming = evaluateTagEffects(

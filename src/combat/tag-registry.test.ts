@@ -191,6 +191,16 @@ describe('extensible tag condition and precedence contracts', () => {
     expect(matches({ path: 'a.b', op: 'eq_field' }, { a: {} })).toBe(true);
     expect(matches({ path: 'items', op: 'includes', value: 'x' }, { items: ['x'] })).toBe(true);
     expect(matches({ path: 'items', op: 'includes', value: 'x' }, { items: 'x' })).toBe(false);
+    expect(
+      matches({ path: 'items', op: 'includes_id', value: 'x' }, { items: [{ id: 'x' }] }),
+    ).toBe(true);
+    expect(
+      matches(
+        { path: 'items', op: 'includes_id', value: 'x' },
+        { items: [{ id: 'y' }, { label: 'x' }, null, 'x'] },
+      ),
+    ).toBe(false);
+    expect(matches({ path: 'items', op: 'includes_id', value: 'x' }, { items: {} })).toBe(false);
     expect(matches({ path: 'items', op: 'not_includes', value: 'x' }, { items: ['x'] })).toBe(
       false,
     );
@@ -224,6 +234,12 @@ describe('extensible tag condition and precedence contracts', () => {
     expect(matches({ path: 'flag', op: 'truthy' }, {})).toBe(false);
     expect(matches({ path: 'flag', op: 'not_truthy' }, {})).toBe(true);
     expect(matches({ path: 'flag', op: 'not_truthy' }, { flag: true })).toBe(false);
+    expect(matches({ path: 'n', op: 'lte', value: 2 }, { n: 2 })).toBe(true);
+    expect(matches({ path: 'n', op: 'lte', value: 2 }, { n: 3 })).toBe(false);
+    expect(matches({ path: 'n', op: 'lte', value: 2 }, { n: '2' })).toBe(false);
+    expect(matches({ path: 'n', op: 'gte', value: 2 }, { n: 2 })).toBe(true);
+    expect(matches({ path: 'n', op: 'gte', value: 2 }, { n: 1 })).toBe(false);
+    expect(matches({ path: 'n', op: 'gte', value: 2 }, { n: null })).toBe(false);
     expect(matches({ path: 'n', op: 'gt', value: 2 }, { n: 3 })).toBe(true);
     expect(matches({ path: 'n', op: 'gt', value: 2 }, { n: 2 })).toBe(false);
     expect(matches({ path: 'n', op: 'gt', value: 2 }, { n: '3' })).toBe(false);

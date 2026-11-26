@@ -100,9 +100,197 @@ describe('deterministic event combat', () => {
 
     const result = advanceCombat(state, 0);
     expect(result.actors.find((entry) => entry.id === 'oni')?.hp.current).toBe(50);
+    expect(result.actors.find((entry) => entry.id === 'oni')?.effects).toContainEqual(
+      expect.objectContaining({ id: 'core:haste', potency: 2, counter: 1 }),
+    );
     expect(result.log.find((entry) => entry.actorId === 'oni')?.effectsApplied).toContain(
       'flat_vampirism:10',
     );
+  });
+
+  it('grants an Oni Pressa 4/4 after striking a bleeding target', () => {
+    const content = loadOfficialContent();
+    const oni = actor('oni', 'party', { tags: ['race:oni'] });
+    const bleedingTarget = actor('victim', 'enemy', {
+      actions: [],
+      effects: [{ id: 'core:bleeding', category: 'dot', potency: 1, counter: 3 }],
+    });
+    const result = advanceCombat(
+      createCombatState('oni-predator-bleeding-target', [oni, bleedingTarget], 23, {}, [
+        ...content.enemyTags.values(),
+      ]),
+      0,
+    );
+
+    expect(result.actors.find((entry) => entry.id === 'oni')?.effects).toContainEqual(
+      expect.objectContaining({ id: 'core:haste', potency: 4, counter: 4 }),
+    );
+  });
+
+  it('rejects an on-hit status when the attacker has a matching immunity', () => {
+    const content = loadOfficialContent();
+    const selfPoisonTag = {
+      id: 'test:self-poison-on-hit',
+      category: 'behavior' as const,
+      name: 'Self poisoning on hit',
+      description: 'Test tag for the attacker immunity path.',
+      origin: 'test',
+      activationConditions: ['successful hit'],
+      eventsObserved: ['damage.dealt'],
+      modifiers: [
+        {
+          id: 'self-poison',
+          event: 'damage.dealt',
+          conditions: [],
+          interactionId: 'test:self-poison',
+          potency: 1,
+          priority: 100,
+          effect: {
+            type: 'on_hit_effect' as const,
+            value: { id: 'base:poison', category: 'dot', potency: 1, counter: 2 },
+          },
+        },
+      ],
+      interactions: [{ id: 'self-poison', counterplay: 'test' }],
+      requirements: [],
+      properties: [],
+    };
+    const attacker = actor('toxic-attacker', 'party', {
+      tags: ['base:toxic', selfPoisonTag.id],
+    });
+    const victim = actor('victim', 'enemy', { actions: [] });
+    const result = advanceCombat(
+      createCombatState('immune-on-hit-status', [attacker, victim], 31, {}, [
+        ...content.enemyTags.values(),
+        selfPoisonTag,
+      ]),
+      0,
+    );
+
+    expect(
+      result.actors
+        .find((entry) => entry.id === 'toxic-attacker')
+        ?.effects.some((effect) => effect.id === 'base:poison'),
+    ).toBe(false);
+  });
+
+  it.each([
+    { hp: 80, bleeding: false, expectedHp: 90, label: 'base healing' },
+    { hp: 80, bleeding: true, expectedHp: 100, label: 'a bleeding target' },
+    { hp: 75, bleeding: false, expectedHp: 100, label: '25% HP lost' },
+    { hp: 40, bleeding: false, expectedHp: 90, label: '50% HP lost' },
+    { hp: 10, bleeding: false, expectedHp: 90, label: '10% HP remaining' },
+    { hp: 20, bleeding: true, expectedHp: 70, label: 'overlapping conditions' },
+  ])('scales Oni Fome Eterna healing for $label', ({ hp, bleeding, expectedHp }) => {
+    const content = loadOfficialContent();
+    const oni = actor('oni', 'party', {
+      tags: ['race:oni'],
+      hp: { current: hp, maximum: 100 },
+    });
+    const victim = actor('victim', 'enemy', {
+      actions: [],
+      effects: bleeding ? [{ id: 'core:bleeding', category: 'dot', potency: 1, counter: 2 }] : [],
+    });
+    const result = advanceCombat(
+      createCombatState(`oni-fome-eterna:${hp}:${bleeding}`, [oni, victim], 29, {}, [
+        ...content.enemyTags.values(),
+      ]),
+      0,
+    );
+
+    expect(result.actors.find((entry) => entry.id === 'oni')?.hp.current).toBe(expectedHp);
+  });
+
+  it.each(['core:confusion', 'core:exhaustion', 'core:haste'])(
+    'applies the Dwarf racial immunity to %s without granting immunity to other statuses',
+    (statusId) => {
+      const content = loadOfficialContent();
+      const dwarfRace = content.races.get('dwarf')!;
+      const dwarf = actor('z-dwarf', 'party', {
+        tags: [dwarfRace.combatTag!.id],
+        actions: [],
+      });
+      const incoming: CombatAction = {
+        id: 'test:apply-dwarf-status',
+        name: 'Status test',
+        kind: 'support',
+        target: 'enemy',
+        intervalMs: 1_000,
+        accuracy: 1,
+        effects: [
+          {
+            id: statusId,
+            category:
+              statusId === 'core:haste'
+                ? 'buff'
+                : statusId === 'core:exhaustion'
+                  ? 'debuff'
+                  : 'control',
+            potency: 1,
+            counter: 2,
+          },
+          { id: 'core:poison', category: 'dot', potency: 1, counter: 2 },
+        ],
+      };
+      const attacker = actor('a-attacker', 'enemy', {
+        actions: [incoming],
+        actionPriority: [incoming.id],
+      });
+      const result = advanceCombat(
+        createCombatState('dwarf-status-immunity', [attacker, dwarf], 17, {}, [
+          ...content.enemyTags.values(),
+        ]),
+        0,
+      );
+
+      expect(result.actors.find((entry) => entry.id === 'z-dwarf')?.effects).toEqual([
+        expect.objectContaining({ id: 'core:poison' }),
+      ]);
+    },
+  );
+
+  it.each([
+    ['doll', 'core:confusion'],
+    ['doll', 'core:charm'],
+    ['giant', 'core:haste'],
+  ])('applies the %s racial status immunity to %s', (raceId, statusId) => {
+    const content = loadOfficialContent();
+    const race = content.races.get(raceId)!;
+    const target = actor(`z-${raceId}`, 'party', {
+      tags: [...(race.combatTags ?? []), race.combatTag!.id],
+      actions: [],
+    });
+    const incoming: CombatAction = {
+      id: 'test:apply-racial-status',
+      name: 'Status test',
+      kind: 'support',
+      target: 'enemy',
+      intervalMs: 1_000,
+      accuracy: 1,
+      effects: [
+        {
+          id: statusId,
+          category: statusId === 'core:haste' ? 'buff' : 'control',
+          potency: 1,
+          counter: 2,
+        },
+        { id: 'core:poison', category: 'dot', potency: 1, counter: 2 },
+      ],
+    };
+    const attacker = actor('a-attacker', 'enemy', {
+      actions: [incoming],
+      actionPriority: [incoming.id],
+    });
+    const result = advanceCombat(
+      createCombatState(`racial-immunity:${raceId}:${statusId}`, [attacker, target], 19, {}, [
+        ...content.enemyTags.values(),
+      ]),
+      0,
+    );
+
+    expect(result.actors.find((entry) => entry.id === `z-${raceId}`)?.effects).toEqual([
+      expect.objectContaining({ id: 'core:poison' }),
+    ]);
   });
 
   it('applies a character regeneration implant on turns and respects recorded suppression', () => {

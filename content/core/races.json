@@ -144,6 +144,52 @@
     "source": "Notion: Eternity Realms — Sistemas originais do RP (2026-11-08; atualização de Kitsune/2026-11-08)",
     "adaptationNotes": "Texto canônico resumido; os efeitos marcados como incompletos ou ambíguos permanecem sem valores inventados. A adaptação mecânica aparece em combatTags e activityBonuses.",
     "combatTags": ["base:metallic", "base:subterranean"],
+    "combatTag": {
+      "id": "race:dwarf-resilience",
+      "category": "behavior",
+      "name": "Trabalho Persistente e Corpo Lento",
+      "description": "Anões não sofrem Exaustão ou Confusão nem recebem Pressa, conforme os traços raciais documentados.",
+      "origin": "Notion: Sistemas originais do RP — Anões, Trabalho Persistente e Corpo Lento (2026-11-08)",
+      "activationConditions": ["efeito de status recebido"],
+      "eventsObserved": ["status.incoming"],
+      "modifiers": [
+        {
+          "id": "persistent-work-confusion-immunity",
+          "event": "status.incoming",
+          "conditions": [{ "path": "status.id", "op": "eq", "value": "core:confusion" }],
+          "interactionId": "race:dwarf:confusion-immunity",
+          "potency": 100,
+          "priority": 100,
+          "effect": { "type": "status_immunity", "value": "core:confusion" }
+        },
+        {
+          "id": "persistent-work-exhaustion-immunity",
+          "event": "status.incoming",
+          "conditions": [{ "path": "status.id", "op": "eq", "value": "core:exhaustion" }],
+          "interactionId": "race:dwarf:exhaustion-immunity",
+          "potency": 100,
+          "priority": 100,
+          "effect": { "type": "status_immunity", "value": "core:exhaustion" }
+        },
+        {
+          "id": "slow-body-haste-immunity",
+          "event": "status.incoming",
+          "conditions": [{ "path": "status.id", "op": "eq", "value": "core:haste" }],
+          "interactionId": "race:dwarf:haste-immunity",
+          "potency": 100,
+          "priority": 100,
+          "effect": { "type": "status_immunity", "value": "core:haste" }
+        }
+      ],
+      "interactions": [
+        {
+          "id": "status-immunity",
+          "counterplay": "Aplicar outros efeitos que não sejam Exaustão, Confusão ou Pressa."
+        }
+      ],
+      "requirements": [],
+      "properties": ["racial", "status-immunity"]
+    },
     "activityBonuses": [
       {
         "skillId": "mining-skill",
@@ -175,8 +221,9 @@
       "id": "race:oni",
       "category": "behavior",
       "name": "Fome Eterna",
-      "description": "Cada ataque acertado recupera 10 HP, conforme a vantagem racial original.",
+      "description": "Cada ataque acertado recupera 10 HP e concede Pressa 2/1, conforme as vantagens raciais originais.",
       "origin": "Notion: Sistemas originais do RP — Onis, Fome Eterna (2026-11-08)",
+      "adaptationNotes": "O original aumenta a cura para 200% contra alvo sangrando, 400% após perder 25% do HP, 500% após perder 50% e 800% com 10% de HP restante, mas não define acúmulo ou prioridade. A adaptação aplica somente o maior patamar elegível.",
       "activationConditions": ["ataque acertado"],
       "eventsObserved": ["damage.dealt"],
       "modifiers": [
@@ -184,12 +231,98 @@
           "id": "fome-eterna",
           "event": "damage.dealt",
           "conditions": [],
-          "interactionId": "race:oni:fome-eterna",
-          "potency": 10,
+          "interactionId": "race:oni:fome-eterna-healing",
+          "potency": 1,
           "priority": 100,
           "effect": {
             "type": "flat_vampirism",
             "value": 10
+          }
+        },
+        {
+          "id": "fome-eterna-bleeding-target-heal",
+          "event": "damage.dealt",
+          "conditions": [
+            { "path": "defender.effects", "op": "includes_id", "value": "core:bleeding" }
+          ],
+          "interactionId": "race:oni:fome-eterna-healing",
+          "potency": 2,
+          "priority": 100,
+          "effect": {
+            "type": "flat_vampirism",
+            "value": 20
+          }
+        },
+        {
+          "id": "fome-eterna-quarter-health-heal",
+          "event": "damage.dealt",
+          "conditions": [{ "path": "attacker.hpRatio", "op": "lte", "value": 0.75 }],
+          "interactionId": "race:oni:fome-eterna-healing",
+          "potency": 4,
+          "priority": 100,
+          "effect": {
+            "type": "flat_vampirism",
+            "value": 40
+          }
+        },
+        {
+          "id": "fome-eterna-half-health-heal",
+          "event": "damage.dealt",
+          "conditions": [{ "path": "attacker.hpRatio", "op": "lte", "value": 0.5 }],
+          "interactionId": "race:oni:fome-eterna-healing",
+          "potency": 5,
+          "priority": 100,
+          "effect": {
+            "type": "flat_vampirism",
+            "value": 50
+          }
+        },
+        {
+          "id": "fome-eterna-low-health-heal",
+          "event": "damage.dealt",
+          "conditions": [{ "path": "attacker.hpRatio", "op": "lte", "value": 0.1 }],
+          "interactionId": "race:oni:fome-eterna-healing",
+          "potency": 8,
+          "priority": 100,
+          "effect": {
+            "type": "flat_vampirism",
+            "value": 80
+          }
+        },
+        {
+          "id": "predator-hit-haste",
+          "event": "damage.dealt",
+          "conditions": [],
+          "interactionId": "race:oni:hit-haste",
+          "potency": 2,
+          "priority": 100,
+          "effect": {
+            "type": "on_hit_effect",
+            "value": {
+              "id": "core:haste",
+              "category": "buff",
+              "potency": 2,
+              "counter": 1
+            }
+          }
+        },
+        {
+          "id": "predator-bleeding-target-haste",
+          "event": "damage.dealt",
+          "conditions": [
+            { "path": "defender.effects", "op": "includes_id", "value": "core:bleeding" }
+          ],
+          "interactionId": "race:oni:bleeding-target-haste",
+          "potency": 4,
+          "priority": 100,
+          "effect": {
+            "type": "on_hit_effect",
+            "value": {
+              "id": "core:haste",
+              "category": "buff",
+              "potency": 4,
+              "counter": 4
+            }
           }
         }
       ],
@@ -200,7 +333,7 @@
         }
       ],
       "requirements": [],
-      "properties": ["racial", "healing"]
+      "properties": ["racial", "healing", "self-buff"]
     }
   },
   {
@@ -221,7 +354,44 @@
     ],
     "source": "Notion: Eternity Realms — Sistemas originais do RP (2026-11-08; atualização de Kitsune/2026-11-08)",
     "adaptationNotes": "Texto canônico resumido; os efeitos marcados como incompletos ou ambíguos permanecem sem valores inventados. A adaptação mecânica aparece em combatTags e activityBonuses.",
-    "combatTags": ["base:construct"]
+    "combatTags": ["base:construct"],
+    "combatTag": {
+      "id": "race:doll-artificial-body",
+      "category": "behavior",
+      "name": "Ser Artificial",
+      "description": "O corpo artificial do Boneco impede Confusão e Charme.",
+      "origin": "Notion: Sistemas originais do RP — Bonecos, Ser Artificial (2026-11-08)",
+      "activationConditions": ["efeito de status recebido"],
+      "eventsObserved": ["status.incoming"],
+      "modifiers": [
+        {
+          "id": "artificial-body-confusion-immunity",
+          "event": "status.incoming",
+          "conditions": [{ "path": "status.id", "op": "eq", "value": "core:confusion" }],
+          "interactionId": "race:doll:confusion-immunity",
+          "potency": 100,
+          "priority": 100,
+          "effect": { "type": "status_immunity", "value": "core:confusion" }
+        },
+        {
+          "id": "artificial-body-charm-immunity",
+          "event": "status.incoming",
+          "conditions": [{ "path": "status.id", "op": "eq", "value": "core:charm" }],
+          "interactionId": "race:doll:charm-immunity",
+          "potency": 100,
+          "priority": 100,
+          "effect": { "type": "status_immunity", "value": "core:charm" }
+        }
+      ],
+      "interactions": [
+        {
+          "id": "status-immunity",
+          "counterplay": "Aplicar efeitos de status que não sejam Confusão ou Charme."
+        }
+      ],
+      "requirements": [],
+      "properties": ["racial", "status-immunity"]
+    }
   },
   {
     "id": "fairy",
@@ -262,7 +432,35 @@
     ],
     "source": "Notion: Eternity Realms — Sistemas originais do RP (2026-11-08; atualização de Kitsune/2026-11-08)",
     "adaptationNotes": "Texto canônico resumido; os efeitos marcados como incompletos ou ambíguos permanecem sem valores inventados. A adaptação mecânica aparece em combatTags e activityBonuses.",
-    "combatTags": ["base:colossal", "base:elemental"]
+    "combatTags": ["base:colossal", "base:elemental"],
+    "combatTag": {
+      "id": "race:giant-heavy-body",
+      "category": "behavior",
+      "name": "Corpo Pesado",
+      "description": "Gigantes não recebem Pressa, conforme a fraqueza racial documentada.",
+      "origin": "Notion: Sistemas originais do RP — Gigantes, Corpo Pesado (2026-11-08)",
+      "activationConditions": ["efeito de status recebido"],
+      "eventsObserved": ["status.incoming"],
+      "modifiers": [
+        {
+          "id": "heavy-body-haste-immunity",
+          "event": "status.incoming",
+          "conditions": [{ "path": "status.id", "op": "eq", "value": "core:haste" }],
+          "interactionId": "race:giant:haste-immunity",
+          "potency": 100,
+          "priority": 100,
+          "effect": { "type": "status_immunity", "value": "core:haste" }
+        }
+      ],
+      "interactions": [
+        {
+          "id": "haste-immunity",
+          "counterplay": "Usar outros efeitos; a imunidade cobre apenas Pressa."
+        }
+      ],
+      "requirements": [],
+      "properties": ["racial", "status-immunity"]
+    }
   },
   {
     "id": "triton",
