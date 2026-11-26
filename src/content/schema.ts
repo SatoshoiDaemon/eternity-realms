@@ -313,6 +313,39 @@ export const EnergySchema = z
     origin: z.string().trim().min(1),
     resources: z.array(id),
     progression: z.array(z.record(z.string(), z.unknown())),
+    affinities: z
+      .array(
+        z.object({
+          id,
+          name: z.string().trim().min(1),
+          element: z.string().trim().min(1),
+          nodeId: id.optional(),
+          sourceStatus: z.enum(['documented', 'adapted']).default('documented'),
+        }),
+      )
+      .optional(),
+    combinations: z
+      .array(
+        z.object({
+          id,
+          ingredients: z.array(id).min(2),
+          result: z.string().trim().min(1).optional(),
+          candidates: z.array(z.string().trim().min(1)).optional(),
+          stage: z.enum(['intermediate', 'advanced', 'awakened']).optional(),
+          sourceStatus: z.enum(['documented', 'conflicting']).default('documented'),
+        }),
+      )
+      .optional(),
+    evolutions: z
+      .array(
+        z.object({
+          affinity: id,
+          stage: z.enum(['intermediate', 'advanced', 'awakened']),
+          result: z.string().trim().min(1),
+          sourceStatus: z.enum(['documented', 'conflicting', 'adapted']).default('documented'),
+        }),
+      )
+      .optional(),
   })
   .passthrough();
 

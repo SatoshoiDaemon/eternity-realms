@@ -35,8 +35,27 @@ describe('shared character combat contract', () => {
     const actor = createCharacterCombatActor(character(), content.items, defaults, [], ghost);
 
     expect(actor.tags).toEqual(['base:ghost', 'base:ethereal']);
-    expect(actor.affinityElement).toBe('mana');
+    expect(actor.affinityElement).toBeUndefined();
     expect(actor.effects).toEqual([]);
+  });
+
+  it('passes every selected Mana element into the combat affinity contract', () => {
+    const prepared = {
+      ...character(),
+      energy: { affinity: 'mana', affinities: ['fire', 'water'], reserves: { mana: 30 } },
+    };
+    const actor = createCharacterCombatActor(
+      prepared,
+      content.items,
+      defaults,
+      [],
+      undefined,
+      content.systems,
+      [...content.energies.values()],
+    );
+
+    expect(actor.affinityElement).toBe('fire');
+    expect(actor.affinityElements).toEqual(['fire', 'water']);
   });
 
   it('applies installed alchemical attribute bonuses before deriving combat bars and weapon damage', () => {

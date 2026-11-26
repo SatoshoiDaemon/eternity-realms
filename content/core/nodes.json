@@ -19,6 +19,36 @@
     "damageType": { "channel": "magical", "element": "fire" }
   },
   {
+    "id": "core:type-earth",
+    "name": "Terra",
+    "category": "type",
+    "damageType": { "channel": "magical", "element": "earth" }
+  },
+  {
+    "id": "core:type-air",
+    "name": "Ar/Vento",
+    "category": "type",
+    "damageType": { "channel": "magical", "element": "air" }
+  },
+  {
+    "id": "core:type-poison",
+    "name": "Veneno",
+    "category": "type",
+    "damageType": { "channel": "magical", "element": "poison" }
+  },
+  {
+    "id": "core:type-light",
+    "name": "Luz",
+    "category": "type",
+    "damageType": { "channel": "magical", "element": "light" }
+  },
+  {
+    "id": "core:type-water",
+    "name": "Água",
+    "category": "type",
+    "damageType": { "channel": "magical", "element": "water" }
+  },
+  {
     "id": "core:type-frost",
     "name": "Gelo",
     "category": "type",

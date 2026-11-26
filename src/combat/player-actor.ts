@@ -1,6 +1,12 @@
-import type { ItemDefinition, RaceDefinition, SystemDefinition } from '../content/schema';
+import type {
+  EnergyDefinition,
+  ItemDefinition,
+  RaceDefinition,
+  SystemDefinition,
+} from '../content/schema';
 import type { Character } from '../domain/types';
 import { getInstalledImplantStatModifiers } from '../domain/implants';
+import { selectedCombatAffinities } from '../domain/mana-affinities';
 import type { CombatAction, CombatActor, CombatDamage } from './types';
 
 export interface PlayerCombatDefaults {
@@ -115,6 +121,7 @@ export function createCharacterCombatActor(
   additionalActions: CombatAction[] = [],
   race?: RaceDefinition,
   systems?: Map<string, SystemDefinition>,
+  energyDefinitions: EnergyDefinition[] = [],
 ): CombatActor {
   if (
     !Number.isFinite(defaults.accuracy) ||
@@ -213,6 +220,10 @@ export function createCharacterCombatActor(
   if (!Number.isSafeInteger(regenerationPerAction) || regenerationPerAction < 0) {
     throw new Error('Character implants produce invalid regeneration.');
   }
+  const affinityElements = selectedCombatAffinities(
+    character,
+    energyDefinitions.flatMap((definition) => definition.affinities ?? []),
+  );
   const energy = { ...character.energy.reserves };
   if (!Object.hasOwn(energy, 'mana')) energy.mana = (character.attributes.energetic.mana ?? 0) * 10;
   if (!Object.hasOwn(energy, 'aura')) energy.aura = character.attributes.energetic.chi ?? 0;
@@ -251,7 +262,7 @@ export function createCharacterCombatActor(
     evasion: readEvasion(character),
     guarantees: { hits: 0, semiHits: 0, evasions: 0 },
     position: { x: 0, y: 0 },
-    affinityElement: character.energy.affinity,
+    ...(affinityElements.length ? { affinityElement: affinityElements[0], affinityElements } : {}),
     regenerationPerAction,
     soulAnchorAvailable: implantModifiers.soulAnchorAvailable,
     state: 'ready',

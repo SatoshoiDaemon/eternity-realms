@@ -1997,6 +1997,36 @@ describe('deterministic event combat', () => {
         ],
       },
       {
+        id: 'mod:path-affinity-array',
+        category: 'affinity',
+        name: 'Path Affinity Array',
+        description: '',
+        origin: 'mod:test',
+        activationConditions: [],
+        eventsObserved: ['damage.incoming'],
+        interactions: [],
+        requirements: [],
+        properties: [],
+        modifiers: [
+          {
+            id: 'path-relation-array',
+            event: 'damage.incoming',
+            conditions: [],
+            interactionId: 'mod:path-affinity-array',
+            potency: 1,
+            priority: 1,
+            effect: {
+              type: 'elemental_relation',
+              value: 1,
+              affinityPath: 'defender.affinityElements',
+              oppositesPath: 'environment.elementOpposites',
+              sameElement: 1.5,
+              oppositeElement: 0.5,
+            },
+          },
+        ],
+      },
+      {
         id: 'mod:energy-immunity',
         category: 'affinity',
         name: 'Energy Immunity',
@@ -2132,6 +2162,67 @@ describe('deterministic event combat', () => {
       0,
     );
     expect(affinity.log.find((entry) => entry.actorId === 'a-water')?.damageFinal).toBe(20);
+
+    const noSelectedAffinity = advanceCombat(
+      createCombatState(
+        'no-selected-affinity',
+        [
+          actor('a-no-affinity', 'party', { actions: [water], actionPriority: [water.id] }),
+          actor('z-unattuned', 'enemy', { tags: ['mod:path-affinity'], actions: [] }),
+        ],
+        9,
+        { elementOpposites: { fire: ['water'] } },
+        extraTags,
+      ),
+      0,
+    );
+    expect(
+      noSelectedAffinity.log.find((entry) => entry.actorId === 'a-no-affinity')?.damageFinal,
+    ).toBe(40);
+
+    const affinityArrayPath = advanceCombat(
+      createCombatState(
+        'path-affinity-array',
+        [
+          actor('a-water-array', 'party', { actions: [water], actionPriority: [water.id] }),
+          actor('z-fire-water-array', 'enemy', {
+            tags: ['mod:path-affinity-array'],
+            affinityElement: 'fire',
+            affinityElements: ['fire', 'water'],
+            actions: [],
+          }),
+        ],
+        9,
+        { elementOpposites: { fire: ['water'] } },
+        extraTags,
+      ),
+      0,
+    );
+    expect(
+      affinityArrayPath.log.find((entry) => entry.actorId === 'a-water-array')?.damageFinal,
+    ).toBe(60);
+
+    const multipleAffinities = advanceCombat(
+      createCombatState(
+        'multiple-path-affinities',
+        [
+          actor('a-water', 'party', { actions: [water], actionPriority: [water.id] }),
+          actor('z-fire-water', 'enemy', {
+            tags: ['mod:path-affinity'],
+            affinityElement: 'fire',
+            affinityElements: ['fire', 'water'],
+            actions: [],
+          }),
+        ],
+        9,
+        { elementOpposites: { fire: ['water'] } },
+        extraTags,
+      ),
+      0,
+    );
+    expect(multipleAffinities.log.find((entry) => entry.actorId === 'a-water')?.damageFinal).toBe(
+      60,
+    );
 
     const energyEffect: CombatAction = {
       ...strike,

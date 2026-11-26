@@ -294,6 +294,7 @@ describe('Eternity Realms navigation and play flow', () => {
 
   it('keeps unknown save references visible and handles empty content sections', async () => {
     const state = gameWithCharacter('Aria');
+    state.character!.energy.affinity = 'legacy-energy';
     state.character!.raceId = 'legacy-race';
     state.character!.classId = 'legacy-class';
     state.character!.attributes.energetic = { mana: 11 };
@@ -354,7 +355,8 @@ describe('Eternity Realms navigation and play flow', () => {
     expect(screen.getByText('Raça carregada no save.')).toBeInTheDocument();
     expect(screen.getByText('legacy-class')).toBeInTheDocument();
     expect(screen.getByText('Classe carregada no save.')).toBeInTheDocument();
-    expect(screen.getAllByText('Mana')).toHaveLength(2);
+    expect(screen.getByRole('heading', { name: 'legacy-energy' })).toBeInTheDocument();
+    expect(screen.getAllByText('Mana')).toHaveLength(3);
     fireEvent.click(screen.getByRole('tab', { name: 'Habilidades' }));
     expect(screen.getByText('Nenhuma habilidade carregada.')).toBeInTheDocument();
     fireEvent.click(screen.getByRole('tab', { name: 'Inventário' }));
@@ -604,7 +606,7 @@ describe('Eternity Realms navigation and play flow', () => {
 
     tab('Personagem');
     expect(screen.getByRole('heading', { name: 'Capacidades' })).toBeInTheDocument();
-    expect(screen.getByText('Aura')).toBeInTheDocument();
+    expect(screen.getAllByText('Aura')).toHaveLength(2);
     fireEvent.click(screen.getByRole('tab', { name: 'Equipamentos' }));
     expect(screen.getByRole('heading', { name: 'Build equipada' })).toBeInTheDocument();
     fireEvent.click(screen.getByRole('tab', { name: 'Inventário' }));
@@ -1850,6 +1852,36 @@ describe('Eternity Realms navigation and play flow', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Aumentar Mana' }));
     await waitFor(() => expect(repository.state?.character?.attributes.energetic.mana).toBe(2));
     expect(repository.state?.character?.extensions.attributePoints).toBe(0);
+  });
+
+  it('lets the player choose an energy path and Mana affinities with usable type nodes', async () => {
+    const { repository } = await mountApp({ state: gameWithCharacter('Elementalist') });
+    tab('Personagem');
+    fireEvent.click(screen.getByRole('button', { name: 'Mana' }));
+    await waitFor(() => expect(repository.state?.character?.energy.affinity).toBe('mana'));
+    expect(screen.getByRole('button', { name: 'Aura' })).toBeDisabled();
+    fireEvent.click(screen.getByRole('button', { name: 'Água' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Terra' }));
+    await waitFor(() =>
+      expect(repository.state?.character?.energy.affinities).toEqual(['water', 'earth']),
+    );
+    expect(repository.state?.character?.nodeLibrary?.unlockedNodeIds).toEqual([
+      'core:type-earth',
+      'core:type-water',
+    ]);
+    expect(screen.getByRole('button', { name: 'Água' })).toHaveAttribute('aria-pressed', 'true');
+    fireEvent.click(screen.getByRole('button', { name: 'Água' }));
+    await waitFor(() => expect(repository.state?.character?.energy.affinities).toEqual(['earth']));
+    expect(repository.state?.character?.nodeLibrary?.unlockedNodeIds).toContain('core:type-water');
+    fireEvent.click(screen.getByRole('button', { name: 'Água' }));
+    await waitFor(() =>
+      expect(repository.state?.character?.energy.affinities).toEqual(['earth', 'water']),
+    );
+    fireEvent.click(screen.getByRole('button', { name: 'Selar afinidades escolhidas' }));
+    await waitFor(() =>
+      expect(repository.state?.character?.extensions.manaAffinitiesLocked).toBe(true),
+    );
+    expect(screen.getByRole('button', { name: 'Água' })).toBeDisabled();
   });
 
   it('renders currency rewards in the mission catalog', async () => {

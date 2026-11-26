@@ -6,7 +6,9 @@
       "Combate simulado, bestiário, forja e editor universal de nós.",
       "Cinco áreas de navegação e temas visuais configuráveis.",
       "Missões principais, diárias e semanais com recompensas resgatáveis.",
-      "Gerenciamento local de personagens, saves, backups e mods."
+      "Gerenciamento local de personagens, saves, backups e mods.",
+      "Seleção permanente entre Mana, Aura e Sem Afinidade; Mana permite selar até quatro afinidades iniciais.",
+      "Os sete elementos básicos de Mana agora liberam nós elementais e participam das interações de afinidade do combate."
     ],
     "improved": [
       "Interface adaptada para telas Android e áreas seguras do sistema.",
@@ -23,7 +25,8 @@
     "removed": [],
     "technical": [
       "Formato de save separado das versões do aplicativo e do banco de dados.",
-      "O backup automático usa um snapshot local atômico e não abre o SQLite em segundo plano."
+      "O backup automático usa um snapshot local atômico e não abre o SQLite em segundo plano.",
+      "O registry inclui sete afinidades, dezoito combinações e sete evoluções despertas de Mana; ambiguidades documentais permanecem sinalizadas sem desbloqueio automático."
     ]
   }
 }

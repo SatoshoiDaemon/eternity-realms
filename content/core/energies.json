@@ -15,8 +15,12 @@
       },
       {
         "stage": "domínio elemental",
-        "elements": ["fire", "water", "earth", "air", "light", "shadow", "arcane"],
-        "adaptation": "Seven starter affinities exposed in content; advanced combos are registry entries."
+        "elements": ["fire", "earth", "shadow", "poison", "light", "air", "water"],
+        "selectionLimit": 4,
+        "manaCosts": { "basic": 100, "intermediate": 500, "advanced": 1000, "awakened": 1500 },
+        "masteryLevels": { "intermediate": 100, "advanced": 200, "awakened": 300 },
+        "canon": "Mana source: seven basic affinities; a new practitioner may select up to four.",
+        "adaptation": "The selected affinities are saved on the character and their type nodes become available to the node editor."
       },
       {
         "stage": "espírito",
@@ -26,7 +30,180 @@
       }
     ],
     "source": "Notion: Sistemas originais do RP, Energias e Sem Afinidade (2026-11-08)",
-    "adaptationNotes": "Progressão por sessões e afinidades selecionáveis é adaptação. Os sete elementos listados no RP original were Fogo, Frio, Vento e outros; exact complete list is not assumed."
+    "affinities": [
+      {
+        "id": "fire",
+        "name": "Fogo",
+        "element": "fire",
+        "nodeId": "core:type-fire",
+        "sourceStatus": "documented"
+      },
+      {
+        "id": "earth",
+        "name": "Terra",
+        "element": "earth",
+        "nodeId": "core:type-earth",
+        "sourceStatus": "documented"
+      },
+      {
+        "id": "shadow",
+        "name": "Sombra",
+        "element": "shadow",
+        "nodeId": "core:type-shadow",
+        "sourceStatus": "documented"
+      },
+      {
+        "id": "poison",
+        "name": "Veneno",
+        "element": "poison",
+        "nodeId": "core:type-poison",
+        "sourceStatus": "documented"
+      },
+      {
+        "id": "light",
+        "name": "Luz",
+        "element": "light",
+        "nodeId": "core:type-light",
+        "sourceStatus": "documented"
+      },
+      {
+        "id": "air",
+        "name": "Ar/Vento",
+        "element": "air",
+        "nodeId": "core:type-air",
+        "sourceStatus": "documented"
+      },
+      {
+        "id": "water",
+        "name": "Água",
+        "element": "water",
+        "nodeId": "core:type-water",
+        "sourceStatus": "documented"
+      }
+    ],
+    "combinations": [
+      {
+        "id": "fire-air-combustion",
+        "ingredients": ["fire", "air"],
+        "result": "Combustão",
+        "stage": "intermediate"
+      },
+      {
+        "id": "fire-water-blue-fire",
+        "ingredients": ["fire", "water"],
+        "result": "Fogo Azul",
+        "stage": "intermediate"
+      },
+      {
+        "id": "fire-shadow-shadow-fire",
+        "ingredients": ["fire", "shadow"],
+        "result": "Fogo Sombrio",
+        "stage": "intermediate"
+      },
+      {
+        "id": "fire-earth-lava",
+        "ingredients": ["fire", "earth"],
+        "result": "Lava",
+        "stage": "intermediate"
+      },
+      {
+        "id": "poison-air-rot",
+        "ingredients": ["poison", "air"],
+        "result": "Putrefação",
+        "stage": "intermediate"
+      },
+      {
+        "id": "poison-water-acid",
+        "ingredients": ["poison", "water"],
+        "result": "Ácido",
+        "stage": "intermediate"
+      },
+      {
+        "id": "earth-poison-metal",
+        "ingredients": ["earth", "poison"],
+        "result": "Metal",
+        "stage": "intermediate"
+      },
+      {
+        "id": "earth-water-plants",
+        "ingredients": ["earth", "water"],
+        "result": "Plantas",
+        "stage": "intermediate",
+        "sourceStatus": "conflicting"
+      },
+      {
+        "id": "earth-air-sand",
+        "ingredients": ["earth", "air"],
+        "result": "Areia",
+        "stage": "intermediate"
+      },
+      {
+        "id": "water-earth-ice",
+        "ingredients": ["water", "earth"],
+        "result": "Gelo",
+        "stage": "intermediate",
+        "sourceStatus": "conflicting"
+      },
+      {
+        "id": "water-air-vapor",
+        "ingredients": ["water", "air"],
+        "result": "Vapor",
+        "stage": "intermediate"
+      },
+      {
+        "id": "shadow-earth-solid-darkness",
+        "ingredients": ["shadow", "earth"],
+        "result": "Escuridão Sólida",
+        "stage": "intermediate"
+      },
+      {
+        "id": "shadow-water-liquid-darkness",
+        "ingredients": ["shadow", "water"],
+        "result": "Escuridão Líquida",
+        "stage": "intermediate"
+      },
+      {
+        "id": "shadow-air-immaterial-darkness",
+        "ingredients": ["shadow", "air"],
+        "result": "Escuridão Imaterial",
+        "stage": "intermediate"
+      },
+      {
+        "id": "light-shadow-neutralization",
+        "ingredients": ["light", "shadow"],
+        "result": "Neutralização",
+        "stage": "intermediate"
+      },
+      {
+        "id": "light-water-aurora",
+        "ingredients": ["light", "water"],
+        "result": "Aurora",
+        "stage": "intermediate"
+      },
+      {
+        "id": "light-fire-ray",
+        "ingredients": ["light", "fire"],
+        "candidates": ["Raio de luz", "Relâmpago"],
+        "stage": "intermediate",
+        "sourceStatus": "conflicting"
+      },
+      {
+        "id": "air-light-sound",
+        "ingredients": ["air", "light"],
+        "result": "Som",
+        "stage": "intermediate"
+      }
+    ],
+    "evolutions": [
+      { "affinity": "fire", "stage": "awakened", "result": "Plasma" },
+      { "affinity": "water", "stage": "awakened", "result": "Zero Absoluto" },
+      { "affinity": "earth", "stage": "awakened", "result": "Matéria" },
+      { "affinity": "air", "stage": "awakened", "result": "Vetor" },
+      { "affinity": "light", "stage": "awakened", "result": "Energia" },
+      { "affinity": "shadow", "stage": "awakened", "result": "Gravidade" },
+      { "affinity": "poison", "stage": "awakened", "result": "Julgamento" }
+    ],
+    "adaptationNotes": "A seleção de até quatro afinidades e o acesso aos nós correspondentes estão adaptados para o jogo. Combinações elementais e evoluções são registradas como conteúdo canônico, mas sua progressão jogável ainda depende dos requisitos e operações declarados no sistema de Mana. Água+Terra possui resultados conflitantes na documentação (Plantas e Gelo), portanto nenhum resultado foi escolhido para desbloqueio automático."
   },
   {
     "id": "energy:aura",
@@ -44,15 +221,8 @@
       },
       {
         "stage": "ego",
-        "paths": [
-          "mental",
-          "physical",
-          "spiritual",
-          "existential",
-          "environmental",
-          "transcendent"
-        ],
-        "source": "Canonical types vary by documentation and remain represented as separate unlock entries."
+        "paths": ["emitter", "defensive", "offensive", "controller", "utility", "pacifist"],
+        "source": "Six documented Ego styles: Emitter, Defensive, Offensive, Controller, Utility, Pacifist."
       },
       {
         "stage": "reinos de cultivo",

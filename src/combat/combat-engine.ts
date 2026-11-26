@@ -80,6 +80,7 @@ function cloneActor(actor: CombatActor): CombatActor {
     evasion: actor.evasion && { ...actor.evasion },
     guarantees: actor.guarantees && { ...actor.guarantees },
     position: { ...actor.position },
+    affinityElements: actor.affinityElements && [...actor.affinityElements],
   };
 }
 
@@ -553,17 +554,31 @@ function combineTagMultipliers(
       const affinity = value.affinityPath
         ? pathValue({ defender }, value.affinityPath)
         : defender.affinityElement;
+      const affinities =
+        value.affinityPath === 'defender.affinityElement' && defender.affinityElements
+          ? defender.affinityElements
+          : Array.isArray(affinity)
+            ? affinity.filter((entry): entry is string => typeof entry === 'string')
+            : typeof affinity === 'string'
+              ? [affinity]
+              : [];
       const opposites = value.oppositesPath
         ? pathValue({ environment }, value.oppositesPath)
         : environment.elementOpposites;
-      if (damage.element === affinity && typeof value.sameElement === 'number') {
+      if (
+        damage.element !== undefined &&
+        affinities.includes(damage.element) &&
+        typeof value.sameElement === 'number'
+      ) {
         results.push({ effect, multiplier: value.sameElement });
       } else if (
-        typeof affinity === 'string' &&
         typeof opposites === 'object' &&
         opposites !== null &&
-        Array.isArray((opposites as Record<string, unknown>)[affinity]) &&
-        ((opposites as Record<string, unknown>)[affinity] as unknown[]).includes(damage.element) &&
+        affinities.some(
+          (entry) =>
+            Array.isArray((opposites as Record<string, unknown>)[entry]) &&
+            ((opposites as Record<string, unknown>)[entry] as unknown[]).includes(damage.element),
+        ) &&
         typeof value.oppositeElement === 'number'
       ) {
         results.push({ effect, multiplier: value.oppositeElement });

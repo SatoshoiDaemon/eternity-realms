@@ -236,6 +236,7 @@ export const PhaseTwoPanels = memo(function PhaseTwoPanels({
         [action],
         content.races.get(character!.raceId),
         content.systems,
+        [...content.energies.values()],
       );
       actor.side = 'party';
       actor.actionPriority = [action.id, ...actor.actionPriority];

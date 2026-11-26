@@ -17,6 +17,12 @@ import {
 import { createCharacter, createInitialGameState } from '../domain/model';
 import { awardExperience, grantItems, spendAttributePoint } from '../domain/progression';
 import {
+  selectEnergyPath,
+  selectManaAffinities,
+  sealManaAffinities,
+  type EnergyPath,
+} from '../domain/mana-affinities';
+import {
   cancelActiveSession,
   editQueuedSession,
   enqueueSession,
@@ -131,6 +137,15 @@ function localizedStatLabel(id: string): string {
     mana: 'energy.mana',
     spirit: 'energy.spirit',
     none: 'energy.none',
+    unaffiliated: 'energy.none',
+    unawakened: 'energy.unawakened',
+    fire: 'energy.fire',
+    earth: 'energy.earth',
+    shadow: 'energy.shadow',
+    poison: 'energy.poison',
+    light: 'energy.light',
+    air: 'energy.air',
+    water: 'energy.water',
   };
   const key = keys[id.toLowerCase()];
   return key ? t(key) : id;
@@ -1885,6 +1900,8 @@ export function GameApp({
     const brokenImplantIds = new Set(getBrokenImplantIds(character));
     const implantCapacity = getImplantCapacity(character);
     const implantLoad = getAlchemicalLoad(character, activeContent);
+    const manaAffinityDefinitions = activeContent.energies.get('energy:mana')?.affinities ?? [];
+    const selectedManaAffinities = character.energy.affinities ?? [];
     const wallet = character.extensions.wallet;
     const fragmentBalance =
       typeof wallet === 'object' && wallet !== null && 'fragments' in wallet
@@ -1991,6 +2008,91 @@ export function GameApp({
               <section className="panel">
                 <p className="eyebrow">{t('character.energy')}</p>
                 <h2>{localizedStatLabel(character.energy.affinity)}</h2>
+                <fieldset className="energy-choice-group">
+                  <legend>{t('character.energyPath')}</legend>
+                  <p className="muted">{t('character.energyPathPermanent')}</p>
+                  <div className="category-rail">
+                    {(
+                      [
+                        { id: 'mana', label: t('energy.mana') },
+                        { id: 'aura', label: t('energy.aura') },
+                        { id: 'unaffiliated', label: t('energy.none') },
+                      ] as const
+                    ).map((path) => (
+                      <button
+                        className="category-chip"
+                        type="button"
+                        key={path.id}
+                        aria-pressed={character.energy.affinity === path.id}
+                        disabled={
+                          character.energy.affinity !== 'unawakened' &&
+                          character.energy.affinity !== path.id
+                        }
+                        onClick={() =>
+                          void updateCharacterAction((current) =>
+                            selectEnergyPath(current, path.id as EnergyPath),
+                          )
+                        }
+                      >
+                        {path.label}
+                      </button>
+                    ))}
+                  </div>
+                </fieldset>
+                {character.energy.affinity === 'mana' && (
+                  <fieldset className="energy-choice-group">
+                    <legend>{t('character.manaAffinities')}</legend>
+                    <p className="muted">{t('character.manaAffinitiesHelp')}</p>
+                    <div className="category-rail">
+                      {manaAffinityDefinitions.map((affinity) => {
+                        const selected = selectedManaAffinities.includes(affinity.id);
+                        return (
+                          <button
+                            className="category-chip"
+                            type="button"
+                            key={affinity.id}
+                            aria-pressed={selected}
+                            disabled={
+                              character.extensions.manaAffinitiesLocked === true ||
+                              (!selected && selectedManaAffinities.length >= 4)
+                            }
+                            onClick={() =>
+                              void updateCharacterAction((current) => {
+                                const currentSelection = current.energy.affinities ?? [];
+                                const nextSelection = currentSelection.includes(affinity.id)
+                                  ? currentSelection.filter((id) => id !== affinity.id)
+                                  : [...currentSelection, affinity.id];
+                                return selectManaAffinities(
+                                  current,
+                                  nextSelection,
+                                  manaAffinityDefinitions,
+                                );
+                              })
+                            }
+                          >
+                            {affinity.name}
+                          </button>
+                        );
+                      })}
+                    </div>
+                    {character.extensions.manaAffinitiesLocked === true ? (
+                      <p className="muted" role="status">
+                        {t('character.manaAffinitiesSealed')}
+                      </p>
+                    ) : (
+                      <button
+                        className="quiet-button"
+                        type="button"
+                        disabled={selectedManaAffinities.length === 0}
+                        onClick={() =>
+                          void updateCharacterAction((current) => sealManaAffinities(current))
+                        }
+                      >
+                        {t('character.sealManaAffinities')}
+                      </button>
+                    )}
+                  </fieldset>
+                )}
                 <div className="energy-bars">
                   {Object.entries(character.energy.reserves).map(([id, amount]) => (
                     <div key={id}>

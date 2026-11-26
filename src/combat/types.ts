@@ -148,6 +148,8 @@ export interface CombatActor {
   guarantees?: { hits: number; semiHits: number; evasions: number };
   position: { x: number; y: number };
   affinityElement?: string;
+  /** All selected elemental affinities; affinityElement remains the primary legacy field. */
+  affinityElements?: string[];
   movementState?: string;
   lastDamageChannel?: DamageChannel;
   actionsTaken?: number;
