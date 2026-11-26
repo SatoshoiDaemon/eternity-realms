@@ -51,6 +51,7 @@ const effectType = z.enum([
   'adaptive_resistance',
   'status_duration_multiplier',
   'status_potency_multiplier',
+  'status_persistence',
   'on_support_effect',
 ]);
 
@@ -76,6 +77,12 @@ const tagEffectSchema = z
         code: 'custom',
         message: 'Status multipliers must be finite and positive',
       });
+    }
+    if (
+      effect.type === 'status_persistence' &&
+      (typeof effect.value !== 'string' || effect.value.trim().length === 0)
+    ) {
+      context.addIssue({ code: 'custom', message: 'Persistent status effect must name a status' });
     }
     if (
       effect.type === 'on_support_effect' &&

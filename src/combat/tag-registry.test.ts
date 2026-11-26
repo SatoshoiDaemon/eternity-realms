@@ -167,6 +167,56 @@ describe('data driven enemy tags', () => {
     }
   });
 
+  it('requires persistent-status rules to name a status id', () => {
+    const template = registry[0]!;
+    const tagWithPersistence = (value: unknown) => ({
+      ...template,
+      id: 'race:test-persistence',
+      modifiers: [
+        {
+          ...template.modifiers[0]!,
+          id: 'race:test-persistence:rule',
+          event: 'status.incoming',
+          interactionId: 'race:test-persistence',
+          conditions: [],
+          effect: { type: 'status_persistence', value },
+        },
+      ],
+    });
+
+    expect(loadTagRegistry([tagWithPersistence('core:burn')])).toHaveLength(1);
+    for (const invalidValue of [undefined, '', 2]) {
+      expect(() => loadTagRegistry([tagWithPersistence(invalidValue)])).toThrow(
+        'Invalid enemy tag rule',
+      );
+    }
+  });
+
+  it('requires persistent-status rules to name a status id', () => {
+    const template = registry[0]!;
+    const tagWithPersistence = (value: unknown) => ({
+      ...template,
+      id: 'race:test-persistence',
+      modifiers: [
+        {
+          ...template.modifiers[0]!,
+          id: 'race:test-persistence:rule',
+          event: 'status.incoming',
+          interactionId: 'race:test-persistence',
+          conditions: [],
+          effect: { type: 'status_persistence', value },
+        },
+      ],
+    });
+
+    expect(loadTagRegistry([tagWithPersistence('core:burn')])).toHaveLength(1);
+    for (const invalidValue of [undefined, '', 2]) {
+      expect(() => loadTagRegistry([tagWithPersistence(invalidValue)])).toThrow(
+        'Invalid enemy tag rule',
+      );
+    }
+  });
+
   it('validates support reaction status payloads', () => {
     const template = registry[0]!;
     const tagWithSupportEffect = (value: unknown) => ({

@@ -1,5 +1,5 @@
-Warning: truncated output (original token count: 27738)
-Total output lines: 3456
+Warning: truncated output (original token count: 29220)
+Total output lines: 3625
 
 import { describe, expect, it } from 'vitest';
 import type { CombatActor, CombatAction } from './types';
@@ -596,6 +596,175 @@ describe('deterministic event combat', () => {
     );
 
     expect(result.actors.find((entry) => entry.id === 'a-angel')?.hp.current).toBe(83);
+  });
+
+  it.each(['core:poison', 'core:bleeding'])(
+    'Slime rejects the %s status through its racial physiology',
+    (statusId) => {
+      const content = loadOfficialContent();
+      const race = content.races.get('slime')!;
+      const slime = actor('z-slime', 'party', {
+        tags: [...(race.combatTags ?? []), race.combatTag!.id],
+        actions: [],
+      });
+      const application: CombatAction = {
+        id: `test:apply-${statusId}`,
+        name: 'Apply status',
+        kind: 'support',
+        target: 'enemy',
+        intervalMs: 1_000,
+        accuracy: 1,
+        effects: [{ id: statusId, category: 'dot', potency: 2, counter: 3 }],
+      };
+      const attacker = actor('a-attacker', 'enemy', {
+        actions: [application],
+        actionPriority: [application.id],
+      });
+      const result = advanceCombat(
+        createCombatState(`slime-immunity:${statusId}`, [attacker, slime], 71, {}, [
+          ...content.enemyTags.values(),
+        ]),
+        0,
+      );
+
+      expect(result.actors.find((entry) => entry.id === 'z-slime')?.effects).not.toContainEqual(
+        expect.objectContaining({ id: statusId }),
+      );
+    },
+  );
+
+  it('Slime doubles Burn potency and keeps Burn and Freeze until explicitly removed', () => {
+    const content = loadOfficialContent();
+    const race = content.races.get('slime')!;
+    const slime = actor('z-slime', 'party', {
+      tags: [...(race.combatTags ?? []), race.combatTag!.id],
+      actions: [],
+    });
+    const application: CombatAction = {
+      id: 'test:apply-slime-elements',
+      name: 'Apply statuses',
+      kind: 'support',
+      target: 'enemy',
+      intervalMs: 1_000,
+      accuracy: 1,
+      effects: [
+        { id: 'core:burn', category: 'dot', potency: 2, counter: 1 },
+        { id: 'core:freeze', category: 'control', potency: 1, counter: 1 },
+      ],
+    };
+    const attacker = actor('a-attacker', 'enemy', {
+      actions: [application],
+      actionPriority: [application.id],
+    });
+    const result = advanceCombat(
+      createCombatState('slime-elemental-reaction', [attacker, slime], 73, {}, [
+        ...content.enemyTags.values(),
+      ]),
+      4_000,
+    );
+    const effects = result.actors.find((entry) => entry.id === 'z-slime')?.effects;
+
+    expect(effects).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({ id: 'core:burn', potency: 4, counter: 0, expiresAt: undefined }),
+        expect.objectContaining({ id: 'core:freeze', counter: 0, expiresAt: undefined }),
+      ]),
+    );
+  });
+
+  it('preserves Slime Burn and Freeze statuses already present at combat start', () => {
+    const content = loadOfficialContent();
+    const race = content.races.get('slime')!;
+    const slime = actor('a-slime', 'party', {
+      tags: [...(race.combatTags ?? []), race.combatTag!.id],
+      effects: [
+        { id: 'core:burn', category: 'dot', potency: 2, counter: 4, expiresAt: 4_000 },
+        { id: 'core:freeze', category: 'control', potency: 1, counter: 2, expiresAt: 2_000 },
+      ],
+    });
+    const state = createCombatState(
+      'slime-persistent-start-status',
+      [slime, actor('z-enemy', 'enemy')],
+      74,
+      {},
+      [...content.enemyTags.values()],
+    );
+    const effects = state.actors.find((entry) => entry.id === 'a-slime')?.effects;
+
+    expect(effects).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({ id: 'core:burn', counter: 0, expiresAt: undefined }),
+        expect.objectContaining({ id: 'core:freeze', counter: 0, expiresAt: undefined }),
+      ]),
+    );
+  });
+
+  it('applies acidic poison and Fragile when a Slime is struck in melee', () => {
+    const content = loadOfficialContent();
+    const race = content.races.get('slime')!;
+    const attacker = actor('a-attacker', 'party', { actions: [strike] });
+    const slime = actor('z-slime', 'enemy', {
+      tags: [...(race.combatTags ?? []), race.combatTag!.id],
+      actions: [],
+    });
+    const result = advanceCombat(
+      createCombatState('slime-acid-contact', [attacker, slime], 83, {}, [
+        ...content.enemyTags.values(),
+      ]),
+      0,
+    );
+
+    expect(result.actors.find((entry) => entry.id === 'a-attacker')?.effects).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({ id: 'core:poison', potency: 15, counter: 1 }),
+        expect.objectContaining({ id: 'core:fragile', potency: 7, counter: 3 }),
+      ]),
+    );
+  });
+
+  it('does not transmit acid effects to ranged attackers who never touch the Slime', () => {
+    const content = loadOfficialContent();
+    const race = content.races.get('slime')!;
+    const ranged: CombatAction = {
+      ...strike,
+      id: 'test:ranged-strike',
+      name: 'Ranged strike',
+      kind: 'ranged',
+    };
+    const attacker = actor('a-attacker', 'party', {
+      actions: [ranged],
+      actionPriority: [ranged.id],
+    });
+    const slime = actor('z-slime', 'enemy', {
+      tags: [...(race.combatTags ?? []), race.combatTag!.id],
+      actions: [],
+    });
+    const result = advanceCombat(
+      createCombatState('slime-ranged-counterplay', [attacker, slime], 87, {}, [
+        ...content.enemyTags.values(),
+      ]),
+      0,
+    );
+
+    expect(result.actors.find((entry) => entry.id === 'a-attacker')?.effects).toEqual([]);
+  });
+
+  it('adds four regeneration levels per resolved Slime turn', () => {
+    const content = loadOfficialContent();
+    const race = content.races.get('slime')!;
+    const slime = actor('a-slime', 'party', {
+      tags: [...(race.combatTags ?? []), race.combatTag!.id],
+      hp: { current: 80, maximum: 100 },
+    });
+    const enemy = actor('z-enemy', 'enemy', { actions: [] });
+    const result = advanceCombat(
+      createCombatState('slime-regeneration', [slime, enemy], 89, {}, [
+        ...content.enemyTags.values(),
+      ]),
+      0,
+    );
+
+    expect(result.actors.find((entry) => entry.id === 'a-slime')?.hp.current).toBe(84);
   });
 
   it.each(['core:confusion', 'core:exhaustion', 'core:haste'])(
@@ -1282,184 +1451,7 @@ describe('deterministic event combat', () => {
       [{ soulAnchorAvailable: false, soulAnchorUsed: 1 as never }, 'invalid soul anchor state'],
       [{ attributes: { ...hero.attributes, speed: 0 } }, 'positive Speed'],
       [{ mitigation: { physical: 1, magical: 0 } }, 'mitigation'],
-      [{ evasion: { chance: 2, guaranteed: 0 } }, 'invalid evasion'],
-      [{ actions: [{ ...strike, id: ' ', accuracy: 1 }] }, 'invalid action'],
-      [{ actions: [{ ...strike, intervalMs: 0 }] }, 'invalid action'],
-      [{ actions: [{ ...strike, accuracy: 2 }] }, 'invalid action'],
-      [
-        { actions: [{ ...strike, damage: { ...strike.damage!, amount: -1 } }] },
-        'invalid attack damage',
-      ],
-      [
-        { actions: [{ ...strike, movement: { kind: 'push', distance: -1 } }] },
-        'invalid movement action',
-      ],
-    ];
-    for (const [override, message] of invalidActors) {
-      expect(() =>
-        createCombatState('invalid', [actor('invalid', 'party', override), foe], 1),
-      ).toThrow(message);
-    }
-  });
-
-  it('deep-copies action, equipment, policy, status, evasion, and guarantee state', () => {
-    const equippedAction: CombatAction = {
-      ...strike,
-      properties: ['ranged'],
-      damage: {
-        ...strike.damage!,
-        modifiers: [
-          {
-            id: 'item:edge',
-            interactionId: 'edge',
-            operation: 'add',
-            value: 2,
-            potency: 1,
-            origin: { kind: 'item', id: 'item:edge' },
-          },
-        ],
-      },
-      cost: { resource: 'mana', amount: 1 },
-      effects: [
-        {
-          id: 'base:ward',
-          category: 'buff',
-          potency: 1,
-          counter: 1,
-          source: { kind: 'effect', id: 'base:ward' },
-        },
-      ],
-    };
-    const state = createCombatState(
-      'copy',
-      [
-        actor('hero', 'party', {
-          equipment: [{ id: 'sword', properties: ['cutting'] }],
-          actions: [equippedAction],
-          effects: [
-            {
-              id: 'base:guard',
-              category: 'buff',
-              potency: 1,
-              counter: 2,
-              source: { kind: 'item', id: 'shield' },
-            },
-          ],
-          policy: {
-            id: 'base:conditional',
-            rules: [
-              {
-                actionId: 'base:strike',
-                priority: 2,
-                conditions: [{ path: 'actor.hpRatio', operator: 'lt', value: 0.5 }],
-              },
-            ],
-          },
-          evasion: { chance: 0.25, guaranteed: 1 },
-          guarantees: { hits: 1, semiHits: 2, evasions: 3 },
-        }),
-        actor('foe', 'enemy'),
-      ],
-      0,
-    );
-
-    expect(state.rngState).not.toBe(0);
-    expect(state.actors[0]?.equipment[0]?.properties).toEqual(['cutting']);
-    expect(state.actors[0]?.actions[0]?.damage?.modifiers?.[0]?.origin.kind).toBe('item');
-    expect(state.actors[0]?.actions[0]?.effects?.[0]?.source?.id).toBe('base:ward');
-    expect(state.actors[0]?.policy.rules[0]?.conditions?.[0]?.operator).toBe('lt');
-    expect(state.actors[0]?.guarantees).toEqual({ hits: 1, semiHits: 2, evasions: 3 });
-  });
-
-  it('resolves inevitable and guaranteed hits, accuracy misses, guaranteed evasion, semi hits, and random evasion', () => {
-    const run = (
-      id: string,
-      action: CombatAction,
-      attackerOverrides: Partial<CombatActor> = {},
-      defenderOverrides: Partial<CombatActor> = {},
-    ) =>
-      advanceCombat(
-        createCombatState(
-          id,
-          [
-            actor('a-hero', 'party', {
-              actions: [action],
-              actionPriority: [action.id],
-              ...attackerOverrides,
-            }),
-            actor('z-target', 'enemy', { actions: [], ...defenderOverrides }),
-          ],
-          123,
-        ),
-        0,
-      ).log[0];
-    const unavoidable = {
-      ...strike,
-      id: 'base:unavoidable',
-      accuracy: 0,
-      damage: { ...strike.damage!, properties: ['inevitable'] },
-    };
-    const guaranteed = { ...strike, id: 'base:guaranteed', accuracy: 0 };
-    const evadable = { ...strike, id: 'base:evadable', accuracy: 1 };
-
-    expect(run('inevitable', unavoidable)?.hit).toBe(true);
-    expect(
-      run('guaranteed', guaranteed, { guarantees: { hits: 1, semiHits: 0, evasions: 0 } })?.hit,
-    ).toBe(true);
-    expect(run('miss', guaranteed)?.hit).toBe(false);
-    expect(
-      run('guaranteed-dodge', evadable, {}, { guarantees: { hits: 0, semiHits: 0, evasions: 1 } })
-        ?.evaded,
-    ).toBe(true);
-    expect(
-      run(
-        'semi-hit',
-        evadable,
-        { guarantees: { hits: 0, semiHits: 1, evasions: 0 } },
-        { evasion: { chance: 1, guaranteed: 0 } },
-      )?.evaded,
-    ).toBe(false);
-    expect(
-      run('random-dodge', evadable, {}, { evasion: { chance: 1, guaranteed: 0 } })?.evaded,
-    ).toBe(true);
-  });
-
-  it('selects policy actions by conditions, player priority, tag behavior, target mode, and available resources', () => {
-    const attack = { ...strike, id: 'base:policy-attack' };
-    const guard: CombatAction = {
-      id: 'base:guard',
-      name: 'Guard',
-      kind: 'guard',
-      target: 'self',
-      intervalMs: 1_000,
-      accuracy: 1,
-    };
-    const expensive = { ...strike, id: 'base:expensive', cost: { resource: 'mana', amount: 10 } };
-    const policy = actor('a-hero', 'party', {
-      tags: ['base:berserker'],
-      actions: [guard, attack, expensive],
-      actionPriority: [attack.id, guard.id, expensive.id],
-      energy: { mana: 1 },
-      policy: {
-        id: 'base:threshold',
-        rules: [
-          {
-            actionId: guard.id,
-            priority: 100,
-            conditions: [
-              { path: 'actor.side', operator: 'eq', value: 'party' },
-              { path: 'target.side', operator: 'neq', value: 'party' },
-              { path: 'target.hpRatio', operator: 'gte', value: 0.5 },
-              { path: 'target.hpRatio', operator: 'lte', value: 0.5 },
-              { path: 'actor.attributes.speed', operator: 'gt', value: 5 },
-              { path: 'actor.attributes.speed', operator: 'lt', value: 11 },
-            ],
-          },
-        ],
-      },
-    });
-    const result = advanceCombat(
-      createCombatStat…2738 tokens truncated…, counter], 2), 0);
+      [{ evasion: { chance: 2, guar…4220 tokens truncated…, counter], 2), 0);
     expect(
       result.log.some(
         (entry) => entry.actorId === counter.id && entry.actionId === counterAction.id,

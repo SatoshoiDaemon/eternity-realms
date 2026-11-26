@@ -692,7 +692,149 @@
     ],
     "source": "Notion: Eternity Realms — Sistemas originais do RP (2026-11-08; atualização de Kitsune/2026-11-08)",
     "adaptationNotes": "Texto canônico resumido; os efeitos marcados como incompletos ou ambíguos permanecem sem valores inventados. A adaptação mecânica aparece em combatTags e activityBonuses.",
-    "combatTags": ["base:gelatinous", "base:regenerative", "base:corrosive"]
+    "combatTags": ["base:gelatinous", "base:regenerative", "base:corrosive"],
+    "combatTag": {
+      "id": "race:slime-acidic-body",
+      "name": "Corpo Ácido",
+      "description": "A fisiologia do Slime rejeita veneno e sangramento, perpetua queimadura/congelamento e contamina quem toca seu gel.",
+      "category": "anatomy",
+      "origin": "Notion: Eternity Realms — Sistemas originais do RP",
+      "activationConditions": [
+        "Receber Veneno ou Sangramento",
+        "Receber Queimadura ou Congelamento",
+        "Receber dano físico corpo a corpo",
+        "Resolver um turno de combate"
+      ],
+      "eventsObserved": ["status.incoming", "damage.received", "environment.tick"],
+      "modifiers": [
+        {
+          "id": "race:slime-acidic-body:poison-immunity",
+          "event": "status.incoming",
+          "conditions": [{ "path": "status.id", "op": "eq", "value": "core:poison" }],
+          "interactionId": "race:slime:poison-immunity",
+          "potency": 1,
+          "priority": 0,
+          "effect": { "type": "status_immunity", "value": "core:poison" }
+        },
+        {
+          "id": "race:slime-acidic-body:bleeding-immunity",
+          "event": "status.incoming",
+          "conditions": [{ "path": "status.id", "op": "eq", "value": "core:bleeding" }],
+          "interactionId": "race:slime:bleeding-immunity",
+          "potency": 1,
+          "priority": 0,
+          "effect": { "type": "status_immunity", "value": "core:bleeding" }
+        },
+        {
+          "id": "race:slime-acidic-body:burn-potency",
+          "event": "status.incoming",
+          "conditions": [{ "path": "status.id", "op": "eq", "value": "core:burn" }],
+          "interactionId": "race:slime:burn-potency",
+          "potency": 2,
+          "priority": 0,
+          "effect": { "type": "status_potency_multiplier", "value": 2 }
+        },
+        {
+          "id": "race:slime-acidic-body:burn-persistence",
+          "event": "status.incoming",
+          "conditions": [{ "path": "status.id", "op": "eq", "value": "core:burn" }],
+          "interactionId": "race:slime:burn-persistence",
+          "potency": 1,
+          "priority": 0,
+          "effect": { "type": "status_persistence", "value": "core:burn" }
+        },
+        {
+          "id": "race:slime-acidic-body:freeze-persistence",
+          "event": "status.incoming",
+          "conditions": [{ "path": "status.id", "op": "eq", "value": "core:freeze" }],
+          "interactionId": "race:slime:freeze-persistence",
+          "potency": 1,
+          "priority": 0,
+          "effect": { "type": "status_persistence", "value": "core:freeze" }
+        },
+        {
+          "id": "race:slime-acidic-body:acid-poison-contact",
+          "event": "damage.received",
+          "conditions": [
+            { "path": "damage.channel", "op": "eq", "value": "physical" },
+            { "path": "action.kind", "op": "eq", "value": "attack" }
+          ],
+          "interactionId": "race:slime:acid-poison-contact",
+          "potency": 1,
+          "priority": 0,
+          "effect": {
+            "type": "on_hit_effect",
+            "value": { "id": "core:poison", "category": "dot", "potency": 15, "counter": 1 }
+          }
+        },
+        {
+          "id": "race:slime-acidic-body:acid-fragile-contact",
+          "event": "damage.received",
+          "conditions": [
+            { "path": "damage.channel", "op": "eq", "value": "physical" },
+            { "path": "action.kind", "op": "eq", "value": "attack" }
+          ],
+          "interactionId": "race:slime:acid-fragile-contact",
+          "potency": 1,
+          "priority": 0,
+          "effect": {
+            "type": "on_hit_effect",
+            "value": { "id": "core:fragile", "category": "debuff", "potency": 7, "counter": 3 }
+          }
+        },
+        {
+          "id": "race:slime-acidic-body:regeneration",
+          "event": "environment.tick",
+          "conditions": [
+            {
+              "path": "actor.effects",
+              "op": "not_includes_id",
+              "value": "base:regeneration-suppressed"
+            }
+          ],
+          "interactionId": "race:slime:regeneration",
+          "potency": 3,
+          "priority": 0,
+          "effect": { "type": "regeneration", "value": 3 }
+        }
+      ],
+      "interactions": [
+        {
+          "id": "race:slime:poison-immunity",
+          "counterplay": "O Slime é imune a Veneno."
+        },
+        {
+          "id": "race:slime:bleeding-immunity",
+          "counterplay": "O Slime é imune a Sangramento."
+        },
+        {
+          "id": "race:slime:burn-potency",
+          "counterplay": "Queimadura recebida causa o dobro de dano pela Potência dobrada."
+        },
+        {
+          "id": "race:slime:burn-persistence",
+          "counterplay": "Queimadura não expira naturalmente no Slime e permanece até ser removida."
+        },
+        {
+          "id": "race:slime:freeze-persistence",
+          "counterplay": "Congelamento não expira naturalmente no Slime e permanece até ser removido."
+        },
+        {
+          "id": "race:slime:acid-poison-contact",
+          "counterplay": "Um ataque físico corpo a corpo contra o Slime aplica Veneno 15/1 ao atacante."
+        },
+        {
+          "id": "race:slime:acid-fragile-contact",
+          "counterplay": "Um ataque físico corpo a corpo contra o Slime aplica Frágil 7/3 ao atacante."
+        },
+        {
+          "id": "race:slime:regeneration",
+          "counterplay": "A regeneração base e três níveis adicionais rendem quatro HP por turno resolvido."
+        }
+      ],
+      "requirements": [],
+      "properties": ["racial", "gelatinous", "acid", "regenerative"]
+    }
   },
   {
     "id": "elf",

@@ -211,14 +211,24 @@ export function createCombatState(
   const rngState = seed >>> 0 || ZERO_SEED_STATE;
   const clonedActors = actors.map(cloneActor).map((actor) => ({
     ...actor,
-    effects: actor.effects.map((effect) => ({
-      ...effect,
-      expiresAt: effect.expiresAt ?? (effect.counter > 0 ? effect.counter * 1_000 : undefined),
-      nextTickAt:
-        effect.tickDamage && effect.tickIntervalMs
-          ? (effect.nextTickAt ?? effect.tickIntervalMs)
-          : effect.nextTickAt,
-    })),
+    effects: actor.effects.map((effect) => {
+      const persistent =
+        tagRegistry?.length &&
+        evaluateTagEffects(actor.tags, 'status.incoming', { status: effect }, tagRegistry).some(
+          (rule) => rule.type === 'status_persistence' && rule.value === effect.id,
+        );
+      return {
+        ...effect,
+        counter: persistent ? 0 : effect.counter,
+        expiresAt: persistent
+          ? undefined
+          : (effect.expiresAt ?? (effect.counter > 0 ? effect.counter * 1_000 : undefined)),
+        nextTickAt:
+          effect.tickDamage && effect.tickIntervalMs
+            ? (effect.nextTickAt ?? effect.tickIntervalMs)
+            : effect.nextTickAt,
+      };
+    }),
   }));
   return {
     id,
@@ -708,19 +718,22 @@ function applyStatus(
         : multiplier,
     1,
   );
+  const persistent = incomingEffects.some(
+    (rule) => rule.type === 'status_persistence' && rule.value === effect.id,
+  );
   const originalDurationMs =
     effect.expiresAt === undefined ? effect.counter * 1_000 : effect.expiresAt - nowMs;
   const adjustedDurationMs = originalDurationMs * durationMultiplier;
   const incoming = {
     ...effect,
     potency: effect.potency * potencyMultiplier,
-    counter: adjustedDurationMs / 1_000,
+    counter: persistent ? 0 : adjustedDurationMs / 1_000,
     sourceActorId: effect.sourceActorId ?? sourceActor.id,
     nextTickAt:
       effect.tickDamage && effect.tickIntervalMs
         ? (effect.nextTickAt ?? nowMs + effect.tickIntervalMs)
         : undefined,
-    expiresAt: nowMs + adjustedDurationMs,
+    expiresAt: persistent ? undefined : nowMs + adjustedDurationMs,
   };
   const currentIndex = target.effects.findIndex((candidate) => candidate.id === incoming.id);
   if (currentIndex < 0) {
@@ -730,7 +743,9 @@ function applyStatus(
   const current = target.effects[currentIndex]!;
   if (
     incoming.potency > current.potency ||
-    (incoming.potency === current.potency && incoming.counter > current.counter)
+    (incoming.potency === current.potency &&
+      ((incoming.expiresAt === undefined && current.expiresAt !== undefined) ||
+        incoming.counter > current.counter))
   ) {
     target.effects[currentIndex] = incoming;
     return true;
