@@ -501,7 +501,7 @@
     "id": "base:ethereal",
     "category": "anatomy",
     "name": "Etéreo",
-    "description": "Faseia ataques físicos comuns; ancoragem ou revelação permite atingi-lo.",
+    "description": "Faseia ataques físicos comuns; telecinese, propriedade espiritual, ancoragem ou revelação permite atingi-lo.",
     "origin": "base",
     "activationConditions": ["attack is physical and lacks phase counterplay"],
     "eventsObserved": ["targeting.check"],
@@ -518,7 +518,7 @@
           {
             "path": "attack.properties",
             "op": "not_includes_any",
-            "value": ["spiritual", "anchoring", "revealing", "inevitable"]
+            "value": ["spiritual", "telekinetic", "anchoring", "revealing", "inevitable"]
           },
           {
             "path": "defender.revealed",
@@ -531,14 +531,14 @@
         "priority": 100,
         "effect": {
           "type": "target_gate",
-          "requiredProperties": ["spiritual", "anchoring", "revealing"]
+          "requiredProperties": ["spiritual", "telekinetic", "anchoring", "revealing"]
         }
       }
     ],
     "interactions": [
       {
         "id": "anchor",
-        "counterplay": "ancoragem, revelação ou propriedade espiritual"
+        "counterplay": "telecinese, ancoragem, revelação ou propriedade espiritual"
       }
     ],
     "requirements": [],

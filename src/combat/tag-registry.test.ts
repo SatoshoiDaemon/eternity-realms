@@ -85,9 +85,13 @@ describe('data driven enemy tags', () => {
     const anchored = evaluateTagEffects(['base:ghost', 'base:ethereal'], 'targeting.check', {
       attack: { channel: 'physical', properties: ['spiritual', 'anchoring'] },
     });
+    const telekinetic = evaluateTagEffects(['base:ghost', 'base:ethereal'], 'targeting.check', {
+      attack: { channel: 'physical', properties: ['telekinetic'] },
+    });
 
     expect(ordinary.some((effect) => effect.type === 'target_gate')).toBe(true);
     expect(anchored.some((effect) => effect.type === 'target_gate')).toBe(false);
+    expect(telekinetic.some((effect) => effect.type === 'target_gate')).toBe(false);
   });
 
   it('applies material weaknesses and environmental affinity from rules, not creature names', () => {
@@ -138,6 +142,203 @@ describe('data driven enemy tags', () => {
     expect(() => evaluateTagEffects(['missing:tag'], 'damage.incoming', {})).toThrow(
       'Unknown enemy tag',
     );
+  });
+
+  it('requires finite positive values for duration and potency multipliers', () => {
+    const template = registry[0]!;
+    const tagWithMultiplier = (type: string, value: unknown) => ({
+      ...template,
+      id: 'race:test-duration',
+      modifiers: [
+        {
+          ...template.modifiers[0]!,
+          id: 'race:test-duration:rule',
+          event: 'status.incoming',
+          interactionId: 'race:test-duration',
+          conditions: [],
+          effect: { type, value },
+        },
+      ],
+    });
+
+    for (const type of ['status_duration_multiplier', 'status_potency_multiplier']) {
+      expect(loadTagRegistry([tagWithMultiplier(type, 0.5)])).toHaveLength(1);
+      for (const invalidValue of [undefined, 0, Infinity]) {
+        expect(() => loadTagRegistry([tagWithMultiplier(type, invalidValue)])).toThrow(
+          'Invalid enemy tag rule',
+        );
+      }
+    }
+  });
+
+  it('requires maximum HP regeneration effects to use a finite positive fraction', () => {
+    const template = registry[0]!;
+    const tagWithRegeneration = (value: unknown) => ({
+      ...template,
+      id: 'race:test-max-hp-regeneration',
+      modifiers: [
+        {
+          ...template.modifiers[0]!,
+          id: 'race:test-max-hp-regeneration:rule',
+          event: 'environment.tick',
+          interactionId: 'race:test-max-hp-regeneration',
+          conditions: [],
+          effect: { type: 'max_hp_regeneration', value },
+        },
+      ],
+    });
+
+    expect(loadTagRegistry([tagWithRegeneration(0.01)])).toHaveLength(1);
+    for (const invalidValue of [undefined, '0.01', Infinity, 0]) {
+      expect(() => loadTagRegistry([tagWithRegeneration(invalidValue)])).toThrow(
+        'Invalid enemy tag rule',
+      );
+    }
+  });
+
+  it('validates environment-applied status payloads and damage tick intervals', () => {
+    const template = registry[0]!;
+    const tagWithEnvironmentStatus = (value: unknown) => ({
+      ...template,
+      id: 'race:test-environment-status',
+      modifiers: [
+        {
+          ...template.modifiers[0]!,
+          id: 'race:test-environment-status:rule',
+          event: 'environment.tick',
+          interactionId: 'race:test-environment-status',
+          conditions: [],
+          effect: { type: 'environment_status', value },
+        },
+      ],
+    });
+    const status = { id: 'core:burn', category: 'dot', potency: 99, counter: 99 };
+
+    expect(loadTagRegistry([tagWithEnvironmentStatus(status)])).toHaveLength(1);
+    expect(
+      loadTagRegistry([
+        tagWithEnvironmentStatus({
+          ...status,
+          tickDamage: { amount: 1, channel: 'magical' },
+          tickIntervalMs: 1_000,
+        }),
+      ]),
+    ).toHaveLength(1);
+    for (const invalidValue of [
+      undefined,
+      'core:burn',
+      { ...status, tickDamage: { amount: 1, channel: 'fire' }, tickIntervalMs: 1_000 },
+      { ...status, tickDamage: { amount: 1, channel: 'magical' } },
+    ]) {
+      expect(() => loadTagRegistry([tagWithEnvironmentStatus(invalidValue)])).toThrow(
+        'Invalid enemy tag rule',
+      );
+    }
+  });
+
+  it('requires persistent-status rules to name a status id', () => {
+    const template = registry[0]!;
+    const tagWithPersistence = (value: unknown) => ({
+      ...template,
+      id: 'race:test-persistence',
+      modifiers: [
+        {
+          ...template.modifiers[0]!,
+          id: 'race:test-persistence:rule',
+          event: 'status.incoming',
+          interactionId: 'race:test-persistence',
+          conditions: [],
+          effect: { type: 'status_persistence', value },
+        },
+      ],
+    });
+
+    expect(loadTagRegistry([tagWithPersistence('core:burn')])).toHaveLength(1);
+    for (const invalidValue of [undefined, '', 2]) {
+      expect(() => loadTagRegistry([tagWithPersistence(invalidValue)])).toThrow(
+        'Invalid enemy tag rule',
+      );
+    }
+  });
+
+  it('requires persistent-status rules to name a status id', () => {
+    const template = registry[0]!;
+    const tagWithPersistence = (value: unknown) => ({
+      ...template,
+      id: 'race:test-persistence',
+      modifiers: [
+        {
+          ...template.modifiers[0]!,
+          id: 'race:test-persistence:rule',
+          event: 'status.incoming',
+          interactionId: 'race:test-persistence',
+          conditions: [],
+          effect: { type: 'status_persistence', value },
+        },
+      ],
+    });
+
+    expect(loadTagRegistry([tagWithPersistence('core:burn')])).toHaveLength(1);
+    for (const invalidValue of [undefined, '', 2]) {
+      expect(() => loadTagRegistry([tagWithPersistence(invalidValue)])).toThrow(
+        'Invalid enemy tag rule',
+      );
+    }
+  });
+
+  it('validates action-forbidden rules for one or many action kinds', () => {
+    const template = registry[0]!;
+    const tagWithForbiddenActions = (value: unknown) => ({
+      ...template,
+      id: 'race:test-action-ban',
+      modifiers: [
+        {
+          ...template.modifiers[0]!,
+          id: 'race:test-action-ban:rule',
+          event: 'action.select',
+          interactionId: 'race:test-action-ban',
+          conditions: [],
+          effect: { type: 'action_forbidden', value },
+        },
+      ],
+    });
+
+    expect(loadTagRegistry([tagWithForbiddenActions('attack')])).toHaveLength(1);
+    expect(loadTagRegistry([tagWithForbiddenActions(['attack', 'ranged'])])).toHaveLength(1);
+    for (const invalidValue of [undefined, '', [], ['attack', '']]) {
+      expect(() => loadTagRegistry([tagWithForbiddenActions(invalidValue)])).toThrow(
+        'Invalid enemy tag rule',
+      );
+    }
+  });
+
+  it('validates support reaction status payloads', () => {
+    const template = registry[0]!;
+    const tagWithSupportEffect = (value: unknown) => ({
+      ...template,
+      id: 'race:test-support',
+      modifiers: [
+        {
+          ...template.modifiers[0]!,
+          id: 'race:test-support:rule',
+          event: 'support.completed',
+          interactionId: 'race:test-support',
+          conditions: [],
+          effect: { type: 'on_support_effect', value },
+        },
+      ],
+    });
+
+    expect(
+      loadTagRegistry([
+        tagWithSupportEffect({ id: 'core:blessing', category: 'buff', potency: 4, counter: 1 }),
+      ]),
+    ).toHaveLength(1);
+    for (const invalidValue of [undefined, 'core:blessing']) {
+      expect(() => loadTagRegistry([tagWithSupportEffect(invalidValue)])).toThrow(
+        'Invalid enemy tag rule',
+      );
+    }
   });
 });
 
@@ -191,6 +392,16 @@ describe('extensible tag condition and precedence contracts', () => {
     expect(matches({ path: 'a.b', op: 'eq_field' }, { a: {} })).toBe(true);
     expect(matches({ path: 'items', op: 'includes', value: 'x' }, { items: ['x'] })).toBe(true);
     expect(matches({ path: 'items', op: 'includes', value: 'x' }, { items: 'x' })).toBe(false);
+    expect(
+      matches({ path: 'items', op: 'includes_id', value: 'x' }, { items: [{ id: 'x' }] }),
+    ).toBe(true);
+    expect(
+      matches(
+        { path: 'items', op: 'includes_id', value: 'x' },
+        { items: [{ id: 'y' }, { label: 'x' }, null, 'x'] },
+      ),
+    ).toBe(false);
+    expect(matches({ path: 'items', op: 'includes_id', value: 'x' }, { items: {} })).toBe(false);
     expect(matches({ path: 'items', op: 'not_includes', value: 'x' }, { items: ['x'] })).toBe(
       false,
     );
@@ -224,6 +435,12 @@ describe('extensible tag condition and precedence contracts', () => {
     expect(matches({ path: 'flag', op: 'truthy' }, {})).toBe(false);
     expect(matches({ path: 'flag', op: 'not_truthy' }, {})).toBe(true);
     expect(matches({ path: 'flag', op: 'not_truthy' }, { flag: true })).toBe(false);
+    expect(matches({ path: 'n', op: 'lte', value: 2 }, { n: 2 })).toBe(true);
+    expect(matches({ path: 'n', op: 'lte', value: 2 }, { n: 3 })).toBe(false);
+    expect(matches({ path: 'n', op: 'lte', value: 2 }, { n: '2' })).toBe(false);
+    expect(matches({ path: 'n', op: 'gte', value: 2 }, { n: 2 })).toBe(true);
+    expect(matches({ path: 'n', op: 'gte', value: 2 }, { n: 1 })).toBe(false);
+    expect(matches({ path: 'n', op: 'gte', value: 2 }, { n: null })).toBe(false);
     expect(matches({ path: 'n', op: 'gt', value: 2 }, { n: 3 })).toBe(true);
     expect(matches({ path: 'n', op: 'gt', value: 2 }, { n: 2 })).toBe(false);
     expect(matches({ path: 'n', op: 'gt', value: 2 }, { n: '3' })).toBe(false);

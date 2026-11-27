@@ -7,7 +7,12 @@
     "cadence": "main",
     "eventType": "session.completed",
     "target": 1,
-    "reward": { "experience": 20, "items": { "iron-ore": 1 } }
+    "reward": {
+      "experience": 20,
+      "items": {
+        "iron-ore": 1
+      }
+    }
   },
   {
     "id": "daily-routine",
@@ -17,7 +22,12 @@
     "cadence": "daily",
     "eventType": "session.completed",
     "target": 3,
-    "reward": { "experience": 40, "items": { "wild-herb": 1 } }
+    "reward": {
+      "experience": 40,
+      "items": {
+        "wild-herb": 1
+      }
+    }
   },
   {
     "id": "weekly-expedition",
@@ -27,6 +37,1119 @@
     "cadence": "weekly",
     "eventType": "session.completed",
     "target": 10,
-    "reward": { "experience": 100, "items": { "material-silver": 1 } }
+    "reward": {
+      "experience": 100,
+      "items": {
+        "material-silver": 1
+      }
+    }
+  },
+  {
+    "id": "main:apexia:survey",
+    "name": "Exploração: Apexia",
+    "description": "Conclua uma expedição de reconhecimento em Apexia e registre a rota no diário da campanha.",
+    "cadence": "main",
+    "eventType": "expedition.completed",
+    "target": 1,
+    "criteria": {
+      "expeditionId": "core:p4-apexia-quest-1"
+    },
+    "requiredLevel": 1,
+    "regionId": "apexia",
+    "prerequisites": ["first-steps"],
+    "reward": {
+      "experience": 25,
+      "items": {
+        "wild-herb": 1
+      },
+      "currencies": {
+        "fragments": 15
+      }
+    },
+    "kind": "mission",
+    "source": "Adaptação jogável v1.0 — conteúdo narrativo e objetivos criados para o jogo a partir dos sistemas documentados."
+  },
+  {
+    "id": "main:vaeloria:survey",
+    "name": "Exploração: Vaeloria",
+    "description": "Conclua uma expedição de reconhecimento em Vaeloria e registre a rota no diário da campanha.",
+    "cadence": "main",
+    "eventType": "expedition.completed",
+    "target": 1,
+    "criteria": {
+      "expeditionId": "core:p4-vaeloria-quest-1"
+    },
+    "requiredLevel": 3,
+    "regionId": "vaeloria",
+    "prerequisites": ["main:apexia:survey"],
+    "reward": {
+      "experience": 75,
+      "items": {
+        "wild-herb": 1
+      },
+      "currencies": {
+        "fragments": 45
+      }
+    },
+    "kind": "mission",
+    "source": "Adaptação jogável v1.0 — conteúdo narrativo e objetivos criados para o jogo a partir dos sistemas documentados."
+  },
+  {
+    "id": "main:dross:survey",
+    "name": "Exploração: Dross",
+    "description": "Conclua uma expedição de reconhecimento em Dross e registre a rota no diário da campanha.",
+    "cadence": "main",
+    "eventType": "expedition.completed",
+    "target": 1,
+    "criteria": {
+      "expeditionId": "core:p4-dross-quest-1"
+    },
+    "requiredLevel": 4,
+    "regionId": "dross",
+    "prerequisites": ["main:vaeloria:survey"],
+    "reward": {
+      "experience": 100,
+      "items": {
+        "wild-herb": 1
+      },
+      "currencies": {
+        "fragments": 60
+      }
+    },
+    "kind": "mission",
+    "source": "Adaptação jogável v1.0 — conteúdo narrativo e objetivos criados para o jogo a partir dos sistemas documentados."
+  },
+  {
+    "id": "main:vrakkas:survey",
+    "name": "Exploração: Vrakkas",
+    "description": "Conclua uma expedição de reconhecimento em Vrakkas e registre a rota no diário da campanha.",
+    "cadence": "main",
+    "eventType": "expedition.completed",
+    "target": 1,
+    "criteria": {
+      "expeditionId": "core:p4-vrakkas-quest-1"
+    },
+    "requiredLevel": 6,
+    "regionId": "vrakkas",
+    "prerequisites": ["main:dross:survey"],
+    "reward": {
+      "experience": 150,
+      "items": {
+        "wild-herb": 1
+      },
+      "currencies": {
+        "fragments": 90
+      }
+    },
+    "kind": "mission",
+    "source": "Adaptação jogável v1.0 — conteúdo narrativo e objetivos criados para o jogo a partir dos sistemas documentados."
+  },
+  {
+    "id": "main:riptide:survey",
+    "name": "Exploração: Riptide",
+    "description": "Conclua uma expedição de reconhecimento em Riptide e registre a rota no diário da campanha.",
+    "cadence": "main",
+    "eventType": "expedition.completed",
+    "target": 1,
+    "criteria": {
+      "expeditionId": "core:p4-riptide-quest-1"
+    },
+    "requiredLevel": 8,
+    "regionId": "riptide",
+    "prerequisites": ["main:vrakkas:survey"],
+    "reward": {
+      "experience": 200,
+      "items": {
+        "wild-herb": 1
+      },
+      "currencies": {
+        "fragments": 120
+      }
+    },
+    "kind": "mission",
+    "source": "Adaptação jogável v1.0 — conteúdo narrativo e objetivos criados para o jogo a partir dos sistemas documentados."
+  },
+  {
+    "id": "main:kryos:survey",
+    "name": "Exploração: Kryos",
+    "description": "Conclua uma expedição de reconhecimento em Kryos e registre a rota no diário da campanha.",
+    "cadence": "main",
+    "eventType": "expedition.completed",
+    "target": 1,
+    "criteria": {
+      "expeditionId": "core:p4-kryos-quest-1"
+    },
+    "requiredLevel": 10,
+    "regionId": "kryos",
+    "prerequisites": ["main:riptide:survey"],
+    "reward": {
+      "experience": 250,
+      "items": {
+        "wild-herb": 1
+      },
+      "currencies": {
+        "fragments": 150
+      }
+    },
+    "kind": "mission",
+    "source": "Adaptação jogável v1.0 — conteúdo narrativo e objetivos criados para o jogo a partir dos sistemas documentados."
+  },
+  {
+    "id": "main:mourland:survey",
+    "name": "Exploração: Mourland",
+    "description": "Conclua uma expedição de reconhecimento em Mourland e registre a rota no diário da campanha.",
+    "cadence": "main",
+    "eventType": "expedition.completed",
+    "target": 1,
+    "criteria": {
+      "expeditionId": "core:p4-mourland-quest-1"
+    },
+    "requiredLevel": 12,
+    "regionId": "mourland",
+    "prerequisites": ["main:kryos:survey"],
+    "reward": {
+      "experience": 300,
+      "items": {
+        "wild-herb": 1
+      },
+      "currencies": {
+        "fragments": 180
+      }
+    },
+    "kind": "mission",
+    "source": "Adaptação jogável v1.0 — conteúdo narrativo e objetivos criados para o jogo a partir dos sistemas documentados."
+  },
+  {
+    "id": "main:caelum:survey",
+    "name": "Exploração: Caelum",
+    "description": "Conclua uma expedição de reconhecimento em Caelum e registre a rota no diário da campanha.",
+    "cadence": "main",
+    "eventType": "expedition.completed",
+    "target": 1,
+    "criteria": {
+      "expeditionId": "core:p4-caelum-quest-1"
+    },
+    "requiredLevel": 15,
+    "regionId": "caelum",
+    "prerequisites": ["main:mourland:survey"],
+    "reward": {
+      "experience": 375,
+      "items": {
+        "wild-herb": 1
+      },
+      "currencies": {
+        "fragments": 225
+      }
+    },
+    "kind": "mission",
+    "source": "Adaptação jogável v1.0 — conteúdo narrativo e objetivos criados para o jogo a partir dos sistemas documentados."
+  },
+  {
+    "id": "main:xochitlan:survey",
+    "name": "Exploração: Xochitlan",
+    "description": "Conclua uma expedição de reconhecimento em Xochitlan e registre a rota no diário da campanha.",
+    "cadence": "main",
+    "eventType": "expedition.completed",
+    "target": 1,
+    "criteria": {
+      "expeditionId": "core:p4-xochitlan-quest-1"
+    },
+    "requiredLevel": 18,
+    "regionId": "xochitlan",
+    "prerequisites": ["main:caelum:survey"],
+    "reward": {
+      "experience": 450,
+      "items": {
+        "wild-herb": 1
+      },
+      "currencies": {
+        "fragments": 270
+      }
+    },
+    "kind": "mission",
+    "source": "Adaptação jogável v1.0 — conteúdo narrativo e objetivos criados para o jogo a partir dos sistemas documentados."
+  },
+  {
+    "id": "secondary:apexia:aco-e-cristal",
+    "name": "Aço e cristal",
+    "description": "Atenda ao pedido local de Apexia por meio de uma ação real de exploração ou produção.",
+    "cadence": "secondary",
+    "eventType": "item.crafted",
+    "target": 1,
+    "criteria": {
+      "itemId": "gear:iron-maul"
+    },
+    "regionId": "apexia",
+    "reward": {
+      "experience": 45,
+      "items": {
+        "material-iron": 3
+      },
+      "currencies": {
+        "fragments": 35
+      }
+    },
+    "kind": "mission",
+    "source": "Adaptação jogável v1.0 — conteúdo narrativo e objetivos criados para o jogo a partir dos sistemas documentados."
+  },
+  {
+    "id": "secondary:vaeloria:veu-de-mithril",
+    "name": "Véu de mithril",
+    "description": "Atenda ao pedido local de Vaeloria por meio de uma ação real de exploração ou produção.",
+    "cadence": "secondary",
+    "eventType": "item.acquired",
+    "target": 3,
+    "criteria": {
+      "itemId": "ore-mithril"
+    },
+    "regionId": "vaeloria",
+    "reward": {
+      "experience": 45,
+      "items": {
+        "wild-herb": 2
+      },
+      "currencies": {
+        "fragments": 35
+      }
+    },
+    "kind": "mission",
+    "source": "Adaptação jogável v1.0 — conteúdo narrativo e objetivos criados para o jogo a partir dos sistemas documentados."
+  },
+  {
+    "id": "secondary:dross:rota-de-contrabando",
+    "name": "Rota de contrabando",
+    "description": "Atenda ao pedido local de Dross por meio de uma ação real de exploração ou produção.",
+    "cadence": "secondary",
+    "eventType": "activity.completed",
+    "target": 2,
+    "criteria": {
+      "activityId": "smuggle-goods"
+    },
+    "regionId": "dross",
+    "reward": {
+      "experience": 45,
+      "items": {
+        "material-dilthio": 2
+      },
+      "currencies": {
+        "fragments": 35
+      }
+    },
+    "kind": "mission",
+    "source": "Adaptação jogável v1.0 — conteúdo narrativo e objetivos criados para o jogo a partir dos sistemas documentados."
+  },
+  {
+    "id": "secondary:vrakkas:ouro-sob-as-cinzas",
+    "name": "Ouro sob as cinzas",
+    "description": "Atenda ao pedido local de Vrakkas por meio de uma ação real de exploração ou produção.",
+    "cadence": "secondary",
+    "eventType": "item.acquired",
+    "target": 3,
+    "criteria": {
+      "itemId": "ore-gold"
+    },
+    "regionId": "vrakkas",
+    "reward": {
+      "experience": 45,
+      "items": {
+        "material-gold": 2
+      },
+      "currencies": {
+        "fragments": 35
+      }
+    },
+    "kind": "mission",
+    "source": "Adaptação jogável v1.0 — conteúdo narrativo e objetivos criados para o jogo a partir dos sistemas documentados."
+  },
+  {
+    "id": "secondary:riptide:o-preco-da-mare",
+    "name": "O preço da maré",
+    "description": "Atenda ao pedido local de Riptide por meio de uma ação real de exploração ou produção.",
+    "cadence": "secondary",
+    "eventType": "activity.completed",
+    "target": 2,
+    "criteria": {
+      "activityId": "fish-deep"
+    },
+    "regionId": "riptide",
+    "reward": {
+      "experience": 45,
+      "items": {
+        "material-silver": 2
+      },
+      "currencies": {
+        "fragments": 35
+      }
+    },
+    "kind": "mission",
+    "source": "Adaptação jogável v1.0 — conteúdo narrativo e objetivos criados para o jogo a partir dos sistemas documentados."
+  },
+  {
+    "id": "secondary:kryos:forja-glacial",
+    "name": "Forja glacial",
+    "description": "Atenda ao pedido local de Kryos por meio de uma ação real de exploração ou produção.",
+    "cadence": "secondary",
+    "eventType": "item.crafted",
+    "target": 1,
+    "criteria": {
+      "itemId": "gear:adamantite-breaker"
+    },
+    "regionId": "kryos",
+    "reward": {
+      "experience": 45,
+      "items": {
+        "material-adamantite": 2
+      },
+      "currencies": {
+        "fragments": 35
+      }
+    },
+    "kind": "mission",
+    "source": "Adaptação jogável v1.0 — conteúdo narrativo e objetivos criados para o jogo a partir dos sistemas documentados."
+  },
+  {
+    "id": "secondary:mourland:prata-para-os-inquietos",
+    "name": "Prata para os inquietos",
+    "description": "Atenda ao pedido local de Mourland por meio de uma ação real de exploração ou produção.",
+    "cadence": "secondary",
+    "eventType": "enemy.defeated",
+    "target": 3,
+    "criteria": {
+      "enemyId": "core:p4-mourland-4"
+    },
+    "regionId": "mourland",
+    "reward": {
+      "experience": 45,
+      "items": {
+        "material-sacrite": 2
+      },
+      "currencies": {
+        "fragments": 35
+      }
+    },
+    "kind": "mission",
+    "source": "Adaptação jogável v1.0 — conteúdo narrativo e objetivos criados para o jogo a partir dos sistemas documentados."
+  },
+  {
+    "id": "secondary:caelum:conducao-celeste",
+    "name": "Condução celeste",
+    "description": "Atenda ao pedido local de Caelum por meio de uma ação real de exploração ou produção.",
+    "cadence": "secondary",
+    "eventType": "activity.completed",
+    "target": 2,
+    "criteria": {
+      "activityId": "rune-setting"
+    },
+    "regionId": "caelum",
+    "reward": {
+      "experience": 45,
+      "items": {
+        "material-orichalcum": 2
+      },
+      "currencies": {
+        "fragments": 35
+      }
+    },
+    "kind": "mission",
+    "source": "Adaptação jogável v1.0 — conteúdo narrativo e objetivos criados para o jogo a partir dos sistemas documentados."
+  },
+  {
+    "id": "secondary:xochitlan:raizes-antigas",
+    "name": "Raízes antigas",
+    "description": "Atenda ao pedido local de Xochitlan por meio de uma ação real de exploração ou produção.",
+    "cadence": "secondary",
+    "eventType": "activity.completed",
+    "target": 2,
+    "criteria": {
+      "activityId": "grow-moonberry"
+    },
+    "regionId": "xochitlan",
+    "reward": {
+      "experience": 45,
+      "items": {
+        "material-chlorophyte": 2
+      },
+      "currencies": {
+        "fragments": 35
+      }
+    },
+    "kind": "mission",
+    "source": "Adaptação jogável v1.0 — conteúdo narrativo e objetivos criados para o jogo a partir dos sistemas documentados."
+  },
+  {
+    "id": "secondary:profession:miner",
+    "name": "Veios conhecidos",
+    "description": "Uma cadeia secundária permanente que reconhece progresso real de uma profissão.",
+    "cadence": "secondary",
+    "eventType": "skill.level_increased",
+    "target": 2,
+    "criteria": {
+      "skillId": "mining-skill"
+    },
+    "reward": {
+      "experience": 60,
+      "items": {
+        "ore-iron": 4
+      },
+      "currencies": {
+        "fragments": 50
+      }
+    },
+    "kind": "mission",
+    "source": "Adaptação jogável v1.0 — conteúdo narrativo e objetivos criados para o jogo a partir dos sistemas documentados."
+  },
+  {
+    "id": "secondary:profession:forger",
+    "name": "A mão da forja",
+    "description": "Uma cadeia secundária permanente que reconhece progresso real de uma profissão.",
+    "cadence": "secondary",
+    "eventType": "item.crafted",
+    "target": 3,
+    "criteria": {},
+    "reward": {
+      "experience": 60,
+      "items": {
+        "material-iron": 5
+      },
+      "currencies": {
+        "fragments": 50
+      }
+    },
+    "kind": "mission",
+    "source": "Adaptação jogável v1.0 — conteúdo narrativo e objetivos criados para o jogo a partir dos sistemas documentados."
+  },
+  {
+    "id": "secondary:profession:alchemist",
+    "name": "Ofício alquímico",
+    "description": "Uma cadeia secundária permanente que reconhece progresso real de uma profissão.",
+    "cadence": "secondary",
+    "eventType": "item.crafted",
+    "target": 2,
+    "criteria": {
+      "itemId": "healing-potion"
+    },
+    "reward": {
+      "experience": 60,
+      "items": {
+        "wild-herb": 5
+      },
+      "currencies": {
+        "fragments": 50
+      }
+    },
+    "kind": "mission",
+    "source": "Adaptação jogável v1.0 — conteúdo narrativo e objetivos criados para o jogo a partir dos sistemas documentados."
+  },
+  {
+    "id": "secondary:profession:angler",
+    "name": "Conhecedor das águas",
+    "description": "Uma cadeia secundária permanente que reconhece progresso real de uma profissão.",
+    "cadence": "secondary",
+    "eventType": "activity.completed",
+    "target": 5,
+    "criteria": {
+      "activityId": ["fish-river", "fish-deep", "fish-storm"]
+    },
+    "reward": {
+      "experience": 60,
+      "items": {
+        "river-carp": 3
+      },
+      "currencies": {
+        "fragments": 50
+      }
+    },
+    "kind": "mission",
+    "source": "Adaptação jogável v1.0 — conteúdo narrativo e objetivos criados para o jogo a partir dos sistemas documentados."
+  },
+  {
+    "id": "secondary:profession:scout",
+    "name": "Passos sem rastro",
+    "description": "Uma cadeia secundária permanente que reconhece progresso real de uma profissão.",
+    "cadence": "secondary",
+    "eventType": "activity.completed",
+    "target": 3,
+    "criteria": {
+      "activityId": "night-scout"
+    },
+    "reward": {
+      "experience": 60,
+      "items": {
+        "wild-herb": 3
+      },
+      "currencies": {
+        "fragments": 50
+      }
+    },
+    "kind": "mission",
+    "source": "Adaptação jogável v1.0 — conteúdo narrativo e objetivos criados para o jogo a partir dos sistemas documentados."
+  },
+  {
+    "id": "secondary:profession:broker",
+    "name": "Negócios de confiança",
+    "description": "Uma cadeia secundária permanente que reconhece progresso real de uma profissão.",
+    "cadence": "secondary",
+    "eventType": "currency.earned",
+    "target": 5,
+    "criteria": {
+      "currency": "fragments"
+    },
+    "reward": {
+      "experience": 60,
+      "items": {
+        "material-gold": 1
+      },
+      "currencies": {
+        "fragments": 50
+      }
+    },
+    "kind": "mission",
+    "source": "Adaptação jogável v1.0 — conteúdo narrativo e objetivos criados para o jogo a partir dos sistemas documentados."
+  },
+  {
+    "id": "secondary:profession:archer",
+    "name": "Mira treinada",
+    "description": "Uma cadeia secundária permanente que reconhece progresso real de uma profissão.",
+    "cadence": "secondary",
+    "eventType": "activity.completed",
+    "target": 5,
+    "criteria": {
+      "activityId": ["target-range", "moving-target", "long-range"]
+    },
+    "reward": {
+      "experience": 60,
+      "items": {
+        "gear:iron-weapon": 1
+      },
+      "currencies": {
+        "fragments": 50
+      }
+    },
+    "kind": "mission",
+    "source": "Adaptação jogável v1.0 — conteúdo narrativo e objetivos criados para o jogo a partir dos sistemas documentados."
+  },
+  {
+    "id": "secondary:profession:gatherer",
+    "name": "Colheita diversa",
+    "description": "Uma cadeia secundária permanente que reconhece progresso real de uma profissão.",
+    "cadence": "secondary",
+    "eventType": "activity.completed",
+    "target": 5,
+    "criteria": {
+      "activityId": ["foraging", "herb-medicinal", "herb-frostflower", "herb-emberleaf"]
+    },
+    "reward": {
+      "experience": 60,
+      "items": {
+        "wild-herb": 6
+      },
+      "currencies": {
+        "fragments": 50
+      }
+    },
+    "kind": "mission",
+    "source": "Adaptação jogável v1.0 — conteúdo narrativo e objetivos criados para o jogo a partir dos sistemas documentados."
+  },
+  {
+    "id": "daily:field-work",
+    "name": "Trabalho de campo",
+    "description": "Objetivo renovado a cada dia UTC, acompanhado pelo registro de eventos do jogo.",
+    "cadence": "daily",
+    "eventType": "session.completed",
+    "target": 3,
+    "criteria": {},
+    "reward": {
+      "experience": 30,
+      "items": {
+        "wild-herb": 2
+      },
+      "currencies": {
+        "fragments": 30
+      }
+    },
+    "kind": "mission",
+    "source": "Adaptação jogável v1.0 — conteúdo narrativo e objetivos criados para o jogo a partir dos sistemas documentados."
+  },
+  {
+    "id": "daily:mining",
+    "name": "Veio do dia",
+    "description": "Objetivo renovado a cada dia UTC, acompanhado pelo registro de eventos do jogo.",
+    "cadence": "daily",
+    "eventType": "activity.completed",
+    "target": 2,
+    "criteria": {
+      "activityId": ["mining", "mine-silver", "mine-gold"]
+    },
+    "reward": {
+      "experience": 25,
+      "items": {
+        "ore-iron": 3
+      },
+      "currencies": {
+        "fragments": 25
+      }
+    },
+    "kind": "mission",
+    "source": "Adaptação jogável v1.0 — conteúdo narrativo e objetivos criados para o jogo a partir dos sistemas documentados."
+  },
+  {
+    "id": "daily:foraging",
+    "name": "Ingredientes frescos",
+    "description": "Objetivo renovado a cada dia UTC, acompanhado pelo registro de eventos do jogo.",
+    "cadence": "daily",
+    "eventType": "activity.completed",
+    "target": 2,
+    "criteria": {
+      "activityId": ["foraging", "herb-medicinal", "herb-frostflower", "herb-emberleaf"]
+    },
+    "reward": {
+      "experience": 25,
+      "items": {
+        "wild-herb": 3
+      },
+      "currencies": {
+        "fragments": 25
+      }
+    },
+    "kind": "mission",
+    "source": "Adaptação jogável v1.0 — conteúdo narrativo e objetivos criados para o jogo a partir dos sistemas documentados."
+  },
+  {
+    "id": "daily:combat",
+    "name": "Ameaças abatidas",
+    "description": "Objetivo renovado a cada dia UTC, acompanhado pelo registro de eventos do jogo.",
+    "cadence": "daily",
+    "eventType": "enemy.defeated",
+    "target": 5,
+    "criteria": {},
+    "reward": {
+      "experience": 40,
+      "items": {
+        "material-iron": 2
+      },
+      "currencies": {
+        "fragments": 40
+      }
+    },
+    "kind": "mission",
+    "source": "Adaptação jogável v1.0 — conteúdo narrativo e objetivos criados para o jogo a partir dos sistemas documentados."
+  },
+  {
+    "id": "daily:crafting",
+    "name": "Oficina ativa",
+    "description": "Objetivo renovado a cada dia UTC, acompanhado pelo registro de eventos do jogo.",
+    "cadence": "daily",
+    "eventType": "item.crafted",
+    "target": 1,
+    "criteria": {},
+    "reward": {
+      "experience": 35,
+      "items": {
+        "material-iron": 2
+      },
+      "currencies": {
+        "fragments": 35
+      }
+    },
+    "kind": "mission",
+    "source": "Adaptação jogável v1.0 — conteúdo narrativo e objetivos criados para o jogo a partir dos sistemas documentados."
+  },
+  {
+    "id": "daily:fragments",
+    "name": "Fragmentos em circulação",
+    "description": "Objetivo renovado a cada dia UTC, acompanhado pelo registro de eventos do jogo.",
+    "cadence": "daily",
+    "eventType": "currency.earned",
+    "target": 2,
+    "criteria": {
+      "currency": "fragments"
+    },
+    "reward": {
+      "experience": 25,
+      "items": {
+        "wild-herb": 1
+      },
+      "currencies": {
+        "fragments": 25
+      }
+    },
+    "kind": "mission",
+    "source": "Adaptação jogável v1.0 — conteúdo narrativo e objetivos criados para o jogo a partir dos sistemas documentados."
+  },
+  {
+    "id": "daily:quest",
+    "name": "Rota diária",
+    "description": "Objetivo renovado a cada dia UTC, acompanhado pelo registro de eventos do jogo.",
+    "cadence": "daily",
+    "eventType": "quest.completed",
+    "target": 1,
+    "criteria": {},
+    "reward": {
+      "experience": 40,
+      "items": {
+        "material-silver": 1
+      },
+      "currencies": {
+        "fragments": 40
+      }
+    },
+    "kind": "mission",
+    "source": "Adaptação jogável v1.0 — conteúdo narrativo e objetivos criados para o jogo a partir dos sistemas documentados."
+  },
+  {
+    "id": "daily:skill",
+    "name": "Prática constante",
+    "description": "Objetivo renovado a cada dia UTC, acompanhado pelo registro de eventos do jogo.",
+    "cadence": "daily",
+    "eventType": "skill.level_increased",
+    "target": 1,
+    "criteria": {},
+    "reward": {
+      "experience": 50,
+      "items": {
+        "wild-herb": 2
+      },
+      "currencies": {
+        "fragments": 50
+      }
+    },
+    "kind": "mission",
+    "source": "Adaptação jogável v1.0 — conteúdo narrativo e objetivos criados para o jogo a partir dos sistemas documentados."
+  },
+  {
+    "id": "daily:cooking",
+    "name": "Cozinha em movimento",
+    "description": "Objetivo renovado a cada dia UTC, acompanhado pelo registro de eventos do jogo.",
+    "cadence": "daily",
+    "eventType": "activity.completed",
+    "target": 1,
+    "criteria": {
+      "activityId": ["cook-stew", "smoke-fish", "field-rations"]
+    },
+    "reward": {
+      "experience": 35,
+      "items": {
+        "healing-potion": 1
+      },
+      "currencies": {
+        "fragments": 35
+      }
+    },
+    "kind": "mission",
+    "source": "Adaptação jogável v1.0 — conteúdo narrativo e objetivos criados para o jogo a partir dos sistemas documentados."
+  },
+  {
+    "id": "daily:meditation",
+    "name": "Centro e energia",
+    "description": "Objetivo renovado a cada dia UTC, acompanhado pelo registro de eventos do jogo.",
+    "cadence": "daily",
+    "eventType": "activity.completed",
+    "target": 1,
+    "criteria": {
+      "activityId": ["mana-meditation", "meditate-aura", "study-mana"]
+    },
+    "reward": {
+      "experience": 35,
+      "items": {
+        "mana-potion": 1
+      },
+      "currencies": {
+        "fragments": 35
+      }
+    },
+    "kind": "mission",
+    "source": "Adaptação jogável v1.0 — conteúdo narrativo e objetivos criados para o jogo a partir dos sistemas documentados."
+  },
+  {
+    "id": "daily:stealth",
+    "name": "Passagem silenciosa",
+    "description": "Objetivo renovado a cada dia UTC, acompanhado pelo registro de eventos do jogo.",
+    "cadence": "daily",
+    "eventType": "activity.completed",
+    "target": 1,
+    "criteria": {
+      "activityId": ["shadow-route", "night-scout", "silent-infiltration"]
+    },
+    "reward": {
+      "experience": 35,
+      "items": {
+        "wild-herb": 2
+      },
+      "currencies": {
+        "fragments": 35
+      }
+    },
+    "kind": "mission",
+    "source": "Adaptação jogável v1.0 — conteúdo narrativo e objetivos criados para o jogo a partir dos sistemas documentados."
+  },
+  {
+    "id": "daily:expedition",
+    "name": "Incursão diária",
+    "description": "Objetivo renovado a cada dia UTC, acompanhado pelo registro de eventos do jogo.",
+    "cadence": "daily",
+    "eventType": "expedition.completed",
+    "target": 2,
+    "criteria": {},
+    "reward": {
+      "experience": 55,
+      "items": {
+        "material-iron": 3
+      },
+      "currencies": {
+        "fragments": 55
+      }
+    },
+    "kind": "mission",
+    "source": "Adaptação jogável v1.0 — conteúdo narrativo e objetivos criados para o jogo a partir dos sistemas documentados."
+  },
+  {
+    "id": "weekly:journey",
+    "name": "Viajante da semana",
+    "description": "Objetivo renovado semanalmente à segunda-feira UTC, integrado aos eventos reais de progresso.",
+    "cadence": "weekly",
+    "eventType": "expedition.completed",
+    "target": 10,
+    "criteria": {},
+    "reward": {
+      "experience": 120,
+      "items": {
+        "material-silver": 4
+      },
+      "currencies": {
+        "fragments": 180
+      }
+    },
+    "kind": "mission",
+    "source": "Adaptação jogável v1.0 — conteúdo narrativo e objetivos criados para o jogo a partir dos sistemas documentados."
+  },
+  {
+    "id": "weekly:dungeon",
+    "name": "Mergulho nas masmorras",
+    "description": "Objetivo renovado semanalmente à segunda-feira UTC, integrado aos eventos reais de progresso.",
+    "cadence": "weekly",
+    "eventType": "expedition.completed",
+    "target": 3,
+    "criteria": {
+      "expeditionId": [
+        "core:p4-apexia-dungeon-3",
+        "core:p4-vaeloria-dungeon-3",
+        "core:p4-dross-dungeon-3",
+        "core:p4-vrakkas-dungeon-3",
+        "core:p4-riptide-dungeon-3",
+        "core:p4-kryos-dungeon-3",
+        "core:p4-mourland-dungeon-3",
+        "core:p4-caelum-dungeon-3",
+        "core:p4-xochitlan-dungeon-3"
+      ]
+    },
+    "reward": {
+      "experience": 120,
+      "items": {
+        "material-gold": 2
+      },
+      "currencies": {
+        "fragments": 140
+      }
+    },
+    "kind": "mission",
+    "source": "Adaptação jogável v1.0 — conteúdo narrativo e objetivos criados para o jogo a partir dos sistemas documentados."
+  },
+  {
+    "id": "weekly:raid",
+    "name": "Desafio de incursão",
+    "description": "Objetivo renovado semanalmente à segunda-feira UTC, integrado aos eventos reais de progresso.",
+    "cadence": "weekly",
+    "eventType": "expedition.completed",
+    "target": 1,
+    "criteria": {
+      "expeditionId": [
+        "core:p4-apexia-raid-4",
+        "core:p4-vaeloria-raid-4",
+        "core:p4-dross-raid-4",
+        "core:p4-vrakkas-raid-4",
+        "core:p4-riptide-raid-4",
+        "core:p4-kryos-raid-4",
+        "core:p4-mourland-raid-4",
+        "core:p4-caelum-raid-4",
+        "core:p4-xochitlan-raid-4"
+      ]
+    },
+    "reward": {
+      "experience": 120,
+      "items": {
+        "red-orb": 1
+      },
+      "currencies": {
+        "fragments": 120
+      }
+    },
+    "kind": "mission",
+    "source": "Adaptação jogável v1.0 — conteúdo narrativo e objetivos criados para o jogo a partir dos sistemas documentados."
+  },
+  {
+    "id": "weekly:craft",
+    "name": "Produção semanal",
+    "description": "Objetivo renovado semanalmente à segunda-feira UTC, integrado aos eventos reais de progresso.",
+    "cadence": "weekly",
+    "eventType": "item.crafted",
+    "target": 5,
+    "criteria": {},
+    "reward": {
+      "experience": 120,
+      "items": {
+        "material-iron": 6
+      },
+      "currencies": {
+        "fragments": 100
+      }
+    },
+    "kind": "mission",
+    "source": "Adaptação jogável v1.0 — conteúdo narrativo e objetivos criados para o jogo a partir dos sistemas documentados."
+  },
+  {
+    "id": "weekly:training",
+    "name": "Treino disciplinado",
+    "description": "Objetivo renovado semanalmente à segunda-feira UTC, integrado aos eventos reais de progresso.",
+    "cadence": "weekly",
+    "eventType": "activity.completed",
+    "target": 5,
+    "criteria": {
+      "activityId": ["train-physical", "meditate-aura", "study-mana"]
+    },
+    "reward": {
+      "experience": 120,
+      "items": {
+        "healing-potion": 2
+      },
+      "currencies": {
+        "fragments": 100
+      }
+    },
+    "kind": "mission",
+    "source": "Adaptação jogável v1.0 — conteúdo narrativo e objetivos criados para o jogo a partir dos sistemas documentados."
+  },
+  {
+    "id": "weekly:harvest",
+    "name": "Celeiro abastecido",
+    "description": "Objetivo renovado semanalmente à segunda-feira UTC, integrado aos eventos reais de progresso.",
+    "cadence": "weekly",
+    "eventType": "activity.completed",
+    "target": 5,
+    "criteria": {
+      "activityId": ["grow-wheat", "grow-moonberry", "grow-saltroot"]
+    },
+    "reward": {
+      "experience": 120,
+      "items": {
+        "wild-herb": 8
+      },
+      "currencies": {
+        "fragments": 100
+      }
+    },
+    "kind": "mission",
+    "source": "Adaptação jogável v1.0 — conteúdo narrativo e objetivos criados para o jogo a partir dos sistemas documentados."
+  },
+  {
+    "id": "weekly:fishing",
+    "name": "Águas profundas",
+    "description": "Objetivo renovado semanalmente à segunda-feira UTC, integrado aos eventos reais de progresso.",
+    "cadence": "weekly",
+    "eventType": "activity.completed",
+    "target": 6,
+    "criteria": {
+      "activityId": ["fish-river", "fish-cage", "fish-storm", "fish-deep", "fish-azure"]
+    },
+    "reward": {
+      "experience": 120,
+      "items": {
+        "river-carp": 5
+      },
+      "currencies": {
+        "fragments": 120
+      }
+    },
+    "kind": "mission",
+    "source": "Adaptação jogável v1.0 — conteúdo narrativo e objetivos criados para o jogo a partir dos sistemas documentados."
+  },
+  {
+    "id": "weekly:trade",
+    "name": "Rota comercial",
+    "description": "Objetivo renovado semanalmente à segunda-feira UTC, integrado aos eventos reais de progresso.",
+    "cadence": "weekly",
+    "eventType": "activity.completed",
+    "target": 4,
+    "criteria": {
+      "activityId": ["trade-materials", "supply-caravan", "broker-relics"]
+    },
+    "reward": {
+      "experience": 120,
+      "items": {
+        "material-gold": 2
+      },
+      "currencies": {
+        "fragments": 120
+      }
+    },
+    "kind": "mission",
+    "source": "Adaptação jogável v1.0 — conteúdo narrativo e objetivos criados para o jogo a partir dos sistemas documentados."
+  },
+  {
+    "id": "weekly:skills",
+    "name": "Especialista em progresso",
+    "description": "Objetivo renovado semanalmente à segunda-feira UTC, integrado aos eventos reais de progresso.",
+    "cadence": "weekly",
+    "eventType": "skill.level_increased",
+    "target": 3,
+    "criteria": {},
+    "reward": {
+      "experience": 120,
+      "items": {
+        "blue-orb": 1
+      },
+      "currencies": {
+        "fragments": 100
+      }
+    },
+    "kind": "mission",
+    "source": "Adaptação jogável v1.0 — conteúdo narrativo e objetivos criados para o jogo a partir dos sistemas documentados."
+  },
+  {
+    "id": "weekly:threats",
+    "name": "Caçador de ameaças",
+    "description": "Objetivo renovado semanalmente à segunda-feira UTC, integrado aos eventos reais de progresso.",
+    "cadence": "weekly",
+    "eventType": "enemy.defeated",
+    "target": 30,
+    "criteria": {},
+    "reward": {
+      "experience": 120,
+      "items": {
+        "material-adamantite": 2
+      },
+      "currencies": {
+        "fragments": 160
+      }
+    },
+    "kind": "mission",
+    "source": "Adaptação jogável v1.0 — conteúdo narrativo e objetivos criados para o jogo a partir dos sistemas documentados."
+  },
+  {
+    "id": "secondary:first-implant",
+    "kind": "mission",
+    "name": "Corpo aprimorado",
+    "description": "Instale um implante alquímico e acompanhe a Carga Alquímica e a Síndrome de Dédalo.",
+    "cadence": "secondary",
+    "eventType": "implant.installed",
+    "target": 1,
+    "criteria": {},
+    "reward": {
+      "experience": 80,
+      "items": {},
+      "currencies": {
+        "fragments": 5000
+      }
+    },
+    "source": "Adaptação jogável v1.0; objetivo associado ao sistema canônico de implantes alquímicos."
   }
 ]

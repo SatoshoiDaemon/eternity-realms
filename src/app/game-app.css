@@ -1424,6 +1424,23 @@ summary {
   background: var(--color-accent);
 }
 
+.energy-choice-group {
+  min-width: 0;
+  margin: 1rem 0;
+  padding: 0;
+  border: 0;
+}
+
+.energy-choice-group legend {
+  margin-bottom: 0.4rem;
+  color: var(--color-muted);
+  font-size: 0.82rem;
+}
+
+.energy-choice-group .category-chip:disabled {
+  opacity: 0.45;
+}
+
 .activity-card {
   position: relative;
   min-height: 14.5rem;
@@ -1663,6 +1680,37 @@ summary {
 .skill-glyph {
   color: var(--color-yellow);
   font-size: 1.2rem;
+}
+
+.skill-milestones {
+  margin-top: 0.35rem;
+  color: var(--color-text);
+  font-size: 0.8rem;
+}
+
+.skill-milestones summary {
+  cursor: pointer;
+  color: var(--color-accent);
+}
+
+.skill-milestones ul {
+  display: grid;
+  gap: 0.5rem;
+  margin: 0.55rem 0 0;
+  padding-left: 1.1rem;
+}
+
+.skill-milestones li {
+  display: grid;
+  gap: 0.2rem;
+}
+
+.skill-milestones li strong {
+  overflow-wrap: anywhere;
+}
+
+.skill-milestones li span {
+  color: var(--color-muted);
 }
 
 .energy-bars {

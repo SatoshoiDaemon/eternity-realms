@@ -1,4 +1,6 @@
-import { awardExperience, grantItems } from './progression';
+import { getUnlockedRegionIds } from './activity-access';
+import { awardExperience, grantCurrency, grantItems } from './progression';
+import type { MissionDefinition } from '../content/schema';
 import type { ContentCatalog } from '../content/registry';
 import type { DomainEvent, GameState } from './types';
 
@@ -12,6 +14,8 @@ export interface MissionProgress {
   target: number;
   claimed: boolean;
   complete: boolean;
+  available: boolean;
+  lockedReason?: string;
 }
 
 function validateNow(now: number): void {
@@ -20,12 +24,9 @@ function validateNow(now: number): void {
   }
 }
 
-function getPeriod(
-  mission: ContentCatalog['missions'] extends Map<string, infer T> ? T : never,
-  now: number,
-) {
-  if (mission.cadence === 'main') {
-    return { key: 'main', startAt: 0, endAt: Number.POSITIVE_INFINITY };
+function getPeriod(mission: MissionDefinition, now: number) {
+  if (mission.cadence === 'main' || mission.cadence === 'secondary') {
+    return { key: mission.cadence, startAt: 0, endAt: Number.POSITIVE_INFINITY };
   }
   const date = new Date(now);
   const dayStart = Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate());
@@ -45,6 +46,54 @@ function getPeriod(
   };
 }
 
+function matchesCriteria(
+  event: DomainEvent,
+  criteria: Record<string, unknown> | undefined,
+): boolean {
+  if (!criteria) return true;
+  return Object.entries(criteria).every(([key, expected]) => {
+    const actual = (event as unknown as Record<string, unknown>)[key];
+    return Array.isArray(expected) ? expected.includes(actual) : actual === expected;
+  });
+}
+
+function prerequisiteClaimId(state: GameState, content: ContentCatalog, id: string, now: number) {
+  const prerequisite = content.missions.get(id);
+  if (!prerequisite) return undefined;
+  const period = getPeriod(prerequisite, now);
+  const claimId = `${prerequisite.id}@${period.key}`;
+  return (state.missionClaims ?? []).includes(claimId) ||
+    state.processedEventIds.includes(claimId) ||
+    state.events.some((event) => event.type === 'mission.reward_claimed' && event.id === claimId)
+    ? claimId
+    : undefined;
+}
+
+function availabilityError(
+  state: GameState,
+  mission: MissionDefinition,
+  now: number,
+  content: ContentCatalog,
+): string | undefined {
+  const character = state.character;
+  if (!character) return 'A character is required to access missions.';
+  if (mission.requiredLevel && character.level < mission.requiredLevel) {
+    return `Requires character level ${mission.requiredLevel}.`;
+  }
+  if (
+    mission.regionId &&
+    !getUnlockedRegionIds(character, content.regions).includes(mission.regionId)
+  ) {
+    return `Region ${content.regions.get(mission.regionId)?.name ?? mission.regionId} is locked.`;
+  }
+  for (const prerequisiteId of mission.prerequisites ?? []) {
+    if (!prerequisiteClaimId(state, content, prerequisiteId, now)) {
+      return `Complete the prerequisite mission: ${prerequisiteId}.`;
+    }
+  }
+  return undefined;
+}
+
 export function getMissionProgress(
   state: GameState,
   missionId: string,
@@ -55,22 +104,26 @@ export function getMissionProgress(
   const mission = content.missions.get(missionId);
   if (!mission) throw new Error(`Unknown mission: ${missionId}`);
   const period = getPeriod(mission, now);
-  const progress = state.events.filter(
+  const matchingEvents = state.events.filter(
     (event) =>
       event.type === mission.eventType &&
       event.occurredAt >= period.startAt &&
-      event.occurredAt < period.endAt,
-  ).length;
+      event.occurredAt < period.endAt &&
+      matchesCriteria(event, mission.criteria),
+  );
   const claimId = `${mission.id}@${period.key}`;
   const claimed =
     (state.missionClaims ?? []).includes(claimId) || state.processedEventIds.includes(claimId);
+  const lockedReason = availabilityError(state, mission, now, content);
   return {
     missionId: mission.id,
     periodKey: period.key,
-    progress: Math.min(progress, mission.target),
+    progress: Math.min(matchingEvents.length, mission.target),
     target: mission.target,
     claimed,
-    complete: progress >= mission.target,
+    complete: matchingEvents.length >= mission.target,
+    available: !lockedReason,
+    ...(lockedReason ? { lockedReason } : {}),
   };
 }
 
@@ -87,15 +140,25 @@ export function claimMission(
   if (progress.claimed || state.events.some((event) => event.id === claimId)) {
     throw new Error('Mission reward was already claimed for this period.');
   }
+  if (!progress.available) throw new Error(progress.lockedReason!);
   if (!progress.complete) throw new Error('Mission objective is not complete.');
 
   const itemUpdate = grantItems(state.character, mission.reward.items, claimId);
+  let character = itemUpdate.character;
+  const events: DomainEvent[] = [...itemUpdate.events];
+  for (const [currency, amount] of Object.entries(mission.reward.currencies ?? {})) {
+    const currencyUpdate = grantCurrency(character, currency, amount, `${claimId}:reward`);
+    character = currencyUpdate.character;
+    events.push(...currencyUpdate.events);
+  }
   const experienceUpdate = awardExperience(
-    itemUpdate.character,
+    character,
     mission.reward.experience,
     content.rules,
     claimId,
   );
+  character = experienceUpdate.character;
+  events.push(...experienceUpdate.events);
   const claimedEvent: DomainEvent = {
     id: claimId,
     type: 'mission.reward_claimed',
@@ -103,12 +166,9 @@ export function claimMission(
     missionId: mission.id,
     periodKey: progress.periodKey,
   };
-  const events = [...itemUpdate.events, ...experienceUpdate.events, claimedEvent].map((event) => ({
-    ...event,
-    occurredAt: now,
-  }));
+  const newEvents = [...events, claimedEvent].map((event) => ({ ...event, occurredAt: now }));
   const processed = new Set(state.processedEventIds);
-  const newEvents = events.filter((event) => {
+  const accepted = newEvents.filter((event) => {
     if (processed.has(event.id)) return false;
     processed.add(event.id);
     return true;
@@ -116,9 +176,9 @@ export function claimMission(
 
   return {
     ...state,
-    character: experienceUpdate.character,
+    character,
     missionClaims: [...(state.missionClaims ?? []), claimId],
-    events: [...state.events, ...newEvents],
-    processedEventIds: [...state.processedEventIds, ...newEvents.map((event) => event.id)],
+    events: [...state.events, ...accepted],
+    processedEventIds: [...state.processedEventIds, ...accepted.map((event) => event.id)],
   };
 }

@@ -1,0 +1,276 @@
+[
+  {
+    "id": "energy:mana",
+    "kind": "energy",
+    "name": "Mana",
+    "description": "Energia do universo, originada em Kha; versátil em elementos, ataque, defesa, utilidade e suporte.",
+    "origin": "Kha",
+    "resources": ["mana", "spirit"],
+    "progression": [
+      {
+        "stage": "núcleo",
+        "attribute": "mana",
+        "reservePerPoint": 10,
+        "canon": "RP: cada ponto de Mana concede +10 reserva."
+      },
+      {
+        "stage": "domínio elemental",
+        "elements": ["fire", "earth", "shadow", "poison", "light", "air", "water"],
+        "selectionLimit": 4,
+        "manaCosts": { "basic": 100, "intermediate": 500, "advanced": 1000, "awakened": 1500 },
+        "masteryLevels": { "intermediate": 100, "advanced": 200, "awakened": 300 },
+        "canon": "Mana source: seven basic affinities; a new practitioner may select up to four.",
+        "adaptation": "The selected affinities are saved on the character and their type nodes become available to the node editor."
+      },
+      {
+        "stage": "espírito",
+        "attribute": "spirit",
+        "damagePerTwoPoints": 7,
+        "canon": "RP: +7 damage to elemental/magic actions per 2 Spirit."
+      }
+    ],
+    "source": "Notion: Sistemas originais do RP, Energias e Sem Afinidade (2026-11-08)",
+    "affinities": [
+      {
+        "id": "fire",
+        "name": "Fogo",
+        "element": "fire",
+        "nodeId": "core:type-fire",
+        "sourceStatus": "documented"
+      },
+      {
+        "id": "earth",
+        "name": "Terra",
+        "element": "earth",
+        "nodeId": "core:type-earth",
+        "sourceStatus": "documented"
+      },
+      {
+        "id": "shadow",
+        "name": "Sombra",
+        "element": "shadow",
+        "nodeId": "core:type-shadow",
+        "sourceStatus": "documented"
+      },
+      {
+        "id": "poison",
+        "name": "Veneno",
+        "element": "poison",
+        "nodeId": "core:type-poison",
+        "sourceStatus": "documented"
+      },
+      {
+        "id": "light",
+        "name": "Luz",
+        "element": "light",
+        "nodeId": "core:type-light",
+        "sourceStatus": "documented"
+      },
+      {
+        "id": "air",
+        "name": "Ar/Vento",
+        "element": "air",
+        "nodeId": "core:type-air",
+        "sourceStatus": "documented"
+      },
+      {
+        "id": "water",
+        "name": "Água",
+        "element": "water",
+        "nodeId": "core:type-water",
+        "sourceStatus": "documented"
+      }
+    ],
+    "combinations": [
+      {
+        "id": "fire-air-combustion",
+        "ingredients": ["fire", "air"],
+        "result": "Combustão",
+        "stage": "intermediate"
+      },
+      {
+        "id": "fire-water-blue-fire",
+        "ingredients": ["fire", "water"],
+        "result": "Fogo Azul",
+        "stage": "intermediate"
+      },
+      {
+        "id": "fire-shadow-shadow-fire",
+        "ingredients": ["fire", "shadow"],
+        "result": "Fogo Sombrio",
+        "stage": "intermediate"
+      },
+      {
+        "id": "fire-earth-lava",
+        "ingredients": ["fire", "earth"],
+        "result": "Lava",
+        "stage": "intermediate"
+      },
+      {
+        "id": "poison-air-rot",
+        "ingredients": ["poison", "air"],
+        "result": "Putrefação",
+        "stage": "intermediate"
+      },
+      {
+        "id": "poison-water-acid",
+        "ingredients": ["poison", "water"],
+        "result": "Ácido",
+        "stage": "intermediate"
+      },
+      {
+        "id": "earth-poison-metal",
+        "ingredients": ["earth", "poison"],
+        "result": "Metal",
+        "stage": "intermediate"
+      },
+      {
+        "id": "earth-water-plants",
+        "ingredients": ["earth", "water"],
+        "result": "Plantas",
+        "stage": "intermediate",
+        "sourceStatus": "conflicting"
+      },
+      {
+        "id": "earth-air-sand",
+        "ingredients": ["earth", "air"],
+        "result": "Areia",
+        "stage": "intermediate"
+      },
+      {
+        "id": "water-earth-ice",
+        "ingredients": ["water", "earth"],
+        "result": "Gelo",
+        "stage": "intermediate",
+        "sourceStatus": "conflicting"
+      },
+      {
+        "id": "water-air-vapor",
+        "ingredients": ["water", "air"],
+        "result": "Vapor",
+        "stage": "intermediate"
+      },
+      {
+        "id": "shadow-earth-solid-darkness",
+        "ingredients": ["shadow", "earth"],
+        "result": "Escuridão Sólida",
+        "stage": "intermediate"
+      },
+      {
+        "id": "shadow-water-liquid-darkness",
+        "ingredients": ["shadow", "water"],
+        "result": "Escuridão Líquida",
+        "stage": "intermediate"
+      },
+      {
+        "id": "shadow-air-immaterial-darkness",
+        "ingredients": ["shadow", "air"],
+        "result": "Escuridão Imaterial",
+        "stage": "intermediate"
+      },
+      {
+        "id": "light-shadow-neutralization",
+        "ingredients": ["light", "shadow"],
+        "result": "Neutralização",
+        "stage": "intermediate"
+      },
+      {
+        "id": "light-water-aurora",
+        "ingredients": ["light", "water"],
+        "result": "Aurora",
+        "stage": "intermediate"
+      },
+      {
+        "id": "light-fire-ray",
+        "ingredients": ["light", "fire"],
+        "candidates": ["Raio de luz", "Relâmpago"],
+        "stage": "intermediate",
+        "sourceStatus": "conflicting"
+      },
+      {
+        "id": "air-light-sound",
+        "ingredients": ["air", "light"],
+        "result": "Som",
+        "stage": "intermediate"
+      }
+    ],
+    "evolutions": [
+      { "affinity": "fire", "stage": "awakened", "result": "Plasma" },
+      { "affinity": "water", "stage": "awakened", "result": "Zero Absoluto" },
+      { "affinity": "earth", "stage": "awakened", "result": "Matéria" },
+      { "affinity": "air", "stage": "awakened", "result": "Vetor" },
+      { "affinity": "light", "stage": "awakened", "result": "Energia" },
+      { "affinity": "shadow", "stage": "awakened", "result": "Gravidade" },
+      { "affinity": "poison", "stage": "awakened", "result": "Julgamento" }
+    ],
+    "adaptationNotes": "A seleção de até quatro afinidades e o acesso aos nós correspondentes estão adaptados para o jogo. Combinações elementais e evoluções são registradas como conteúdo canônico, mas sua progressão jogável ainda depende dos requisitos e operações declarados no sistema de Mana. Água+Terra possui resultados conflitantes na documentação (Plantas e Gelo), portanto nenhum resultado foi escolhido para desbloqueio automático."
+  },
+  {
+    "id": "energy:aura",
+    "kind": "energy",
+    "name": "Aura",
+    "description": "Energia do Eu, originada em Kho; cultivo interno que fortalece sobretudo resistência, força e velocidade.",
+    "origin": "Kho",
+    "resources": ["aura", "chi", "ego", "superego"],
+    "progression": [
+      {
+        "stage": "cultivo de chi",
+        "attribute": "chi",
+        "reservePerPoint": 1,
+        "canon": "RP: cada ponto de Chi cultivado concede +1 reserva de Aura; Chi não é distribuível normalmente."
+      },
+      {
+        "stage": "ego",
+        "paths": ["emitter", "defensive", "offensive", "controller", "utility", "pacifist"],
+        "source": "Six documented Ego styles: Emitter, Defensive, Offensive, Controller, Utility, Pacifist."
+      },
+      {
+        "stage": "reinos de cultivo",
+        "method": "training-session",
+        "adaptation": "Offline session cycles replace text-counted roleplay training."
+      }
+    ],
+    "source": "Notion: Sistemas originais do RP, Energias e Sem Afinidade (2026-11-08)",
+    "adaptationNotes": "Reinos de cultivo têm nomes e regras detalhadas em documentos adicionais; não presumir progressão universal."
+  },
+  {
+    "id": "energy:unaffiliated",
+    "kind": "energy",
+    "name": "Sem Afinidade",
+    "description": "Condição rara de Energia escassa ou ausente, sem afinidade natural com Mana ou Aura.",
+    "origin": "Kha/Kho",
+    "resources": ["incomplete", "celestial-restriction"],
+    "progression": [
+      {
+        "stage": "incomplete",
+        "damageReduction": 0.2,
+        "physicalAttributeBonus": 40,
+        "trainingGainMultiplier": 2,
+        "forbiddenAttributes": ["energy:chi", "energy:mana", "energy:spirit"],
+        "canon": "RP values; idle adaptation applies to combat and training services."
+      },
+      {
+        "stage": "celestial-restriction",
+        "damageReduction": 0.4,
+        "physicalAttributeBonus": 150,
+        "trainingGainMultiplier": 2,
+        "directEnergyEffectMultiplier": 0.2,
+        "forbiddenAttributes": ["energy:chi", "energy:mana", "energy:spirit"],
+        "canon": "RP values; physical body reduces direct Mana/Aura effects by 80%."
+      },
+      {
+        "stage": "traits",
+        "values": [
+          "energy-sense",
+          "intuitive-aptitude",
+          "invisibility",
+          "vitality-drain",
+          "wall-walking",
+          "anti-illusion"
+        ]
+      }
+    ],
+    "source": "Notion: Sistemas originais do RP, Energias e Sem Afinidade (2026-11-08)",
+    "adaptationNotes": "Ao selecionar Sem Afinidade, o jogo inicia na forma Incompleta e aplica seus valores canônicos a combate e treino. A forma Restrição Celestial permanece registrada sem gatilho aleatório; seu desbloqueio por eventos de jogo ainda precisa ser declarado em conteúdo."
+  }
+]

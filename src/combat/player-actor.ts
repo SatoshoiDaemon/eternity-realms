@@ -1,5 +1,17 @@
-import type { ItemDefinition } from '../content/schema';
+import type {
+  EnergyDefinition,
+  ItemDefinition,
+  RaceDefinition,
+  SkillDefinition,
+  SystemDefinition,
+} from '../content/schema';
 import type { Character } from '../domain/types';
+import { getInstalledImplantStatModifiers } from '../domain/implants';
+import { selectedCombatAffinities } from '../domain/mana-affinities';
+import { getManaSpiritDamageBonus } from '../domain/mana-progression';
+import { getCombatSkillAction } from '../domain/combat-skill-effects';
+import { isEnergyResourceAvailable } from '../domain/energy-rules';
+import { getUnaffiliatedEffects } from '../domain/unaffiliated';
 import type { CombatAction, CombatActor, CombatDamage } from './types';
 
 export interface PlayerCombatDefaults {
@@ -112,6 +124,10 @@ export function createCharacterCombatActor(
   items: Map<string, ItemDefinition>,
   defaults: PlayerCombatDefaults,
   additionalActions: CombatAction[] = [],
+  race?: RaceDefinition,
+  systems?: Map<string, SystemDefinition>,
+  energyDefinitions: EnergyDefinition[] = [],
+  skillDefinitions: SkillDefinition[] = [],
 ): CombatActor {
   if (
     !Number.isFinite(defaults.accuracy) ||
@@ -122,7 +138,28 @@ export function createCharacterCombatActor(
   ) {
     throw new Error('Combat defaults have invalid accuracy or interval.');
   }
-  const physical = character.attributes.physical;
+  const basePhysical = character.attributes.physical;
+  const unaffiliated = getUnaffiliatedEffects(
+    character,
+    energyDefinitions.find((definition) => definition.id === 'energy:unaffiliated'),
+  );
+  const implantModifiers = systems
+    ? getInstalledImplantStatModifiers(character, systems)
+    : {
+        flat: {},
+        multipliers: {},
+        consumableMultiplier: 1,
+        regenerationPercentPerTurn: 0,
+        soulAnchorAvailable: false,
+      };
+  const physical = { ...basePhysical };
+  for (const key of Object.keys(physical)) {
+    const baseValue = physical[key] ?? 0;
+    physical[key] = Math.floor(
+      (baseValue + unaffiliated.physicalAttributeBonus + (implantModifiers.flat[key] ?? 0)) *
+        (implantModifiers.multipliers[key] ?? 1),
+    );
+  }
   if (
     ![
       physical.vigor,
@@ -142,10 +179,23 @@ export function createCharacterCombatActor(
   const primary =
     equipped.find(({ id }) => character.equipment.primary === id) ??
     equipped.find(({ id }) => character.equipment.secondary === id);
+  const manaDefinition = energyDefinitions.find((definition) => definition.id === 'energy:mana');
   const actions = [
-    weaponAction(primary, character, defaults),
-    ...additionalActions.map((action) => ({ ...action })),
-  ];
+    weaponAction(
+      primary,
+      { ...character, attributes: { ...character.attributes, physical } },
+      defaults,
+    ),
+    ...additionalActions,
+    ...(race?.combatActions ?? []),
+  ].map((action) => {
+    const damageBonus = getManaSpiritDamageBonus(character, action.damage?.channel, manaDefinition);
+    const withEnergyBonus =
+      damageBonus > 0 && action.damage
+        ? { ...action, damage: { ...action.damage, amount: action.damage.amount + damageBonus } }
+        : { ...action };
+    return getCombatSkillAction(character, withEnergyBonus, skillDefinitions);
+  });
   const remainingMitigation = { physical: 1, magical: 1 };
   for (const { definition } of equipped) {
     for (const channel of ['physical', 'magical'] as const) {
@@ -180,9 +230,38 @@ export function createCharacterCombatActor(
   if (![maxHp, maxTenacity, speed].every(Number.isSafeInteger) || maxHp <= 0 || maxTenacity < 0) {
     throw new Error('Character attributes produce invalid combat bars or Speed.');
   }
+  const savedHp = character.extensions.combatHp;
+  const currentHp = typeof savedHp === 'number' ? savedHp : maxHp;
+  if (!Number.isSafeInteger(currentHp) || currentHp < 0 || currentHp > maxHp) {
+    throw new Error('Character has invalid saved HP.');
+  }
+  const regenerationPerAction = Math.floor(maxHp * implantModifiers.regenerationPercentPerTurn);
+  if (!Number.isSafeInteger(regenerationPerAction) || regenerationPerAction < 0) {
+    throw new Error('Character implants produce invalid regeneration.');
+  }
+  const affinityElements = selectedCombatAffinities(
+    character,
+    energyDefinitions.flatMap((definition) => definition.affinities ?? []),
+  );
   const energy = { ...character.energy.reserves };
+  if (character.energy.affinity === 'unaffiliated') {
+    energy.mana = 0;
+    energy.aura = 0;
+  } else if (character.energy.affinity === 'mana') {
+    if (!Object.hasOwn(energy, 'mana'))
+      energy.mana = (character.attributes.energetic.mana ?? 0) * 10;
+    energy.aura = 0;
+  } else if (character.energy.affinity === 'aura') {
+    energy.mana = 0;
+    if (!Object.hasOwn(energy, 'aura')) energy.aura = character.attributes.energetic.chi ?? 0;
+  } else {
+    if (!Object.hasOwn(energy, 'mana'))
+      energy.mana = (character.attributes.energetic.mana ?? 0) * 10;
+    if (!Object.hasOwn(energy, 'aura')) energy.aura = character.attributes.energetic.chi ?? 0;
+  }
   for (const { definition } of equipped) {
     for (const [resource, amount] of Object.entries(definition.combat?.energyBonus ?? {})) {
+      if (!isEnergyResourceAvailable(character.energy.affinity, resource)) continue;
       energy[resource] = (energy[resource] ?? 0) + amount;
     }
   }
@@ -190,7 +269,9 @@ export function createCharacterCombatActor(
     id: `player:${character.id}`,
     name: character.name,
     speciesId: character.raceId,
-    tags: [],
+    tags: [
+      ...new Set([...(race?.combatTags ?? []), ...(race?.combatTag ? [race.combatTag.id] : [])]),
+    ],
     side: 'party',
     attributes: {
       ...physical,
@@ -199,21 +280,25 @@ export function createCharacterCombatActor(
       ),
       speed,
     },
-    hp: { current: maxHp, maximum: maxHp },
+    hp: { current: currentHp, maximum: maxHp },
     tenacity: { current: maxTenacity, maximum: maxTenacity },
     energy,
     equipment: equippedRecords,
     actions,
-    effects: [],
+    effects: (race?.combatStartEffects ?? []).map((effect) => ({ ...effect })),
     policy: { id: 'base:player-priorities', rules: [] },
     actionPriority: actions.map((action) => action.id),
     mitigation: {
       physical: 1 - remainingMitigation.physical,
       magical: 1 - remainingMitigation.magical,
     },
+    damageReduction: unaffiliated.damageReduction,
     evasion: readEvasion(character),
     guarantees: { hits: 0, semiHits: 0, evasions: 0 },
     position: { x: 0, y: 0 },
+    ...(affinityElements.length ? { affinityElement: affinityElements[0], affinityElements } : {}),
+    regenerationPerAction,
+    soulAnchorAvailable: implantModifiers.soulAnchorAvailable,
     state: 'ready',
     nextEventAt: 0,
   };

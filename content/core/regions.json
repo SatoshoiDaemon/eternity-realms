@@ -1,0 +1,320 @@
+[
+  {
+    "id": "apexia",
+    "kind": "region",
+    "name": "Apexia",
+    "description": "Polo tecnológico mundial de máquinas, transportes, veículos e portais. A Hextech utiliza cristais descobertos pelo clã Ferros e aperfeiçoados por cientistas locais. Dross, antiga Subferia, conquistou independência após conflitos e ainda realiza ataques frequentes.",
+    "source": "Notion: Eternity Realms — Universo e lore, Geografia — nove localidades do mundo (2026-11-08)",
+    "adaptationNotes": "Os nomes de pontos de exploração são conteúdo novo do jogo e não alteram o mapa canônico. Progressão de acesso por nível e nomes de atividades são adaptação jogável v1.0, não geografia canônica.",
+    "terrain": ["urban", "industrial", "riverbank"],
+    "climate": ["temperate", "urban-smog"],
+    "localities": ["Clã Ferros", "Distrito Hextech", "Portais de Apexia"],
+    "materials": ["material-iron", "material-gold", "material-dilthio", "iron-ore"],
+    "enemies": [
+      "core:p4-apexia-1",
+      "core:p4-apexia-2",
+      "core:p4-apexia-3",
+      "core:p4-apexia-4",
+      "core:p4-boss-apexia"
+    ],
+    "expeditionIds": [
+      "core:p4-apexia-quest-1",
+      "core:p4-apexia-quest-2",
+      "core:p4-apexia-dungeon-3",
+      "core:p4-apexia-raid-4"
+    ],
+    "activityIds": [
+      "expedition:apexia:quest:1",
+      "expedition:apexia:quest:2",
+      "expedition:apexia:dungeon:3",
+      "expedition:apexia:raid:4"
+    ],
+    "unlockRequirements": {
+      "level": 1
+    }
+  },
+  {
+    "id": "dross",
+    "kind": "region",
+    "name": "Dross",
+    "description": "Nação industrial independente formada por antigos operários de Apexia, entre rios contaminados, fábricas, vielas e esgotos. Sua economia inclui indústria pesada, roubos e negócios obscuros; a Quimtec combina magia, química e alquimia.",
+    "source": "Notion: Eternity Realms — Universo e lore, Geografia — nove localidades do mundo (2026-11-08)",
+    "adaptationNotes": "Os nomes de pontos de exploração são conteúdo novo do jogo e não alteram fronteiras ou a história canônica. Progressão de acesso por nível e nomes de atividades são adaptação jogável v1.0, não geografia canônica.",
+    "terrain": ["urban", "industrial", "river", "sewer"],
+    "climate": ["temperate", "contaminated"],
+    "localities": ["Ponte de Apexia", "Fábricas de Quimtec", "Galerias de Dross"],
+    "materials": ["material-dilthio", "material-gold", "wild-herb", "dross-mushroom"],
+    "enemies": [
+      "core:p4-dross-1",
+      "core:p4-dross-2",
+      "core:p4-dross-3",
+      "core:p4-dross-4",
+      "core:p4-boss-dross"
+    ],
+    "expeditionIds": [
+      "core:p4-dross-quest-1",
+      "core:p4-dross-quest-2",
+      "core:p4-dross-dungeon-3",
+      "core:p4-dross-raid-4"
+    ],
+    "activityIds": [
+      "expedition:dross:quest:1",
+      "expedition:dross:quest:2",
+      "expedition:dross:dungeon:3",
+      "expedition:dross:raid:4"
+    ],
+    "unlockRequirements": {
+      "level": 4,
+      "regionIds": ["apexia"]
+    }
+  },
+  {
+    "id": "vaeloria",
+    "kind": "region",
+    "name": "Vaeloria",
+    "description": "Reino fundado por refugiados das Grandes Guerras Rúnicas. Mana é proibida; predominam usuários de Aura e Sem Afinidade. Vaeloria exporta ferro e trigo, preserva tradição militar e marcial, rejeita tecnologia e mantém uma unidade de caça a dragões.",
+    "source": "Notion: Eternity Realms — Universo e lore, Geografia — nove localidades do mundo (2026-11-08)",
+    "adaptationNotes": "A adaptação de Vaeloria preserva a proibição de Mana como conflito regional e não a converte em bloqueio global de seleção racial ou energética. Progressão de acesso por nível e nomes de atividades são adaptação jogável v1.0, não geografia canônica.",
+    "terrain": ["plains", "fortress", "farmland"],
+    "climate": ["temperate", "continental"],
+    "localities": ["Campos de Trigo", "Forjas Reais", "Posto Caça-Dragões"],
+    "materials": ["material-iron", "material-mithril", "wheat", "oak-log"],
+    "enemies": [
+      "core:p4-vaeloria-1",
+      "core:p4-vaeloria-2",
+      "core:p4-vaeloria-3",
+      "core:p4-vaeloria-4",
+      "core:p4-boss-vaeloria"
+    ],
+    "expeditionIds": [
+      "core:p4-vaeloria-quest-1",
+      "core:p4-vaeloria-quest-2",
+      "core:p4-vaeloria-dungeon-3",
+      "core:p4-vaeloria-raid-4"
+    ],
+    "activityIds": [
+      "expedition:vaeloria:quest:1",
+      "expedition:vaeloria:quest:2",
+      "expedition:vaeloria:dungeon:3",
+      "expedition:vaeloria:raid:4"
+    ],
+    "unlockRequirements": {
+      "level": 3,
+      "regionIds": ["apexia"]
+    }
+  },
+  {
+    "id": "vrakkas",
+    "kind": "region",
+    "name": "Vrakkas",
+    "description": "Império que reconhece força como utilidade demonstrada em combate, magia, comércio, política e persuasão. O governo atual é o Trifarix, três reis com igual poder: Visão, Astúcia e Poderio.",
+    "source": "Notion: Eternity Realms — Universo e lore, Geografia — nove localidades do mundo (2026-11-08)",
+    "adaptationNotes": "Os locais de treino e comércio são opções de jogo derivadas da estrutura imperial documentada. Progressão de acesso por nível e nomes de atividades são adaptação jogável v1.0, não geografia canônica.",
+    "terrain": ["imperial-city", "arena", "trade-road"],
+    "climate": ["continental"],
+    "localities": ["Câmara do Trifarix", "Arena Imperial", "Bazar das Províncias"],
+    "materials": ["material-gold", "material-silver", "jewel-shard"],
+    "enemies": [
+      "core:p4-vrakkas-1",
+      "core:p4-vrakkas-2",
+      "core:p4-vrakkas-3",
+      "core:p4-vrakkas-4",
+      "core:p4-boss-vrakkas"
+    ],
+    "expeditionIds": [
+      "core:p4-vrakkas-quest-1",
+      "core:p4-vrakkas-quest-2",
+      "core:p4-vrakkas-dungeon-3",
+      "core:p4-vrakkas-raid-4"
+    ],
+    "activityIds": [
+      "expedition:vrakkas:quest:1",
+      "expedition:vrakkas:quest:2",
+      "expedition:vrakkas:dungeon:3",
+      "expedition:vrakkas:raid:4"
+    ],
+    "unlockRequirements": {
+      "level": 6,
+      "regionIds": ["vaeloria"]
+    }
+  },
+  {
+    "id": "kryos",
+    "kind": "region",
+    "name": "Kryos",
+    "description": "Região mais inóspita e selvagem do continente. O inverno eterno vem de um grande pássaro de gelo que atravessa os céus e ergue tempestades de neve. Tribos lideradas por Mães de Guerra enfrentam monstros, grupos bárbaros e clima mortal.",
+    "source": "Notion: Eternity Realms — Universo e lore, Geografia — nove localidades do mundo (2026-11-08)",
+    "adaptationNotes": "Pontos de expedição foram nomeados para a adaptação; não estabelecem nova geografia canônica. Progressão de acesso por nível e nomes de atividades são adaptação jogável v1.0, não geografia canônica.",
+    "terrain": ["tundra", "mountain", "frozen-forest"],
+    "climate": ["eternal-winter", "blizzard"],
+    "localities": [
+      "Acampamento das Mães de Guerra",
+      "Passo dos Irmãos",
+      "Ninho do Pássaro de Gelo"
+    ],
+    "materials": ["material-adamantite", "material-mithril", "frostwood-log", "frostflower"],
+    "enemies": [
+      "core:p4-kryos-1",
+      "core:p4-kryos-2",
+      "core:p4-kryos-3",
+      "core:p4-kryos-4",
+      "core:p4-boss-kryos"
+    ],
+    "expeditionIds": [
+      "core:p4-kryos-quest-1",
+      "core:p4-kryos-quest-2",
+      "core:p4-kryos-dungeon-3",
+      "core:p4-kryos-raid-4"
+    ],
+    "activityIds": [
+      "expedition:kryos:quest:1",
+      "expedition:kryos:quest:2",
+      "expedition:kryos:dungeon:3",
+      "expedition:kryos:raid:4"
+    ],
+    "unlockRequirements": {
+      "level": 10,
+      "regionIds": ["vaeloria"]
+    }
+  },
+  {
+    "id": "riptide",
+    "kind": "region",
+    "name": "Riptide",
+    "description": "Arquipélago de piratas e saqueadores. Após a queda do Rei dos Ladrões, voltou ao caos. Suas águas abrigam feras e peixes exóticos dos doze mares, incluindo o Peixe Jaula.",
+    "source": "Notion: Eternity Realms — Universo e lore, Geografia — nove localidades do mundo (2026-11-08)",
+    "adaptationNotes": "Píeres e rotas de pesca nomeiam opções do jogo, sem estabelecer coordenadas ou novas fronteiras. Progressão de acesso por nível e nomes de atividades são adaptação jogável v1.0, não geografia canônica.",
+    "terrain": ["island", "coast", "open-sea", "shipwreck"],
+    "climate": ["tropical", "maritime"],
+    "localities": ["Enseada da Capitã", "Docas dos Doze Mares", "Naufrágios do Rei dos Ladrões"],
+    "materials": ["material-chlorophyte", "material-silver", "cage-fish", "driftwood"],
+    "enemies": [
+      "core:p4-riptide-1",
+      "core:p4-riptide-2",
+      "core:p4-riptide-3",
+      "core:p4-riptide-4",
+      "core:p4-boss-riptide"
+    ],
+    "expeditionIds": [
+      "core:p4-riptide-quest-1",
+      "core:p4-riptide-quest-2",
+      "core:p4-riptide-dungeon-3",
+      "core:p4-riptide-raid-4"
+    ],
+    "activityIds": [
+      "expedition:riptide:quest:1",
+      "expedition:riptide:quest:2",
+      "expedition:riptide:dungeon:3",
+      "expedition:riptide:raid:4"
+    ],
+    "unlockRequirements": {
+      "level": 8,
+      "regionIds": ["dross"]
+    }
+  },
+  {
+    "id": "caelum",
+    "kind": "region",
+    "name": "Caelum",
+    "description": "Monte Caelum, a maior montanha do mundo, fica ao norte de Vaeloria, perto da fronteira com Ionia. Trilhas mutáveis, vilas desaparecidas e distorções temporais e mágicas tornam a subida mortal. Raros sobreviventes podem ser escolhidos por Aspectos.",
+    "source": "Notion: Eternity Realms — Universo e lore, Geografia — nove localidades do mundo (2026-11-08)",
+    "adaptationNotes": "A subida explora o marco documentado; os pontos de descanso são conteúdo de jogo, sem inventar coordenadas. Progressão de acesso por nível e nomes de atividades são adaptação jogável v1.0, não geografia canônica.",
+    "terrain": ["mountain", "cloudline", "temporal-anomaly"],
+    "climate": ["alpine", "unstable"],
+    "localities": ["Trilha das Vilas Perdidas", "Escadaria das Nuvens", "Cume de Caelum"],
+    "materials": ["material-orichalcum", "material-unobtanio", "arcane-crystal"],
+    "enemies": [
+      "core:p4-caelum-1",
+      "core:p4-caelum-2",
+      "core:p4-caelum-3",
+      "core:p4-caelum-4",
+      "core:p4-boss-caelum"
+    ],
+    "expeditionIds": [
+      "core:p4-caelum-quest-1",
+      "core:p4-caelum-quest-2",
+      "core:p4-caelum-dungeon-3",
+      "core:p4-caelum-raid-4"
+    ],
+    "activityIds": [
+      "expedition:caelum:quest:1",
+      "expedition:caelum:quest:2",
+      "expedition:caelum:dungeon:3",
+      "expedition:caelum:raid:4"
+    ],
+    "unlockRequirements": {
+      "level": 15,
+      "regionIds": ["kryos"]
+    }
+  },
+  {
+    "id": "mourland",
+    "kind": "region",
+    "name": "Mourland",
+    "description": "Arquipélago de antigos monges dedicados à cura e ao mundo dos mortos. Um cataclismo converteu a Névoa Sagrada em Névoa Negra, que transforma seres vivos tocados em espectros a serviço do Rei Destruído.",
+    "source": "Notion: Eternity Realms — Universo e lore, Geografia — nove localidades do mundo (2026-11-08)",
+    "adaptationNotes": "Os locais de exploração refletem o cataclismo documentado e não acrescentam causas ou relações geográficas. Progressão de acesso por nível e nomes de atividades são adaptação jogável v1.0, não geografia canônica.",
+    "terrain": ["island", "ruin", "mist"],
+    "climate": ["black-mist", "humid"],
+    "localities": ["Mosteiro da Névoa Sagrada", "Palácio do Rei Destruído", "Costa da Névoa Negra"],
+    "materials": ["material-silver", "material-sacrite", "spectral-dust", "medicinal-herb"],
+    "enemies": [
+      "core:p4-mourland-1",
+      "core:p4-mourland-2",
+      "core:p4-mourland-3",
+      "core:p4-mourland-4",
+      "core:p4-boss-mourland"
+    ],
+    "expeditionIds": [
+      "core:p4-mourland-quest-1",
+      "core:p4-mourland-quest-2",
+      "core:p4-mourland-dungeon-3",
+      "core:p4-mourland-raid-4"
+    ],
+    "activityIds": [
+      "expedition:mourland:quest:1",
+      "expedition:mourland:quest:2",
+      "expedition:mourland:dungeon:3",
+      "expedition:mourland:raid:4"
+    ],
+    "unlockRequirements": {
+      "level": 12,
+      "regionIds": ["riptide"]
+    }
+  },
+  {
+    "id": "xochitlan",
+    "kind": "region",
+    "name": "Xochitlan",
+    "description": "Reino isolado por seres místicos que impedem entrada e saída. A sociedade é organizada em castas, com os Yun Tal no topo. Manipulação elemental influencia poder, mas a casta de nascimento é imutável.",
+    "source": "Notion: Eternity Realms — Universo e lore, Geografia — nove localidades do mundo (2026-11-08)",
+    "adaptationNotes": "Acesso regional usa a barreira mística documentada; os nomes de locais são conteúdo novo do jogo. Progressão de acesso por nível e nomes de atividades são adaptação jogável v1.0, não geografia canônica.",
+    "terrain": ["enclosed-valley", "temple", "elemental-garden"],
+    "climate": ["varied", "mystical-barrier"],
+    "localities": ["Terraço Yun Tal", "Jardins Elementais", "Barreira Mística"],
+    "materials": ["material-vibranium", "material-chlorophyte", "crystalwood", "jewel-shard"],
+    "enemies": [
+      "core:p4-xochitlan-1",
+      "core:p4-xochitlan-2",
+      "core:p4-xochitlan-3",
+      "core:p4-xochitlan-4",
+      "core:p4-boss-xochitlan"
+    ],
+    "expeditionIds": [
+      "core:p4-xochitlan-quest-1",
+      "core:p4-xochitlan-quest-2",
+      "core:p4-xochitlan-dungeon-3",
+      "core:p4-xochitlan-raid-4"
+    ],
+    "activityIds": [
+      "expedition:xochitlan:quest:1",
+      "expedition:xochitlan:quest:2",
+      "expedition:xochitlan:dungeon:3",
+      "expedition:xochitlan:raid:4"
+    ],
+    "unlockRequirements": {
+      "level": 18,
+      "regionIds": ["vrakkas"]
+    }
+  }
+]

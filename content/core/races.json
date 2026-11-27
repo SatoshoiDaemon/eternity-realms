@@ -3,6 +3,1290 @@
     "id": "human",
     "kind": "race",
     "name": "Humano",
-    "description": "Raça inicial representativa para a primeira fatia jogável."
+    "description": "Espécie recente, dominante por tenacidade, adaptação, aprendizado e criatividade.",
+    "lore": "Espécie recente, dominante por tenacidade, adaptação, aprendizado e criatividade.",
+    "advantages": [
+      "Talentos exclusivos nos níveis 1, 200, 500 e 700",
+      "pode escolher um talento inicial adicional. Trabalho Duro: bônus de 200% em profissões mecânicas."
+    ],
+    "disadvantages": [
+      "Elo Fraco",
+      "Biologia Comum",
+      "Magicamente Ineficazes. O texto original não fixa números para essas limitações."
+    ],
+    "source": "Notion: Eternity Realms — Sistemas originais do RP (2026-11-08; atualização de Kitsune/2026-11-08)",
+    "adaptationNotes": "Texto canônico resumido; os efeitos marcados como incompletos ou ambíguos permanecem sem valores inventados. A adaptação mecânica aparece em combatTags e activityBonuses.",
+    "combatTags": [],
+    "activityBonuses": [
+      {
+        "skillId": "mining-skill",
+        "yieldMultiplier": 3
+      },
+      {
+        "skillId": "forging-skill",
+        "yieldMultiplier": 3
+      },
+      {
+        "skillId": "alchemy-skill",
+        "yieldMultiplier": 3
+      },
+      {
+        "skillId": "culinary-skill",
+        "yieldMultiplier": 3
+      },
+      {
+        "skillId": "agriculture-skill",
+        "yieldMultiplier": 3
+      },
+      {
+        "skillId": "fishing-skill",
+        "yieldMultiplier": 3
+      },
+      {
+        "skillId": "logging-skill",
+        "yieldMultiplier": 3
+      },
+      {
+        "skillId": "herbalism-skill",
+        "yieldMultiplier": 3
+      },
+      {
+        "skillId": "jewelry-skill",
+        "yieldMultiplier": 3
+      },
+      {
+        "skillId": "trade-skill",
+        "yieldMultiplier": 3
+      }
+    ]
+  },
+  {
+    "id": "demon",
+    "kind": "race",
+    "name": "Demônio",
+    "description": "Originário do Inferno e alimentado por emoções negativas.",
+    "lore": "Originário do Inferno e alimentado por emoções negativas.",
+    "advantages": [
+      "Olhar do Akazana causa Confusão 5/1 e Queimadura 7/1",
+      "Submundo molda matéria escura",
+      "Hellblaze custa 4 Carga e causa Queimadura 7/3 e Feridas Dolorosas 6/3",
+      "sete corações protegem contra dano fatal acima de 50% HP",
+      "Pavor da Sociedade gera Benção e Carga."
+    ],
+    "disadvantages": [
+      "Anjo que não sabe voar: magia sagrada é proibida (exceto Benção de cura), e dano sagrado causa Ruptura",
+      "Coração Quebrado após perder sete corações",
+      "Demônios Nunca Choram: obediência a demônio 50 níveis acima."
+    ],
+    "source": "Notion: Eternity Realms — Sistemas originais do RP (2026-11-08; atualização de Kitsune/2026-11-08)",
+    "adaptationNotes": "Texto canônico resumido; os efeitos marcados como incompletos ou ambíguos permanecem sem valores inventados. A adaptação mecânica aparece em combatTags e activityBonuses.",
+    "combatTags": ["base:demonic"]
+  },
+  {
+    "id": "ghost",
+    "kind": "race",
+    "name": "Fantasma",
+    "description": "Entidade etérea originada de desejos, angústia ou energia espiritual, capaz de alternar planos.",
+    "lore": "Entidade etérea originada de desejos, angústia ou energia espiritual, capaz de alternar planos.",
+    "advantages": [
+      "Corpo Etéreo: atravessa sólidos, voa e fica invisível",
+      "Poltergeist move objetos e pessoas com energia",
+      "Possessão controla alvo debilitado por até cinco turnos."
+    ],
+    "disadvantages": [
+      "Âncora Espiritual: não interage fisicamente sem Poltergeist",
+      "Rancor longe do local de vínculo",
+      "vulnerável ao sagrado e ataques espirituais."
+    ],
+    "source": "Notion: Eternity Realms — Sistemas originais do RP (2026-11-08; atualização de Kitsune/2026-11-08)",
+    "adaptationNotes": "Etéreo e vulnerabilidade sagrada usam tags base; o Fantasma também não escolhe ataques físicos comuns, salvo ações marcadas espiritual/telecinética. Possessão, telecinese por energia, equipamento e gatilhos contextuais seguem pendentes sem regras/runtime próprios.",
+    "combatTags": ["base:ghost", "base:ethereal"],
+    "combatTag": {
+      "id": "race:ghost-physical-anchor",
+      "name": "Âncora Espiritual",
+      "description": "O Fantasma não seleciona ataques físicos comuns; ações com propriedade espiritual ou telecinética podem atravessar sua âncora.",
+      "category": "behavior",
+      "origin": "Notion: Eternity Realms — Sistemas originais do RP",
+      "activationConditions": [
+        "Selecionar uma ação física sem propriedade espiritual ou telecinética"
+      ],
+      "eventsObserved": ["action.select"],
+      "modifiers": [
+        {
+          "id": "race:ghost-physical-anchor:ordinary-attacks",
+          "event": "action.select",
+          "conditions": [
+            { "path": "action.damage.channel", "op": "eq", "value": "physical" },
+            {
+              "path": "action.properties",
+              "op": "not_includes_any",
+              "value": ["spiritual", "telekinetic"]
+            },
+            {
+              "path": "action.damage.properties",
+              "op": "not_includes_any",
+              "value": ["spiritual", "telekinetic"]
+            }
+          ],
+          "interactionId": "race:ghost:ordinary-physical-attack",
+          "potency": 1,
+          "priority": 0,
+          "effect": {
+            "type": "action_forbidden",
+            "value": ["attack", "ranged", "area", "combo"]
+          }
+        }
+      ],
+      "interactions": [
+        {
+          "id": "race:ghost:ordinary-physical-attack",
+          "counterplay": "Ações físicas comuns não são selecionadas; ações físicas com propriedade espiritual ou telecinética permanecem utilizáveis."
+        }
+      ],
+      "requirements": [],
+      "properties": ["racial", "ethereal", "physical-anchor"]
+    }
+  },
+  {
+    "id": "dragonborn",
+    "kind": "race",
+    "name": "Dragonborn",
+    "description": "Descendentes ou discípulos de dragões, marcados por escamas, asas e fúria.",
+    "lore": "Descendentes ou discípulos de dragões, marcados por escamas, asas e fúria.",
+    "advantages": [
+      "Fúria Escaldante cresce em ataques acertados",
+      "Escamas podem consumir Fúria para proteção, asas e forma híbrida",
+      "escolhe elemento da quadra primordial",
+      "pode devorar ataques energéticos mais fracos."
+    ],
+    "disadvantages": [
+      "Herdeiros de um Trono: não recebem benefícios diretos de divindades",
+      "Tiara zera Fúria",
+      "dependência de Energia causa Fragilidade quando Fúria e Carga faltam por mais de dois turnos."
+    ],
+    "source": "Notion: Eternity Realms — Sistemas originais do RP (2026-11-08; atualização de Kitsune/2026-11-08)",
+    "adaptationNotes": "Texto canônico resumido; os efeitos marcados como incompletos ou ambíguos permanecem sem valores inventados. A adaptação mecânica aparece em combatTags e activityBonuses.",
+    "combatTags": ["base:draconic"]
+  },
+  {
+    "id": "dwarf",
+    "kind": "race",
+    "name": "Anão",
+    "description": "Povo antigo ligado a mineração, forja e maquinário, criador original dos Warforged.",
+    "lore": "Povo antigo ligado a mineração, forja e maquinário, criador original dos Warforged.",
+    "advantages": [
+      "Trabalho Persistente: sem cansaço e sem Confusão",
+      "profissão de minerador recebe bônus de 200%",
+      "Mótsognir reage a ataques corporais",
+      "Arma de Dúrrin imbui equipamento para atingir incorpóreos."
+    ],
+    "disadvantages": [
+      "Corpo Lento: não recebe Pressa",
+      "movimentos finos aceleram em etapas",
+      "Desprezo pelo Rebuscado prejudica armas refinadas",
+      "Sem Vínculo reduz aptidão mágica."
+    ],
+    "source": "Notion: Eternity Realms — Sistemas originais do RP (2026-11-08; atualização de Kitsune/2026-11-08)",
+    "adaptationNotes": "Texto canônico resumido; os efeitos marcados como incompletos ou ambíguos permanecem sem valores inventados. A adaptação mecânica aparece em combatTags e activityBonuses.",
+    "combatTags": ["base:metallic", "base:subterranean"],
+    "combatTag": {
+      "id": "race:dwarf-resilience",
+      "category": "behavior",
+      "name": "Trabalho Persistente e Corpo Lento",
+      "description": "Anões não sofrem Exaustão ou Confusão nem recebem Pressa, conforme os traços raciais documentados.",
+      "origin": "Notion: Sistemas originais do RP — Anões, Trabalho Persistente e Corpo Lento (2026-11-08)",
+      "activationConditions": ["efeito de status recebido"],
+      "eventsObserved": ["status.incoming"],
+      "modifiers": [
+        {
+          "id": "persistent-work-confusion-immunity",
+          "event": "status.incoming",
+          "conditions": [{ "path": "status.id", "op": "eq", "value": "core:confusion" }],
+          "interactionId": "race:dwarf:confusion-immunity",
+          "potency": 100,
+          "priority": 100,
+          "effect": { "type": "status_immunity", "value": "core:confusion" }
+        },
+        {
+          "id": "persistent-work-exhaustion-immunity",
+          "event": "status.incoming",
+          "conditions": [{ "path": "status.id", "op": "eq", "value": "core:exhaustion" }],
+          "interactionId": "race:dwarf:exhaustion-immunity",
+          "potency": 100,
+          "priority": 100,
+          "effect": { "type": "status_immunity", "value": "core:exhaustion" }
+        },
+        {
+          "id": "slow-body-haste-immunity",
+          "event": "status.incoming",
+          "conditions": [{ "path": "status.id", "op": "eq", "value": "core:haste" }],
+          "interactionId": "race:dwarf:haste-immunity",
+          "potency": 100,
+          "priority": 100,
+          "effect": { "type": "status_immunity", "value": "core:haste" }
+        }
+      ],
+      "interactions": [
+        {
+          "id": "status-immunity",
+          "counterplay": "Aplicar outros efeitos que não sejam Exaustão, Confusão ou Pressa."
+        }
+      ],
+      "requirements": [],
+      "properties": ["racial", "status-immunity"]
+    },
+    "activityBonuses": [
+      {
+        "skillId": "mining-skill",
+        "yieldMultiplier": 3
+      }
+    ]
+  },
+  {
+    "id": "oni",
+    "kind": "race",
+    "name": "Oni",
+    "description": "Humanos amaldiçoados, predadores noturnos que dependem de carne humana e temem o sol.",
+    "lore": "Humanos amaldiçoados, predadores noturnos que dependem de carne humana e temem o sol.",
+    "advantages": [
+      "Predador fareja seres vivos e vê no escuro",
+      "ataques acertados concedem Pressa",
+      "Fome Eterna cura 10 HP por ataque",
+      "Kekkijutsu é uma técnica inata exclusiva."
+    ],
+    "disadvantages": [
+      "Coerção Infinita exige carne humana",
+      "Rejeitados pelo Sol impede cura e causa Queimadura",
+      "presença perturba animais e pessoas."
+    ],
+    "source": "Notion: Eternity Realms — Sistemas originais do RP (2026-11-08; atualização de Kitsune/2026-11-08)",
+    "adaptationNotes": "Texto canônico resumido; os efeitos marcados como incompletos ou ambíguos permanecem sem valores inventados. A adaptação mecânica aparece em combatTags e activityBonuses.",
+    "combatTags": ["base:nocturnal"],
+    "combatTag": {
+      "id": "race:oni",
+      "category": "behavior",
+      "name": "Fome Eterna",
+      "description": "Cada ataque acertado recupera 10 HP e concede Pressa 2/1, conforme as vantagens raciais originais.",
+      "origin": "Notion: Sistemas originais do RP — Onis, Fome Eterna (2026-11-08)",
+      "adaptationNotes": "O original aumenta a cura para 200% contra alvo sangrando, 400% após perder 25% do HP, 500% após perder 50% e 800% com 10% de HP restante, mas não define acúmulo ou prioridade. A adaptação aplica somente o maior patamar elegível.",
+      "activationConditions": ["ataque acertado"],
+      "eventsObserved": ["damage.dealt"],
+      "modifiers": [
+        {
+          "id": "fome-eterna",
+          "event": "damage.dealt",
+          "conditions": [],
+          "interactionId": "race:oni:fome-eterna-healing",
+          "potency": 1,
+          "priority": 100,
+          "effect": {
+            "type": "flat_vampirism",
+            "value": 10
+          }
+        },
+        {
+          "id": "fome-eterna-bleeding-target-heal",
+          "event": "damage.dealt",
+          "conditions": [
+            { "path": "defender.effects", "op": "includes_id", "value": "core:bleeding" }
+          ],
+          "interactionId": "race:oni:fome-eterna-healing",
+          "potency": 2,
+          "priority": 100,
+          "effect": {
+            "type": "flat_vampirism",
+            "value": 20
+          }
+        },
+        {
+          "id": "fome-eterna-quarter-health-heal",
+          "event": "damage.dealt",
+          "conditions": [{ "path": "attacker.hpRatio", "op": "lte", "value": 0.75 }],
+          "interactionId": "race:oni:fome-eterna-healing",
+          "potency": 4,
+          "priority": 100,
+          "effect": {
+            "type": "flat_vampirism",
+            "value": 40
+          }
+        },
+        {
+          "id": "fome-eterna-half-health-heal",
+          "event": "damage.dealt",
+          "conditions": [{ "path": "attacker.hpRatio", "op": "lte", "value": 0.5 }],
+          "interactionId": "race:oni:fome-eterna-healing",
+          "potency": 5,
+          "priority": 100,
+          "effect": {
+            "type": "flat_vampirism",
+            "value": 50
+          }
+        },
+        {
+          "id": "fome-eterna-low-health-heal",
+          "event": "damage.dealt",
+          "conditions": [{ "path": "attacker.hpRatio", "op": "lte", "value": 0.1 }],
+          "interactionId": "race:oni:fome-eterna-healing",
+          "potency": 8,
+          "priority": 100,
+          "effect": {
+            "type": "flat_vampirism",
+            "value": 80
+          }
+        },
+        {
+          "id": "predator-hit-haste",
+          "event": "damage.dealt",
+          "conditions": [],
+          "interactionId": "race:oni:hit-haste",
+          "potency": 2,
+          "priority": 100,
+          "effect": {
+            "type": "on_hit_effect",
+            "value": {
+              "id": "core:haste",
+              "category": "buff",
+              "potency": 2,
+              "counter": 1
+            }
+          }
+        },
+        {
+          "id": "predator-bleeding-target-haste",
+          "event": "damage.dealt",
+          "conditions": [
+            { "path": "defender.effects", "op": "includes_id", "value": "core:bleeding" }
+          ],
+          "interactionId": "race:oni:bleeding-target-haste",
+          "potency": 4,
+          "priority": 100,
+          "effect": {
+            "type": "on_hit_effect",
+            "value": {
+              "id": "core:haste",
+              "category": "buff",
+              "potency": 4,
+              "counter": 4
+            }
+          }
+        }
+      ],
+      "interactions": [
+        {
+          "id": "fome",
+          "counterplay": "evitar que o Oni acerte ataques"
+        }
+      ],
+      "requirements": [],
+      "properties": ["racial", "healing", "self-buff"]
+    }
+  },
+  {
+    "id": "doll",
+    "kind": "race",
+    "name": "Boneco",
+    "description": "Autômato mágico de pano ou madeira, distinto de um Warforged.",
+    "lore": "Autômato mágico de pano ou madeira, distinto de um Warforged.",
+    "advantages": [
+      "Ser Artificial: imune a Confusão e Charme, membros independentes e reconstruíveis",
+      "Titeleiro acumula controle no alvo",
+      "Encanto Mágico ganha Carga ao acertar magia."
+    ],
+    "disadvantages": [
+      "Sem Coração: sem emoções, treino físico ou regeneração",
+      "precisa de reparo. Dano superior a 10% do HP máximo aplica Fragilidade",
+      "repouso evita desgaste acumulado."
+    ],
+    "source": "Notion: Eternity Realms — Sistemas originais do RP (2026-11-08; atualização de Kitsune/2026-11-08)",
+    "adaptationNotes": "Texto canônico resumido; os efeitos marcados como incompletos ou ambíguos permanecem sem valores inventados. A adaptação mecânica aparece em combatTags e activityBonuses.",
+    "combatTags": ["base:construct"],
+    "combatTag": {
+      "id": "race:doll-artificial-body",
+      "category": "behavior",
+      "name": "Ser Artificial",
+      "description": "O corpo artificial do Boneco impede Confusão e Charme.",
+      "origin": "Notion: Sistemas originais do RP — Bonecos, Ser Artificial (2026-11-08)",
+      "activationConditions": ["efeito de status recebido"],
+      "eventsObserved": ["status.incoming"],
+      "modifiers": [
+        {
+          "id": "artificial-body-confusion-immunity",
+          "event": "status.incoming",
+          "conditions": [{ "path": "status.id", "op": "eq", "value": "core:confusion" }],
+          "interactionId": "race:doll:confusion-immunity",
+          "potency": 100,
+          "priority": 100,
+          "effect": { "type": "status_immunity", "value": "core:confusion" }
+        },
+        {
+          "id": "artificial-body-charm-immunity",
+          "event": "status.incoming",
+          "conditions": [{ "path": "status.id", "op": "eq", "value": "core:charm" }],
+          "interactionId": "race:doll:charm-immunity",
+          "potency": 100,
+          "priority": 100,
+          "effect": { "type": "status_immunity", "value": "core:charm" }
+        }
+      ],
+      "interactions": [
+        {
+          "id": "status-immunity",
+          "counterplay": "Aplicar efeitos de status que não sejam Confusão ou Charme."
+        }
+      ],
+      "requirements": [],
+      "properties": ["racial", "status-immunity"]
+    }
+  },
+  {
+    "id": "fairy",
+    "kind": "race",
+    "name": "Fada",
+    "description": "Criatura pequena e mágica ligada à natureza, reclusa, protetora e travessa.",
+    "lore": "Criatura pequena e mágica ligada à natureza, reclusa, protetora e travessa.",
+    "advantages": [
+      "Escolhe Fogo, Água, Terra ou Ar",
+      "o elemento escolhido é efetivo. Forma de até 4 cm concede Pressa e dois desvios garantidos por combate",
+      "compreende seres vivos."
+    ],
+    "disadvantages": [
+      "Forma pequena reduz HP e Defesa em 80%",
+      "efeitos mentais próximos podem ser compartilhados",
+      "centros urbanos e tecnologia causam Confusão e Fragilidade."
+    ],
+    "source": "Notion: Eternity Realms — Sistemas originais do RP (2026-11-08; atualização de Kitsune/2026-11-08)",
+    "adaptationNotes": "Texto canônico resumido; os efeitos marcados como incompletos ou ambíguos permanecem sem valores inventados. A adaptação mecânica aparece em combatTags e activityBonuses.",
+    "combatTags": ["base:elemental", "base:flying"]
+  },
+  {
+    "id": "giant",
+    "kind": "race",
+    "name": "Gigante",
+    "description": "Ser colossal anterior à magia dracônica, ligado à Terra e com pelo menos cinco metros.",
+    "lore": "Ser colossal anterior à magia dracônica, ligado à Terra e com pelo menos cinco metros.",
+    "advantages": [
+      "Jotun Body concede Ataque e Proteção naturais, crescimento aumenta poder",
+      "ataques com armas de força fragmentam",
+      "Megadorza domina Terra",
+      "passos atordoam criaturas menores."
+    ],
+    "disadvantages": [
+      "Corpo Pesado impede Pressa e reduz aceleração/precisão",
+      "elementos fora de Terra custam o dobro",
+      "Alvo Óbvio atrai ataques."
+    ],
+    "source": "Notion: Eternity Realms — Sistemas originais do RP (2026-11-08; atualização de Kitsune/2026-11-08)",
+    "adaptationNotes": "Texto canônico resumido; os efeitos marcados como incompletos ou ambíguos permanecem sem valores inventados. A adaptação mecânica aparece em combatTags e activityBonuses.",
+    "combatTags": ["base:colossal", "base:elemental"],
+    "combatTag": {
+      "id": "race:giant-heavy-body",
+      "category": "behavior",
+      "name": "Corpo Pesado",
+      "description": "Gigantes não recebem Pressa, conforme a fraqueza racial documentada.",
+      "origin": "Notion: Sistemas originais do RP — Gigantes, Corpo Pesado (2026-11-08)",
+      "activationConditions": ["efeito de status recebido"],
+      "eventsObserved": ["status.incoming"],
+      "modifiers": [
+        {
+          "id": "heavy-body-haste-immunity",
+          "event": "status.incoming",
+          "conditions": [{ "path": "status.id", "op": "eq", "value": "core:haste" }],
+          "interactionId": "race:giant:haste-immunity",
+          "potency": 100,
+          "priority": 100,
+          "effect": { "type": "status_immunity", "value": "core:haste" }
+        }
+      ],
+      "interactions": [
+        {
+          "id": "haste-immunity",
+          "counterplay": "Usar outros efeitos; a imunidade cobre apenas Pressa."
+        }
+      ],
+      "requirements": [],
+      "properties": ["racial", "status-immunity"]
+    }
+  },
+  {
+    "id": "triton",
+    "kind": "race",
+    "name": "Tritão",
+    "description": "Povo aquático recentemente liberto da escravidão, conhecido por artes marciais e facilidade linguística.",
+    "lore": "Povo aquático recentemente liberto da escravidão, conhecido por artes marciais e facilidade linguística.",
+    "advantages": [
+      "Respira sob água",
+      "natação concede Pressa",
+      "Karatê dos Homens-Peixe exige Água, aplica Lentidão e Confusão",
+      "Barganha amplia idiomas e concede Pressa a aliados."
+    ],
+    "disadvantages": [
+      "Ambientes áridos causam Lentidão e Confusão",
+      "água doce acumula Confusão",
+      "Terra e vertentes são efetivas",
+      "sentidos são imprecisos em terra."
+    ],
+    "source": "Notion: Eternity Realms — Sistemas originais do RP (2026-11-08; atualização de Kitsune/2026-11-08)",
+    "adaptationNotes": "Texto canônico resumido; os efeitos marcados como incompletos ou ambíguos permanecem sem valores inventados. A adaptação mecânica aparece em combatTags e activityBonuses.",
+    "combatTags": ["base:aquatic"]
+  },
+  {
+    "id": "angel",
+    "kind": "race",
+    "name": "Anjo",
+    "description": "Soldado criado pelos deuses durante o Motim no Céu, guerreiro e curandeiro.",
+    "lore": "Soldado criado pelos deuses durante o Motim no Céu, guerreiro e curandeiro.",
+    "advantages": [
+      "Halo liga Fogo, Luz e armas",
+      "Genesi concede regeneração e protege alvos curados",
+      "Expurgo pune mortos-vivos e seres malignos",
+      "Executor Divino executa alvos qualificados."
+    ],
+    "disadvantages": [
+      "Feito aos Céus impede magia negra e necromancia",
+      "Halo prejudica furtividade e atrai ataques",
+      "desobedecer superior causa Atordoamento e Fragilidade."
+    ],
+    "source": "Notion: Eternity Realms — Sistemas originais do RP (2026-11-08; atualização de Kitsune/2026-11-08)",
+    "adaptationNotes": "Texto canônico resumido; os efeitos marcados como incompletos ou ambíguos permanecem sem valores inventados. A adaptação mecânica aparece em combatTags e activityBonuses.",
+    "combatTags": ["base:celestial", "base:light_attuned"],
+    "combatTag": {
+      "id": "race:angel-halo-genesi",
+      "name": "Halo e Genesi",
+      "description": "A Queimadura aplicada pelo Anjo dura mais; Genesi reduz Feridas Dolorosas, regenera e protege após curas e buffs.",
+      "category": "behavior",
+      "origin": "Notion: Eternity Realms — Sistemas originais do RP",
+      "activationConditions": [
+        "Aplicar Queimadura",
+        "Receber Feridas Dolorosas",
+        "Resolver um turno de combate",
+        "Curar ou aplicar um buff"
+      ],
+      "eventsObserved": [
+        "status.applied",
+        "status.incoming",
+        "environment.tick",
+        "support.completed"
+      ],
+      "modifiers": [
+        {
+          "id": "race:angel-halo-genesi:burn-duration",
+          "event": "status.applied",
+          "conditions": [{ "path": "status.id", "op": "eq", "value": "core:burn" }],
+          "interactionId": "race:angel:burn-duration",
+          "potency": 1,
+          "priority": 0,
+          "effect": { "type": "status_duration_multiplier", "value": 2 }
+        },
+        {
+          "id": "race:angel-halo-genesi:painful-wounds-potency",
+          "event": "status.incoming",
+          "conditions": [{ "path": "status.id", "op": "eq", "value": "core:painful-wounds" }],
+          "interactionId": "race:angel:genesi:painful-wounds-potency",
+          "potency": 1,
+          "priority": 0,
+          "effect": { "type": "status_potency_multiplier", "value": 0.5 }
+        },
+        {
+          "id": "race:angel-halo-genesi:painful-wounds-duration",
+          "event": "status.incoming",
+          "conditions": [{ "path": "status.id", "op": "eq", "value": "core:painful-wounds" }],
+          "interactionId": "race:angel:genesi:painful-wounds-duration",
+          "potency": 1,
+          "priority": 0,
+          "effect": { "type": "status_duration_multiplier", "value": 0.5 }
+        },
+        {
+          "id": "race:angel-halo-genesi:regeneration",
+          "event": "environment.tick",
+          "conditions": [],
+          "interactionId": "race:angel:genesi:regeneration",
+          "potency": 3,
+          "priority": 0,
+          "effect": { "type": "regeneration", "value": 3 }
+        },
+        {
+          "id": "race:angel-halo-genesi:healing-blessing",
+          "event": "support.completed",
+          "conditions": [{ "path": "action.hasHealing", "op": "eq", "value": true }],
+          "interactionId": "race:angel:genesi:blessing",
+          "potency": 4,
+          "priority": 0,
+          "effect": {
+            "type": "on_support_effect",
+            "value": { "id": "core:blessing", "category": "buff", "potency": 4, "counter": 1 }
+          }
+        },
+        {
+          "id": "race:angel-halo-genesi:buff-blessing",
+          "event": "support.completed",
+          "conditions": [{ "path": "action.hasAppliedBuff", "op": "eq", "value": true }],
+          "interactionId": "race:angel:genesi:blessing",
+          "potency": 4,
+          "priority": 0,
+          "effect": {
+            "type": "on_support_effect",
+            "value": { "id": "core:blessing", "category": "buff", "potency": 4, "counter": 1 }
+          }
+        },
+        {
+          "id": "race:angel-halo-genesi:healing-protection",
+          "event": "support.completed",
+          "conditions": [{ "path": "action.hasHealing", "op": "eq", "value": true }],
+          "interactionId": "race:angel:genesi:protection",
+          "potency": 4,
+          "priority": 0,
+          "effect": {
+            "type": "on_support_effect",
+            "value": { "id": "core:protection", "category": "buff", "potency": 4, "counter": 1 }
+          }
+        },
+        {
+          "id": "race:angel-halo-genesi:buff-protection",
+          "event": "support.completed",
+          "conditions": [{ "path": "action.hasAppliedBuff", "op": "eq", "value": true }],
+          "interactionId": "race:angel:genesi:protection",
+          "potency": 4,
+          "priority": 0,
+          "effect": {
+            "type": "on_support_effect",
+            "value": { "id": "core:protection", "category": "buff", "potency": 4, "counter": 1 }
+          }
+        }
+      ],
+      "interactions": [
+        {
+          "id": "race:angel:burn-duration",
+          "counterplay": "Queimadura aplicada pelo Anjo tem duração dobrada."
+        },
+        {
+          "id": "race:angel:genesi:painful-wounds-potency",
+          "counterplay": "Feridas Dolorosas recebidas têm metade da Potência."
+        },
+        {
+          "id": "race:angel:genesi:painful-wounds-duration",
+          "counterplay": "Feridas Dolorosas recebidas têm metade da Duração."
+        },
+        {
+          "id": "race:angel:genesi:regeneration",
+          "counterplay": "Os três níveis canônicos são adaptados como 3 HP por turno resolvido do ator."
+        },
+        {
+          "id": "race:angel:genesi:blessing",
+          "counterplay": "Após curar ou aplicar um buff, o Anjo e o alvo recebem Benção 4/1."
+        },
+        {
+          "id": "race:angel:genesi:protection",
+          "counterplay": "Após curar ou aplicar um buff, o Anjo e o alvo recebem Proteção 4/1."
+        }
+      ],
+      "requirements": [],
+      "properties": ["racial", "healing", "fire-affinity", "light-affinity"]
+    }
+  },
+  {
+    "id": "feral",
+    "kind": "race",
+    "name": "Feral",
+    "description": "Humanoide animal de espécies variadas, historicamente perseguido.",
+    "lore": "Humanoide animal de espécies variadas, historicamente perseguido.",
+    "advantages": [
+      "Lado Animal permite escolher espécie e criar uma habilidade coerente",
+      "sentidos e traços dependem do animal escolhido",
+      "sinergia de matilha ou autonomia conforme espécie."
+    ],
+    "disadvantages": [
+      "A desvantagem depende da espécie escolhida e da relação com matilha",
+      "preservar a seleção da ficha, sem impor uma espécie padrão."
+    ],
+    "source": "Notion: Eternity Realms — Sistemas originais do RP (2026-11-08; atualização de Kitsune/2026-11-08)",
+    "adaptationNotes": "Texto canônico resumido; os efeitos marcados como incompletos ou ambíguos permanecem sem valores inventados. A adaptação mecânica aparece em combatTags e activityBonuses.",
+    "combatTags": ["base:beast", "base:pack_hunter"]
+  },
+  {
+    "id": "warforged",
+    "kind": "race",
+    "name": "Warforged",
+    "description": "Construto mecânico criado pelos Anões, sem biologia orgânica.",
+    "lore": "Construto mecânico criado pelos Anões, sem biologia orgânica.",
+    "advantages": [
+      "Corpo mecânico resiste a efeitos biológicos e não precisa de funções orgânicas",
+      "crescimento de atributos físicos ocorre em marcos próprios de nível."
+    ],
+    "disadvantages": [
+      "Não realiza treinamento normal nem regenera como organismo",
+      "depende de manutenção e reparo."
+    ],
+    "source": "Notion: Eternity Realms — Sistemas originais do RP (2026-11-08; atualização de Kitsune/2026-11-08)",
+    "adaptationNotes": "Texto canônico resumido; os efeitos marcados como incompletos ou ambíguos permanecem sem valores inventados. A adaptação mecânica aparece em combatTags e activityBonuses.",
+    "combatTags": ["base:construct", "base:metallic"]
+  },
+  {
+    "id": "slime",
+    "kind": "race",
+    "name": "Slime",
+    "description": "Criatura amorfa capaz de alterar forma e recompor o próprio corpo.",
+    "lore": "Criatura amorfa capaz de alterar forma e recompor o próprio corpo.",
+    "advantages": [
+      "Corpo amorfo atravessa aberturas, adapta anatomia e regenera",
+      "ácido pode corroer e ferir",
+      "composição define interações."
+    ],
+    "disadvantages": [
+      "Estrutura amorfa possui vulnerabilidades específicas a elementos e condições",
+      "manter propriedades da composição escolhida."
+    ],
+    "source": "Notion: Eternity Realms — Sistemas originais do RP (2026-11-08; atualização de Kitsune/2026-11-08)",
+    "adaptationNotes": "Texto canônico resumido; os efeitos marcados como incompletos ou ambíguos permanecem sem valores inventados. A adaptação mecânica aparece em combatTags e activityBonuses.",
+    "combatTags": ["base:gelatinous", "base:regenerative", "base:corrosive"],
+    "combatTag": {
+      "id": "race:slime-acidic-body",
+      "name": "Corpo Ácido",
+      "description": "A fisiologia do Slime rejeita veneno e sangramento, perpetua queimadura/congelamento e contamina quem toca seu gel.",
+      "category": "anatomy",
+      "origin": "Notion: Eternity Realms — Sistemas originais do RP",
+      "activationConditions": [
+        "Receber Veneno ou Sangramento",
+        "Receber Queimadura ou Congelamento",
+        "Receber dano físico corpo a corpo",
+        "Resolver um turno de combate"
+      ],
+      "eventsObserved": ["status.incoming", "damage.received", "environment.tick"],
+      "modifiers": [
+        {
+          "id": "race:slime-acidic-body:poison-immunity",
+          "event": "status.incoming",
+          "conditions": [{ "path": "status.id", "op": "eq", "value": "core:poison" }],
+          "interactionId": "race:slime:poison-immunity",
+          "potency": 1,
+          "priority": 0,
+          "effect": { "type": "status_immunity", "value": "core:poison" }
+        },
+        {
+          "id": "race:slime-acidic-body:bleeding-immunity",
+          "event": "status.incoming",
+          "conditions": [{ "path": "status.id", "op": "eq", "value": "core:bleeding" }],
+          "interactionId": "race:slime:bleeding-immunity",
+          "potency": 1,
+          "priority": 0,
+          "effect": { "type": "status_immunity", "value": "core:bleeding" }
+        },
+        {
+          "id": "race:slime-acidic-body:burn-potency",
+          "event": "status.incoming",
+          "conditions": [{ "path": "status.id", "op": "eq", "value": "core:burn" }],
+          "interactionId": "race:slime:burn-potency",
+          "potency": 2,
+          "priority": 0,
+          "effect": { "type": "status_potency_multiplier", "value": 2 }
+        },
+        {
+          "id": "race:slime-acidic-body:burn-persistence",
+          "event": "status.incoming",
+          "conditions": [{ "path": "status.id", "op": "eq", "value": "core:burn" }],
+          "interactionId": "race:slime:burn-persistence",
+          "potency": 1,
+          "priority": 0,
+          "effect": { "type": "status_persistence", "value": "core:burn" }
+        },
+        {
+          "id": "race:slime-acidic-body:freeze-persistence",
+          "event": "status.incoming",
+          "conditions": [{ "path": "status.id", "op": "eq", "value": "core:freeze" }],
+          "interactionId": "race:slime:freeze-persistence",
+          "potency": 1,
+          "priority": 0,
+          "effect": { "type": "status_persistence", "value": "core:freeze" }
+        },
+        {
+          "id": "race:slime-acidic-body:acid-poison-contact",
+          "event": "damage.received",
+          "conditions": [
+            { "path": "damage.channel", "op": "eq", "value": "physical" },
+            { "path": "action.kind", "op": "eq", "value": "attack" }
+          ],
+          "interactionId": "race:slime:acid-poison-contact",
+          "potency": 1,
+          "priority": 0,
+          "effect": {
+            "type": "on_hit_effect",
+            "value": { "id": "core:poison", "category": "dot", "potency": 15, "counter": 1 }
+          }
+        },
+        {
+          "id": "race:slime-acidic-body:acid-fragile-contact",
+          "event": "damage.received",
+          "conditions": [
+            { "path": "damage.channel", "op": "eq", "value": "physical" },
+            { "path": "action.kind", "op": "eq", "value": "attack" }
+          ],
+          "interactionId": "race:slime:acid-fragile-contact",
+          "potency": 1,
+          "priority": 0,
+          "effect": {
+            "type": "on_hit_effect",
+            "value": { "id": "core:fragile", "category": "debuff", "potency": 7, "counter": 3 }
+          }
+        },
+        {
+          "id": "race:slime-acidic-body:regeneration",
+          "event": "environment.tick",
+          "conditions": [
+            {
+              "path": "actor.effects",
+              "op": "not_includes_id",
+              "value": "base:regeneration-suppressed"
+            }
+          ],
+          "interactionId": "race:slime:regeneration",
+          "potency": 3,
+          "priority": 0,
+          "effect": { "type": "regeneration", "value": 3 }
+        }
+      ],
+      "interactions": [
+        {
+          "id": "race:slime:poison-immunity",
+          "counterplay": "O Slime é imune a Veneno."
+        },
+        {
+          "id": "race:slime:bleeding-immunity",
+          "counterplay": "O Slime é imune a Sangramento."
+        },
+        {
+          "id": "race:slime:burn-potency",
+          "counterplay": "Queimadura recebida causa o dobro de dano pela Potência dobrada."
+        },
+        {
+          "id": "race:slime:burn-persistence",
+          "counterplay": "Queimadura não expira naturalmente no Slime e permanece até ser removida."
+        },
+        {
+          "id": "race:slime:freeze-persistence",
+          "counterplay": "Congelamento não expira naturalmente no Slime e permanece até ser removido."
+        },
+        {
+          "id": "race:slime:acid-poison-contact",
+          "counterplay": "Um ataque físico corpo a corpo contra o Slime aplica Veneno 15/1 ao atacante."
+        },
+        {
+          "id": "race:slime:acid-fragile-contact",
+          "counterplay": "Um ataque físico corpo a corpo contra o Slime aplica Frágil 7/3 ao atacante."
+        },
+        {
+          "id": "race:slime:regeneration",
+          "counterplay": "A regeneração base e três níveis adicionais rendem quatro HP por turno resolvido."
+        }
+      ],
+      "requirements": [],
+      "properties": ["racial", "gelatinous", "acid", "regenerative"]
+    }
+  },
+  {
+    "id": "elf",
+    "kind": "race",
+    "name": "Elfo",
+    "description": "Povo longevo associado à Luz e à Natureza, com grande finesse.",
+    "lore": "Povo longevo associado à Luz e à Natureza, com grande finesse.",
+    "advantages": [
+      "Afinidade com Luz e Natureza",
+      "ataques refinados favorecem precisão e acertos críticos",
+      "sentidos e percepção naturais."
+    ],
+    "disadvantages": [
+      "Metal e força física são fraquezas",
+      "armaduras pesadas ou materiais metálicos prejudicam o desempenho."
+    ],
+    "source": "Notion: Eternity Realms — Sistemas originais do RP (2026-11-08; atualização de Kitsune/2026-11-08)",
+    "adaptationNotes": "Texto canônico resumido; os efeitos marcados como incompletos ou ambíguos permanecem sem valores inventados. A adaptação mecânica aparece em combatTags e activityBonuses.",
+    "combatTags": ["base:light_attuned", "base:plant"]
+  },
+  {
+    "id": "vampire",
+    "kind": "race",
+    "name": "Vampiro",
+    "description": "Predador imortal que depende de sangue e apresenta transformação.",
+    "lore": "Predador imortal que depende de sangue e apresenta transformação.",
+    "advantages": [
+      "Sangue sustenta recuperação e evolução",
+      "forma transformada amplia capacidades",
+      "pode rastrear vítimas e explorar ferimentos."
+    ],
+    "disadvantages": [
+      "Sol, alho e energia sagrada são fraquezas",
+      "necessidade de sangue condiciona a sobrevivência."
+    ],
+    "source": "Notion: Eternity Realms — Sistemas originais do RP (2026-11-08; atualização de Kitsune/2026-11-08)",
+    "adaptationNotes": "Texto canônico resumido; os efeitos marcados como incompletos ou ambíguos permanecem sem valores inventados. A adaptação mecânica aparece em combatTags e activityBonuses. A regeneração documentada foi implementada: dois níveis como 2 HP por turno do ator, conforme a adaptação de níveis de regeneração já usada pelo motor, e 1% do HP máximo por turno enquanto houver oponente vivo com Sangramento adjacente. 'Próximo' é interpretado como distância Manhattan até 1 na simulação automática.",
+    "combatTags": ["base:vampiric", "base:nocturnal", "base:cursed"],
+    "combatTag": {
+      "id": "race:vampire-blood-regeneration",
+      "category": "behavior",
+      "name": "Magia de Sangue — Regeneração Vampírica",
+      "description": "Recupera dois níveis de regeneração por turno, mais 1% do HP máximo quando um adversário próximo está sangrando; sob luz solar, sofre Queimadura 99/99.",
+      "origin": "Notion: Eternity Realms — Sistemas originais do RP, 16. Vampiros (2026-11-08)",
+      "activationConditions": [
+        "cada turno do Vampiro",
+        "oponente vivo com Sangramento a distância Manhattan 1 para a regeneração sanguínea",
+        "luz solar no ambiente, representada por período diurno na simulação"
+      ],
+      "eventsObserved": ["environment.tick"],
+      "modifiers": [
+        {
+          "id": "vampire-base-regeneration-levels",
+          "event": "environment.tick",
+          "conditions": [],
+          "interactionId": "race:vampire:base-regeneration",
+          "potency": 2,
+          "priority": 100,
+          "effect": { "type": "regeneration", "value": 2 }
+        },
+        {
+          "id": "vampire-bleeding-opponent-regeneration",
+          "event": "environment.tick",
+          "conditions": [{ "path": "actor.nearbyBleedingOpponent", "op": "eq", "value": true }],
+          "interactionId": "race:vampire:blood-regeneration",
+          "potency": 1,
+          "priority": 100,
+          "effect": { "type": "max_hp_regeneration", "value": 0.01 }
+        },
+        {
+          "id": "vampire-sunlight-burn",
+          "event": "environment.tick",
+          "conditions": [{ "path": "environment.timeOfDay", "op": "eq", "value": "day" }],
+          "interactionId": "race:vampire:sunlight",
+          "potency": 99,
+          "priority": 100,
+          "effect": {
+            "type": "environment_status",
+            "value": {
+              "id": "core:burn",
+              "category": "dot",
+              "potency": 99,
+              "counter": 99,
+              "tickDamage": { "amount": 1, "channel": "magical" },
+              "tickIntervalMs": 1000
+            }
+          }
+        }
+      ],
+      "interactions": [
+        {
+          "id": "race:vampire:base-regeneration",
+          "counterplay": "Dano supera a recuperação fixa, aplicada apenas nos turnos do Vampiro."
+        },
+        {
+          "id": "race:vampire:blood-regeneration",
+          "counterplay": "Evite Sangramento ou mantenha distância do Vampiro."
+        },
+        {
+          "id": "race:vampire:sunlight",
+          "counterplay": "Lute fora da luz solar ou aplique imunidade a Queimadura."
+        }
+      ],
+      "requirements": [],
+      "properties": ["racial", "blood-magic", "regenerative"]
+    }
+  },
+  {
+    "id": "intelligent-weapon",
+    "kind": "race",
+    "name": "Arma Inteligente",
+    "description": "Objeto animado por parte da energia e alma de seu criador, com personalidade própria e vínculo com portador.",
+    "lore": "Objeto animado por parte da energia e alma de seu criador, com personalidade própria e vínculo com portador.",
+    "advantages": [
+      "Incorpóreo: imune a estados salvo reduções de dano e efeitos mentais, percebe armadilhas e hostilidade",
+      "Ferida Etérea ignora reduções raciais e atinge incorpóreos",
+      "Aprendizado Profundo converte erros em Carga e bônus."
+    ],
+    "disadvantages": [
+      "Sem Corpo: depende do portador, não age ou ataca autonomamente",
+      "Rigidez dobra efeitos de Frágil, Ruptura e Fragmentação."
+    ],
+    "source": "Notion: Eternity Realms — Sistemas originais do RP (2026-11-08; atualização de Kitsune/2026-11-08)",
+    "adaptationNotes": "Texto canônico resumido; os efeitos marcados como incompletos ou ambíguos permanecem sem valores inventados. A adaptação mecânica aparece em combatTags e activityBonuses.",
+    "combatTags": ["base:construct", "base:ethereal"]
+  },
+  {
+    "id": "yordle",
+    "kind": "race",
+    "name": "Yordle",
+    "description": "Ser pequeno do Bandobosque, dimensão de lógica, espaço e gravidade distorcidos.",
+    "lore": "Ser pequeno do Bandobosque, dimensão de lógica, espaço e gravidade distorcidos.",
+    "advantages": [
+      "Colhedor de Sonhos pode alterar uma regra de realidade no combate sem ferir diretamente",
+      "Polimorfo altera forma e tamanho",
+      "magia permite teleporte, voo e portais."
+    ],
+    "disadvantages": [
+      "Inocência Obrigatória restringe violência",
+      "Magia de Captura dobra debilitações e zera Carga",
+      "Espaço Pessoal impede pactos e buffs de terceiros."
+    ],
+    "source": "Notion: Eternity Realms — Sistemas originais do RP (2026-11-08; atualização de Kitsune/2026-11-08)",
+    "adaptationNotes": "Texto canônico resumido; os efeitos marcados como incompletos ou ambíguos permanecem sem valores inventados. A adaptação mecânica aparece em combatTags e activityBonuses.",
+    "combatTags": ["base:fast", "base:flying"]
+  },
+  {
+    "id": "elemental",
+    "kind": "race",
+    "name": "Elemental",
+    "description": "Ser natural de energia e elemento, surgido após o primeiro Dragão e ligado à proteção da natureza.",
+    "lore": "Ser natural de energia e elemento, surgido após o primeiro Dragão e ligado à proteção da natureza.",
+    "advantages": [
+      "Coração Elementar gera Carga com ataques energizados",
+      "escolhe um elemento de origem",
+      "efeitos e Mix Elemental dependem da afinidade",
+      "Corpo Elementar não precisa respirar ou dormir."
+    ],
+    "disadvantages": [
+      "Trava Elemental limita a um elemento e dobra debuffs do elemento oposto",
+      "ambientes urbanos e fechados dobram custos",
+      "impulso de proteger a natureza."
+    ],
+    "source": "Notion: Eternity Realms — Sistemas originais do RP (2026-11-08; atualização de Kitsune/2026-11-08)",
+    "adaptationNotes": "Texto canônico resumido; os efeitos marcados como incompletos ou ambíguos permanecem sem valores inventados. A adaptação mecânica aparece em combatTags e activityBonuses.",
+    "combatTags": ["base:elemental"]
+  },
+  {
+    "id": "mutant",
+    "kind": "race",
+    "name": "Mutante",
+    "description": "Humano alterado geneticamente ou por alquimia para combate.",
+    "lore": "Humano alterado geneticamente ou por alquimia para combate.",
+    "advantages": [
+      "Sangue Alquímico gera Carga e regeneração",
+      "Metabolismo Adaptativo reduz aplicações repetidas de debuffs",
+      "Gene X é uma habilidade exclusiva do personagem."
+    ],
+    "disadvantages": [
+      "Sangue Maldito duplica dano de Sangramento e Veneno e impede decaimento natural",
+      "Volátil dobra custos",
+      "Fogo causa dano dobrado."
+    ],
+    "source": "Notion: Eternity Realms — Sistemas originais do RP (2026-11-08; atualização de Kitsune/2026-11-08)",
+    "adaptationNotes": "Texto canônico resumido; os efeitos marcados como incompletos ou ambíguos permanecem sem valores inventados. A adaptação mecânica aparece em combatTags e activityBonuses.",
+    "combatTags": ["base:adaptive", "base:regenerative", "base:volatile"]
+  },
+  {
+    "id": "beast",
+    "kind": "race",
+    "name": "Besta",
+    "description": "Monstro formado por emoções negativas acumuladas e energia; não se alimenta delas como demônios.",
+    "lore": "Monstro formado por emoções negativas acumuladas e energia; não se alimenta delas como demônios.",
+    "advantages": [
+      "Evolução por Confronto adapta defesa à fonte de dano recebida",
+      "Luz Morrendo marca uma presa e favorece perseguição",
+      "ataques corporais causam Sangramento."
+    ],
+    "disadvantages": [
+      "Casca Vazia reduz duração de buffs externos e aumenta efeitos mentais negativos",
+      "não pode matar a presa nos quatro primeiros turnos",
+      "presença causa temor."
+    ],
+    "source": "Notion: Eternity Realms — Sistemas originais do RP (2026-11-08; atualização de Kitsune/2026-11-08)",
+    "adaptationNotes": "Texto canônico resumido; os efeitos marcados como incompletos ou ambíguos permanecem sem valores inventados. A adaptação mecânica aparece em combatTags e activityBonuses.",
+    "combatTags": ["base:beast", "base:adaptive"]
+  },
+  {
+    "id": "kitsune",
+    "kind": "race",
+    "name": "Kitsune",
+    "description": "Raposa metamórfica herdeira da Deusa da Lua, ligada a templos e florestas.",
+    "lore": "Raposa metamórfica herdeira da Deusa da Lua, ligada a templos e florestas.",
+    "advantages": [
+      "Chakra gera Carga em acertos e alimenta fogo-fátuo",
+      "Kage usa ilusões, encantamentos e teleporte",
+      "Kurama ganha uma cauda a cada 100 níveis."
+    ],
+    "disadvantages": [
+      "Traiçoeira: nome verdadeiro cria servidão vitalícia se pronunciado",
+      "Paranoia dobra duração de efeitos mentais",
+      "metais causam queimaduras e Feridas Dolorosas."
+    ],
+    "source": "Notion: Eternity Realms — Sistemas originais do RP (2026-11-08; atualização de Kitsune/2026-11-08)",
+    "adaptationNotes": "Texto canônico resumido; os efeitos marcados como incompletos ou ambíguos permanecem sem valores inventados. A adaptação mecânica aparece em combatTags e activityBonuses.",
+    "combatTags": ["base:fast", "base:arcane"]
+  },
+  {
+    "id": "dragon",
+    "kind": "race",
+    "name": "Dragão",
+    "description": "Ser ancestral nascido de pedra animada pela Mana planetária, sábio e poderoso.",
+    "lore": "Ser ancestral nascido de pedra animada pela Mana planetária, sábio e poderoso.",
+    "advantages": [
+      "Coração da Besta reduz debuffs",
+      "Sopro Elemental usa elemento escolhido",
+      "Escamas do Imperador protegem e forma completa dobra atributos",
+      "Biblioteca Draconiana aprende feitiços."
+    ],
+    "disadvantages": [
+      "Tirano perde forma completa após mais de dois turnos sem acertar",
+      "Motim no Céu impede pactos e benefícios divinos",
+      "Coroa que Sangra reage a dano extremo."
+    ],
+    "source": "Notion: Eternity Realms — Sistemas originais do RP (2026-11-08; atualização de Kitsune/2026-11-08)",
+    "adaptationNotes": "Texto canônico resumido; os efeitos marcados como incompletos ou ambíguos permanecem sem valores inventados. A adaptação mecânica aparece em combatTags e activityBonuses.",
+    "combatTags": ["base:draconic", "base:armored"]
+  },
+  {
+    "id": "kong",
+    "kind": "race",
+    "name": "Kong",
+    "description": "Descendente de Sun Wukong: imortal, ágil, sagaz e reservado.",
+    "lore": "Descendente de Sun Wukong: imortal, ágil, sagaz e reservado.",
+    "advantages": [
+      "Elixir Dourado impede envelhecimento e doença, dá Pressa ao acertar e Proteção ao receber ataque",
+      "Clones de Fio criam cópias",
+      "Iluminação nos Olhos antecipa ações",
+      "Passo das Nuvens convoca Nimbus."
+    ],
+    "disadvantages": [
+      "O Tédio do Mais Forte age por último e bloqueia o Elixir contra oponentes mais fracos",
+      "Tiara Dourada pune turnos sem ataque",
+      "Ira do Rei de Jade pune energia sagrada ou profana."
+    ],
+    "source": "Notion: Eternity Realms — Sistemas originais do RP (2026-11-08; atualização de Kitsune/2026-11-08)",
+    "adaptationNotes": "Texto canônico resumido; os efeitos marcados como incompletos ou ambíguos permanecem sem valores inventados. A adaptação mecânica aparece em combatTags e activityBonuses.",
+    "combatTags": ["base:fast", "base:regenerative"]
+  },
+  {
+    "id": "shadow",
+    "kind": "race",
+    "name": "Sombra",
+    "description": "Criatura artificial criada por Necromante, leal ao invocador e com resquícios de sua vida anterior.",
+    "lore": "Criatura artificial criada por Necromante, leal ao invocador e com resquícios de sua vida anterior.",
+    "advantages": [
+      "Imortalidade transfere dano fatal à Mana do Necromante",
+      "mantém raça, classe, habilidades, energias e personalidade anteriores",
+      "raça Sombra é adicional ao limite normal."
+    ],
+    "disadvantages": [
+      "Monstro sem Liberdade: ordem direta do Necromante é incontestável e deve priorizar defendê-lo."
+    ],
+    "source": "Notion: Eternity Realms — Sistemas originais do RP (2026-11-08; atualização de Kitsune/2026-11-08)",
+    "adaptationNotes": "Texto canônico resumido; os efeitos marcados como incompletos ou ambíguos permanecem sem valores inventados. A adaptação mecânica aparece em combatTags e activityBonuses.",
+    "combatTags": ["base:undead", "base:ethereal"]
+  },
+  {
+    "id": "nephalem",
+    "kind": "race",
+    "name": "Nephalem",
+    "description": "União raríssima de anjo e demônio, associada a tragédias e distorções de espaço, tempo e gravidade.",
+    "lore": "União raríssima de anjo e demônio, associada a tragédias e distorções de espaço, tempo e gravidade.",
+    "advantages": [
+      "Síndrome da Oni-potência distorce espaço, tempo e gravidade próximos",
+      "Anjo Caído troca asas e algo valioso por desejos sobrenaturais."
+    ],
+    "disadvantages": [
+      "Tragédia de Dante: inimigos priorizam o Nephalem, debuffs duram o dobro e tragédias recorrentes atingem personagem e próximos."
+    ],
+    "source": "Notion: Eternity Realms — Sistemas originais do RP (2026-11-08; atualização de Kitsune/2026-11-08)",
+    "adaptationNotes": "Texto canônico resumido; os efeitos marcados como incompletos ou ambíguos permanecem sem valores inventados. A adaptação mecânica aparece em combatTags e activityBonuses.",
+    "combatTags": ["base:celestial", "base:demonic"],
+    "combatTag": {
+      "id": "race:nephalem-tragedy",
+      "name": "Tragédia de Dante",
+      "description": "Debuffs recebidos pelo Nephalem têm duração dobrada.",
+      "category": "behavior",
+      "origin": "Notion: Eternity Realms — Sistemas originais do RP",
+      "activationConditions": [
+        "Ao receber um efeito de categoria debuff",
+        "Quando um inimigo escolhe um alvo"
+      ],
+      "eventsObserved": ["status.incoming", "targeting.check"],
+      "modifiers": [
+        {
+          "id": "race:nephalem-tragedy:double-debuff-duration",
+          "event": "status.incoming",
+          "conditions": [{ "path": "status.category", "op": "eq", "value": "debuff" }],
+          "interactionId": "race:nephalem:double-debuff-duration",
+          "potency": 1,
+          "priority": 0,
+          "effect": { "type": "status_duration_multiplier", "value": 2 }
+        },
+        {
+          "id": "race:nephalem-tragedy:enemy-priority",
+          "event": "targeting.check",
+          "conditions": [],
+          "interactionId": "race:nephalem:enemy-priority",
+          "potency": 1,
+          "priority": 0,
+          "effect": { "type": "targeting_modifier", "value": "forced_target" }
+        }
+      ],
+      "interactions": [
+        {
+          "id": "race:nephalem:double-debuff-duration",
+          "counterplay": "Efeitos que não sejam debuffs mantêm sua duração normal."
+        },
+        {
+          "id": "race:nephalem:enemy-priority",
+          "counterplay": "Inimigos priorizam o Nephalem como alvo; ataques em área continuam atingindo seus alvos conforme a área declarada."
+        }
+      ],
+      "requirements": [],
+      "properties": ["racial", "debuff-duration"]
+    }
+  },
+  {
+    "id": "demigod",
+    "kind": "race",
+    "name": "Semi-Deus",
+    "description": "Filho de deuses ou indivíduo elevado à divindade; sangue dourado chamado Icor e coroa de Húbris.",
+    "lore": "Filho de deuses ou indivíduo elevado à divindade; sangue dourado chamado Icor e coroa de Húbris.",
+    "advantages": [
+      "Divinitude escala com fiéis",
+      "Húbris mantém Benção e Proteção",
+      "milagres curam, fortalecem, protegem ou afligem",
+      "Vigor Heroico desbloqueia forma divina ou Domínio Divino."
+    ],
+    "disadvantages": [
+      "Coroa Apertada pune cura externa",
+      "Soberba bloqueia poderes divinos após derrota por oponente que não se enquadre nas exceções canônicas."
+    ],
+    "source": "Notion: Eternity Realms — Sistemas originais do RP (2026-11-08; atualização de Kitsune/2026-11-08)",
+    "adaptationNotes": "Texto canônico resumido; os efeitos marcados como incompletos ou ambíguos permanecem sem valores inventados. A adaptação mecânica aparece em combatTags e activityBonuses.",
+    "combatTags": ["base:celestial"]
+  },
+  {
+    "id": "aspect",
+    "kind": "race",
+    "name": "Aspecto",
+    "description": "Conceito divino representado por um Ascendente escolhido após sobreviver à subida do Monte Caelum.",
+    "lore": "Conceito divino representado por um Ascendente escolhido após sobreviver à subida do Monte Caelum.",
+    "advantages": [
+      "Constelação acumula Fulgor em vitórias e concede efeitos persistentes",
+      "habilidade autoral única desbloqueia com dois Fulgor e evolui a cada dez",
+      "morte retorna ao Caelum."
+    ],
+    "disadvantages": [
+      "Peso de um Sol exige ação diária coerente com o conceito",
+      "Mácula bloqueia atributos",
+      "Soberano Traiçoeiro pode controlar o hospedeiro",
+      "inimigos naturais podem impedir retorno."
+    ],
+    "source": "Notion: Eternity Realms — Sistemas originais do RP (2026-11-08; atualização de Kitsune/2026-11-08)",
+    "adaptationNotes": "Texto canônico resumido; os efeitos marcados como incompletos ou ambíguos permanecem sem valores inventados. A adaptação mecânica aparece em combatTags e activityBonuses.",
+    "combatTags": ["base:celestial"]
+  },
+  {
+    "id": "darkin",
+    "kind": "race",
+    "name": "Darkin",
+    "description": "Antigo deus guerreiro corrompido e aprisionado em arma que toma o corpo do portador.",
+    "lore": "Antigo deus guerreiro corrompido e aprisionado em arma que toma o corpo do portador.",
+    "advantages": [
+      "Ser Malformado troca de corpo se arma persistir",
+      "Anti-Vida usa Destruição mesmo sem Mana",
+      "Hemomancia molda sangue e carne com regeneração",
+      "O Destruidor de Mundos transforma por sete turnos."
+    ],
+    "disadvantages": [
+      "Antítese da Vida mantém Confusão permanente e restringe energia ao elemento Destruição",
+      "arma Darkin deve ser principal."
+    ],
+    "source": "Notion: Eternity Realms — Sistemas originais do RP (2026-11-08; atualização de Kitsune/2026-11-08)",
+    "adaptationNotes": "Texto canônico resumido; os efeitos marcados como incompletos ou ambíguos permanecem sem valores inventados. A adaptação mecânica aparece em combatTags e activityBonuses.",
+    "combatTags": ["base:undead", "base:vampiric"]
   }
 ]

@@ -1,0 +1,589 @@
+[
+  {
+    "id": "system:alchemy",
+    "kind": "system",
+    "name": "Alquimia e implantes",
+    "description": "Compreensão, carga alquímica, poções, elixires, implantes e consequências.",
+    "systemType": "alchemy",
+    "entries": [
+      {
+        "id": "comprehension-i",
+        "name": "Compreensão I",
+        "rank": 1
+      },
+      {
+        "id": "comprehension-ii",
+        "name": "Compreensão II",
+        "rank": 2
+      },
+      {
+        "id": "comprehension-iii",
+        "name": "Compreensão III",
+        "rank": 3
+      },
+      {
+        "id": "comprehension-iv",
+        "name": "Compreensão IV",
+        "rank": 4
+      },
+      {
+        "id": "comprehension-v",
+        "name": "Compreensão V",
+        "rank": 5
+      },
+      {
+        "id": "implant-01",
+        "name": "Braço Mecânico",
+        "charge": 1,
+        "rank": "common",
+        "deviceItemId": "alchemical-implant-01",
+        "acquisitionPriceFragments": 15000,
+        "installationCostFragments": 10000,
+        "description": "Braço mecânico substitui o braço e concede +100 de Força; permite agir apesar de ferimentos em músculos ou tendões.",
+        "implementationState": "canonical-passive",
+        "implementedEffects": ["strength:+100"],
+        "pendingEffects": [],
+        "attributeModifiers": {
+          "strength": 100
+        }
+      },
+      {
+        "id": "implant-02",
+        "name": "Pernas Articuladas",
+        "charge": 1,
+        "rank": "common",
+        "deviceItemId": "alchemical-implant-02",
+        "acquisitionPriceFragments": 15000,
+        "installationCostFragments": 10000,
+        "description": "Pernas articuladas concedem +100 de Velocidade, amortecem quedas e permitem saltos propulsados.",
+        "implementationState": "canonical-passive",
+        "implementedEffects": ["speed:+100"],
+        "pendingEffects": [
+          "amortecimento de quedas e saltos propulsados ainda não têm uma ação de exploração própria."
+        ],
+        "attributeModifiers": {
+          "speed": 100
+        }
+      },
+      {
+        "id": "implant-03",
+        "name": "Olho Alquímico",
+        "charge": 1,
+        "rank": "common",
+        "deviceItemId": "alchemical-implant-03",
+        "acquisitionPriceFragments": 12000,
+        "installationCostFragments": 10000,
+        "description": "Olho alquímico oferece visão noturna, zoom de 10× e leitura de detalhes.",
+        "implementationState": "exploration-pending",
+        "implementedEffects": [],
+        "pendingEffects": [
+          "visão noturna, zoom e inspeção visual aguardam o sistema de exploração."
+        ]
+      },
+      {
+        "id": "implant-04",
+        "name": "Pulmões Filtrantes",
+        "charge": 1,
+        "rank": "common",
+        "deviceItemId": "alchemical-implant-04",
+        "acquisitionPriceFragments": 18000,
+        "installationCostFragments": 10000,
+        "description": "Pulmões filtrantes separam gases, fumaça e toxinas enquanto houver oxigênio.",
+        "implementationState": "hazard-pending",
+        "implementedEffects": [],
+        "pendingEffects": ["o jogo ainda não possui exposição ambiental a gases ou fumaça."]
+      },
+      {
+        "id": "implant-05",
+        "name": "Coluna Reforçada",
+        "charge": 1,
+        "rank": "common",
+        "deviceItemId": "alchemical-implant-05",
+        "acquisitionPriceFragments": 20000,
+        "installationCostFragments": 10000,
+        "description": "Coluna reforçada concede +100 de Resistência e estabilidade contra impactos.",
+        "implementationState": "canonical-passive",
+        "implementedEffects": ["resistance:+100"],
+        "pendingEffects": [
+          "estabilidade contra impactos aguarda propriedades de empurrão e queda no combate."
+        ],
+        "attributeModifiers": {
+          "resistance": 100
+        }
+      },
+      {
+        "id": "implant-06",
+        "name": "Módulo de IA",
+        "charge": 1,
+        "rank": "common",
+        "deviceItemId": "alchemical-implant-06",
+        "acquisitionPriceFragments": 25000,
+        "installationCostFragments": 10000,
+        "description": "Módulo de IA remove a desvantagem de treinamento dos Warforged.",
+        "implementationState": "rule-pending",
+        "implementedEffects": [],
+        "pendingEffects": [
+          "a desvantagem de treinamento Warforged ainda não tem definição mecânica disponível no catálogo do jogo."
+        ]
+      },
+      {
+        "id": "implant-07",
+        "name": "Acelerador Neural",
+        "charge": 1,
+        "rank": "epic",
+        "deviceItemId": "alchemical-implant-07",
+        "acquisitionPriceFragments": 60000,
+        "installationCostFragments": 10000,
+        "description": "Acelerador neural concede Aceleração 7/3 e imunidade a Lentidão e Atordoamento quando ativado.",
+        "implementationState": "activation-pending",
+        "implementedEffects": [],
+        "pendingEffects": [
+          "a fonte não define custo ou recarga da ativação; efeitos temporários e imunidades ainda não foram ligados ao dispositivo."
+        ]
+      },
+      {
+        "id": "implant-08",
+        "name": "Lâmina Mantis",
+        "charge": 1,
+        "rank": "epic",
+        "deviceItemId": "alchemical-implant-08",
+        "acquisitionPriceFragments": 45000,
+        "installationCostFragments": 10000,
+        "description": "Lâmina Mantis instala duas lâminas retráteis de até 80 cm, armas naturais encantadas junto ao usuário e escaladas por Destreza.",
+        "implementationState": "combat-adaptation",
+        "implementedEffects": [],
+        "pendingEffects": [
+          "o cálculo de dano derivado de Destreza será uma adaptação declarativa antes de habilitar o ataque automático."
+        ]
+      },
+      {
+        "id": "implant-09",
+        "name": "Coração Catalítico",
+        "charge": 1,
+        "rank": "epic",
+        "deviceItemId": "alchemical-implant-09",
+        "acquisitionPriceFragments": 55000,
+        "installationCostFragments": 10000,
+        "description": "Coração catalítico aumenta em 50% a potência de efeitos positivos de poções consumidas.",
+        "implementationState": "canonical-passive",
+        "implementedEffects": [],
+        "pendingEffects": [],
+        "consumablePositiveEffectMultiplier": 1.5
+      },
+      {
+        "id": "implant-10",
+        "name": "Lançador de Arpéu",
+        "charge": 1,
+        "rank": "epic",
+        "deviceItemId": "alchemical-implant-10",
+        "acquisitionPriceFragments": 35000,
+        "installationCostFragments": 10000,
+        "description": "Lançador de arpéu usa cabo reforçado de 30 m para alcançar superfícies e puxar o usuário ou objetos.",
+        "implementationState": "exploration-pending",
+        "implementedEffects": [],
+        "pendingEffects": [
+          "movimento vertical e interação com objetos aguardam um sistema de exploração física."
+        ]
+      },
+      {
+        "id": "implant-11",
+        "name": "Retina Espectral",
+        "charge": 1,
+        "rank": "epic",
+        "deviceItemId": "alchemical-implant-11",
+        "acquisitionPriceFragments": 20000,
+        "installationCostFragments": 10000,
+        "description": "Retina espectral revela fluxos e concentrações de Mana, Aura e outras energias.",
+        "implementationState": "inspection-pending",
+        "implementedEffects": [],
+        "pendingEffects": [
+          "visualização de fluxos e inspeção de energia aguardam a interface de exploração."
+        ]
+      },
+      {
+        "id": "implant-12",
+        "name": "Sandevistam",
+        "charge": 1,
+        "rank": "legendary",
+        "deviceItemId": "alchemical-implant-12",
+        "acquisitionPriceFragments": 200000,
+        "installationCostFragments": 10000,
+        "description": "Sandevistan concede +100% de Velocidade e Destreza por 3 turnos; recarga de 8 turnos.",
+        "implementationState": "activation-pending",
+        "implementedEffects": [],
+        "pendingEffects": [
+          "buff temporário e ativação com recarga ainda não estão ligados ao ciclo de combate."
+        ]
+      },
+      {
+        "id": "implant-13",
+        "name": "Esqueleto de Adamantita",
+        "charge": 1,
+        "rank": "legendary",
+        "deviceItemId": "alchemical-implant-13",
+        "acquisitionPriceFragments": 180000,
+        "installationCostFragments": 10000,
+        "description": "Esqueleto de adamantita concede +50% de Resistência; ossos não se quebram por meios convencionais.",
+        "implementationState": "canonical-passive",
+        "implementedEffects": ["resistance:*1.5"],
+        "pendingEffects": ["quebra óssea ainda não é um estado representado pelo combate."],
+        "attributeMultipliers": {
+          "resistance": 1.5
+        }
+      },
+      {
+        "id": "implant-14",
+        "name": "Núcleo de Regeneração",
+        "charge": 1,
+        "rank": "legendary",
+        "deviceItemId": "alchemical-implant-14",
+        "acquisitionPriceFragments": 220000,
+        "installationCostFragments": 10000,
+        "description": "Núcleo de regeneração recupera 5% da Vida máxima por turno e reconstrói tecidos e órgãos gradualmente.",
+        "implementationState": "combat-passive",
+        "implementedEffects": ["heals 5% of maximum HP per resolved combat turn"],
+        "pendingEffects": ["gradual reconstruction of tissues and organs waits for wound states."],
+        "regenerationPercentPerTurn": 0.05
+      },
+      {
+        "id": "implant-15",
+        "name": "Arsenal Metamórgico",
+        "charge": 1,
+        "rank": "legendary",
+        "deviceItemId": "alchemical-implant-15",
+        "acquisitionPriceFragments": 250000,
+        "installationCostFragments": 10000,
+        "description": "Arsenal metamórgico transforma os braços em lâminas, escudos, lanças e outras formas incorporadas.",
+        "implementationState": "combat-adaptation",
+        "implementedEffects": [],
+        "pendingEffects": [
+          "formas equipáveis e alternância durante o combate aguardam suporte de equipamentos incorporados."
+        ]
+      },
+      {
+        "id": "implant-16",
+        "name": "Córtex Oracular",
+        "charge": 1,
+        "rank": "legendary",
+        "deviceItemId": "alchemical-implant-16",
+        "acquisitionPriceFragments": 300000,
+        "installationCostFragments": 10000,
+        "description": "Córtex oracular lê movimentos físicos, trajetórias e padrões de combate por pistas musculares e comportamentais.",
+        "implementationState": "combat-pending",
+        "implementedEffects": [],
+        "pendingEffects": [
+          "predição por padrões aguarda gatilhos de reação e telemetria de padrões no combate."
+        ]
+      },
+      {
+        "id": "implant-17",
+        "name": "Segundo Cérebro",
+        "charge": 1,
+        "rank": "special",
+        "deviceItemId": "alchemical-implant-17",
+        "acquisitionPriceFragments": 200000,
+        "installationCostFragments": 10000,
+        "description": "Segundo cérebro processa mecanismos em paralelo e controla implantes e dispositivos de forma independente.",
+        "implementationState": "automation-pending",
+        "implementedEffects": [],
+        "pendingEffects": [
+          "o controle paralelo de dispositivos depende de ativações de implante ainda não disponíveis."
+        ]
+      },
+      {
+        "id": "implant-18",
+        "name": "Coração de Sangue",
+        "charge": 1,
+        "rank": "special",
+        "deviceItemId": "alchemical-implant-18",
+        "acquisitionPriceFragments": 350000,
+        "installationCostFragments": 10000,
+        "description": "Coração de sangue converte sangue absorvido de outras criaturas em energia regenerativa e permite armazená-lo.",
+        "implementationState": "resource-pending",
+        "implementedEffects": [],
+        "pendingEffects": [
+          "taxa de conversão, capacidade de armazenamento e coleta não foram especificadas pela fonte e permanecem pendentes."
+        ]
+      },
+      {
+        "id": "implant-19",
+        "name": "Carne de Mercúrio",
+        "charge": 1,
+        "rank": "special",
+        "deviceItemId": "alchemical-implant-19",
+        "acquisitionPriceFragments": 500000,
+        "installationCostFragments": 10000,
+        "description": "Carne de mercúrio substitui uma área corporal por metal alquímico maleável, moldável em ferramentas e capaz de reconstruir deformidades.",
+        "implementationState": "crafting-pending",
+        "implementedEffects": [],
+        "pendingEffects": [
+          "moldagem e reconstrução dependem de um sistema de partes corporais e fabricação incorporada."
+        ]
+      },
+      {
+        "id": "implant-20",
+        "name": "Âncora da Alma",
+        "charge": 1,
+        "rank": "special",
+        "deviceItemId": "alchemical-implant-20",
+        "acquisitionPriceFragments": 600000,
+        "installationCostFragments": 10000,
+        "description": "Âncora da alma mantém a ligação entre corpo e alma, permite uma ressurreição e quebra após o uso; então deve ser removida.",
+        "implementationState": "partial-runtime",
+        "implementedEffects": [
+          "one resurrection at 1 HP; breaks and remains recorded until removal"
+        ],
+        "pendingEffects": [
+          "the canon does not specify restored HP or removal cost; 1 HP and free removal are explicit game adaptations."
+        ],
+        "breaksAfterUse": true,
+        "resurrections": 1
+      },
+      {
+        "id": "load",
+        "name": "Carga Alquímica",
+        "notes": "Cada implante ocupa 1 Carga, salvo exceção especificada."
+      },
+      {
+        "id": "dedalus-syndrome",
+        "name": "Síndrome de Dédalo",
+        "notes": "Estado e progressão são documentados; implementation effects will be encoded in persisted conditions."
+      }
+    ],
+    "source": "Notion: Sistemas originais do RP, Alquimia e Implantes (2026-11-08)"
+  },
+  {
+    "id": "system:runes",
+    "kind": "system",
+    "name": "Runas e inscrições",
+    "description": "Uma Grande Runa e de zero a cinco Talentos Rúnicos; requer Compreensão Alquímica III.",
+    "systemType": "runes",
+    "entries": [
+      {
+        "id": "great-rune:1",
+        "name": "Ignis",
+        "effect": "Aplica um efeito de dano ao longo do tempo.",
+        "requiredComprehension": 3,
+        "inscriptionMinutes": 30
+      },
+      {
+        "id": "great-rune:2",
+        "name": "Vimculum",
+        "effect": "Aplica um efeito de controle; Atordoamento é expressamente inválido.",
+        "requiredComprehension": 3,
+        "inscriptionMinutes": 30
+      },
+      {
+        "id": "great-rune:3",
+        "name": "Maledictio",
+        "effect": "Aplica um debuff.",
+        "requiredComprehension": 3,
+        "inscriptionMinutes": 30
+      },
+      {
+        "id": "great-rune:4",
+        "name": "Benedictio",
+        "effect": "Concede um buff.",
+        "requiredComprehension": 3,
+        "inscriptionMinutes": 30
+      },
+      {
+        "id": "great-rune:5",
+        "name": "Mutatio",
+        "effect": "Modifica uma propriedade física do objeto.",
+        "requiredComprehension": 3,
+        "inscriptionMinutes": 30
+      },
+      {
+        "id": "great-rune:6",
+        "name": "Imperium",
+        "effect": "Concede comportamento ou função ativa ao objeto.",
+        "requiredComprehension": 3,
+        "inscriptionMinutes": 30
+      },
+      {
+        "id": "rune-talent:1",
+        "name": "Potência",
+        "inscriptionMinutes": 10,
+        "repeatable": true
+      },
+      {
+        "id": "rune-talent:2",
+        "name": "Duração",
+        "inscriptionMinutes": 10,
+        "repeatable": true
+      },
+      {
+        "id": "rune-talent:3",
+        "name": "Contato",
+        "inscriptionMinutes": 10,
+        "repeatable": false
+      },
+      {
+        "id": "rune-talent:4",
+        "name": "Projeção",
+        "inscriptionMinutes": 10,
+        "repeatable": false
+      },
+      {
+        "id": "rune-talent:5",
+        "name": "Área",
+        "inscriptionMinutes": 10,
+        "repeatable": false
+      },
+      {
+        "id": "rune-talent:6",
+        "name": "Propagação",
+        "inscriptionMinutes": 10,
+        "repeatable": false
+      },
+      {
+        "id": "rune-talent:7",
+        "name": "Persistência",
+        "inscriptionMinutes": 10,
+        "repeatable": false
+      },
+      {
+        "id": "rune-talent:8",
+        "name": "Condição",
+        "inscriptionMinutes": 10,
+        "repeatable": false
+      },
+      {
+        "id": "rune-talent:9",
+        "name": "Seletividade",
+        "inscriptionMinutes": 10,
+        "repeatable": false
+      },
+      {
+        "id": "rune-talent:10",
+        "name": "Acumulação",
+        "inscriptionMinutes": 10,
+        "repeatable": false
+      },
+      {
+        "id": "rune-talent:11",
+        "name": "Vínculo",
+        "inscriptionMinutes": 10,
+        "repeatable": false
+      },
+      {
+        "id": "rune-talent:12",
+        "name": "Alternância",
+        "inscriptionMinutes": 10,
+        "repeatable": false
+      },
+      {
+        "id": "structure",
+        "greatRuneRequired": true,
+        "talentSlots": 5,
+        "totalMinutes": 80,
+        "source": "Canon: one great rune + 0–5 talents; 30 min plus 10 min each."
+      }
+    ],
+    "source": "Notion: Sistemas originais do RP, Runas (2026-11-08)"
+  },
+  {
+    "id": "system:progression",
+    "kind": "system",
+    "name": "Progressão e treinamento",
+    "description": "Nível, distribuição de atributos e treino físico/energético.",
+    "systemType": "progression",
+    "entries": [
+      {
+        "id": "levels",
+        "minimum": 1,
+        "maximum": 1000,
+        "attributePointsPerLevel": 8,
+        "source": "Canon RP; maximum level is 1000."
+      },
+      {
+        "id": "physical",
+        "focus": ["vigor", "resistance", "speed", "strength", "dexterity", "precision"]
+      },
+      {
+        "id": "meditation",
+        "focus": ["chi", "aura"]
+      },
+      {
+        "id": "study",
+        "focus": ["mana", "spirit"]
+      },
+      {
+        "id": "idle-adaptation",
+        "note": "Training session durations and offline rewards are game adaptations; weekly RP text quota is not silently applied."
+      }
+    ],
+    "source": "Notion: Sistemas originais do RP, Progressão (2026-11-08)"
+  },
+  {
+    "id": "system:status-effects",
+    "kind": "system",
+    "name": "Efeitos de status",
+    "description": "Catálogo original de 42 efeitos em DoT, controle, debuffs e buffs; valores e ambiguidades preservados em conteúdo próprio.",
+    "systemType": "status-effects",
+    "entries": [
+      {
+        "id": "catalog",
+        "expectedCount": 42,
+        "categories": {
+          "dot": 8,
+          "control": 11,
+          "debuff": 10,
+          "buff": 13
+        },
+        "source": "Notion: Catálogo de efeitos de status (2026-11-08)",
+        "effectIds": [
+          "core:burn",
+          "core:poison",
+          "core:bleeding",
+          "core:confusion",
+          "core:electrified",
+          "core:hypothermia",
+          "core:corrosion",
+          "core:illusion-dot",
+          "core:silence",
+          "core:disarm",
+          "core:taunt",
+          "core:terror",
+          "core:charm",
+          "core:stun",
+          "core:freezing",
+          "core:slowness",
+          "core:rooted",
+          "core:paralysis",
+          "core:illusion-cc",
+          "core:defense-reduction",
+          "core:attack-reduction",
+          "core:exhaustion",
+          "core:fragile",
+          "core:painful-wounds",
+          "core:madness",
+          "core:fragmentation",
+          "core:tremor",
+          "core:rupture",
+          "core:cursed",
+          "core:attack-increase",
+          "core:defense-increase",
+          "core:speed-increase",
+          "core:protection",
+          "core:colossus",
+          "core:haste",
+          "core:blessing",
+          "core:shield",
+          "core:charge",
+          "core:potency",
+          "core:stance",
+          "core:lethality",
+          "core:healing"
+        ],
+        "implementationState": "42 efeitos catalogados; a cobertura comportamental no motor permanece parcial."
+      },
+      {
+        "id": "known-engine",
+        "description": "O combate executa efeitos aplicados, dano por tick, duração e resistências; this entry tracks original statuses absent from current engine."
+      }
+    ],
+    "source": "Notion: Sistemas originais do RP"
+  }
+]

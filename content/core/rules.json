@@ -1,5 +1,7 @@
 {
   "experiencePerLevel": 80,
+  "maxLevel": 1000,
+  "attributePointsPerLevel": 8,
   "combat": {
     "accuracy": 0.9,
     "intervalMs": 1000
