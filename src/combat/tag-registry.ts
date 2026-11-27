@@ -33,6 +33,7 @@ const effectType = z.enum([
   'action_interval_multiplier',
   'regeneration',
   'max_hp_regeneration',
+  'environment_status',
   'hazard_awareness',
   'reveal_target',
   'policy_bias',
@@ -64,6 +65,27 @@ const supportStatusSchema = z
     counter: z.number().finite().nonnegative(),
   })
   .passthrough();
+const environmentStatusSchema = supportStatusSchema
+  .extend({
+    tickDamage: z
+      .object({
+        amount: z.number().finite().nonnegative(),
+        channel: z.enum(['physical', 'magical', 'true']),
+        subtype: z.enum(['cutting', 'piercing', 'crushing', 'other']).optional(),
+        element: z.string().optional(),
+        properties: z.array(z.string()).optional(),
+      })
+      .optional(),
+    tickIntervalMs: z.number().int().positive().safe().optional(),
+  })
+  .superRefine((status, context) => {
+    if (status.tickDamage && status.tickIntervalMs === undefined) {
+      context.addIssue({
+        code: 'custom',
+        message: 'Environment damage statuses must define a tick interval',
+      });
+    }
+  });
 
 const tagEffectSchema = z
   .object({ type: effectType })
@@ -86,6 +108,15 @@ const tagEffectSchema = z
       context.addIssue({
         code: 'custom',
         message: 'Maximum HP regeneration must be a finite positive fraction',
+      });
+    }
+    if (
+      effect.type === 'environment_status' &&
+      !environmentStatusSchema.safeParse(effect.value).success
+    ) {
+      context.addIssue({
+        code: 'custom',
+        message: 'Environment status must contain a valid effect payload',
       });
     }
     if (

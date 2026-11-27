@@ -922,11 +922,12 @@
       "id": "race:vampire-blood-regeneration",
       "category": "behavior",
       "name": "Magia de Sangue — Regeneração Vampírica",
-      "description": "Recupera dois níveis de regeneração por turno e mais 1% do HP máximo quando um adversário próximo está sangrando.",
+      "description": "Recupera dois níveis de regeneração por turno, mais 1% do HP máximo quando um adversário próximo está sangrando; sob luz solar, sofre Queimadura 99/99.",
       "origin": "Notion: Eternity Realms — Sistemas originais do RP, 16. Vampiros (2026-11-08)",
       "activationConditions": [
         "cada turno do Vampiro",
-        "oponente vivo com Sangramento a distância Manhattan 1 para a regeneração sanguínea"
+        "oponente vivo com Sangramento a distância Manhattan 1 para a regeneração sanguínea",
+        "luz solar no ambiente, representada por período diurno na simulação"
       ],
       "eventsObserved": ["environment.tick"],
       "modifiers": [
@@ -947,16 +948,39 @@
           "potency": 1,
           "priority": 100,
           "effect": { "type": "max_hp_regeneration", "value": 0.01 }
+        },
+        {
+          "id": "vampire-sunlight-burn",
+          "event": "environment.tick",
+          "conditions": [{ "path": "environment.timeOfDay", "op": "eq", "value": "day" }],
+          "interactionId": "race:vampire:sunlight",
+          "potency": 99,
+          "priority": 100,
+          "effect": {
+            "type": "environment_status",
+            "value": {
+              "id": "core:burn",
+              "category": "dot",
+              "potency": 99,
+              "counter": 99,
+              "tickDamage": { "amount": 1, "channel": "magical" },
+              "tickIntervalMs": 1000
+            }
+          }
         }
       ],
       "interactions": [
         {
           "id": "race:vampire:base-regeneration",
-          "counterplay": "Aplique efeitos que suprimem regeneração."
+          "counterplay": "Dano supera a recuperação fixa, aplicada apenas nos turnos do Vampiro."
         },
         {
           "id": "race:vampire:blood-regeneration",
           "counterplay": "Evite Sangramento ou mantenha distância do Vampiro."
+        },
+        {
+          "id": "race:vampire:sunlight",
+          "counterplay": "Lute fora da luz solar ou aplique imunidade a Queimadura."
         }
       ],
       "requirements": [],

@@ -196,6 +196,46 @@ describe('data driven enemy tags', () => {
     }
   });
 
+  it('validates environment-applied status payloads and damage tick intervals', () => {
+    const template = registry[0]!;
+    const tagWithEnvironmentStatus = (value: unknown) => ({
+      ...template,
+      id: 'race:test-environment-status',
+      modifiers: [
+        {
+          ...template.modifiers[0]!,
+          id: 'race:test-environment-status:rule',
+          event: 'environment.tick',
+          interactionId: 'race:test-environment-status',
+          conditions: [],
+          effect: { type: 'environment_status', value },
+        },
+      ],
+    });
+    const status = { id: 'core:burn', category: 'dot', potency: 99, counter: 99 };
+
+    expect(loadTagRegistry([tagWithEnvironmentStatus(status)])).toHaveLength(1);
+    expect(
+      loadTagRegistry([
+        tagWithEnvironmentStatus({
+          ...status,
+          tickDamage: { amount: 1, channel: 'magical' },
+          tickIntervalMs: 1_000,
+        }),
+      ]),
+    ).toHaveLength(1);
+    for (const invalidValue of [
+      undefined,
+      'core:burn',
+      { ...status, tickDamage: { amount: 1, channel: 'fire' }, tickIntervalMs: 1_000 },
+      { ...status, tickDamage: { amount: 1, channel: 'magical' } },
+    ]) {
+      expect(() => loadTagRegistry([tagWithEnvironmentStatus(invalidValue)])).toThrow(
+        'Invalid enemy tag rule',
+      );
+    }
+  });
+
   it('requires persistent-status rules to name a status id', () => {
     const template = registry[0]!;
     const tagWithPersistence = (value: unknown) => ({

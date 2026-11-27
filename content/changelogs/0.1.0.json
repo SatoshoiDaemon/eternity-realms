@@ -14,7 +14,7 @@
       "Skills de Magia, Arquearia e Tiro ao Alvo aplicam seus marcos de dano e precisão às ações de combate; Alquimia melhora a restauração de poções e tônicos. A ficha exibe os benefícios ativos e futuros.",
       "Traços raciais executáveis: imunidades de Anões, Bonecos e Gigantes; Fome Eterna e Pressa do Oni; Tragédia de Dante prioriza Nephalem como alvo e dobra a duração de debuffs recebidos; Halo e Genesi do Anjo ampliam Queimadura, reduzem Feridas Dolorosas e reagem a curas e buffs; a fisiologia do Slime rejeita Veneno/Sangramento, perpetua Queimadura/Congelamento e contamina atacantes corpo a corpo; Fantasmas não selecionam ataques físicos comuns sem propriedades espirituais ou telecinéticas.",
       "A Banca diária alterna quatro ofertas entre doze produtos úteis, com estoque, requisitos e seleção determinística offline.",
-      "Vampiros regeneram dois níveis por turno e recuperam 1% do HP máximo quando um oponente sangrando está adjacente; a distância Manhattan usada pela simulação está registrada como adaptação."
+      "Vampiros regeneram dois níveis por turno, recuperam 1% do HP máximo perto de oponentes sangrando e sofrem Queimadura 99/99 durante o dia; proximidade e luz solar baseada no período diurno estão registradas como adaptações."
     ],
     "improved": [
       "Interface adaptada para telas Android e áreas seguras do sistema.",
@@ -35,7 +35,7 @@
       "O backup automático usa um snapshot local atômico e não abre o SQLite em segundo plano.",
       "O registry inclui sete afinidades, dezoito combinações e sete evoluções despertas de Mana; ambiguidades documentais permanecem sinalizadas sem desbloqueio automático.",
       "A Restrição Celestial tem valores canônicos no registry e efeitos estruturados; ainda não possui desbloqueio no jogo nem execução completa de redução de efeitos de Mana/Aura.",
-      "A engine de tags agora compara IDs dentro de listas e limites numéricos inclusivos, observa oponentes adjacentes com Sangramento e calcula regeneração como fração do HP máximo para traços raciais declarativos.",
+      "A engine de tags agora compara IDs dentro de listas e limites numéricos inclusivos, observa oponentes adjacentes com Sangramento, calcula regeneração como fração do HP máximo e aplica efeitos de status definidos por condições ambientais.",
       "A rotação de lojas usa períodos UTC e identificadores estáveis por item, preservando a leitura de contadores de compra legados por índice."
     ]
   }

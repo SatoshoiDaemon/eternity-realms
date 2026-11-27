@@ -935,6 +935,20 @@ function applyEnvironmentalEffects(state: CombatState, actor: CombatActor): stri
       continue;
     }
     if (
+      effect.type === 'environment_status' &&
+      typeof effect.value === 'object' &&
+      effect.value !== null
+    ) {
+      const status = effect.value as AppliedCombatEffect;
+      if (
+        !statusIsImmune(actor, status, state.tagRegistry) &&
+        applyStatus(actor, status, state.nowMs, actor, state.tagRegistry)
+      ) {
+        applied.push(`${actor.id}:${status.id}`);
+      }
+      continue;
+    }
+    if (
       effect.type === 'environment_modifier' &&
       typeof effect.value === 'object' &&
       effect.value !== null

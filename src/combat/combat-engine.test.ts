@@ -309,6 +309,83 @@ describe('deterministic event combat', () => {
     expect(result.actors.find((entry) => entry.id === 'a-vampire')?.hp.current).toBe(expectedHp);
   });
 
+  it('applies sunlight Burn 99/99 to a Vampire and resolves its canonical damage ticks', () => {
+    const content = loadOfficialContent();
+    const race = content.races.get('vampire')!;
+    const vampire = actor('a-vampire', 'party', {
+      tags: [...(race.combatTags ?? []), race.combatTag!.id],
+      hp: { current: 1_000, maximum: 1_000 },
+      actions: [],
+    });
+    const foe = actor('z-foe', 'enemy', { actions: [] });
+    const sunlit = createCombatState(
+      'vampire-sunlight',
+      [vampire, foe],
+      109,
+      { timeOfDay: 'day' },
+      [...content.enemyTags.values()],
+    );
+    const applied = advanceCombat(sunlit, 0);
+    expect(applied.actors.find((entry) => entry.id === 'a-vampire')?.effects).toContainEqual(
+      expect.objectContaining({
+        id: 'core:burn',
+        potency: 99,
+        counter: 99,
+        tickDamage: { amount: 1, channel: 'magical' },
+        tickIntervalMs: 1_000,
+      }),
+    );
+
+    const ticked = advanceCombat(applied, 1_200);
+    expect(ticked.actors.find((entry) => entry.id === 'a-vampire')?.hp.current).toBe(903);
+    expect(ticked.log.some((entry) => entry.actionId === 'status:core:burn')).toBe(true);
+  });
+
+  it('respects racial immunity when the environment applies a status', () => {
+    const content = loadOfficialContent();
+    const race = content.races.get('vampire')!;
+    const immunity = {
+      id: 'test:solar-burn-immunity',
+      category: 'behavior' as const,
+      name: 'Solar burn immunity',
+      description: 'Test immunity for environment-applied status.',
+      origin: 'test',
+      activationConditions: ['incoming Burn'],
+      eventsObserved: ['status.incoming'],
+      modifiers: [
+        {
+          id: 'solar-burn-immunity',
+          event: 'status.incoming',
+          conditions: [{ path: 'status.id', op: 'eq' as const, value: 'core:burn' }],
+          interactionId: 'test:solar-burn-immunity',
+          potency: 1,
+          priority: 100,
+          effect: { type: 'status_immunity' as const, value: 'core:burn' },
+        },
+      ],
+      interactions: [{ id: 'test:solar-burn-immunity', counterplay: 'test' }],
+      requirements: [],
+      properties: [],
+    };
+    const immuneVampire = actor('a-immune-vampire', 'party', {
+      tags: [...(race.combatTags ?? []), race.combatTag!.id, immunity.id],
+      hp: { current: 500, maximum: 1_000 },
+      actions: [],
+    });
+    const result = advanceCombat(
+      createCombatState(
+        'vampire-sunlight-immunity',
+        [immuneVampire, actor('z-foe', 'enemy', { actions: [] })],
+        113,
+        { timeOfDay: 'day' },
+        [...content.enemyTags.values(), immunity],
+      ),
+      0,
+    );
+
+    expect(result.actors.find((entry) => entry.id === 'a-immune-vampire')?.effects).toEqual([]);
+  });
+
   it('doubles received debuff duration for Nephalem without extending buffs', () => {
     const content = loadOfficialContent();
     const race = content.races.get('nephalem')!;
