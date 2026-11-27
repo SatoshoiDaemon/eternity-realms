@@ -23,6 +23,9 @@
     ],
     "changed": [],
     "fixed": [
+      "Dano verdadeiro agora ignora modificadores defensivos de status, imunidades de dano declaradas por tags, mitigação e redução universal.",
+      "Status iniciados com Potência ou Duração zero contam como 1; aplicações duplicadas só substituem a instância atual com Potência estritamente maior.",
+      "Potência e Duração fracionárias de status são arredondadas para baixo; os campos omitidos e valores zero assumem 1, exceto a Duração 0 mantida por persistência declarativa.",
       "Ticks de dano no instante exato da expiração do status agora resolvem antes da remoção, garantindo a duração completa de efeitos como Queimadura 99/99.",
       "Reconciliação de sessões idempotente após reinicialização e retrocesso do relógio.",
       "A navegação permanece utilizável antes da criação de um personagem.",

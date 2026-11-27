@@ -61,8 +61,8 @@ const supportStatusSchema = z
   .object({
     id: z.string().trim().min(1),
     category: z.string().trim().min(1),
-    potency: z.number().finite().nonnegative(),
-    counter: z.number().finite().nonnegative(),
+    potency: z.number().finite().nonnegative().default(1),
+    counter: z.number().finite().nonnegative().default(1),
   })
   .passthrough();
 const environmentStatusSchema = supportStatusSchema
