@@ -19,7 +19,12 @@ export interface Character {
   level: number;
   experience: { current: number; total: number };
   attributes: { physical: PhysicalAttributes; energetic: Record<string, number> };
-  energy: { affinity: string; reserves: Record<string, number> };
+  energy: {
+    affinity: string;
+    affinities?: string[];
+    unaffiliatedStage?: 'incomplete' | 'celestial-restriction';
+    reserves: Record<string, number>;
+  };
   equipment: {
     head: string | null;
     chest: string | null;
@@ -87,7 +92,30 @@ export type DomainEvent =
   | (EventBase & { type: 'reward.granted'; sessionId: string; rewardId: string })
   | (EventBase & { type: 'experience.gained'; amount: number })
   | (EventBase & { type: 'level.increased'; level: number })
+  | (EventBase & { type: 'skill.level_increased'; skillId: string; level: number })
+  | (EventBase & { type: 'attribute.points_awarded'; amount: number })
+  | (EventBase & {
+      type: 'attribute.increased';
+      attributeId: string;
+      amount: number;
+      total: number;
+    })
+  | (EventBase & { type: 'currency.earned'; currency: string; amount: number })
   | (EventBase & { type: 'item.acquired'; itemId: string; quantity: number })
+  | (EventBase & { type: 'item.consumed'; itemId: string; quantity: number })
+  | (EventBase & {
+      type: 'implant.installed';
+      implantId: string;
+      load: number;
+      capacity: number;
+      syndrome: 'none' | 'instability' | 'psychosis' | 'collapse';
+    })
+  | (EventBase & { type: 'resource.restored'; resource: string; amount: number })
+  | (EventBase & { type: 'activity.completed'; activityId: string; sessionId: string })
+  | (EventBase & { type: 'quest.completed'; expeditionId: string; sessionId: string })
+  | (EventBase & { type: 'enemy.defeated'; enemyId: string; sessionId: string })
+  | (EventBase & { type: 'region.unlocked'; regionId: string })
+  | (EventBase & { type: 'item.crafted'; itemId: string; quantity: number })
   | (EventBase & {
       type: 'expedition.completed';
       sessionId: string;

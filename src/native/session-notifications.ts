@@ -9,7 +9,13 @@ export const IDLE_QUEUE_NOTIFICATION_ID = 7303;
 export interface LocalNotificationPort {
   cancel(options: { notifications: Array<{ id: number }> }): Promise<unknown>;
   schedule(options: {
-    notifications: Array<{ id: number; title: string; body: string; schedule: { at: Date } }>;
+    notifications: Array<{
+      id: number;
+      title: string;
+      body: string;
+      isExactNotification: false;
+      schedule: { at: Date };
+    }>;
   }): Promise<unknown>;
 }
 
@@ -48,6 +54,7 @@ export async function syncSessionNotification(
       id: SESSION_NOTIFICATION_ID,
       title: 'Sessão concluída',
       body: 'Sua sessão terminou. Confira o progresso da jornada.',
+      isExactNotification: false as const,
       schedule: { at: new Date(notificationAt) },
     });
   if (settings.rewards)
@@ -55,6 +62,7 @@ export async function syncSessionNotification(
       id: REWARD_NOTIFICATION_ID,
       title: 'Recompensas disponíveis',
       body: 'Os recursos e a experiência da sessão foram adicionados ao personagem.',
+      isExactNotification: false as const,
       schedule: { at: new Date(notificationAt) },
     });
   if (settings.queueIdle && queueLength === 1)
@@ -62,6 +70,7 @@ export async function syncSessionNotification(
       id: IDLE_QUEUE_NOTIFICATION_ID,
       title: 'Fila de sessões ociosa',
       body: 'Todas as sessões planejadas foram concluídas. Organize a próxima fila.',
+      isExactNotification: false as const,
       schedule: { at: new Date(notificationAt) },
     });
   if (!notifications.length) return;
@@ -82,6 +91,7 @@ export async function notifyMissionReady(
         id,
         title: 'Missão concluída',
         body: `${missionName}: sua recompensa pode ser resgatada.`,
+        isExactNotification: false as const,
         schedule: { at: new Date(now) },
       },
     ],

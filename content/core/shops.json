@@ -1,0 +1,323 @@
+[
+  {
+    "id": "shop:fragments",
+    "kind": "shop",
+    "name": "Loja de Fragmentos",
+    "description": "Ofertas permanentes compradas com Fragmentos.",
+    "cadence": "permanent",
+    "entries": [
+      {
+        "itemId": "healing-potion",
+        "currency": "fragments",
+        "price": 25,
+        "stock": -1,
+        "sellPrice": 7
+      },
+      {
+        "itemId": "mana-potion",
+        "currency": "fragments",
+        "price": 35,
+        "stock": -1,
+        "sellPrice": 17
+      },
+      {
+        "itemId": "aura-tonic",
+        "currency": "fragments",
+        "price": 35,
+        "stock": -1,
+        "sellPrice": 17
+      },
+      {
+        "itemId": "rune-token",
+        "currency": "fragments",
+        "price": 120,
+        "stock": -1,
+        "sellPrice": 60
+      },
+      {
+        "itemId": "medicinal-herb",
+        "currency": "fragments",
+        "price": 8,
+        "stock": -1,
+        "sellPrice": 4
+      },
+      {
+        "itemId": "alchemical-implant-01",
+        "currency": "fragments",
+        "price": 15000,
+        "stock": -1
+      },
+      {
+        "itemId": "alchemical-implant-02",
+        "currency": "fragments",
+        "price": 15000,
+        "stock": -1
+      },
+      {
+        "itemId": "alchemical-implant-03",
+        "currency": "fragments",
+        "price": 12000,
+        "stock": -1
+      },
+      {
+        "itemId": "alchemical-implant-04",
+        "currency": "fragments",
+        "price": 18000,
+        "stock": -1
+      },
+      {
+        "itemId": "alchemical-implant-05",
+        "currency": "fragments",
+        "price": 20000,
+        "stock": -1
+      },
+      {
+        "itemId": "alchemical-implant-06",
+        "currency": "fragments",
+        "price": 25000,
+        "stock": -1
+      },
+      {
+        "itemId": "alchemical-implant-07",
+        "currency": "fragments",
+        "price": 60000,
+        "stock": -1
+      },
+      {
+        "itemId": "alchemical-implant-08",
+        "currency": "fragments",
+        "price": 45000,
+        "stock": -1
+      },
+      {
+        "itemId": "alchemical-implant-09",
+        "currency": "fragments",
+        "price": 55000,
+        "stock": -1
+      },
+      {
+        "itemId": "alchemical-implant-10",
+        "currency": "fragments",
+        "price": 35000,
+        "stock": -1
+      },
+      {
+        "itemId": "alchemical-implant-11",
+        "currency": "fragments",
+        "price": 20000,
+        "stock": -1
+      },
+      {
+        "itemId": "alchemical-implant-12",
+        "currency": "fragments",
+        "price": 200000,
+        "stock": -1
+      },
+      {
+        "itemId": "alchemical-implant-13",
+        "currency": "fragments",
+        "price": 180000,
+        "stock": -1
+      },
+      {
+        "itemId": "alchemical-implant-14",
+        "currency": "fragments",
+        "price": 220000,
+        "stock": -1
+      },
+      {
+        "itemId": "alchemical-implant-15",
+        "currency": "fragments",
+        "price": 250000,
+        "stock": -1
+      },
+      {
+        "itemId": "alchemical-implant-16",
+        "currency": "fragments",
+        "price": 300000,
+        "stock": -1
+      },
+      {
+        "itemId": "alchemical-implant-17",
+        "currency": "fragments",
+        "price": 200000,
+        "stock": -1
+      },
+      {
+        "itemId": "alchemical-implant-18",
+        "currency": "fragments",
+        "price": 350000,
+        "stock": -1
+      },
+      {
+        "itemId": "alchemical-implant-19",
+        "currency": "fragments",
+        "price": 500000,
+        "stock": -1
+      },
+      {
+        "itemId": "alchemical-implant-20",
+        "currency": "fragments",
+        "price": 600000,
+        "stock": -1
+      }
+    ]
+  },
+  {
+    "id": "shop:orbs",
+    "kind": "shop",
+    "name": "Loja de Orbes",
+    "description": "Compra e troca de seis cores de orbes; conversão de dez unidades para uma da cor imediatamente superior.",
+    "cadence": "permanent",
+    "entries": [
+      {
+        "itemId": "arcane-crystal",
+        "currency": "green-orb",
+        "price": 1,
+        "stock": -1,
+        "sellPrice": 1
+      },
+      {
+        "itemId": "rune-token",
+        "currency": "blue-orb",
+        "price": 2,
+        "stock": -1,
+        "sellPrice": 1
+      },
+      {
+        "itemId": "jewel-shard",
+        "currency": "orange-orb",
+        "price": 1,
+        "stock": -1,
+        "sellPrice": 1
+      },
+      {
+        "itemId": "material-orichalcum",
+        "currency": "red-orb",
+        "price": 2,
+        "stock": -1,
+        "sellPrice": 1
+      },
+      {
+        "itemId": "material-unobtanio",
+        "currency": "black-orb",
+        "price": 1,
+        "stock": -1,
+        "sellPrice": 1
+      },
+      {
+        "itemId": "material-sacrite",
+        "currency": "gold-orb",
+        "price": 1,
+        "stock": -1,
+        "sellPrice": 1
+      }
+    ]
+  },
+  {
+    "id": "shop:daily",
+    "kind": "shop",
+    "name": "Banca diária",
+    "description": "Quatro ofertas de um catálogo regional, renovadas a cada dia UTC da partida.",
+    "cadence": "daily",
+    "regionId": "apexia",
+    "rotation": {
+      "offersPerPeriod": 4
+    },
+    "entries": [
+      {
+        "itemId": "healing-potion",
+        "currency": "fragments",
+        "price": 15,
+        "stock": 3,
+        "sellPrice": 7
+      },
+      {
+        "itemId": "wild-herb",
+        "currency": "fragments",
+        "price": 5,
+        "stock": 10,
+        "sellPrice": 3
+      },
+      {
+        "itemId": "iron-ore",
+        "currency": "fragments",
+        "price": 8,
+        "stock": 6,
+        "sellPrice": 4
+      },
+      {
+        "itemId": "mana-potion",
+        "currency": "fragments",
+        "price": 22,
+        "stock": 3,
+        "sellPrice": 11
+      },
+      {
+        "itemId": "aura-tonic",
+        "currency": "fragments",
+        "price": 22,
+        "stock": 3,
+        "sellPrice": 11
+      },
+      {
+        "itemId": "ore-silver",
+        "currency": "fragments",
+        "price": 18,
+        "stock": 6,
+        "sellPrice": 9,
+        "requiredLevel": 3,
+        "requiredSkill": "mining-skill",
+        "requiredSkillLevel": 3
+      },
+      {
+        "itemId": "oak-log",
+        "currency": "fragments",
+        "price": 6,
+        "stock": 12,
+        "sellPrice": 3
+      },
+      {
+        "itemId": "wheat",
+        "currency": "fragments",
+        "price": 6,
+        "stock": 12,
+        "sellPrice": 3
+      },
+      {
+        "itemId": "river-carp",
+        "currency": "fragments",
+        "price": 12,
+        "stock": 8,
+        "sellPrice": 6
+      },
+      {
+        "itemId": "beast-hide",
+        "currency": "fragments",
+        "price": 16,
+        "stock": 5,
+        "sellPrice": 8
+      },
+      {
+        "itemId": "arcane-crystal",
+        "currency": "fragments",
+        "price": 30,
+        "stock": 3,
+        "sellPrice": 15,
+        "requiredLevel": 5,
+        "requiredSkill": "magic-skill",
+        "requiredSkillLevel": 5
+      },
+      {
+        "itemId": "rune-token",
+        "currency": "fragments",
+        "price": 45,
+        "stock": 2,
+        "sellPrice": 22,
+        "requiredLevel": 8,
+        "requiredSkill": "forging-skill",
+        "requiredSkillLevel": 5
+      }
+    ]
+  }
+]

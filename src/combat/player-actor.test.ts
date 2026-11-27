@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { createCharacter } from '../domain/model';
 import { loadOfficialContent } from '../content/registry';
-import type { ItemDefinition } from '../content/schema';
+import type { ItemDefinition, RaceDefinition, SystemDefinition } from '../content/schema';
 import { createCharacterCombatActor } from './player-actor';
 import type { CombatAction } from './types';
 
@@ -28,6 +28,247 @@ describe('shared character combat contract', () => {
       energy: { mana: 30 },
       actions: [{ damage: { amount: 35, subtype: 'crushing' }, accuracy: 0.9, intervalMs: 1_000 }],
     });
+  });
+
+  it('carries the selected race combat tags and configured racial actions into combat', () => {
+    const ghost = content.races.get('ghost')!;
+    const actor = createCharacterCombatActor(character(), content.items, defaults, [], ghost);
+
+    expect(actor.tags).toEqual(['base:ghost', 'base:ethereal', 'race:ghost-physical-anchor']);
+    expect(actor.affinityElement).toBeUndefined();
+    expect(actor.effects).toEqual([]);
+  });
+
+  it('passes every selected Mana element into the combat affinity contract', () => {
+    const prepared = {
+      ...character(),
+      energy: { affinity: 'mana', affinities: ['fire', 'water'], reserves: { mana: 30 } },
+    };
+    const actor = createCharacterCombatActor(
+      prepared,
+      content.items,
+      defaults,
+      [],
+      undefined,
+      content.systems,
+      [...content.energies.values()],
+    );
+
+    expect(actor.affinityElement).toBe('fire');
+    expect(actor.affinityElements).toEqual(['fire', 'water']);
+  });
+
+  it('adds Mana Spirit damage to magical weapons and node actions', () => {
+    const weaponId = 'gear:spirit-focus';
+    const magicWeapon: ItemDefinition = {
+      ...content.items.get('gear:mithril-spear')!,
+      id: weaponId,
+      name: 'Spirit focus',
+      combat: {
+        damage: {
+          amount: 10,
+          channel: 'magical',
+          properties: ['elemental'],
+          origin: { kind: 'weapon', id: weaponId },
+        },
+      },
+    };
+    const nodeAction: CombatAction = {
+      id: 'node:spirit-bolt',
+      name: 'Spirit Bolt',
+      kind: 'magic',
+      target: 'enemy',
+      intervalMs: 1_000,
+      accuracy: 1,
+      damage: {
+        amount: 11,
+        channel: 'magical',
+        element: 'fire',
+        properties: ['elemental'],
+        origin: { kind: 'node', id: 'node:spirit-bolt' },
+      },
+    };
+    const prepared = {
+      ...character(),
+      attributes: { ...character().attributes, energetic: { spirit: 4 } },
+      equipment: { ...character().equipment, primary: weaponId },
+    };
+    const items = new Map(content.items).set(weaponId, magicWeapon);
+    const actor = createCharacterCombatActor(
+      prepared,
+      items,
+      defaults,
+      [nodeAction],
+      undefined,
+      undefined,
+      [...content.energies.values()],
+    );
+
+    expect(actor.actions.find((action) => action.id === weaponId)?.damage?.amount).toBe(24);
+    expect(actor.actions.find((action) => action.id === nodeAction.id)?.damage?.amount).toBe(25);
+    const unarmed = createCharacterCombatActor(
+      { ...prepared, equipment: { ...prepared.equipment, primary: null } },
+      content.items,
+      defaults,
+      [],
+      undefined,
+      undefined,
+      [...content.energies.values()],
+    );
+    expect(
+      unarmed.actions.find((action) => action.id === 'base:unarmed-strike')?.damage?.amount,
+    ).toBe(35);
+  });
+
+  it('applies trained combat skill milestones to the actor action set', () => {
+    const hero = {
+      ...character(),
+      skills: {
+        'magic-skill': { level: 5, experience: 0, extensions: {} },
+        'archery-skill': { level: 10, experience: 0, extensions: {} },
+        'targeting-skill': { level: 5, experience: 0, extensions: {} },
+      },
+    };
+    const magic: CombatAction = {
+      id: 'node:test-magic',
+      name: 'Test spell',
+      kind: 'magic',
+      target: 'enemy',
+      intervalMs: 1_000,
+      accuracy: 0.8,
+      damage: {
+        amount: 100,
+        channel: 'magical',
+        properties: [],
+        origin: { kind: 'node', id: 'node:test-magic' },
+      },
+    };
+    const ranged: CombatAction = {
+      id: 'gear:test-bow',
+      name: 'Test bow',
+      kind: 'ranged',
+      target: 'enemy',
+      intervalMs: 1_000,
+      accuracy: 0.8,
+      damage: {
+        amount: 100,
+        channel: 'physical',
+        properties: ['ranged'],
+        origin: { kind: 'weapon', id: 'gear:test-bow' },
+      },
+    };
+    const actor = createCharacterCombatActor(
+      hero,
+      content.items,
+      defaults,
+      [magic, ranged],
+      undefined,
+      undefined,
+      [],
+      [...content.skills.values()],
+    );
+
+    expect(actor.actions.find((entry) => entry.id === magic.id)).toMatchObject({
+      damage: { amount: 110 },
+    });
+    expect(actor.actions.find((entry) => entry.id === ranged.id)).toMatchObject({
+      damage: { amount: 130 },
+    });
+    expect(actor.actions.find((entry) => entry.id === ranged.id)?.accuracy).toBeCloseTo(0.85);
+  });
+
+  it('applies Incomplete Sem Afinidade attributes, mitigation, and absent energy reserves', () => {
+    const prepared = {
+      ...character(),
+      energy: { affinity: 'unaffiliated', reserves: { mana: 120, aura: 40 } },
+      attributes: { ...character().attributes, energetic: { mana: 8, chi: 6 } },
+    };
+    const actor = createCharacterCombatActor(
+      prepared,
+      content.items,
+      defaults,
+      [],
+      undefined,
+      content.systems,
+      [...content.energies.values()],
+    );
+
+    expect(actor.attributes).toMatchObject({
+      vigor: 46,
+      resistance: 48,
+      speed: 52,
+      dexterity: 46,
+      precision: 44,
+      strength: 50,
+    });
+    expect(actor.damageReduction).toBe(0.2);
+    expect(actor.energy).toMatchObject({ mana: 0, aura: 0 });
+    expect(actor.hp.maximum).toBe(230);
+    expect(actor.tenacity.maximum).toBe(480);
+  });
+
+  it('applies installed alchemical attribute bonuses before deriving combat bars and weapon damage', () => {
+    const actor = createCharacterCombatActor(
+      {
+        ...character(),
+        extensions: { installedImplants: ['implant-01', 'implant-02', 'implant-05', 'implant-13'] },
+      },
+      content.items,
+      defaults,
+      [],
+      undefined,
+      content.systems,
+    );
+
+    expect(actor.attributes).toMatchObject({ strength: 110, speed: 112, resistance: 162 });
+    expect(actor.hp.maximum).toBe(30);
+    expect(actor.tenacity.maximum).toBe(1_620);
+    expect(actor.actions[0]?.damage?.amount).toBe(385);
+  });
+
+  it('converts the regeneration core percentage into combat healing per turn', () => {
+    const actor = createCharacterCombatActor(
+      {
+        ...character(),
+        extensions: { installedImplants: ['implant-14'] },
+      },
+      content.items,
+      defaults,
+      [],
+      undefined,
+      content.systems,
+    );
+
+    expect(actor.regenerationPerAction).toBe(1);
+  });
+
+  it('activates an unused installed soul anchor and keeps consumed anchors disabled', () => {
+    const installed = {
+      ...character(),
+      extensions: { installedImplants: ['implant-20'] },
+    };
+    const available = createCharacterCombatActor(
+      installed,
+      content.items,
+      defaults,
+      [],
+      undefined,
+      content.systems,
+    );
+    const broken = createCharacterCombatActor(
+      {
+        ...installed,
+        extensions: { ...installed.extensions, brokenImplants: ['implant-20'] },
+      },
+      content.items,
+      defaults,
+      [],
+      undefined,
+      content.systems,
+    );
+
+    expect(available.soulAnchorAvailable).toBe(true);
+    expect(broken.soulAnchorAvailable).toBe(false);
   });
 
   it('uses equipped weapons, item properties, armor mitigation, speed, and configured abilities', () => {
@@ -129,6 +370,70 @@ describe('shared character combat contract', () => {
       element: 'lightning',
       properties: expect.arrayContaining(['conductive']),
     });
+  });
+
+  it('derives Mana and Aura reserves from energy attributes and restores saved HP', () => {
+    const prepared = {
+      ...character(),
+      attributes: {
+        ...character().attributes,
+        energetic: { mana: 5, chi: 3 },
+      },
+      energy: { affinity: 'mana', reserves: {} },
+      extensions: { combatHp: 17 },
+    };
+    const actor = createCharacterCombatActor(prepared, content.items, defaults);
+    expect(actor.energy).toMatchObject({ mana: 50, aura: 0 });
+    expect(actor.hp).toEqual({ current: 17, maximum: 30 });
+    expect(() =>
+      createCharacterCombatActor(
+        { ...prepared, extensions: { combatHp: 31 } },
+        content.items,
+        defaults,
+      ),
+    ).toThrow('Character has invalid saved HP.');
+  });
+
+  it('activates only the reserve belonging to an awakened energy path', () => {
+    const aura = createCharacterCombatActor(
+      {
+        ...character(),
+        attributes: {
+          ...character().attributes,
+          energetic: { mana: 5, chi: 3 },
+        },
+        energy: { affinity: 'aura', reserves: { mana: 40, aura: 2 } },
+      },
+      content.items,
+      defaults,
+    );
+    const mana = createCharacterCombatActor(
+      {
+        ...character(),
+        energy: { affinity: 'mana', reserves: { mana: 2, aura: 40 } },
+      },
+      content.items,
+      defaults,
+    );
+    const derivedAura = createCharacterCombatActor(
+      {
+        ...character(),
+        attributes: { ...character().attributes, energetic: { chi: 3 } },
+        energy: { affinity: 'aura', reserves: {} },
+      },
+      content.items,
+      defaults,
+    );
+    const derivedMana = createCharacterCombatActor(
+      { ...character(), energy: { affinity: 'mana', reserves: {} } },
+      content.items,
+      defaults,
+    );
+
+    expect(aura.energy).toMatchObject({ mana: 0, aura: 2 });
+    expect(mana.energy).toMatchObject({ mana: 2, aura: 0 });
+    expect(derivedAura.energy).toMatchObject({ mana: 0, aura: 3 });
+    expect(derivedMana.energy).toMatchObject({ mana: 0 });
   });
 
   it('uses secondary weapons, ranged precision, and unequipped items without combat profiles', () => {
@@ -312,5 +617,84 @@ describe('shared character combat contract', () => {
         defaults,
       ).energy.focus,
     ).toBe(5);
+    const manaBonusItem = {
+      ...energyItem,
+      id: 'gear:mana-bonus',
+      combat: { energyBonus: { mana: 5 } },
+    };
+    energyItems.set(manaBonusItem.id, manaBonusItem);
+    expect(
+      createCharacterCombatActor(
+        {
+          ...character(),
+          energy: { affinity: 'aura', reserves: { mana: 10 } },
+          equipment: { ...character().equipment, chest: manaBonusItem.id },
+        },
+        energyItems,
+        defaults,
+      ).energy.mana,
+    ).toBe(0);
+  });
+
+  it('copies racial actions and effects, preserves legacy stat gaps, and rejects overflowing regeneration', () => {
+    const action: CombatAction = {
+      id: 'race:test-action',
+      name: 'Racial action',
+      kind: 'heal',
+      target: 'self',
+      intervalMs: 1_000,
+      accuracy: 1,
+      healing: 1,
+    };
+    const race = {
+      ...content.races.get('human')!,
+      combatTag: { id: 'race:test-tag' },
+      combatActions: [action],
+      combatStartEffects: [{ id: 'race:test-effect', category: 'buff', potency: 1, counter: 1 }],
+    } as unknown as RaceDefinition;
+    const physical = { ...character().attributes.physical, legacy: undefined as unknown as number };
+    const actorWithRace = createCharacterCombatActor(
+      { ...character(), attributes: { ...character().attributes, physical } },
+      content.items,
+      defaults,
+      [action],
+      race,
+    );
+    expect(actorWithRace.attributes.legacy).toBe(0);
+    expect(actorWithRace.actions.map((entry) => entry.id)).toEqual([
+      'base:unarmed-strike',
+      action.id,
+      action.id,
+    ]);
+    expect(actorWithRace.tags).toContain('race:test-tag');
+    expect(actorWithRace.effects).toEqual([
+      { id: 'race:test-effect', category: 'buff', potency: 1, counter: 1 },
+    ]);
+
+    const system = content.systems.get('system:alchemy')!;
+    const entries = system.entries.map((entry) =>
+      entry.id === 'implant-14' ? { ...entry, regenerationPercentPerTurn: 1e308 } : entry,
+    );
+    const systems = new Map(content.systems).set('system:alchemy', {
+      ...system,
+      entries,
+    } as SystemDefinition);
+    expect(() =>
+      createCharacterCombatActor(
+        { ...character(), extensions: { installedImplants: ['implant-14'] } },
+        content.items,
+        defaults,
+        [],
+        undefined,
+        systems,
+      ),
+    ).toThrow('Character implants produce invalid regeneration.');
+    expect(
+      createCharacterCombatActor(
+        { ...character(), extensions: { combatEvasion: { chance: 0.5 } } },
+        content.items,
+        defaults,
+      ).evasion,
+    ).toBeUndefined();
   });
 });

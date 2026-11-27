@@ -6,12 +6,15 @@ const conditionOperator = z.enum([
   'neq',
   'eq_field',
   'includes',
+  'includes_id',
   'not_includes',
   'includes_any',
   'not_includes_any',
   'not_includes_id',
   'truthy',
   'not_truthy',
+  'lte',
+  'gte',
   'gt',
   'lt',
 ]);
@@ -29,6 +32,8 @@ const effectType = z.enum([
   'status_immunity',
   'action_interval_multiplier',
   'regeneration',
+  'max_hp_regeneration',
+  'environment_status',
   'hazard_awareness',
   'reveal_target',
   'policy_bias',
@@ -43,9 +48,101 @@ const effectType = z.enum([
   'preferred_range',
   'counterattack',
   'vampirism',
+  'flat_vampirism',
   'death_burst',
   'adaptive_resistance',
+  'status_duration_multiplier',
+  'status_potency_multiplier',
+  'status_persistence',
+  'on_support_effect',
 ]);
+
+const supportStatusSchema = z
+  .object({
+    id: z.string().trim().min(1),
+    category: z.string().trim().min(1),
+    potency: z.number().finite().nonnegative(),
+    counter: z.number().finite().nonnegative(),
+  })
+  .passthrough();
+const environmentStatusSchema = supportStatusSchema
+  .extend({
+    tickDamage: z
+      .object({
+        amount: z.number().finite().nonnegative(),
+        channel: z.enum(['physical', 'magical', 'true']),
+        subtype: z.enum(['cutting', 'piercing', 'crushing', 'other']).optional(),
+        element: z.string().optional(),
+        properties: z.array(z.string()).optional(),
+      })
+      .optional(),
+    tickIntervalMs: z.number().int().positive().safe().optional(),
+  })
+  .superRefine((status, context) => {
+    if (status.tickDamage && status.tickIntervalMs === undefined) {
+      context.addIssue({
+        code: 'custom',
+        message: 'Environment damage statuses must define a tick interval',
+      });
+    }
+  });
+
+const tagEffectSchema = z
+  .object({ type: effectType })
+  .passthrough()
+  .superRefine((effect, context) => {
+    if (
+      (effect.type === 'status_duration_multiplier' ||
+        effect.type === 'status_potency_multiplier') &&
+      (typeof effect.value !== 'number' || !Number.isFinite(effect.value) || effect.value <= 0)
+    ) {
+      context.addIssue({
+        code: 'custom',
+        message: 'Status multipliers must be finite and positive',
+      });
+    }
+    if (
+      effect.type === 'max_hp_regeneration' &&
+      (typeof effect.value !== 'number' || !Number.isFinite(effect.value) || effect.value <= 0)
+    ) {
+      context.addIssue({
+        code: 'custom',
+        message: 'Maximum HP regeneration must be a finite positive fraction',
+      });
+    }
+    if (
+      effect.type === 'environment_status' &&
+      !environmentStatusSchema.safeParse(effect.value).success
+    ) {
+      context.addIssue({
+        code: 'custom',
+        message: 'Environment status must contain a valid effect payload',
+      });
+    }
+    if (
+      effect.type === 'status_persistence' &&
+      (typeof effect.value !== 'string' || effect.value.trim().length === 0)
+    ) {
+      context.addIssue({ code: 'custom', message: 'Persistent status effect must name a status' });
+    }
+    if (
+      effect.type === 'action_forbidden' &&
+      !(
+        (typeof effect.value === 'string' && effect.value.trim().length > 0) ||
+        (Array.isArray(effect.value) &&
+          effect.value.length > 0 &&
+          effect.value.every((value) => typeof value === 'string' && value.trim().length > 0))
+      )
+    ) {
+      context.addIssue({ code: 'custom', message: 'Forbidden actions must name action kinds' });
+    }
+    if (
+      effect.type === 'on_support_effect' &&
+      !supportStatusSchema.safeParse(effect.value).success
+    ) {
+      context.addIssue({ code: 'custom', message: 'Support effect must contain a valid status' });
+    }
+  });
 
 const tagRuleSchema = z.object({
   id: z.string().trim().min(1),
@@ -54,7 +151,7 @@ const tagRuleSchema = z.object({
   interactionId: z.string().trim().min(1),
   potency: z.number().finite().nonnegative(),
   priority: z.number().finite(),
-  effect: z.object({ type: effectType }).passthrough(),
+  effect: tagEffectSchema,
 });
 
 const enemyTagSchema = z.object({
@@ -143,6 +240,17 @@ function matchesCondition(condition: TagCondition, context: unknown): boolean {
       return actual === readPath(context, String(condition.value ?? ''));
     case 'includes':
       return Array.isArray(actual) && actual.includes(condition.value);
+    case 'includes_id':
+      return (
+        Array.isArray(actual) &&
+        actual.some(
+          (entry) =>
+            typeof entry === 'object' &&
+            entry !== null &&
+            'id' in entry &&
+            (entry as { id: unknown }).id === condition.value,
+        )
+      );
     case 'not_includes':
       return !Array.isArray(actual) || !actual.includes(condition.value);
     case 'includes_any':
@@ -172,6 +280,18 @@ function matchesCondition(condition: TagCondition, context: unknown): boolean {
       return Boolean(actual);
     case 'not_truthy':
       return !actual;
+    case 'lte':
+      return (
+        typeof actual === 'number' &&
+        typeof condition.value === 'number' &&
+        actual <= condition.value
+      );
+    case 'gte':
+      return (
+        typeof actual === 'number' &&
+        typeof condition.value === 'number' &&
+        actual >= condition.value
+      );
     case 'gt':
       return (
         typeof actual === 'number' &&

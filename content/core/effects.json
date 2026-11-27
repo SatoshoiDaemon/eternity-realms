@@ -4,6 +4,722 @@
     "kind": "effect",
     "name": "Trabalho focado",
     "description": "Registro de efeito para extensões futuras; sem modificador numérico presumido.",
-    "payload": { "status": "declarative-extension-point" }
+    "payload": {
+      "status": "declarative-extension-point"
+    }
+  },
+  {
+    "id": "core:burn",
+    "kind": "effect",
+    "name": "Queimadura",
+    "description": "Cada ponto de Potência causa 1 de dano ao HP por turno. Dano mágico.",
+    "payload": {
+      "system": "status-effect",
+      "family": "dot",
+      "canonicalRule": "Cada ponto de Potência causa 1 de dano ao HP por turno. Dano mágico.",
+      "decay": "Ao final do turno: −1 Duração e −1 Potência.",
+      "engineSupport": "tick-damage; requires canonical tick counters",
+      "source": "Notion: Eternity Realms — Sistemas originais do RP, Catálogo de efeitos de status (2026-11-08).",
+      "adaptationNotes": "Regra canônica preservada. A automação completa deste comportamento no combate idle ainda depende da implementação de status correspondente."
+    },
+    "source": "Notion: Eternity Realms — Sistemas originais do RP, Catálogo de efeitos de status (2026-11-08)",
+    "adaptationNotes": "Canônico; não equiparar a funcionamento integral no motor até cobrir engineSupport."
+  },
+  {
+    "id": "core:poison",
+    "kind": "effect",
+    "name": "Veneno",
+    "description": "Cada ponto de Potência causa 1 dano multiplicado pela quantidade de turnos já passados sob Veneno. Dano mágico.",
+    "payload": {
+      "system": "status-effect",
+      "family": "dot",
+      "canonicalRule": "Cada ponto de Potência causa 1 dano multiplicado pela quantidade de turnos já passados sob Veneno. Dano mágico.",
+      "decay": "Ao final: perde metade da Duração. Arredondamento e decaimento de Potência não informados.",
+      "engineSupport": "partial: cumulative turn scaling and half-duration decay",
+      "source": "Notion: Eternity Realms — Sistemas originais do RP, Catálogo de efeitos de status (2026-11-08).",
+      "adaptationNotes": "Regra canônica preservada. A automação completa deste comportamento no combate idle ainda depende da implementação de status correspondente."
+    },
+    "source": "Notion: Eternity Realms — Sistemas originais do RP, Catálogo de efeitos de status (2026-11-08)",
+    "adaptationNotes": "Canônico; não equiparar a funcionamento integral no motor até cobrir engineSupport."
+  },
+  {
+    "id": "core:bleeding",
+    "kind": "effect",
+    "name": "Sangramento",
+    "description": "Cada ponto de Potência causa 1 dano à vida quando o alvo se movimenta, inclusive ao atacar ou desviar. Dano físico.",
+    "payload": {
+      "system": "status-effect",
+      "family": "dot",
+      "canonicalRule": "Cada ponto de Potência causa 1 dano à vida quando o alvo se movimenta, inclusive ao atacar ou desviar. Dano físico.",
+      "decay": "Ao acionar: −1 Duração e metade da Potência. Arredondamento pendente.",
+      "engineSupport": "partial: movement-triggered damage",
+      "source": "Notion: Eternity Realms — Sistemas originais do RP, Catálogo de efeitos de status (2026-11-08).",
+      "adaptationNotes": "Regra canônica preservada. A automação completa deste comportamento no combate idle ainda depende da implementação de status correspondente."
+    },
+    "source": "Notion: Eternity Realms — Sistemas originais do RP, Catálogo de efeitos de status (2026-11-08)",
+    "adaptationNotes": "Canônico; não equiparar a funcionamento integral no motor até cobrir engineSupport."
+  },
+  {
+    "id": "core:confusion",
+    "kind": "effect",
+    "name": "Confusão",
+    "description": "Por turno, cada ponto de Potência retira 1% da reserva de energia.",
+    "payload": {
+      "system": "status-effect",
+      "family": "dot",
+      "canonicalRule": "Por turno, cada ponto de Potência retira 1% da reserva de energia.",
+      "decay": "Ao final: −1 Duração.",
+      "engineSupport": "partial: resource drain",
+      "source": "Notion: Eternity Realms — Sistemas originais do RP, Catálogo de efeitos de status (2026-11-08).",
+      "adaptationNotes": "Regra canônica preservada. A automação completa deste comportamento no combate idle ainda depende da implementação de status correspondente."
+    },
+    "source": "Notion: Eternity Realms — Sistemas originais do RP, Catálogo de efeitos de status (2026-11-08)",
+    "adaptationNotes": "Canônico; não equiparar a funcionamento integral no motor até cobrir engineSupport."
+  },
+  {
+    "id": "core:electrified",
+    "kind": "effect",
+    "name": "Eletrificado",
+    "description": "Dano por turno descrito como “1 da vida” multiplicado pela quantidade de pessoas eletrificadas próximas, com máximo de 20% por pessoa. Dano mágico.",
+    "payload": {
+      "system": "status-effect",
+      "family": "dot",
+      "canonicalRule": "Dano por turno descrito como “1 da vida” multiplicado pela quantidade de pessoas eletrificadas próximas, com máximo de 20% por pessoa. Dano mágico.",
+      "decay": "Ao final: −1 Duração e −1 Potência. Unidade do dano e proximidade pendentes.",
+      "engineSupport": "partial: shared proximity scaling and ambiguous unit",
+      "source": "Notion: Eternity Realms — Sistemas originais do RP, Catálogo de efeitos de status (2026-11-08).",
+      "adaptationNotes": "Regra canônica preservada. A automação completa deste comportamento no combate idle ainda depende da implementação de status correspondente."
+    },
+    "source": "Notion: Eternity Realms — Sistemas originais do RP, Catálogo de efeitos de status (2026-11-08)",
+    "adaptationNotes": "Canônico; não equiparar a funcionamento integral no motor até cobrir engineSupport."
+  },
+  {
+    "id": "core:hypothermia",
+    "kind": "effect",
+    "name": "Hipotermia",
+    "description": "Por Potência, 0,5 de dano à vida por turno; a cada 10 Potência, −5% de velocidade de movimento/esquiva. Dano mágico.",
+    "payload": {
+      "system": "status-effect",
+      "family": "dot",
+      "canonicalRule": "Por Potência, 0,5 de dano à vida por turno; a cada 10 Potência, −5% de velocidade de movimento/esquiva. Dano mágico.",
+      "decay": "Ao final: −1 Duração e −2 Potência.",
+      "engineSupport": "partial: fractional damage and speed/evasion changes",
+      "source": "Notion: Eternity Realms — Sistemas originais do RP, Catálogo de efeitos de status (2026-11-08).",
+      "adaptationNotes": "Regra canônica preservada. A automação completa deste comportamento no combate idle ainda depende da implementação de status correspondente."
+    },
+    "source": "Notion: Eternity Realms — Sistemas originais do RP, Catálogo de efeitos de status (2026-11-08)",
+    "adaptationNotes": "Canônico; não equiparar a funcionamento integral no motor até cobrir engineSupport."
+  },
+  {
+    "id": "core:corrosion",
+    "kind": "effect",
+    "name": "Corrosão",
+    "description": "Por Potência, 0,5 de dano à vida por turno; a cada 5 Potência, −2% Defesa Física. Dano físico.",
+    "payload": {
+      "system": "status-effect",
+      "family": "dot",
+      "canonicalRule": "Por Potência, 0,5 de dano à vida por turno; a cada 5 Potência, −2% Defesa Física. Dano físico.",
+      "decay": "Ao final: −1 Duração e −10% da Potência atual, arredondado para cima.",
+      "engineSupport": "partial: fractional damage, defense changes and percentage decay",
+      "source": "Notion: Eternity Realms — Sistemas originais do RP, Catálogo de efeitos de status (2026-11-08).",
+      "adaptationNotes": "Regra canônica preservada. A automação completa deste comportamento no combate idle ainda depende da implementação de status correspondente."
+    },
+    "source": "Notion: Eternity Realms — Sistemas originais do RP, Catálogo de efeitos de status (2026-11-08)",
+    "adaptationNotes": "Canônico; não equiparar a funcionamento integral no motor até cobrir engineSupport."
+  },
+  {
+    "id": "core:illusion-dot",
+    "kind": "effect",
+    "name": "Ilusão (DoT)",
+    "description": "Para cada ação que use energia ou Tribute Carga, dano à vida igual à Potência de Ilusão (DoT). Dano mágico.",
+    "payload": {
+      "system": "status-effect",
+      "family": "dot",
+      "canonicalRule": "Para cada ação que use energia ou Tribute Carga, dano à vida igual à Potência de Ilusão (DoT). Dano mágico.",
+      "decay": "O texto original repete parte da descrição; sem decaimento explicitado.",
+      "engineSupport": "partial: action/resource-triggered damage",
+      "source": "Notion: Eternity Realms — Sistemas originais do RP, Catálogo de efeitos de status (2026-11-08).",
+      "adaptationNotes": "Regra canônica preservada. A automação completa deste comportamento no combate idle ainda depende da implementação de status correspondente."
+    },
+    "source": "Notion: Eternity Realms — Sistemas originais do RP, Catálogo de efeitos de status (2026-11-08)",
+    "adaptationNotes": "Canônico; não equiparar a funcionamento integral no motor até cobrir engineSupport."
+  },
+  {
+    "id": "core:silence",
+    "kind": "effect",
+    "name": "Silêncio",
+    "description": "Sem Potência; somente Duração, máximo 5. Impede habilidades de energia e Tributar Carga/qualquer Tributo.",
+    "payload": {
+      "system": "status-effect",
+      "family": "control",
+      "canonicalRule": "Sem Potência; somente Duração, máximo 5. Impede habilidades de energia e Tributar Carga/qualquer Tributo.",
+      "decay": "Ao final: −1 Duração.",
+      "engineSupport": "partial: blocks selected actions",
+      "source": "Notion: Eternity Realms — Sistemas originais do RP, Catálogo de efeitos de status (2026-11-08).",
+      "adaptationNotes": "Regra canônica preservada. A automação completa deste comportamento no combate idle ainda depende da implementação de status correspondente."
+    },
+    "source": "Notion: Eternity Realms — Sistemas originais do RP, Catálogo de efeitos de status (2026-11-08)",
+    "adaptationNotes": "Canônico; não equiparar a funcionamento integral no motor até cobrir engineSupport."
+  },
+  {
+    "id": "core:disarm",
+    "kind": "effect",
+    "name": "Desarme",
+    "description": "Impede ataques normais; permite habilidades ativas/passivas, magias e técnicas de espada.",
+    "payload": {
+      "system": "status-effect",
+      "family": "control",
+      "canonicalRule": "Impede ataques normais; permite habilidades ativas/passivas, magias e técnicas de espada.",
+      "decay": "Máximo 5 Duração; −1 Duração ao final.",
+      "engineSupport": "partial: action-kind filtering",
+      "source": "Notion: Eternity Realms — Sistemas originais do RP, Catálogo de efeitos de status (2026-11-08).",
+      "adaptationNotes": "Regra canônica preservada. A automação completa deste comportamento no combate idle ainda depende da implementação de status correspondente."
+    },
+    "source": "Notion: Eternity Realms — Sistemas originais do RP, Catálogo de efeitos de status (2026-11-08)",
+    "adaptationNotes": "Canônico; não equiparar a funcionamento integral no motor até cobrir engineSupport."
+  },
+  {
+    "id": "core:taunt",
+    "kind": "effect",
+    "name": "Provocar",
+    "description": "Alvo só pode atacar o aplicador, mas ainda pode defender-se; −1% de dano contra o aplicador por ponto de Potência.",
+    "payload": {
+      "system": "status-effect",
+      "family": "control",
+      "canonicalRule": "Alvo só pode atacar o aplicador, mas ainda pode defender-se; −1% de dano contra o aplicador por ponto de Potência.",
+      "decay": "−1 Duração ao final.",
+      "engineSupport": "partial: targeting restriction and conditional damage",
+      "source": "Notion: Eternity Realms — Sistemas originais do RP, Catálogo de efeitos de status (2026-11-08).",
+      "adaptationNotes": "Regra canônica preservada. A automação completa deste comportamento no combate idle ainda depende da implementação de status correspondente."
+    },
+    "source": "Notion: Eternity Realms — Sistemas originais do RP, Catálogo de efeitos de status (2026-11-08)",
+    "adaptationNotes": "Canônico; não equiparar a funcionamento integral no motor até cobrir engineSupport."
+  },
+  {
+    "id": "core:terror",
+    "kind": "effect",
+    "name": "Terror",
+    "description": "Impede atacar o aplicador; −1% Velocidade por Potência.",
+    "payload": {
+      "system": "status-effect",
+      "family": "control",
+      "canonicalRule": "Impede atacar o aplicador; −1% Velocidade por Potência.",
+      "decay": "−1 Duração ao final.",
+      "engineSupport": "partial: targeting restriction and speed change",
+      "source": "Notion: Eternity Realms — Sistemas originais do RP, Catálogo de efeitos de status (2026-11-08).",
+      "adaptationNotes": "Regra canônica preservada. A automação completa deste comportamento no combate idle ainda depende da implementação de status correspondente."
+    },
+    "source": "Notion: Eternity Realms — Sistemas originais do RP, Catálogo de efeitos de status (2026-11-08)",
+    "adaptationNotes": "Canônico; não equiparar a funcionamento integral no motor até cobrir engineSupport."
+  },
+  {
+    "id": "core:charm",
+    "kind": "effect",
+    "name": "Charme",
+    "description": "Impede atacar o aplicador; +1% de dano por Potência conforme texto original.",
+    "payload": {
+      "system": "status-effect",
+      "family": "control",
+      "canonicalRule": "Impede atacar o aplicador; +1% de dano por Potência conforme texto original.",
+      "decay": "−1 Duração ao final.",
+      "engineSupport": "partial: targeting restriction; preserve unusual damage rule",
+      "source": "Notion: Eternity Realms — Sistemas originais do RP, Catálogo de efeitos de status (2026-11-08).",
+      "adaptationNotes": "Regra canônica preservada. A automação completa deste comportamento no combate idle ainda depende da implementação de status correspondente."
+    },
+    "source": "Notion: Eternity Realms — Sistemas originais do RP, Catálogo de efeitos de status (2026-11-08)",
+    "adaptationNotes": "Canônico; não equiparar a funcionamento integral no motor até cobrir engineSupport."
+  },
+  {
+    "id": "core:stun",
+    "kind": "effect",
+    "name": "Atordoamento",
+    "description": "Sem Potência; impede ações próprias e reativas, incluindo ataque, defesa e magia.",
+    "payload": {
+      "system": "status-effect",
+      "family": "control",
+      "canonicalRule": "Sem Potência; impede ações próprias e reativas, incluindo ataque, defesa e magia.",
+      "decay": "Máximo 5 Duração; −1 Duração ao final.",
+      "engineSupport": "partial: action suppression",
+      "source": "Notion: Eternity Realms — Sistemas originais do RP, Catálogo de efeitos de status (2026-11-08).",
+      "adaptationNotes": "Regra canônica preservada. A automação completa deste comportamento no combate idle ainda depende da implementação de status correspondente."
+    },
+    "source": "Notion: Eternity Realms — Sistemas originais do RP, Catálogo de efeitos de status (2026-11-08)",
+    "adaptationNotes": "Canônico; não equiparar a funcionamento integral no motor até cobrir engineSupport."
+  },
+  {
+    "id": "core:freezing",
+    "kind": "effect",
+    "name": "Congelamento",
+    "description": "Por Potência, −1% Velocidade e +1% dano recebido de todas as fontes.",
+    "payload": {
+      "system": "status-effect",
+      "family": "control",
+      "canonicalRule": "Por Potência, −1% Velocidade e +1% dano recebido de todas as fontes.",
+      "decay": "−1 Duração ao final.",
+      "engineSupport": "partial: speed change and damage received modifier",
+      "source": "Notion: Eternity Realms — Sistemas originais do RP, Catálogo de efeitos de status (2026-11-08).",
+      "adaptationNotes": "Regra canônica preservada. A automação completa deste comportamento no combate idle ainda depende da implementação de status correspondente."
+    },
+    "source": "Notion: Eternity Realms — Sistemas originais do RP, Catálogo de efeitos de status (2026-11-08)",
+    "adaptationNotes": "Canônico; não equiparar a funcionamento integral no motor até cobrir engineSupport."
+  },
+  {
+    "id": "core:slowness",
+    "kind": "effect",
+    "name": "Lentidão",
+    "description": "Por Potência, −10% Velocidade. Limite 9/9.",
+    "payload": {
+      "system": "status-effect",
+      "family": "control",
+      "canonicalRule": "Por Potência, −10% Velocidade. Limite 9/9.",
+      "decay": "−1 Duração ao final.",
+      "engineSupport": "partial: action interval/speed modification",
+      "source": "Notion: Eternity Realms — Sistemas originais do RP, Catálogo de efeitos de status (2026-11-08).",
+      "adaptationNotes": "Regra canônica preservada. A automação completa deste comportamento no combate idle ainda depende da implementação de status correspondente."
+    },
+    "source": "Notion: Eternity Realms — Sistemas originais do RP, Catálogo de efeitos de status (2026-11-08)",
+    "adaptationNotes": "Canônico; não equiparar a funcionamento integral no motor até cobrir engineSupport."
+  },
+  {
+    "id": "core:rooted",
+    "kind": "effect",
+    "name": "Enraizamento",
+    "description": "Impede deslocamento, mas permite outras ações que não envolvam deslocamento.",
+    "payload": {
+      "system": "status-effect",
+      "family": "control",
+      "canonicalRule": "Impede deslocamento, mas permite outras ações que não envolvam deslocamento.",
+      "decay": "Não possui contador de Duração, apenas Potência; perde metade da Potência ao final do turno.",
+      "engineSupport": "partial: movement suppression and potency decay",
+      "source": "Notion: Eternity Realms — Sistemas originais do RP, Catálogo de efeitos de status (2026-11-08).",
+      "adaptationNotes": "Regra canônica preservada. A automação completa deste comportamento no combate idle ainda depende da implementação de status correspondente."
+    },
+    "source": "Notion: Eternity Realms — Sistemas originais do RP, Catálogo de efeitos de status (2026-11-08)",
+    "adaptationNotes": "Canônico; não equiparar a funcionamento integral no motor até cobrir engineSupport."
+  },
+  {
+    "id": "core:paralysis",
+    "kind": "effect",
+    "name": "Paralisia",
+    "description": "Por Potência, −10% Velocidade e Destreza. Limite 10/10.",
+    "payload": {
+      "system": "status-effect",
+      "family": "control",
+      "canonicalRule": "Por Potência, −10% Velocidade e Destreza. Limite 10/10.",
+      "decay": "−1 Duração ao final.",
+      "engineSupport": "partial: attribute and action interval changes",
+      "source": "Notion: Eternity Realms — Sistemas originais do RP, Catálogo de efeitos de status (2026-11-08).",
+      "adaptationNotes": "Regra canônica preservada. A automação completa deste comportamento no combate idle ainda depende da implementação de status correspondente."
+    },
+    "source": "Notion: Eternity Realms — Sistemas originais do RP, Catálogo de efeitos de status (2026-11-08)",
+    "adaptationNotes": "Canônico; não equiparar a funcionamento integral no motor até cobrir engineSupport."
+  },
+  {
+    "id": "core:illusion-cc",
+    "kind": "effect",
+    "name": "Ilusão (CC)",
+    "description": "Cada ação ofensiva/defensiva consome automaticamente 1 Potência e se transforma em fracasso garantido.",
+    "payload": {
+      "system": "status-effect",
+      "family": "control",
+      "canonicalRule": "Cada ação ofensiva/defensiva consome automaticamente 1 Potência e se transforma em fracasso garantido.",
+      "decay": "Duração/decaimento não explicitados.",
+      "engineSupport": "partial: action interception and forced failure",
+      "source": "Notion: Eternity Realms — Sistemas originais do RP, Catálogo de efeitos de status (2026-11-08).",
+      "adaptationNotes": "Regra canônica preservada. A automação completa deste comportamento no combate idle ainda depende da implementação de status correspondente."
+    },
+    "source": "Notion: Eternity Realms — Sistemas originais do RP, Catálogo de efeitos de status (2026-11-08)",
+    "adaptationNotes": "Canônico; não equiparar a funcionamento integral no motor até cobrir engineSupport."
+  },
+  {
+    "id": "core:defense-reduction",
+    "kind": "effect",
+    "name": "Redução de Defesa",
+    "description": "−10 Resistência por Potência.",
+    "payload": {
+      "system": "status-effect",
+      "family": "debuff",
+      "canonicalRule": "−10 Resistência por Potência.",
+      "decay": "−1 Duração ao final.",
+      "engineSupport": "partial: attribute/tenacity recalculation",
+      "source": "Notion: Eternity Realms — Sistemas originais do RP, Catálogo de efeitos de status (2026-11-08).",
+      "adaptationNotes": "Regra canônica preservada. A automação completa deste comportamento no combate idle ainda depende da implementação de status correspondente."
+    },
+    "source": "Notion: Eternity Realms — Sistemas originais do RP, Catálogo de efeitos de status (2026-11-08)",
+    "adaptationNotes": "Canônico; não equiparar a funcionamento integral no motor até cobrir engineSupport."
+  },
+  {
+    "id": "core:attack-reduction",
+    "kind": "effect",
+    "name": "Redução de Ataque",
+    "description": "−10 de dano da especialidade usada no ataque por Potência.",
+    "payload": {
+      "system": "status-effect",
+      "family": "debuff",
+      "canonicalRule": "−10 de dano da especialidade usada no ataque por Potência.",
+      "decay": "−1 Duração ao final.",
+      "engineSupport": "partial: outgoing damage modifier",
+      "source": "Notion: Eternity Realms — Sistemas originais do RP, Catálogo de efeitos de status (2026-11-08).",
+      "adaptationNotes": "Regra canônica preservada. A automação completa deste comportamento no combate idle ainda depende da implementação de status correspondente."
+    },
+    "source": "Notion: Eternity Realms — Sistemas originais do RP, Catálogo de efeitos de status (2026-11-08)",
+    "adaptationNotes": "Canônico; não equiparar a funcionamento integral no motor até cobrir engineSupport."
+  },
+  {
+    "id": "core:exhaustion",
+    "kind": "effect",
+    "name": "Exaustão",
+    "description": "−10% dano por Potência, aplicado a dano físico, mágico ou ambos. Limite 10/99.",
+    "payload": {
+      "system": "status-effect",
+      "family": "debuff",
+      "canonicalRule": "−10% dano por Potência, aplicado a dano físico, mágico ou ambos. Limite 10/99.",
+      "decay": "−1 Duração ao final.",
+      "engineSupport": "partial: outgoing physical/magical damage modifier",
+      "source": "Notion: Eternity Realms — Sistemas originais do RP, Catálogo de efeitos de status (2026-11-08).",
+      "adaptationNotes": "Regra canônica preservada. A automação completa deste comportamento no combate idle ainda depende da implementação de status correspondente."
+    },
+    "source": "Notion: Eternity Realms — Sistemas originais do RP, Catálogo de efeitos de status (2026-11-08)",
+    "adaptationNotes": "Canônico; não equiparar a funcionamento integral no motor até cobrir engineSupport."
+  },
+  {
+    "id": "core:fragile",
+    "kind": "effect",
+    "name": "Frágil",
+    "description": "+10% dano recebido por Potência. Limite 10/10.",
+    "payload": {
+      "system": "status-effect",
+      "family": "debuff",
+      "canonicalRule": "+10% dano recebido por Potência. Limite 10/10.",
+      "decay": "−1 Duração ao final.",
+      "engineSupport": "supported by generic damageMultiplier on applied combat effects",
+      "source": "Notion: Eternity Realms — Sistemas originais do RP, Catálogo de efeitos de status (2026-11-08).",
+      "adaptationNotes": "Regra canônica preservada. A automação completa deste comportamento no combate idle ainda depende da implementação de status correspondente."
+    },
+    "source": "Notion: Eternity Realms — Sistemas originais do RP, Catálogo de efeitos de status (2026-11-08)",
+    "adaptationNotes": "Canônico; não equiparar a funcionamento integral no motor até cobrir engineSupport."
+  },
+  {
+    "id": "core:painful-wounds",
+    "kind": "effect",
+    "name": "Feridas Dolorosas",
+    "description": "−10% cura recebida por Potência. Limite 10/10.",
+    "payload": {
+      "system": "status-effect",
+      "family": "debuff",
+      "canonicalRule": "−10% cura recebida por Potência. Limite 10/10.",
+      "decay": "−1 Duração ao final.",
+      "engineSupport": "partial: healing reduction",
+      "source": "Notion: Eternity Realms — Sistemas originais do RP, Catálogo de efeitos de status (2026-11-08).",
+      "adaptationNotes": "Regra canônica preservada. A automação completa deste comportamento no combate idle ainda depende da implementação de status correspondente."
+    },
+    "source": "Notion: Eternity Realms — Sistemas originais do RP, Catálogo de efeitos de status (2026-11-08)",
+    "adaptationNotes": "Canônico; não equiparar a funcionamento integral no motor até cobrir engineSupport."
+  },
+  {
+    "id": "core:madness",
+    "kind": "effect",
+    "name": "Enlouquecido",
+    "description": "+1% custo de habilidades por Potência, incluindo tributos e energia.",
+    "payload": {
+      "system": "status-effect",
+      "family": "debuff",
+      "canonicalRule": "+1% custo de habilidades por Potência, incluindo tributos e energia.",
+      "decay": "−1 Duração ao final.",
+      "engineSupport": "partial: resource-cost modifier",
+      "source": "Notion: Eternity Realms — Sistemas originais do RP, Catálogo de efeitos de status (2026-11-08).",
+      "adaptationNotes": "Regra canônica preservada. A automação completa deste comportamento no combate idle ainda depende da implementação de status correspondente."
+    },
+    "source": "Notion: Eternity Realms — Sistemas originais do RP, Catálogo de efeitos de status (2026-11-08)",
+    "adaptationNotes": "Canônico; não equiparar a funcionamento integral no motor até cobrir engineSupport."
+  },
+  {
+    "id": "core:fragmentation",
+    "kind": "effect",
+    "name": "Fragmentação",
+    "description": "−1% da Resistência máxima por Potência.",
+    "payload": {
+      "system": "status-effect",
+      "family": "debuff",
+      "canonicalRule": "−1% da Resistência máxima por Potência.",
+      "decay": "−1 Duração ao final.",
+      "engineSupport": "partial: max tenacity modifier",
+      "source": "Notion: Eternity Realms — Sistemas originais do RP, Catálogo de efeitos de status (2026-11-08).",
+      "adaptationNotes": "Regra canônica preservada. A automação completa deste comportamento no combate idle ainda depende da implementação de status correspondente."
+    },
+    "source": "Notion: Eternity Realms — Sistemas originais do RP, Catálogo de efeitos de status (2026-11-08)",
+    "adaptationNotes": "Canônico; não equiparar a funcionamento integral no motor até cobrir engineSupport."
+  },
+  {
+    "id": "core:tremor",
+    "kind": "effect",
+    "name": "Tremor",
+    "description": "A cada 1% indicado no efeito, +1% dano causado à Tenacidade do alvo.",
+    "payload": {
+      "system": "status-effect",
+      "family": "debuff",
+      "canonicalRule": "A cada 1% indicado no efeito, +1% dano causado à Tenacidade do alvo.",
+      "decay": "Não há Duração/decaimento especificados.",
+      "engineSupport": "partial: tenacity-only damage modifier",
+      "source": "Notion: Eternity Realms — Sistemas originais do RP, Catálogo de efeitos de status (2026-11-08).",
+      "adaptationNotes": "Regra canônica preservada. A automação completa deste comportamento no combate idle ainda depende da implementação de status correspondente."
+    },
+    "source": "Notion: Eternity Realms — Sistemas originais do RP, Catálogo de efeitos de status (2026-11-08)",
+    "adaptationNotes": "Canônico; não equiparar a funcionamento integral no motor até cobrir engineSupport."
+  },
+  {
+    "id": "core:rupture",
+    "kind": "effect",
+    "name": "Ruptura",
+    "description": "Por Potência, ignora 1 ponto da Resistência do alvo no próximo ataque. Sem limite de Potência; Duração padrão máxima 99.",
+    "payload": {
+      "system": "status-effect",
+      "family": "debuff",
+      "canonicalRule": "Por Potência, ignora 1 ponto da Resistência do alvo no próximo ataque. Sem limite de Potência; Duração padrão máxima 99.",
+      "decay": "Ao final: −1 Ruptura e −1 Duração.",
+      "engineSupport": "partial: next-hit resistance bypass",
+      "source": "Notion: Eternity Realms — Sistemas originais do RP, Catálogo de efeitos de status (2026-11-08).",
+      "adaptationNotes": "Regra canônica preservada. A automação completa deste comportamento no combate idle ainda depende da implementação de status correspondente."
+    },
+    "source": "Notion: Eternity Realms — Sistemas originais do RP, Catálogo de efeitos de status (2026-11-08)",
+    "adaptationNotes": "Canônico; não equiparar a funcionamento integral no motor até cobrir engineSupport."
+  },
+  {
+    "id": "core:cursed",
+    "kind": "effect",
+    "name": "Amaldiçoado",
+    "description": "Por Potência, −1% dos efeitos positivos de outros buffs e +1% dos efeitos negativos de outros debuffs.",
+    "payload": {
+      "system": "status-effect",
+      "family": "debuff",
+      "canonicalRule": "Por Potência, −1% dos efeitos positivos de outros buffs e +1% dos efeitos negativos de outros debuffs.",
+      "decay": "−1 Duração ao final.",
+      "engineSupport": "partial: amplifies or suppresses other effects",
+      "source": "Notion: Eternity Realms — Sistemas originais do RP, Catálogo de efeitos de status (2026-11-08).",
+      "adaptationNotes": "Regra canônica preservada. A automação completa deste comportamento no combate idle ainda depende da implementação de status correspondente."
+    },
+    "source": "Notion: Eternity Realms — Sistemas originais do RP, Catálogo de efeitos de status (2026-11-08)",
+    "adaptationNotes": "Canônico; não equiparar a funcionamento integral no motor até cobrir engineSupport."
+  },
+  {
+    "id": "core:attack-increase",
+    "kind": "effect",
+    "name": "Aumento de Ataque",
+    "description": "+10 no atributo da especialização ofensiva por Potência.",
+    "payload": {
+      "system": "status-effect",
+      "family": "buff",
+      "canonicalRule": "+10 no atributo da especialização ofensiva por Potência.",
+      "decay": "−1 Duração ao final.",
+      "engineSupport": "partial: attribute-based outgoing damage modifier",
+      "source": "Notion: Eternity Realms — Sistemas originais do RP, Catálogo de efeitos de status (2026-11-08).",
+      "adaptationNotes": "Regra canônica preservada. A automação completa deste comportamento no combate idle ainda depende da implementação de status correspondente."
+    },
+    "source": "Notion: Eternity Realms — Sistemas originais do RP, Catálogo de efeitos de status (2026-11-08)",
+    "adaptationNotes": "Canônico; não equiparar a funcionamento integral no motor até cobrir engineSupport."
+  },
+  {
+    "id": "core:defense-increase",
+    "kind": "effect",
+    "name": "Aumento de Defesa",
+    "description": "+10 Resistência por Potência.",
+    "payload": {
+      "system": "status-effect",
+      "family": "buff",
+      "canonicalRule": "+10 Resistência por Potência.",
+      "decay": "−1 Duração ao final.",
+      "engineSupport": "partial: tenacity modifier",
+      "source": "Notion: Eternity Realms — Sistemas originais do RP, Catálogo de efeitos de status (2026-11-08).",
+      "adaptationNotes": "Regra canônica preservada. A automação completa deste comportamento no combate idle ainda depende da implementação de status correspondente."
+    },
+    "source": "Notion: Eternity Realms — Sistemas originais do RP, Catálogo de efeitos de status (2026-11-08)",
+    "adaptationNotes": "Canônico; não equiparar a funcionamento integral no motor até cobrir engineSupport."
+  },
+  {
+    "id": "core:speed-increase",
+    "kind": "effect",
+    "name": "Aumento de Velocidade",
+    "description": "+10 Velocidade por Potência.",
+    "payload": {
+      "system": "status-effect",
+      "family": "buff",
+      "canonicalRule": "+10 Velocidade por Potência.",
+      "decay": "−1 Duração ao final.",
+      "engineSupport": "partial: action interval and evasion modifier",
+      "source": "Notion: Eternity Realms — Sistemas originais do RP, Catálogo de efeitos de status (2026-11-08).",
+      "adaptationNotes": "Regra canônica preservada. A automação completa deste comportamento no combate idle ainda depende da implementação de status correspondente."
+    },
+    "source": "Notion: Eternity Realms — Sistemas originais do RP, Catálogo de efeitos de status (2026-11-08)",
+    "adaptationNotes": "Canônico; não equiparar a funcionamento integral no motor até cobrir engineSupport."
+  },
+  {
+    "id": "core:protection",
+    "kind": "effect",
+    "name": "Proteção",
+    "description": "−10% dano recebido por Potência. Limite 10/99; o valor teórico de 100% requer especificação de interação.",
+    "payload": {
+      "system": "status-effect",
+      "family": "buff",
+      "canonicalRule": "−10% dano recebido por Potência. Limite 10/99; o valor teórico de 100% requer especificação de interação.",
+      "decay": "−1 Duração ao final.",
+      "engineSupport": "supported by generic damageMultiplier; canonical upper-limit interaction unresolved",
+      "source": "Notion: Eternity Realms — Sistemas originais do RP, Catálogo de efeitos de status (2026-11-08).",
+      "adaptationNotes": "Regra canônica preservada. A automação completa deste comportamento no combate idle ainda depende da implementação de status correspondente."
+    },
+    "source": "Notion: Eternity Realms — Sistemas originais do RP, Catálogo de efeitos de status (2026-11-08)",
+    "adaptationNotes": "Canônico; não equiparar a funcionamento integral no motor até cobrir engineSupport."
+  },
+  {
+    "id": "core:colossus",
+    "kind": "effect",
+    "name": "Colosso",
+    "description": "+1% Resistência por Potência.",
+    "payload": {
+      "system": "status-effect",
+      "family": "buff",
+      "canonicalRule": "+1% Resistência por Potência.",
+      "decay": "−1 Duração ao final.",
+      "engineSupport": "partial: tenacity modifier",
+      "source": "Notion: Eternity Realms — Sistemas originais do RP, Catálogo de efeitos de status (2026-11-08).",
+      "adaptationNotes": "Regra canônica preservada. A automação completa deste comportamento no combate idle ainda depende da implementação de status correspondente."
+    },
+    "source": "Notion: Eternity Realms — Sistemas originais do RP, Catálogo de efeitos de status (2026-11-08)",
+    "adaptationNotes": "Canônico; não equiparar a funcionamento integral no motor até cobrir engineSupport."
+  },
+  {
+    "id": "core:haste",
+    "kind": "effect",
+    "name": "Pressa",
+    "description": "+10% Velocidade por Potência. Limite 20/99.",
+    "payload": {
+      "system": "status-effect",
+      "family": "buff",
+      "canonicalRule": "+10% Velocidade por Potência. Limite 20/99.",
+      "decay": "−1 Duração ao final.",
+      "engineSupport": "partial: action interval and evasion modifier",
+      "source": "Notion: Eternity Realms — Sistemas originais do RP, Catálogo de efeitos de status (2026-11-08).",
+      "adaptationNotes": "Regra canônica preservada. A automação completa deste comportamento no combate idle ainda depende da implementação de status correspondente."
+    },
+    "source": "Notion: Eternity Realms — Sistemas originais do RP, Catálogo de efeitos de status (2026-11-08)",
+    "adaptationNotes": "Canônico; não equiparar a funcionamento integral no motor até cobrir engineSupport."
+  },
+  {
+    "id": "core:blessing",
+    "kind": "effect",
+    "name": "Benção",
+    "description": "+10% cura de todas as fontes e +10% HP do escudo por Potência. Limite 20/99.",
+    "payload": {
+      "system": "status-effect",
+      "family": "buff",
+      "canonicalRule": "+10% cura de todas as fontes e +10% HP do escudo por Potência. Limite 20/99.",
+      "decay": "−1 Duração ao final.",
+      "engineSupport": "partial: healing and shield modifiers",
+      "source": "Notion: Eternity Realms — Sistemas originais do RP, Catálogo de efeitos de status (2026-11-08).",
+      "adaptationNotes": "Regra canônica preservada. A automação completa deste comportamento no combate idle ainda depende da implementação de status correspondente."
+    },
+    "source": "Notion: Eternity Realms — Sistemas originais do RP, Catálogo de efeitos de status (2026-11-08)",
+    "adaptationNotes": "Canônico; não equiparar a funcionamento integral no motor até cobrir engineSupport."
+  },
+  {
+    "id": "core:shield",
+    "kind": "effect",
+    "name": "Escudo",
+    "description": "+10 pontos de Escudo por Potência; absorve dano no lugar do HP e sofre efeitos de mitigação.",
+    "payload": {
+      "system": "status-effect",
+      "family": "buff",
+      "canonicalRule": "+10 pontos de Escudo por Potência; absorve dano no lugar do HP e sofre efeitos de mitigação.",
+      "decay": "Sem limite de Potência; −1 Duração ao final.",
+      "engineSupport": "partial: shield resource and damage ordering",
+      "source": "Notion: Eternity Realms — Sistemas originais do RP, Catálogo de efeitos de status (2026-11-08).",
+      "adaptationNotes": "Regra canônica preservada. A automação completa deste comportamento no combate idle ainda depende da implementação de status correspondente."
+    },
+    "source": "Notion: Eternity Realms — Sistemas originais do RP, Catálogo de efeitos de status (2026-11-08)",
+    "adaptationNotes": "Canônico; não equiparar a funcionamento integral no motor até cobrir engineSupport."
+  },
+  {
+    "id": "core:charge",
+    "kind": "effect",
+    "name": "Carga",
+    "description": "Bateria consumível para requisitos de habilidades; não tem benefício próprio.",
+    "payload": {
+      "system": "status-effect",
+      "family": "buff",
+      "canonicalRule": "Bateria consumível para requisitos de habilidades; não tem benefício próprio.",
+      "decay": "−1 Duração ao final.",
+      "engineSupport": "partial: consumable ability resource",
+      "source": "Notion: Eternity Realms — Sistemas originais do RP, Catálogo de efeitos de status (2026-11-08).",
+      "adaptationNotes": "Regra canônica preservada. A automação completa deste comportamento no combate idle ainda depende da implementação de status correspondente."
+    },
+    "source": "Notion: Eternity Realms — Sistemas originais do RP, Catálogo de efeitos de status (2026-11-08)",
+    "adaptationNotes": "Canônico; não equiparar a funcionamento integral no motor até cobrir engineSupport."
+  },
+  {
+    "id": "core:potency",
+    "kind": "effect",
+    "name": "Potência",
+    "description": "+1% dano causado por Potência.",
+    "payload": {
+      "system": "status-effect",
+      "family": "buff",
+      "canonicalRule": "+1% dano causado por Potência.",
+      "decay": "−1 Duração ao final.",
+      "engineSupport": "partial: outgoing damage modifier",
+      "source": "Notion: Eternity Realms — Sistemas originais do RP, Catálogo de efeitos de status (2026-11-08).",
+      "adaptationNotes": "Regra canônica preservada. A automação completa deste comportamento no combate idle ainda depende da implementação de status correspondente."
+    },
+    "source": "Notion: Eternity Realms — Sistemas originais do RP, Catálogo de efeitos de status (2026-11-08)",
+    "adaptationNotes": "Canônico; não equiparar a funcionamento integral no motor até cobrir engineSupport."
+  },
+  {
+    "id": "core:stance",
+    "kind": "effect",
+    "name": "Postura",
+    "description": "+5 pontos percentuais de chance crítica e +5% dano crítico por Potência. Limite 20/99.",
+    "payload": {
+      "system": "status-effect",
+      "family": "buff",
+      "canonicalRule": "+5 pontos percentuais de chance crítica e +5% dano crítico por Potência. Limite 20/99.",
+      "decay": "−1 Duração ao final. Forma de somar dano crítico pendente.",
+      "engineSupport": "partial: critical chance and critical damage",
+      "source": "Notion: Eternity Realms — Sistemas originais do RP, Catálogo de efeitos de status (2026-11-08).",
+      "adaptationNotes": "Regra canônica preservada. A automação completa deste comportamento no combate idle ainda depende da implementação de status correspondente."
+    },
+    "source": "Notion: Eternity Realms — Sistemas originais do RP, Catálogo de efeitos de status (2026-11-08)",
+    "adaptationNotes": "Canônico; não equiparar a funcionamento integral no motor até cobrir engineSupport."
+  },
+  {
+    "id": "core:lethality",
+    "kind": "effect",
+    "name": "Letalidade",
+    "description": "Dano ignora 1 ponto de Resistência do alvo; físico ou mágico, aplicável a armas, habilidades e estilos.",
+    "payload": {
+      "system": "status-effect",
+      "family": "buff",
+      "canonicalRule": "Dano ignora 1 ponto de Resistência do alvo; físico ou mágico, aplicável a armas, habilidades e estilos.",
+      "decay": "Sem limite de Potência; duração padrão máxima 99; −1 Duração ao final. Texto original repete a regra de decaimento.",
+      "engineSupport": "partial: resistance bypass",
+      "source": "Notion: Eternity Realms — Sistemas originais do RP, Catálogo de efeitos de status (2026-11-08).",
+      "adaptationNotes": "Regra canônica preservada. A automação completa deste comportamento no combate idle ainda depende da implementação de status correspondente."
+    },
+    "source": "Notion: Eternity Realms — Sistemas originais do RP, Catálogo de efeitos de status (2026-11-08)",
+    "adaptationNotes": "Canônico; não equiparar a funcionamento integral no motor até cobrir engineSupport."
+  },
+  {
+    "id": "core:healing",
+    "kind": "effect",
+    "name": "Cura",
+    "description": "Por Potência, recupera 1% do HP máximo por turno.",
+    "payload": {
+      "system": "status-effect",
+      "family": "buff",
+      "canonicalRule": "Por Potência, recupera 1% do HP máximo por turno.",
+      "decay": "−1 Duração por turno.",
+      "engineSupport": "partial: recurring healing",
+      "source": "Notion: Eternity Realms — Sistemas originais do RP, Catálogo de efeitos de status (2026-11-08).",
+      "adaptationNotes": "Regra canônica preservada. A automação completa deste comportamento no combate idle ainda depende da implementação de status correspondente."
+    },
+    "source": "Notion: Eternity Realms — Sistemas originais do RP, Catálogo de efeitos de status (2026-11-08)",
+    "adaptationNotes": "Canônico; não equiparar a funcionamento integral no motor até cobrir engineSupport."
   }
 ]

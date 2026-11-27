@@ -144,16 +144,25 @@ export interface CombatActor {
   policy: CombatPolicy;
   actionPriority: string[];
   mitigation: { physical: number; magical: number };
+  /** Universal multiplicative mitigation, including true damage. */
+  damageReduction?: number;
   evasion?: { chance: number; guaranteed: number };
   guarantees?: { hits: number; semiHits: number; evasions: number };
   position: { x: number; y: number };
   affinityElement?: string;
+  /** All selected elemental affinities; affinityElement remains the primary legacy field. */
+  affinityElements?: string[];
   movementState?: string;
   lastDamageChannel?: DamageChannel;
   actionsTaken?: number;
   revealed?: boolean;
   summonCount?: number;
   summonedBy?: string;
+  /** Flat HP restored on each resolved actor turn by a persistent regeneration source. */
+  regenerationPerAction?: number;
+  /** The soul anchor can prevent one lethal event; its use permanently breaks it. */
+  soulAnchorAvailable?: boolean;
+  soulAnchorUsed?: boolean;
   state: 'ready' | 'alive' | 'dead';
   nextEventAt: number;
   lootTableId?: string;

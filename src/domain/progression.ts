@@ -1,8 +1,11 @@
 import type { Character, DomainEvent } from './types';
 import type { LootDrop } from '../combat/loot';
+import { getEnergyAttributeAccessError } from './energy-rules';
 
 export interface ProgressionRules {
   experiencePerLevel: number;
+  maxLevel?: number;
+  attributePointsPerLevel?: number;
 }
 
 export interface CharacterUpdate {
@@ -29,6 +32,16 @@ export function awardExperience(
     rules.experiencePerLevel,
     'Experience per level must be a positive safe integer.',
   );
+  const maxLevel = rules.maxLevel ?? 1_000;
+  const attributePointsPerLevel = rules.attributePointsPerLevel ?? 8;
+  validatePositiveSafeInteger(maxLevel, 'Maximum character level must be a positive safe integer.');
+  validatePositiveSafeInteger(
+    attributePointsPerLevel,
+    'Attribute points per level must be a positive safe integer.',
+  );
+  if (!Number.isSafeInteger(character.level) || character.level < 1 || character.level > maxLevel) {
+    throw new Error(`Character level must be between 1 and maximum level ${maxLevel}.`);
+  }
   if (amount === 0) {
     return { character, events: [] };
   }
@@ -48,12 +61,11 @@ export function awardExperience(
   ];
   let level = character.level;
   let currentExperience = character.experience.current + amount;
-  while (currentExperience >= rules.experiencePerLevel) {
+  let levelsGained = 0;
+  while (currentExperience >= rules.experiencePerLevel && level < maxLevel) {
     currentExperience -= rules.experiencePerLevel;
     level += 1;
-    if (!Number.isSafeInteger(level)) {
-      throw new Error('Character level exceeds the safe integer range.');
-    }
+    levelsGained += 1;
     events.push({
       id: `${eventPrefix}:level:${level}`,
       type: 'level.increased',
@@ -62,13 +74,237 @@ export function awardExperience(
     });
   }
 
+  const existingPointValue = character.extensions.attributePoints ?? 0;
+  if (
+    typeof existingPointValue !== 'number' ||
+    !Number.isSafeInteger(existingPointValue) ||
+    existingPointValue < 0
+  ) {
+    throw new Error('Unspent attribute points must be a non-negative safe integer.');
+  }
+  const pointsGained = levelsGained * attributePointsPerLevel;
+  const attributePoints = existingPointValue + pointsGained;
+  if (!Number.isSafeInteger(attributePoints)) {
+    throw new Error('Unspent attribute points exceed the safe integer range.');
+  }
+  if (pointsGained > 0) {
+    events.push({
+      id: `${eventPrefix}:attribute-points`,
+      type: 'attribute.points_awarded',
+      occurredAt: 0,
+      amount: pointsGained,
+    });
+  }
+
   return {
     character: {
       ...character,
       level,
       experience: { current: currentExperience, total: lifetimeExperience },
+      extensions: { ...character.extensions, attributePoints },
     },
     events,
+  };
+}
+
+export function spendAttributePoint(character: Character, attributeId: string): Character {
+  const separator = attributeId.indexOf(':');
+  const group = separator >= 0 ? attributeId.slice(0, separator) : '';
+  const key = separator >= 0 ? attributeId.slice(separator + 1) : '';
+  const pointValue = character.extensions.attributePoints ?? 0;
+  if (typeof pointValue !== 'number' || !Number.isSafeInteger(pointValue) || pointValue < 0) {
+    throw new Error('Unspent attribute points must be a non-negative safe integer.');
+  }
+  const points = pointValue;
+  if (points < 1) throw new Error('No unspent attribute points are available.');
+  if (group === 'physical' && Object.hasOwn(character.attributes.physical, key)) {
+    const current = character.attributes.physical[key];
+    if (
+      typeof current !== 'number' ||
+      !Number.isFinite(current) ||
+      !Number.isSafeInteger(current + 1)
+    ) {
+      throw new Error(`Attribute value is invalid for ${attributeId}.`);
+    }
+    return {
+      ...character,
+      attributes: {
+        ...character.attributes,
+        physical: { ...character.attributes.physical, [key]: current + 1 },
+      },
+      extensions: { ...character.extensions, attributePoints: points - 1 },
+    };
+  }
+  if (group === 'energy' && (key === 'chi' || key === 'mana' || key === 'spirit')) {
+    const accessError = getEnergyAttributeAccessError(character, attributeId, 'allocate');
+    if (accessError) throw new Error(accessError);
+    const current = character.attributes.energetic[key] ?? 0;
+    if (!Number.isFinite(current) || !Number.isSafeInteger(current + 1)) {
+      throw new Error(`Attribute value is invalid for ${attributeId}.`);
+    }
+    return {
+      ...character,
+      attributes: {
+        ...character.attributes,
+        energetic: { ...character.attributes.energetic, [key]: current + 1 },
+      },
+      extensions: { ...character.extensions, attributePoints: points - 1 },
+    };
+  }
+  throw new Error(`Unknown attribute: ${attributeId}.`);
+}
+
+export function applyTrainingEffect(
+  character: Character,
+  trainingEffect: { attributeId: string; amount: number } | undefined,
+  eventPrefix: string,
+): CharacterUpdate {
+  if (!trainingEffect) return { character, events: [] };
+  if (!Number.isSafeInteger(trainingEffect.amount) || trainingEffect.amount <= 0) {
+    throw new Error('Training amount must be a positive safe integer.');
+  }
+  const [group, key = ''] = trainingEffect.attributeId.split(':');
+  const attributeId = trainingEffect.attributeId;
+  if (group === 'physical' && Object.hasOwn(character.attributes.physical, key)) {
+    const current = character.attributes.physical[key];
+    if (typeof current !== 'number')
+      throw new Error(`Attribute value is invalid for ${attributeId}.`);
+    const total = current + trainingEffect.amount;
+    if (!Number.isFinite(current) || !Number.isSafeInteger(total)) {
+      throw new Error(`Attribute value is invalid for ${attributeId}.`);
+    }
+    return {
+      character: {
+        ...character,
+        attributes: {
+          ...character.attributes,
+          physical: { ...character.attributes.physical, [key]: total },
+        },
+      },
+      events: [
+        {
+          id: `${eventPrefix}:attribute:${attributeId}`,
+          type: 'attribute.increased',
+          occurredAt: 0,
+          attributeId,
+          amount: trainingEffect.amount,
+          total,
+        },
+      ],
+    };
+  }
+  if (group === 'energy' && (key === 'chi' || key === 'mana' || key === 'spirit')) {
+    const accessError = getEnergyAttributeAccessError(character, attributeId, 'train');
+    if (accessError) throw new Error(accessError);
+    const current = character.attributes.energetic[key] ?? 0;
+    const total = current + trainingEffect.amount;
+    if (!Number.isFinite(current) || !Number.isSafeInteger(total)) {
+      throw new Error(`Attribute value is invalid for ${attributeId}.`);
+    }
+    return {
+      character: {
+        ...character,
+        attributes: {
+          ...character.attributes,
+          energetic: { ...character.attributes.energetic, [key]: total },
+        },
+      },
+      events: [
+        {
+          id: `${eventPrefix}:attribute:${attributeId}`,
+          type: 'attribute.increased',
+          occurredAt: 0,
+          attributeId,
+          amount: trainingEffect.amount,
+          total,
+        },
+      ],
+    };
+  }
+  throw new Error(`Unknown training attribute: ${attributeId}.`);
+}
+
+export function awardSkillExperience(
+  character: Character,
+  skillId: string,
+  amount: number,
+  experiencePerLevel = 100,
+  eventPrefix = 'skill',
+): CharacterUpdate {
+  if (!skillId.trim()) throw new Error('Skill id cannot be empty.');
+  if (!Number.isSafeInteger(amount) || amount < 0) {
+    throw new Error('Skill experience must be a non-negative safe integer.');
+  }
+  validatePositiveSafeInteger(experiencePerLevel, 'Skill experience per level must be positive.');
+  if (amount === 0) return { character, events: [] };
+
+  const current = character.skills[skillId] ?? { level: 1, experience: 0, extensions: {} };
+  let level = current.level;
+  let experience = current.experience + amount;
+  if (!Number.isSafeInteger(experience)) {
+    throw new Error(`Skill experience exceeds the safe integer range for ${skillId}.`);
+  }
+  const events: DomainEvent[] = [];
+  while (experience >= experiencePerLevel) {
+    experience -= experiencePerLevel;
+    level += 1;
+    if (!Number.isSafeInteger(level)) {
+      throw new Error(`Skill level exceeds the safe integer range for ${skillId}.`);
+    }
+    events.push({
+      id: `${eventPrefix}:skill:${skillId}:level:${level}`,
+      type: 'skill.level_increased',
+      occurredAt: 0,
+      skillId,
+      level,
+    });
+  }
+  return {
+    character: {
+      ...character,
+      skills: {
+        ...character.skills,
+        [skillId]: { ...current, level, experience, extensions: { ...current.extensions } },
+      },
+    },
+    events,
+  };
+}
+
+export function grantCurrency(
+  character: Character,
+  currency: string,
+  amount: number,
+  eventPrefix = 'currency',
+): CharacterUpdate {
+  if (!currency.trim()) throw new Error('Currency id cannot be empty.');
+  if (!Number.isSafeInteger(amount) || amount < 0) {
+    throw new Error('Currency amount must be a non-negative safe integer.');
+  }
+  if (amount === 0) return { character, events: [] };
+  const extensions = { ...character.extensions };
+  const existingWallet = extensions.wallet;
+  const wallet =
+    typeof existingWallet === 'object' && existingWallet !== null
+      ? { ...(existingWallet as Record<string, number>) }
+      : {};
+  const balance = (wallet[currency] ?? 0) + amount;
+  if (!Number.isSafeInteger(balance)) {
+    throw new Error(`Currency balance exceeds the safe integer range for ${currency}.`);
+  }
+  wallet[currency] = balance;
+  extensions.wallet = wallet;
+  return {
+    character: { ...character, extensions },
+    events: [
+      {
+        id: `${eventPrefix}:currency:${currency}`,
+        type: 'currency.earned',
+        occurredAt: 0,
+        currency,
+        amount,
+      },
+    ],
   };
 }
 

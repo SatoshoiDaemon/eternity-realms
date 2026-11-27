@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest';
+import { RaceSchema, ShopSchema } from './schema';
 import { loadContentPacks, loadOfficialContent } from './registry';
 import { testPack } from '../test/fixtures';
 
@@ -6,6 +7,9 @@ describe('declarative content registry', () => {
   it('loads official content through the same validation pipeline as external packs', () => {
     const official = loadOfficialContent();
 
+    expect(official.races.size).toBe(29);
+    expect(official.regions.size).toBe(9);
+    expect(official.skills.size).toBeGreaterThanOrEqual(16);
     expect(official.races.get('human')?.name).toBe('Humano');
     expect(official.activities.get('mining')?.rewardId).toBe('mining-iron');
     expect(official.activities.get('foraging')?.rewardId).toBe('foraging-herbs');
@@ -22,11 +26,157 @@ describe('declarative content registry', () => {
     expect(official.activities.get('ashen-raid')?.expeditionId).toBe('core:ashen-raid');
     expect(official.lootTables.has('core:construct-drops')).toBe(true);
     expect(official.activities.get('lost-foundry')?.expeditionId).toBe('core:lost-foundry');
-    expect(official.enemyTags.size).toBe(52);
+    expect(official.shops.get('shop:daily')?.rotation).toEqual({ offersPerPeriod: 4 });
+    expect(official.shops.get('shop:daily')?.entries).toHaveLength(12);
+    expect(
+      official.systems
+        .get('system:alchemy')
+        ?.entries.filter(
+          (entry) => typeof entry.id === 'string' && entry.id.startsWith('implant-'),
+        ),
+    ).toHaveLength(20);
+    expect(official.items.has('alchemical-implant-20')).toBe(true);
+    expect(official.enemyTags.size).toBeGreaterThan(52);
     expect(official.nodes.map((node) => node.id)).toContain('core:effect-damage');
     expect(official.glyphs).toHaveLength(4);
     expect(official.sigils).toHaveLength(3);
     expect(official.rules.experiencePerLevel).toBe(80);
+  });
+
+  it('accepts fractional status counters and expirations produced by exact racial multipliers', () => {
+    const angel = loadOfficialContent().races.get('angel')!;
+    const result = RaceSchema.safeParse({
+      ...angel,
+      combatStartEffects: [
+        {
+          id: 'core:painful-wounds',
+          category: 'debuff',
+          potency: 0.5,
+          counter: 0.5,
+          expiresAt: 500,
+        },
+      ],
+    });
+
+    expect(result.success).toBe(true);
+  });
+
+  it('loads regions, shops, and energy systems from mod packs and validates their references', () => {
+    const region = {
+      id: 'mod:tidal-coast',
+      kind: 'region',
+      name: 'Costa das Marés',
+      description: 'Uma costa de teste.',
+      terrain: ['coast'],
+      climate: ['temperate'],
+      localities: ['Porto de Teste'],
+      materials: ['iron-ore'],
+      enemies: [],
+      expeditionIds: [],
+      activityIds: ['mining'],
+      unlockRequirements: { level: 1 },
+    };
+    const shop = {
+      id: 'mod:tidal-market',
+      kind: 'shop',
+      name: 'Mercado da Costa',
+      description: 'Loja de teste.',
+      cadence: 'permanent',
+      entries: [{ itemId: 'iron-ore', currency: 'fragments', price: 2, stock: -1 }],
+    };
+    const energy = {
+      id: 'mod:condensed-aura',
+      kind: 'energy',
+      name: 'Aura Condensada',
+      description: 'Energia de teste.',
+      origin: 'Kho',
+      resources: ['chi', 'aura'],
+      progression: [],
+    };
+    const loaded = loadContentPacks([
+      {
+        ...testPack,
+        manifest: { id: 'test.phase-four', name: 'Phase Four Test', version: '1.0.0' },
+        records: [...testPack.records, region, shop, energy],
+      },
+    ]);
+
+    expect(loaded.regions.get('mod:tidal-coast')?.localities).toContain('Porto de Teste');
+    expect(loaded.shops.get('mod:tidal-market')?.entries[0]?.itemId).toBe('iron-ore');
+    expect(loaded.energies.get('mod:condensed-aura')?.origin).toBe('Kho');
+    expect(() =>
+      loadContentPacks([
+        {
+          ...testPack,
+          manifest: { id: 'test.bad-region', name: 'Bad Region', version: '1.0.0' },
+          records: [...testPack.records, { ...region, activityIds: ['missing-activity'] }],
+        },
+      ]),
+    ).toThrow('Region "mod:tidal-coast" references missing activity "missing-activity".');
+    expect(() =>
+      loadContentPacks([
+        {
+          ...testPack,
+          manifest: { id: 'test.bad-shop', name: 'Bad Shop', version: '1.0.0' },
+          records: [
+            ...testPack.records,
+            { ...shop, entries: [{ ...shop.entries[0], itemId: 'missing-item' }] },
+          ],
+        },
+      ]),
+    ).toThrow('Shop "mod:tidal-market" references missing item "missing-item".');
+  });
+
+  it('rejects daily shop rotations that cannot be presented deterministically', () => {
+    const permanentShop = loadOfficialContent().shops.get('shop:fragments')!;
+    const dailyShop = loadOfficialContent().shops.get('shop:daily')!;
+
+    expect(
+      ShopSchema.safeParse({ ...permanentShop, rotation: { offersPerPeriod: 1 } }).success,
+    ).toBe(false);
+    expect(
+      ShopSchema.safeParse({
+        ...dailyShop,
+        rotation: { offersPerPeriod: dailyShop.entries.length + 1 },
+      }).success,
+    ).toBe(false);
+    expect(ShopSchema.safeParse({ ...dailyShop, rotation: { offersPerPeriod: 0 } }).success).toBe(
+      false,
+    );
+    expect(
+      ShopSchema.safeParse({
+        ...dailyShop,
+        entries: [...dailyShop.entries, dailyShop.entries[0]!],
+      }).success,
+    ).toBe(false);
+  });
+
+  it('validates alchemical implant device references and surgery costs', () => {
+    const system = {
+      id: 'mod:alchemy',
+      kind: 'system',
+      name: 'Alchemy',
+      description: 'System test.',
+      systemType: 'alchemy',
+      entries: [
+        {
+          id: 'implant-test',
+          name: 'Implant test',
+          charge: 1,
+          deviceItemId: 'missing-device',
+          installationCostFragments: 10_000,
+        },
+      ],
+    };
+    expect(() =>
+      loadContentPacks([
+        {
+          ...testPack,
+          manifest: { id: 'test.bad-implant', name: 'Bad Implant', version: '1.0.0' },
+          records: [...testPack.records, system],
+        },
+      ]),
+    ).toThrow('Alchemical implant "implant-test" references missing device "missing-device".');
   });
 
   it('loads combat content from mods and validates encounter, loot, activity, and tag references', () => {
@@ -309,5 +459,138 @@ describe('declarative content registry', () => {
         },
       ]),
     ).toThrow('Mission "bad-mission" references missing reward item "missing".');
+  });
+
+  it('rejects every unresolved region, activity, race, shop and implant reference', () => {
+    const manifest = (id: string) => ({ id, name: 'Reference check', version: '1.0.0' });
+    const baseActivity = testPack.records.find((record) => record.id === 'mining')!;
+    const withMining = (replacement: Record<string, unknown>) =>
+      testPack.records.map((record) =>
+        record.id === 'mining' ? { ...baseActivity, ...replacement } : record,
+      );
+    const baseRegion = {
+      id: 'mod:check-region',
+      kind: 'region',
+      name: 'Reference region',
+      description: '',
+      terrain: [],
+      climate: [],
+      localities: [],
+      materials: [],
+      enemies: [],
+      expeditionIds: [],
+      activityIds: [],
+    };
+    const baseShop = {
+      id: 'mod:check-shop',
+      kind: 'shop',
+      name: 'Reference shop',
+      description: '',
+      cadence: 'permanent',
+      entries: [{ itemId: 'iron-ore', currency: 'fragments', price: 1 }],
+    };
+    const baseRace = testPack.records.find((record) => record.id === 'human')!;
+    const invalidPacks = [
+      {
+        id: 'bad-race-tag',
+        records: testPack.records.map((record) =>
+          record.id === 'human' ? { ...baseRace, combatTags: ['base:missing-race-tag'] } : record,
+        ),
+        message: 'Race "human" references missing combat tag "base:missing-race-tag".',
+      },
+      {
+        id: 'bad-race-skill',
+        records: testPack.records.map((record) =>
+          record.id === 'human'
+            ? { ...baseRace, activityBonuses: [{ skillId: 'missing-skill', yieldMultiplier: 2 }] }
+            : record,
+        ),
+        message: 'Race "human" references missing skill "missing-skill".',
+      },
+      {
+        id: 'bad-activity-skill',
+        records: withMining({ skillId: 'missing-skill' }),
+        message: 'Activity "mining" references missing skill "missing-skill".',
+      },
+      {
+        id: 'bad-activity-region',
+        records: withMining({ regionId: 'missing-region' }),
+        message: 'Activity "mining" references missing region "missing-region".',
+      },
+      {
+        id: 'bad-activity-output',
+        records: withMining({ outputItemId: 'missing-item' }),
+        message: 'Activity "mining" references missing output item "missing-item".',
+      },
+      {
+        id: 'bad-region-material',
+        records: [...testPack.records, { ...baseRegion, materials: ['missing-material'] }],
+        message: 'Region "mod:check-region" references missing material "missing-material".',
+      },
+      {
+        id: 'bad-region-enemy',
+        records: [...testPack.records, { ...baseRegion, enemies: ['missing-enemy'] }],
+        message: 'Region "mod:check-region" references missing enemy "missing-enemy".',
+      },
+      {
+        id: 'bad-region-expedition',
+        records: [...testPack.records, { ...baseRegion, expeditionIds: ['missing-expedition'] }],
+        message: 'Region "mod:check-region" references missing expedition "missing-expedition".',
+      },
+      {
+        id: 'bad-region-activity',
+        records: [...testPack.records, { ...baseRegion, activityIds: ['missing-activity'] }],
+        message: 'Region "mod:check-region" references missing activity "missing-activity".',
+      },
+      {
+        id: 'bad-region-unlock',
+        records: [
+          ...testPack.records,
+          { ...baseRegion, unlockRequirements: { regionIds: ['missing-region'] } },
+        ],
+        message: 'Region "mod:check-region" requires missing region "missing-region".',
+      },
+      {
+        id: 'bad-shop-skill',
+        records: [
+          ...testPack.records,
+          { ...baseShop, entries: [{ ...baseShop.entries[0], requiredSkill: 'missing-skill' }] },
+        ],
+        message: 'Shop "mod:check-shop" references missing skill "missing-skill".',
+      },
+      {
+        id: 'bad-shop-region',
+        records: [...testPack.records, { ...baseShop, regionId: 'missing-region' }],
+        message: 'Shop "mod:check-shop" references missing region "missing-region".',
+      },
+      {
+        id: 'bad-implant-cost',
+        records: [
+          ...testPack.records,
+          {
+            id: 'mod:bad-alchemy',
+            kind: 'system',
+            name: 'Alchemy',
+            description: '',
+            systemType: 'alchemy',
+            entries: [
+              {
+                id: 'implant-test',
+                name: 'Implant',
+                charge: 1,
+                deviceItemId: 'iron-ore',
+                installationCostFragments: -1,
+              },
+            ],
+          },
+        ],
+        message: 'Alchemical implant "implant-test" has an invalid surgery cost.',
+      },
+    ];
+    for (const invalid of invalidPacks) {
+      expect(() =>
+        loadContentPacks([{ manifest: manifest(invalid.id), records: invalid.records }]),
+      ).toThrow(invalid.message);
+    }
   });
 });

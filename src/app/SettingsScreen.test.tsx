@@ -129,6 +129,15 @@ function category(name: string) {
 describe('settings center', () => {
   it('changes themes, accessibility, language and visual intensity through local controls', () => {
     const { actions } = renderSettings();
+    const catppuccinSwatches = screen
+      .getByRole('button', { name: 'Catppuccin Mocha' })
+      .querySelectorAll('.theme-swatch > span');
+    const tokyoSwatches = screen
+      .getByRole('button', { name: 'Tokyo Night' })
+      .querySelectorAll('.theme-swatch > span');
+    expect(catppuccinSwatches[1]?.getAttribute('style')).not.toBe(
+      tokyoSwatches[1]?.getAttribute('style'),
+    );
     fireEvent.click(screen.getByRole('button', { name: 'Tokyo Night' }));
     expect(screen.getByRole('button', { name: 'Tokyo Night' })).toHaveAttribute(
       'aria-pressed',
