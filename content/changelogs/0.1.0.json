@@ -23,6 +23,7 @@
     ],
     "changed": [],
     "fixed": [
+      "Ticks de dano no instante exato da expiração do status agora resolvem antes da remoção, garantindo a duração completa de efeitos como Queimadura 99/99.",
       "Reconciliação de sessões idempotente após reinicialização e retrocesso do relógio.",
       "A navegação permanece utilizável antes da criação de um personagem.",
       "O tema Tokyo Night agora usa sua paleta azul característica e se distingue do Catppuccin Mocha.",

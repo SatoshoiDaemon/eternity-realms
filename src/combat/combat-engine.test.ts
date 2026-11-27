@@ -314,7 +314,7 @@ describe('deterministic event combat', () => {
     const race = content.races.get('vampire')!;
     const vampire = actor('a-vampire', 'party', {
       tags: [...(race.combatTags ?? []), race.combatTag!.id],
-      hp: { current: 1_000, maximum: 1_000 },
+      hp: { current: 20_000, maximum: 20_000 },
       actions: [],
     });
     const foe = actor('z-foe', 'enemy', { actions: [] });
@@ -337,8 +337,16 @@ describe('deterministic event combat', () => {
     );
 
     const ticked = advanceCombat(applied, 1_200);
-    expect(ticked.actors.find((entry) => entry.id === 'a-vampire')?.hp.current).toBe(903);
+    expect(ticked.actors.find((entry) => entry.id === 'a-vampire')?.hp.current).toBe(19_903);
     expect(ticked.log.some((entry) => entry.actionId === 'status:core:burn')).toBe(true);
+
+    const fullDuration = advanceCombat(ticked, 99_000);
+    expect(fullDuration.log.filter((entry) => entry.actionId === 'status:core:burn')).toHaveLength(
+      99,
+    );
+    expect(
+      fullDuration.actors.find((entry) => entry.id === 'a-vampire')?.effects,
+    ).not.toContainEqual(expect.objectContaining({ id: 'core:burn' }));
   });
 
   it('respects racial immunity when the environment applies a status', () => {
@@ -3588,6 +3596,9 @@ describe('deterministic event combat', () => {
     expect(
       ticked.log.find((entry) => entry.actionId === 'status:base:lethal-tick')?.damageFinal,
     ).toBe(2);
+    expect(
+      ticked.log.find((entry) => entry.actionId === 'status:base:expiry-tick')?.damageFinal,
+    ).toBe(1);
   });
 
   it('records paid counterattacks, skips unavailable reactions, handles death bursts, and clones detailed logs', () => {

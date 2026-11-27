@@ -1591,7 +1591,7 @@ function nextStatusTickAt(state: CombatState): number | undefined {
         ? actor.effects.flatMap((effect) =>
             effect.tickDamage &&
             effect.nextTickAt !== undefined &&
-            (effect.expiresAt === undefined || effect.nextTickAt < effect.expiresAt)
+            (effect.expiresAt === undefined || effect.nextTickAt <= effect.expiresAt)
               ? [effect.nextTickAt]
               : [],
           )
@@ -1609,7 +1609,7 @@ function processStatusTicks(state: CombatState, atMs: number): void {
         !effect.tickIntervalMs ||
         effect.nextTickAt === undefined ||
         effect.nextTickAt > atMs ||
-        (effect.expiresAt !== undefined && effect.nextTickAt >= effect.expiresAt)
+        (effect.expiresAt !== undefined && effect.nextTickAt > effect.expiresAt)
       )
         continue;
       const source = state.actors.find((actor) => actor.id === effect.sourceActorId) ?? target;
