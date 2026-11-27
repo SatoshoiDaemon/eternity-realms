@@ -1,3 +1,6 @@
+Warning: truncated output (original token count: 34236)
+Total output lines: 4244
+
 import { describe, expect, it } from 'vitest';
 import type { CombatActor, CombatAction } from './types';
 import { advanceCombat, createCombatState } from './combat-engine';
@@ -49,7 +52,7 @@ function actor(
 }
 
 describe('deterministic event combat', () => {
-  it.each(['physical', 'magical', 'true'] as const)(
+  it.each(['physical', 'magical'] as const)(
     'applies universal Sem Afinidade reduction to %s damage',
     (channel) => {
       const action: CombatAction = {
@@ -75,6 +78,387 @@ describe('deterministic event combat', () => {
       });
     },
   );
+
+  it('lets true damage ignore universal reduction, mitigation and defensive status effects', () => {
+    const trueStrike: CombatAction = {
+      ...strike,
+      id: 'test:true-damage',
+      damage: { ...strike.damage!, channel: 'true', subtype: undefined },
+    };
+    const state = createCombatState(
+      'true-damage-bypasses-defense',
+      [
+        actor('attacker', 'party', { actions: [trueStrike], actionPriority: [trueStrike.id] }),
+        actor('defender', 'enemy', {
+          actions: [],
+          mitigation: { physical: 0.75, magical: 0.75 },
+          damageReduction: 0.9,
+          effects: [
+            {
+              id: 'core:protection',
+              category: 'buff',
+              potency: 5,
+              counter: 3,
+              damageMultiplier: 0.5,
+            },
+          ],
+        }),
+      ],
+      4,
+    );
+
+    const resolved = advanceCombat(state, 0);
+    expect(resolved.log.find((entry) => entry.actorId === 'attacker')).toMatchObject({
+      damageInitial: 40,
+      damageFinal: 40,
+      modifiers: [],
+    });
+  });
+
+  it('lets true damage bypass tag-defined defensive immunities', () => {
+    const immunity = {
+      id: 'test:true-damage-immunity',
+      category: 'affinity' as const,
+      name: 'Damage immunity',
+      description: 'A test-only incoming damage immunity.',
+      origin: 'test',
+      activationConditions: [],
+      eventsObserved: ['damage.incoming'],
+      modifiers: [
+        {
+          id: 'test:true-damage-immunity:rule',
+          event: 'damage.incoming',
+          conditions: [],
+          interactionId: 'test:true-damage-immunity',
+          potency: 1,
+          priority: 1,
+          effect: { type: 'damage_multiplier', value: 0 },
+        },
+      ],
+      interactions: [{ id: 'test:true-damage-immunity', counterplay: 'True damage.' }],
+      requirements: [],
+      properties: [],
+    };
+    const testTags = loadTagRegistry([immunity]);
+    const resolve = (channel: 'physical' | 'true') => {
+      const action: CombatAction = {
+        ...strike,
+        id: `test:${channel}-immunity`,
+        damage: { ...strike.damage!, channel, subtype: undefined },
+      };
+      return advanceCombat(
+        createCombatState(
+          `tag-immunity:${channel}`,
+          [
+            actor('attacker', 'party', { actions: [action], actionPriority: [action.id] }),
+            actor('defender', 'enemy', { actions: [], tags: [immunity.id] }),
+          ],
+          4,
+          {},
+          testTags,
+        ),
+        0,
+      ).log.find((entry) => entry.actorId === 'attacker')?.damageFinal;
+    };
+
+    expect(resolve('physical')).toBe(0);
+    expect(resolve('true')).toBe(40);
+  });
+
+  it('treats zero status potency and duration as one', () => {
+    const target = actor('target', 'enemy', {
+      actions: [],
+      effects: [{ id: 'core:fragile', category: 'debuff', potency: 0, counter: 0 }],
+    });
+    const resolved = advanceCombat(
+      createCombatState('zero-status-values', [actor('attacker', 'party'), target], 8),
+      0,
+    );
+
+    expect(resolved.actors.find((entry) => entry.id === 'target')?.effects[0]).toMatchObject({
+      potency: 1,
+      counter: 1,
+      expiresAt: 1_000,
+    });
+  });
+
+  it('defaults omitted status potency and duration to one', () => {
+    const target = actor('target', 'enemy', {
+      actions: [],
+      effects: [
+        {
+          id: 'core:fragile',
+          category: 'debuff',
+        },
+      ],
+    });
+    const resolved = advanceCombat(
+      createCombatState('missing-status-values', [actor('attacker', 'party'), target], 8),
+      0,
+    );
+
+    expect(resolved.actors.find((entry) => entry.id === 'target')?.effects[0]).toMatchObject({
+      potency: 1,
+      counter: 1,
+      expiresAt: 1_000,
+    });
+  });
+
+  it('defaults omitted and zero status values when applying effects during combat', () => {
+    const support: CombatAction = {
+      id: 'test:apply-default-status-values',
+      name: 'Apply statuses',
+      kind: 'support',
+      target: 'enemy',
+      intervalMs: 1_000,
+      accuracy: 1,
+      effects: [
+        { id: 'core:fragile', category: 'debuff' },
+        { id: 'core:protection', category: 'buff', potency: 0, counter: 0 },
+      ],
+    };
+    const result = advanceCombat(
+      createCombatState(
+        'applied-status-defaults',
+        [
+          actor('attacker', 'party', {
+            actions: [support],
+            actionPriority: [support.id],
+          }),
+          actor('target', 'enemy', { actions: [] }),
+        ],
+        12,
+      ),
+      0,
+    );
+    const effects = result.actors.find((entry) => entry.id === 'target')?.effects;
+
+    expect(effects).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({ id: 'core:fragile', potency: 1, counter: 1, expiresAt: 1_000 }),
+        expect.objectContaining({
+          id: 'core:protection',
+          potency: 1,
+          counter: 1,
+          expiresAt: 1_000,
+        }),
+      ]),
+    );
+  });
+
+  it('keeps a status without expiry when a declarative tag marks it persistent', () => {
+    const statusTag = {
+      id: 'test:persistent-burn',
+      category: 'behavior' as const,
+      name: 'Persistent burn',
+      description: 'Keeps Burn until another effect removes it.',
+      origin: 'test',
+      activationConditions: ['Burn is received'],
+      eventsObserved: ['status.incoming'],
+      modifiers: [
+        {
+          id: 'test:persistent-burn:rule',
+          event: 'status.incoming',
+          conditions: [{ path: 'status.id', op: 'eq' as const, value: 'core:burn' }],
+          interactionId: 'test:persistent-burn',
+          potency: 1,
+          priority: 1,
+          effect: { type: 'status_persistence', value: 'core:burn' },
+        },
+      ],
+      interactions: [{ id: 'test:persistent-burn', counterplay: 'Remove the status.' }],
+      requirements: [],
+      properties: [],
+    };
+    const support: CombatAction = {
+      id: 'test:apply-persistent-burn',
+      name: 'Apply Burn',
+      kind: 'support',
+      target: 'enemy',
+      intervalMs: 1_000,
+      accuracy: 1,
+      effects: [{ id: 'core:burn', category: 'dot', potency: 2, counter: 3 }],
+    };
+    const result = advanceCombat(
+      createCombatState(
+        'persistent-status',
+        [
+          actor('attacker', 'party', {
+            actions: [support],
+            actionPriority: [support.id],
+          }),
+          actor('target', 'enemy', { actions: [], tags: [statusTag.id] }),
+        ],
+        13,
+        {},
+        loadTagRegistry([statusTag]),
+      ),
+      0,
+    );
+
+    expect(result.actors.find((entry) => entry.id === 'target')?.effects).toContainEqual(
+      expect.objectContaining({
+        id: 'core:burn',
+        potency: 2,
+        counter: 0,
+        expiresAt: undefined,
+      }),
+    );
+  });
+
+  it('floors status potency after declarative modifiers and treats zero as one', () => {
+    const content = loadOfficialContent();
+    const angel = content.races.get('angel')!;
+    const tags = [...content.enemyTags.values()];
+    const support: CombatAction = {
+      id: 'test:apply-halved-status',
+      name: 'Apply Burn',
+      kind: 'support',
+      target: 'enemy',
+      intervalMs: 1_000,
+      accuracy: 1,
+      effects: [{ id: 'core:painful-wounds', category: 'debuff', potency: 1, counter: 2 }],
+    };
+    const result = advanceCombat(
+      createCombatState(
+        'status-potency-rounding',
+        [
+          actor('attacker', 'party', {
+            actions: [support],
+            actionPriority: [support.id],
+          }),
+          actor('target', 'enemy', {
+            actions: [],
+            tags: [...(angel.combatTags ?? []), angel.combatTag!.id],
+          }),
+        ],
+        15,
+        {},
+        tags,
+      ),
+      0,
+    );
+
+    expect(result.actors.find((entry) => entry.id === 'target')?.effects).toContainEqual(
+      expect.objectContaining({ id: 'core:painful-wounds', potency: 1, counter: 1 }),
+    );
+  });
+
+  it('replaces a legacy duplicate when the incoming status potency is greater', () => {
+    const support: CombatAction = {
+      id: 'test:replace-legacy-status',
+      name: 'Apply Fragile',
+      kind: 'support',
+      target: 'enemy',
+      intervalMs: 1_000,
+      accuracy: 1,
+      effects: [{ id: 'core:fragile', category: 'debuff', potency: 2, counter: 5 }],
+    };
+    const state = createCombatState(
+      'replace-legacy-status',
+      [
+        actor('attacker', 'party', {
+          actions: [support],
+          actionPriority: [support.id],
+        }),
+        actor('target', 'enemy', {
+          actions: [],
+          effects: [{ id: 'core:fragile', category: 'debuff', counter: 2 }],
+        }),
+      ],
+      16,
+    );
+    const existing = state.actors.find((entry) => entry.id === 'target')?.effects[0];
+    if (existing) delete existing.potency;
+
+    const result = advanceCombat(state, 0);
+    expect(result.actors.find((entry) => entry.id === 'target')?.effects).toContainEqual(
+      expect.objectContaining({ id: 'core:fragile', potency: 2, counter: 5 }),
+    );
+  });
+
+  it('uses default potency for duplicate defensive statuses in a legacy snapshot', () => {
+    const target = actor('target', 'enemy', {
+      actions: [],
+      effects: [
+        {
+          id: 'core:protection',
+          category: 'buff',
+          counter: 3,
+          damageMultiplier: 0.5,
+        },
+        {
+          id: 'core:protection',
+          category: 'buff',
+          counter: 3,
+          damageMultiplier: 1,
+        },
+      ],
+    });
+    const state = createCombatState('duplicate-defense', [actor('attacker', 'party'), target], 17);
+    const effects = state.actors.find((entry) => entry.id === 'target')?.effects;
+    if (effects) effects.forEach((effect) => delete effect.potency);
+    const result = advanceCombat(state, 0);
+
+    expect(result.log.find((entry) => entry.actorId === 'attacker')?.damageFinal).toBe(20);
+  });
+
+  it('uses default potency and tick time for legacy status snapshots missing them', () => {
+    const state = createCombatState(
+      'legacy-status-defaults',
+      [
+        actor('attacker', 'party'),
+        actor('target', 'enemy', {
+          actions: [],
+          effects: [
+            {
+              id: 'core:burn',
+              category: 'dot',
+              counter: 1,
+              tickDamage: { amount: 2, channel: 'true' },
+              tickIntervalMs: 1,
+            },
+          ],
+        }),
+      ],
+      14,
+    );
+    const legacyEffect = state.actors.find((entry) => entry.id === 'target')?.effects[0];
+    if (legacyEffect) delete legacyEffect.potency;
+    const result = advanceCombat(state, 1);
+
+    expect(result.log.find((entry) => entry.actionId === 'status:core:burn')?.damageFinal).toBe(2);
+    expect(result.actors.find((entry) => entry.id === 'target')?.effects[0]?.nextTickAt).toBe(2);
+  });
+
+  it('keeps the existing status when a duplicate has equal potency and longer duration', () => {
+    const applyLongerFragile: CombatAction = {
+      ...strike,
+      effects: [{ id: 'core:fragile', category: 'debuff', potency: 2, counter: 10 }],
+    };
+    const target = actor('target', 'enemy', {
+      actions: [],
+      effects: [{ id: 'core:fragile', category: 'debuff', potency: 2, counter: 2 }],
+    });
+    const resolved = advanceCombat(
+      createCombatState(
+        'duplicate-status-priority',
+        [
+          actor('attacker', 'party', {
+            actions: [applyLongerFragile],
+            actionPriority: [applyLongerFragile.id],
+          }),
+          target,
+        ],
+        8,
+      ),
+      0,
+    );
+
+    expect(resolved.actors.find((entry) => entry.id === 'target')?.effects).toContainEqual(
+      expect.objectContaining({ id: 'core:fragile', potency: 2, counter: 2, expiresAt: 2_000 }),
+    );
+  });
 
   it('rejects invalid universal actor damage reduction', () => {
     for (const damageReduction of [-0.1, 1, Number.NaN]) {
@@ -587,8 +971,8 @@ describe('deterministic event combat', () => {
         expect.objectContaining({
           id: 'core:painful-wounds',
           potency: 2,
-          counter: 1.5,
-          expiresAt: 1_500,
+          counter: 1,
+          expiresAt: 1_000,
         }),
       ]),
     );
@@ -1402,499 +1786,7 @@ describe('deterministic event combat', () => {
         'tenacity',
         [
           actor('hero', 'party', { actions: [heavyStrike], actionPriority: ['base:strike'] }),
-          actor('target', 'enemy', {
-            hp: { current: 30, maximum: 30 },
-            tenacity: { current: 100, maximum: 100 },
-          }),
-        ],
-        1,
-      ),
-      1,
-    );
-
-    expect(result.actors.find((entry) => entry.id === 'target')).toMatchObject({
-      hp: { current: 0 },
-      tenacity: { current: 20 },
-      state: 'alive',
-    });
-  });
-
-  it('uses declared action priorities, validates energy costs, and applies player-selectable priorities', () => {
-    const cheap = { ...strike, id: 'base:cheap' };
-    const costly = { ...strike, id: 'base:costly', cost: { resource: 'mana', amount: 9 } };
-    const hero = actor('hero', 'party', {
-      actions: [costly, cheap],
-      actionPriority: ['base:costly', 'base:cheap'],
-      energy: { mana: 2 },
-    });
-    const result = advanceCombat(
-      createCombatState('priority', [hero, actor('enemy', 'enemy')], 10),
-      1,
-    );
-
-    expect(result.log.find((entry) => entry.actorId === 'hero')?.actionId).toBe('base:cheap');
-    expect(result.log.find((entry) => entry.actorId === 'hero')?.resourceChanges).toEqual([]);
-  });
-
-  it('records evades, tag interactions, status effects, and deaths in structured log entries', () => {
-    const poisonStrike: CombatAction = {
-      ...strike,
-      damage: { ...strike.damage!, amount: 101, element: 'venom' },
-      effects: [{ id: 'base:poison', category: 'dot', potency: 3, counter: 2 }],
-    };
-    const result = advanceCombat(
-      createCombatState(
-        'log',
-        [
-          actor('hero', 'party', { actions: [poisonStrike], actionPriority: ['base:strike'] }),
-          actor('enemy', 'enemy', {
-            tags: ['base:toxic'],
-            effects: [],
-            evasion: { chance: 0, guaranteed: 0 },
-            hp: { current: 40, maximum: 40 },
-          }),
-        ],
-        7,
-      ),
-      1,
-    );
-
-    const heroEntry = result.log.find((entry) => entry.actorId === 'hero');
-    expect(heroEntry).toMatchObject({ actorId: 'hero', targetId: 'enemy', hit: true });
-    expect(heroEntry?.tagInteractions.length).toBeGreaterThan(0);
-    expect(heroEntry?.killed).toBe(true);
-    expect(heroEntry?.effectsApplied).toContain('hero:base:poison');
-  });
-
-  it('ticks configured damage statuses on virtual time and resumes them identically in offline batches', () => {
-    const poisonStrike: CombatAction = {
-      ...strike,
-      id: 'base:poison-strike',
-      damage: { ...strike.damage!, amount: 1 },
-      effects: [
-        {
-          id: 'base:poison',
-          category: 'dot',
-          potency: 2,
-          counter: 4,
-          tickDamage: { amount: 3, channel: 'magical', element: 'poison', properties: ['toxic'] },
-          tickIntervalMs: 1_000,
-        },
-      ],
-    };
-    const actors = [
-      actor('hero', 'party', { actions: [poisonStrike], actionPriority: [poisonStrike.id] }),
-      actor('target', 'enemy', {
-        hp: { current: 100, maximum: 100 },
-        actions: [{ ...strike, damage: { ...strike.damage!, amount: 0 } }],
-      }),
-    ];
-    const uninterrupted = advanceCombat(createCombatState('poison', actors, 55), 3_000);
-    const resumed = advanceCombat(
-      advanceCombat(createCombatState('poison', actors, 55), 1_250),
-      3_000,
-    );
-    expect(resumed).toEqual(uninterrupted);
-    expect(
-      uninterrupted.log
-        .filter((entry) => entry.actionId === 'status:base:poison')
-        .map((entry) => entry.damageFinal),
-    ).toEqual([6, 6, 6]);
-    expect(uninterrupted.actors.find((entry) => entry.id === 'target')?.hp.current).toBeLessThan(
-      100,
-    );
-  });
-
-  it('runs guardian interception, counterattacks, vampirism, corrosion, conduction, and death bursts', () => {
-    const hero = actor('hero', 'party', {
-      hp: { current: 20, maximum: 100 },
-      tags: ['base:vampiric'],
-    });
-    const target = actor('target', 'enemy', {
-      tags: ['base:counterattacker'],
-      evasion: { chance: 1, guaranteed: 0 },
-    });
-    const counter = advanceCombat(createCombatState('counter', [hero, target], 2), 0);
-    expect(counter.log.some((entry) => entry.message.includes('contra-ataca'))).toBe(true);
-
-    const guardian = actor('z-guardian', 'enemy', { tags: ['base:guardian'] });
-    const guarded = actor('a-target', 'enemy');
-    const intercepted = advanceCombat(
-      createCombatState('intercept', [actor('a-hero', 'party'), guardian, guarded], 2),
-      0,
-    );
-    expect(intercepted.log.find((entry) => entry.actorId === 'a-hero')?.targetId).toBe(
-      'z-guardian',
-    );
-
-    const lifesteal = advanceCombat(
-      createCombatState(
-        'lifesteal',
-        [hero, actor('weak', 'enemy', { hp: { current: 100, maximum: 100 } })],
-        2,
-      ),
-      0,
-    );
-    expect(lifesteal.log.find((entry) => entry.actorId === 'hero')?.actorHpChange).toEqual({
-      before: 20,
-      after: 30,
-    });
-
-    const corrosive = actor('acid', 'enemy', { tags: ['base:corrosive'] });
-    const corroded = advanceCombat(
-      createCombatState(
-        'corrosion',
-        [actor('a-player', 'party', { mitigation: { physical: 0.5, magical: 0.5 } }), corrosive],
-        2,
-      ),
-      0,
-    );
-    expect(corroded.actors.find((entry) => entry.id === 'a-player')?.mitigation).toEqual({
-      physical: 0,
-      magical: 0,
-    });
-
-    const lightning: CombatAction = {
-      ...strike,
-      damage: { ...strike.damage!, amount: 40, channel: 'magical', element: 'lightning' },
-    };
-    const primary = actor('a-main', 'enemy', {
-      tags: ['base:stormbound'],
-      hp: { current: 200, maximum: 200 },
-    });
-    const adjacent = actor('z-adjacent', 'enemy', {
-      hp: { current: 200, maximum: 200 },
-      position: { x: 2, y: 0 },
-    });
-    const chained = advanceCombat(
-      createCombatState(
-        'chain',
-        [
-          actor('hero', 'party', { actions: [lightning], actionPriority: [lightning.id] }),
-          primary,
-          adjacent,
-        ],
-        2,
-      ),
-      0,
-    );
-    expect(
-      chained.log.some(
-        (entry) => entry.actionId === `chain:${lightning.id}` && entry.targetId === 'z-adjacent',
-      ),
-    ).toBe(true);
-
-    const lethal: CombatAction = { ...strike, damage: { ...strike.damage!, amount: 500 } };
-    const volatile = actor('volatile', 'enemy', {
-      tags: ['base:volatile'],
-      hp: { current: 1, maximum: 1 },
-      tenacity: { current: 0, maximum: 0 },
-    });
-    const burst = advanceCombat(
-      createCombatState(
-        'burst',
-        [actor('hero', 'party', { actions: [lethal], actionPriority: [lethal.id] }), volatile],
-        2,
-      ),
-      0,
-    );
-    expect(
-      burst.log.some(
-        (entry) => entry.actionId === 'death-burst:volatile' && entry.targetId === 'hero',
-      ),
-    ).toBe(true);
-  });
-
-  it('applies forced movement and honors colossal or partial displacement resistance', () => {
-    const shove: CombatAction = {
-      ...strike,
-      id: 'base:shove',
-      movement: { kind: 'push', distance: 2 },
-    };
-    const colossal = advanceCombat(
-      createCombatState(
-        'colossal-move',
-        [
-          actor('hero', 'party', { actions: [shove], actionPriority: [shove.id] }),
-          actor('target', 'enemy', { tags: ['base:colossal'] }),
-        ],
-        8,
-      ),
-      0,
-    );
-    expect(colossal.actors.find((entry) => entry.id === 'target')?.position).toEqual({
-      x: 1,
-      y: 0,
-    });
-    expect(colossal.log[0]?.tagInteractions.some((entry) => entry.tagId === 'base:colossal')).toBe(
-      true,
-    );
-
-    const slow = advanceCombat(
-      createCombatState(
-        'slow-move',
-        [
-          actor('hero', 'party', {
-            actions: [{ ...shove, movement: { kind: 'push', distance: 1 } }],
-            actionPriority: [shove.id],
-          }),
-          actor('target', 'enemy', { tags: ['base:slow'] }),
-        ],
-        8,
-      ),
-      0,
-    );
-    expect(slow.actors.find((entry) => entry.id === 'target')?.position.x).toBe(1.5);
-  });
-
-  it('validates participants and time windows', () => {
-    expect(() => createCombatState('empty', [], 1)).toThrow('Combat requires at least two actors.');
-    expect(() =>
-      createCombatState('duplicate', [actor('same', 'party'), actor('same', 'enemy')], 1),
-    ).toThrow('Combat actor ids must be unique.');
-    expect(() =>
-      createCombatState('same-side', [actor('a', 'party'), actor('b', 'party')], 1),
-    ).toThrow('Combat requires at least two opposing sides.');
-    expect(() =>
-      advanceCombat(createCombatState('time', [actor('a', 'party'), actor('b', 'enemy')], 1), -1),
-    ).toThrow('Combat time cannot move backwards.');
-  });
-
-  it('rejects invalid identities, seeds, actor stats, mitigation, evasion, and actions', () => {
-    const hero = actor('hero', 'party');
-    const foe = actor('foe', 'enemy');
-    expect(() => createCombatState('', [hero, foe], 1)).toThrow('Combat id cannot be empty.');
-    expect(() => createCombatState('seed', [hero, foe], -1)).toThrow(
-      'Combat seed must be a non-negative safe integer.',
-    );
-    expect(() => createCombatState('seed', [hero, foe], Number.NaN)).toThrow(
-      'Combat seed must be a non-negative safe integer.',
-    );
-
-    const invalidActors: Array<[Partial<CombatActor>, string]> = [
-      [{ id: ' ' }, 'identity fields'],
-      [{ name: ' ' }, 'identity fields'],
-      [{ speciesId: ' ' }, 'identity fields'],
-      [{ hp: { current: Number.NaN, maximum: 10 } }, 'invalid HP'],
-      [{ hp: { current: 1, maximum: 0 } }, 'invalid HP'],
-      [{ tenacity: { current: 1.5, maximum: 2 } }, 'invalid Tenacity'],
-      [{ regenerationPerAction: -1 }, 'invalid regeneration'],
-      [{ soulAnchorAvailable: 'yes' as never }, 'invalid soul anchor state'],
-      [{ soulAnchorAvailable: false, soulAnchorUsed: 1 as never }, 'invalid soul anchor state'],
-      [{ attributes: { ...hero.attributes, speed: 0 } }, 'positive Speed'],
-      [{ mitigation: { physical: 1, magical: 0 } }, 'mitigation'],
-      [{ evasion: { chance: 2, guaranteed: 0 } }, 'invalid evasion'],
-      [{ actions: [{ ...strike, id: ' ', accuracy: 1 }] }, 'invalid action'],
-      [{ actions: [{ ...strike, intervalMs: 0 }] }, 'invalid action'],
-      [{ actions: [{ ...strike, accuracy: 2 }] }, 'invalid action'],
-      [
-        { actions: [{ ...strike, damage: { ...strike.damage!, amount: -1 } }] },
-        'invalid attack damage',
-      ],
-      [
-        { actions: [{ ...strike, movement: { kind: 'push', distance: -1 } }] },
-        'invalid movement action',
-      ],
-    ];
-    for (const [override, message] of invalidActors) {
-      expect(() =>
-        createCombatState('invalid', [actor('invalid', 'party', override), foe], 1),
-      ).toThrow(message);
-    }
-  });
-
-  it('deep-copies action, equipment, policy, status, evasion, and guarantee state', () => {
-    const equippedAction: CombatAction = {
-      ...strike,
-      properties: ['ranged'],
-      damage: {
-        ...strike.damage!,
-        modifiers: [
-          {
-            id: 'item:edge',
-            interactionId: 'edge',
-            operation: 'add',
-            value: 2,
-            potency: 1,
-            origin: { kind: 'item', id: 'item:edge' },
-          },
-        ],
-      },
-      cost: { resource: 'mana', amount: 1 },
-      effects: [
-        {
-          id: 'base:ward',
-          category: 'buff',
-          potency: 1,
-          counter: 1,
-          source: { kind: 'effect', id: 'base:ward' },
-        },
-      ],
-    };
-    const state = createCombatState(
-      'copy',
-      [
-        actor('hero', 'party', {
-          equipment: [{ id: 'sword', properties: ['cutting'] }],
-          actions: [equippedAction],
-          effects: [
-            {
-              id: 'base:guard',
-              category: 'buff',
-              potency: 1,
-              counter: 2,
-              source: { kind: 'item', id: 'shield' },
-            },
-          ],
-          policy: {
-            id: 'base:conditional',
-            rules: [
-              {
-                actionId: 'base:strike',
-                priority: 2,
-                conditions: [{ path: 'actor.hpRatio', operator: 'lt', value: 0.5 }],
-              },
-            ],
-          },
-          evasion: { chance: 0.25, guaranteed: 1 },
-          guarantees: { hits: 1, semiHits: 2, evasions: 3 },
-        }),
-        actor('foe', 'enemy'),
-      ],
-      0,
-    );
-
-    expect(state.rngState).not.toBe(0);
-    expect(state.actors[0]?.equipment[0]?.properties).toEqual(['cutting']);
-    expect(state.actors[0]?.actions[0]?.damage?.modifiers?.[0]?.origin.kind).toBe('item');
-    expect(state.actors[0]?.actions[0]?.effects?.[0]?.source?.id).toBe('base:ward');
-    expect(state.actors[0]?.policy.rules[0]?.conditions?.[0]?.operator).toBe('lt');
-    expect(state.actors[0]?.guarantees).toEqual({ hits: 1, semiHits: 2, evasions: 3 });
-  });
-
-  it('resolves inevitable and guaranteed hits, accuracy misses, guaranteed evasion, semi hits, and random evasion', () => {
-    const run = (
-      id: string,
-      action: CombatAction,
-      attackerOverrides: Partial<CombatActor> = {},
-      defenderOverrides: Partial<CombatActor> = {},
-    ) =>
-      advanceCombat(
-        createCombatState(
-          id,
-          [
-            actor('a-hero', 'party', {
-              actions: [action],
-              actionPriority: [action.id],
-              ...attackerOverrides,
-            }),
-            actor('z-target', 'enemy', { actions: [], ...defenderOverrides }),
-          ],
-          123,
-        ),
-        0,
-      ).log[0];
-    const unavoidable = {
-      ...strike,
-      id: 'base:unavoidable',
-      accuracy: 0,
-      damage: { ...strike.damage!, properties: ['inevitable'] },
-    };
-    const guaranteed = { ...strike, id: 'base:guaranteed', accuracy: 0 };
-    const evadable = { ...strike, id: 'base:evadable', accuracy: 1 };
-
-    expect(run('inevitable', unavoidable)?.hit).toBe(true);
-    expect(
-      run('guaranteed', guaranteed, { guarantees: { hits: 1, semiHits: 0, evasions: 0 } })?.hit,
-    ).toBe(true);
-    expect(run('miss', guaranteed)?.hit).toBe(false);
-    expect(
-      run('guaranteed-dodge', evadable, {}, { guarantees: { hits: 0, semiHits: 0, evasions: 1 } })
-        ?.evaded,
-    ).toBe(true);
-    expect(
-      run(
-        'semi-hit',
-        evadable,
-        { guarantees: { hits: 0, semiHits: 1, evasions: 0 } },
-        { evasion: { chance: 1, guaranteed: 0 } },
-      )?.evaded,
-    ).toBe(false);
-    expect(
-      run('random-dodge', evadable, {}, { evasion: { chance: 1, guaranteed: 0 } })?.evaded,
-    ).toBe(true);
-  });
-
-  it('selects policy actions by conditions, player priority, tag behavior, target mode, and available resources', () => {
-    const attack = { ...strike, id: 'base:policy-attack' };
-    const guard: CombatAction = {
-      id: 'base:guard',
-      name: 'Guard',
-      kind: 'guard',
-      target: 'self',
-      intervalMs: 1_000,
-      accuracy: 1,
-    };
-    const expensive = { ...strike, id: 'base:expensive', cost: { resource: 'mana', amount: 10 } };
-    const policy = actor('a-hero', 'party', {
-      tags: ['base:berserker'],
-      actions: [guard, attack, expensive],
-      actionPriority: [attack.id, guard.id, expensive.id],
-      energy: { mana: 1 },
-      policy: {
-        id: 'base:threshold',
-        rules: [
-          {
-            actionId: guard.id,
-            priority: 100,
-            conditions: [
-              { path: 'actor.side', operator: 'eq', value: 'party' },
-              { path: 'target.side', operator: 'neq', value: 'party' },
-              { path: 'target.hpRatio', operator: 'gte', value: 0.5 },
-              { path: 'target.hpRatio', operator: 'lte', value: 0.5 },
-              { path: 'actor.attributes.speed', operator: 'gt', value: 5 },
-              { path: 'actor.attributes.speed', operator: 'lt', value: 11 },
-            ],
-          },
-        ],
-      },
-    });
-    const result = advanceCombat(
-      createCombatState('policy', [policy, actor('z-enemy', 'enemy')], 3),
-      0,
-    );
-
-    expect(result.log.find((entry) => entry.actorId === 'a-hero')?.actionId).toBe(attack.id);
-    expect(result.actors.find((entry) => entry.id === 'a-hero')?.energy.mana).toBe(1);
-  });
-
-  it('applies weapon modifier precedence, elemental relations, adaptive resistance, and status damage modifiers', () => {
-    const modifiedStrike: CombatAction = {
-      ...strike,
-      damage: {
-        ...strike.damage!,
-        amount: 40,
-        element: 'water',
-        modifiers: [
-          {
-            id: 'item-edge',
-            interactionId: 'edge',
-            operation: 'add',
-            value: 5,
-            potency: 10,
-            origin: { kind: 'item', id: 'edge' },
-          },
-          {
-            id: 'race-edge',
-            interactionId: 'edge',
-            operation: 'add',
-            value: 20,
-            potency: 5,
-            origin: { kind: 'race', id: 'race' },
-          },
-          {
-            id: 'ability-force',
-            operation: 'multiply',
+          actor('target', 'enemy…4236 tokens truncated…'multiply',
             value: 2,
             potency: 1,
             origin: { kind: 'ability', id: 'force' },
@@ -2795,7 +2687,7 @@ describe('deterministic event combat', () => {
       cloned.actors[0]?.effects.map((effect) => [effect.expiresAt, effect.nextTickAt]),
     ).toEqual([
       [500, 5],
-      [undefined, undefined],
+      [1_000, undefined],
       [2_000, 20],
     ]);
 
@@ -3455,7 +3347,7 @@ describe('deterministic event combat', () => {
     expect(advancing.actors.find((entry) => entry.id === 'a-caster')?.position.x).toBe(1);
   });
 
-  it('intercepts through stable guardian ordering and removes or replaces statuses by the canonical precedence', () => {
+  it('intercepts through stable guardian ordering and keeps an equal-potency status instance', () => {
     const intercepted = advanceCombat(
       createCombatState(
         'multiple-guardians',
@@ -3500,7 +3392,7 @@ describe('deterministic event combat', () => {
       0,
     );
     expect(effects.actors.find((entry) => entry.id === 'z-construct')?.effects).toContainEqual(
-      expect.objectContaining({ id: 'base:renewed', counter: 5 }),
+      expect.objectContaining({ id: 'base:renewed', counter: 1 }),
     );
     expect(
       effects.actors

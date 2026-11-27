@@ -55,8 +55,8 @@ export interface CombatSummonSpec {
 export interface AppliedCombatEffect {
   id: string;
   category: string;
-  potency: number;
-  counter: number;
+  potency?: number;
+  counter?: number;
   source?: CombatOrigin;
   damageMultiplier?: number;
   damageChannel?: DamageChannel;

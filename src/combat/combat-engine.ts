@@ -212,17 +212,19 @@ export function createCombatState(
   const clonedActors = actors.map(cloneActor).map((actor) => ({
     ...actor,
     effects: actor.effects.map((effect) => {
+      const potency = effect.potency === undefined || effect.potency === 0 ? 1 : effect.potency;
       const persistent =
         tagRegistry?.length &&
         evaluateTagEffects(actor.tags, 'status.incoming', { status: effect }, tagRegistry).some(
           (rule) => rule.type === 'status_persistence' && rule.value === effect.id,
         );
+      const rawCounter = effect.counter ?? 1;
+      const counter = rawCounter === 0 && !persistent ? 1 : rawCounter;
       return {
         ...effect,
-        counter: persistent ? 0 : effect.counter,
-        expiresAt: persistent
-          ? undefined
-          : (effect.expiresAt ?? (effect.counter > 0 ? effect.counter * 1_000 : undefined)),
+        potency,
+        counter: persistent ? 0 : counter,
+        expiresAt: persistent ? undefined : (effect.expiresAt ?? counter * 1_000),
         nextTickAt:
           effect.tickDamage && effect.tickIntervalMs
             ? (effect.nextTickAt ?? effect.tickIntervalMs)
@@ -736,19 +738,23 @@ function applyStatus(
   const persistent = incomingEffects.some(
     (rule) => rule.type === 'status_persistence' && rule.value === effect.id,
   );
+  const potency = effect.potency === undefined || effect.potency === 0 ? 1 : effect.potency;
+  const rawCounter = effect.counter ?? 1;
+  const counter = rawCounter === 0 && !persistent ? 1 : rawCounter;
   const originalDurationMs =
-    effect.expiresAt === undefined ? effect.counter * 1_000 : effect.expiresAt - nowMs;
+    effect.expiresAt === undefined ? counter * 1_000 : effect.expiresAt - nowMs;
   const adjustedDurationMs = originalDurationMs * durationMultiplier;
+  const adjustedDurationSeconds = Math.max(1, Math.floor(adjustedDurationMs / 1_000));
   const incoming = {
     ...effect,
-    potency: effect.potency * potencyMultiplier,
-    counter: persistent ? 0 : adjustedDurationMs / 1_000,
+    potency: Math.floor(potency * potencyMultiplier) || 1,
+    counter: persistent ? 0 : adjustedDurationSeconds,
     sourceActorId: effect.sourceActorId ?? sourceActor.id,
     nextTickAt:
       effect.tickDamage && effect.tickIntervalMs
         ? (effect.nextTickAt ?? nowMs + effect.tickIntervalMs)
         : undefined,
-    expiresAt: persistent ? undefined : nowMs + adjustedDurationMs,
+    expiresAt: persistent ? undefined : nowMs + adjustedDurationSeconds * 1_000,
   };
   const currentIndex = target.effects.findIndex((candidate) => candidate.id === incoming.id);
   if (currentIndex < 0) {
@@ -756,12 +762,7 @@ function applyStatus(
     return true;
   }
   const current = target.effects[currentIndex]!;
-  if (
-    incoming.potency > current.potency ||
-    (incoming.potency === current.potency &&
-      ((incoming.expiresAt === undefined && current.expiresAt !== undefined) ||
-        incoming.counter > current.counter))
-  ) {
+  if (incoming.potency > (current.potency ?? 1)) {
     target.effects[currentIndex] = incoming;
     return true;
   }
@@ -1078,23 +1079,26 @@ function applyDamage(
       value: multiplier,
     });
   }
-  const incomingEffects = evaluateTagEffects(
-    defender.tags,
-    'damage.incoming',
-    {
-      damage,
-      attacker,
-      defender: {
-        ...defender,
-        affinityElement: defender.affinityElement,
-        lastDamageChannel: defender.lastDamageChannel,
-      },
-      target: defender,
-      action,
-      environment: state.environment,
-    },
-    state.tagRegistry,
-  );
+  const incomingEffects =
+    damage.channel === 'true'
+      ? []
+      : evaluateTagEffects(
+          defender.tags,
+          'damage.incoming',
+          {
+            damage,
+            attacker,
+            defender: {
+              ...defender,
+              affinityElement: defender.affinityElement,
+              lastDamageChannel: defender.lastDamageChannel,
+            },
+            target: defender,
+            action,
+            environment: state.environment,
+          },
+          state.tagRegistry,
+        );
   const tagMultipliers = combineTagMultipliers(
     incomingEffects,
     damage,
@@ -1112,7 +1116,7 @@ function applyDamage(
     });
   }
   const matchingStateEffects = new Map<string, AppliedCombatEffect>();
-  for (const effect of defender.effects) {
+  for (const effect of damage.channel === 'true' ? [] : defender.effects) {
     if (
       !effect.damageMultiplier ||
       (effect.damageChannel && effect.damageChannel !== damage.channel)
@@ -1120,7 +1124,7 @@ function applyDamage(
       continue;
     }
     const existing = matchingStateEffects.get(effect.id);
-    if (!existing || effect.potency > existing.potency) {
+    if (!existing || (effect.potency ?? 1) > (existing.potency ?? 1)) {
       matchingStateEffects.set(effect.id, effect);
     }
   }
@@ -1151,7 +1155,11 @@ function applyDamage(
       value: defender.mitigation.magical,
     });
   }
-  if (defender.damageReduction !== undefined && defender.damageReduction > 0) {
+  if (
+    damage.channel !== 'true' &&
+    defender.damageReduction !== undefined &&
+    defender.damageReduction > 0
+  ) {
     final *= 1 - defender.damageReduction;
     modifierLogs.push({
       id: 'universal-damage-reduction',
@@ -1613,7 +1621,7 @@ function processStatusTicks(state: CombatState, atMs: number): void {
       )
         continue;
       const source = state.actors.find((actor) => actor.id === effect.sourceActorId) ?? target;
-      const amount = Math.floor(effect.tickDamage.amount * (effect.potency || 1));
+      const amount = Math.floor(effect.tickDamage.amount * (effect.potency ?? 1));
       const action: CombatAction = {
         id: `status:${effect.id}`,
         name: effect.id,

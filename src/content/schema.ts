@@ -33,8 +33,8 @@ const appliedEffectSchema = z
   .object({
     id,
     category: z.string(),
-    potency: z.number().finite().nonnegative(),
-    counter: z.number().finite().nonnegative(),
+    potency: z.number().finite().nonnegative().default(1),
+    counter: z.number().finite().nonnegative().default(1),
     source: originSchema.optional(),
     damageMultiplier: z.number().finite().optional(),
     damageChannel: z.enum(['physical', 'magical', 'true']).optional(),
